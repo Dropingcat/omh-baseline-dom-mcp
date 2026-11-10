@@ -54,6 +54,22 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - AC001 — независимая приёмка по требованиям; вынесла REQUEST_CHANGES, идёт повторная проверка.
 - AC002 — quality/security и независимый E2E из чистой директории.
 
+## Ветка создания клаймов из плана OMH и их обновление (обзор)
+
+Два пути создания:
+- **`dom_claim` (lite, self-review):** `_validated_claim_args` → `build_item` → `_write_claim` → `_commit` (submit→self-review→admit). Дедупликация по идентичному claim (`_find_identical`); при совпадении возвращается `ALREADY_RECORDED`.
+- **`dom_submit` (strict, независимый review):** candidate → review (другой root) → admit с digest/revision/policy/dependency checks. Claim materialises в `claims` + `claim_snapshots` (N1-fix: снимок зависимостей пишется при допуске).
+- **Обновление (`dom_update`):** создаётся новый claim-версия, старая помечается `replacement`-событием (строка неизменяема). `_lineage` вычисляет `record_id` (корень) и `version`. `NOT_CURRENT`/`NO_CHANGE` отказы. Архивирование — `archive`-событие.
+- **Применимость/требования:** `applicability` расширяется событием; `requirement_refs` пинятся в candidate. Origin (branch/version/author/time/tx) неизменны при переносе/архиве/слиянии.
+- **OMH-план:** `dom_start` создаёт root-claim запроса (verbatim) + goal; `project_root` хранит ссылки, не статусы задач (OMH владеет задачами). Requirement refs R1/R2 привязаны к claims.
+
+Открытые вопросы/долги, затрагивающие ветку клаймов:
+- TD-DOM-15: `STALE_CHECK` не имеет механизма актуализации (dependency pinning на точную ревизию).
+- TD-DOM-18: `converged` — монотонная защёлка.
+- TD-DOM-14: scope trace/resume (ветка vs master).
+- TD-DOM-19: утечка метаданных между ветками.
+- Не реализовано (по `CLAIM_ANATOMY_AND_LINK_MARKERS.md`): дерево уточнений (refinement), маркеры M1 `basis[]`, M2 `refines`, вычисляемые обратные ссылки.
+
 ## Выполнено в цикле 2026-11-10 (закрытие критических долгов)
 
 - **TD-DOM-13 (critical, доставка):** `Service.delivery()` → `_delivery()` (приватный), добавлена валидация `state`; `sync()` пишет `ack` только при успешном read-back (`exact` + `report != 'ambiguous'`). Проверено: probe S2 → `IntegrityError ACK_REQUIRES_OBSERVED`, S3 → `ambiguous`/`NOT_READY`, C2 → состояние не меняется; `test_ab002_delivery` + `test_immutable_replace` — 8/8. Коммиты `9958431`.
