@@ -49,6 +49,18 @@ TYPE_ARGS = {
     'text': ('classification', 'evidence', 'attribution', 'assumptions'),
 }
 
+# Per-type required fields of dom_claim (TD-DOM-22.4 / TD-DOM-23).
+# Server-side validation in _validated_claim_args already enforces these; this
+# table makes them discoverable in the schema and in dom_describe.
+REQUIRED_FIELDS = {
+    'quote': ('source_ref',),
+    'decision': ('rationale',),
+    'formula': ('expression',),
+    'code': ('repository_ref', 'relative_path'),
+    'data': ('artifact_ref',),
+    'concept': ('definition',),
+    'text': (),  # 'classification'+'evidence' required only when classification=='factual'
+}
 
 def identity(directory):
     """work_ref / task_ref / policy_digest of the lite profile, computed from the run directory."""
@@ -827,8 +839,18 @@ def input_schema(name):
         if arg == 'revision':
             prop['minimum'] = 0
         props[arg] = prop
+    base_required = [a for a, d in doc['arguments'].items() if d['required']]
+    if name == 'dom_claim':
+        # Per-type required fields (TD-DOM-22.4): oneOf by type, each branch lists
+        # the type-specific required fields on top of the common required ones.
+        one_of = []
+        for typ in TYPES:
+            req = list(base_required) + list(REQUIRED_FIELDS.get(typ, ()))
+            one_of.append({'type': 'object', 'properties': props,
+                           'required': req, 'additionalProperties': False})
+        return {'type': 'object', 'oneOf': one_of}
     return {'type': 'object', 'additionalProperties': False, 'properties': props,
-            'required': [a for a, d in doc['arguments'].items() if d['required']]}
+            'required': base_required}
 
 
 _CLAIM_EXAMPLES = {
@@ -852,7 +874,17 @@ _CLAIM_WHEN = {
 
 
 def claim_type_examples():
-    return {t: {'use_for': _CLAIM_WHEN[t], 'example_call': {'tool': 'dom_claim', 'arguments': _CLAIM_EXAMPLES[t]}} for t in TYPES}
+    out = {}
+    for t in TYPES:
+        allowed = list(TYPE_ARGS[t])
+        out[t] = {
+            'use_for': _CLAIM_WHEN[t],
+            'required': ['branch', 'type', 'text'] + list(REQUIRED_FIELDS.get(t, ())),
+            'optional_common': ['requirement_refs', 'reason', 'origin_version'],
+            'optional_type_specific': allowed,
+            'example_call': {'tool': 'dom_claim', 'arguments': _CLAIM_EXAMPLES[t]},
+        }
+    return out
 
 
 def describe(svc):

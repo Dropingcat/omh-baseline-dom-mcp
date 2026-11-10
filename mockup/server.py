@@ -198,6 +198,11 @@ def strict_arguments(name, arguments):
     for key, expected in allowed.items():
         if key in arguments and type(arguments[key]) is not expected:
             raise ToolInput('INVALID_ARGUMENTS')
+    # TD-DOM-22.4: per-type required fields for dom_claim.
+    if name == 'dom_claim' and 'type' in arguments and arguments['type'] in claim_entry_mod.REQUIRED_FIELDS:
+        for rf in claim_entry_mod.REQUIRED_FIELDS[arguments['type']]:
+            if rf not in arguments:
+                raise ToolInput('INVALID_ARGUMENTS')
     return arguments
 
 
