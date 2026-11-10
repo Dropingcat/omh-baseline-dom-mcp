@@ -29,7 +29,7 @@
 
 ## Сводка открытых долгов по областям (обновлено 2026-11-10)
 
-Закрыто в этом цикле: TD-DOM-12 (монотонность `branch_heads`), TD-DOM-13 (связь состояния доставки с фактом доставки), TD-DOM-18 (монотонная защёлка `converged`). Ранее закрыто: TD-DOM-11. Остаётся открытым: 16 пунктов (TD-DOM-01…10, 14…17, 19…21), из них TD-DOM-10 — in_progress.
+Закрыто в этом цикле: TD-DOM-12 (монотонность `branch_heads`), TD-DOM-13 (связь состояния доставки с фактом доставки), TD-DOM-18 (монотонная защёлка `converged`). Ранее закрыто: TD-DOM-11. Остаётся открытым: 25 пунктов (TD-DOM-01…10, 14…17, 19…31), из них TD-DOM-10 — in_progress. Новые: TD-DOM-22…31 (блок внесения клаймов, учёт сращивания с OMH).
 
 По областям (ветки AA/AB общие, если не указано иное):
 
@@ -37,6 +37,7 @@
 - **Ветки/сходимость (AA, AB, master):** TD-03 (реальный Git merge), TD-07 (аллокатор кодов веток), TD-14 (scope trace/resume), TD-15 (актуализация STALE_CHECK). (TD-18 закрыт.)
 - **Доставка (общее):** TD-19 (утечка метаданных между ветками), TD-20 (malformed target), TD-21 (lineage манифеста).
 - **OMH/живая привязка (общее):** TD-08 (живая привязка и аутентификация, Q01/Q02).
+- **Блок внесения клаймов (claim-entry, lite/strict):** TD-22 (раздвоенный интерфейс), TD-23 (type-specific required не в Schema), TD-24 (нет diff при update), TD-25 (binding к OMH task), TD-26 (origin_version жёсткий), TD-27 (self-review в convenient-пути), TD-28 (идемпотентность ввода), TD-29 (навигация по версиям), TD-30 (атомарность multi-branch), TD-31 (маркеры связей/refinement).
 - **Инфраструктура/качество (общее):** TD-04 (process death after_rename), TD-09 (детерминизм YAML), TD-10 (актуальность docs/STATUS, in_progress), TD-17 (provenance YAML-экспорта).
 - **Процесс (общее):** TD-04 входит сюда же.
 
@@ -49,4 +50,27 @@
 | TD-DOM-19 | Новая metadata/diagnostic выдача integrity gate нарушает branch scope: AA-only caller видит AB revision (0→1) на query/snapshot/trace/resume/sync_status/export; при повреждённом среднем AB event получает его запрещённый UUID через `chain.broken_event_id` на семи поверхностях. Прямые AB вызовы при этом SCOPE_DENIED. Не OS-admin bypass: здоровая утечка достижима read-only MCP caller при штатном AB admission; corruption только disposable fixture для второй ветки проверки. | major | AU002-A F-AU002-01, `mockup/admission.py:48-51,90-100`; `runtime/AU002_A/run-b944ea96/scope/{result,restricted-before-hidden,restricted-after-hidden,positive-control}.json`, `middle/{injection,responses,result}.json`. Закрытие: scope-safe snapshot/diagnostics без запрещённых revisions/counts/UUID при сохранении fail-closed integrity и привилегированного локатора; независимый MCP differential test при фиксированной AA и меняющейся AB, затем corruption/restart. Не дубликат TD-DOM-06/08/14. | open |
 | TD-DOM-20 | OUT_OF_SCOPE_FINDING, интеграционная устойчивость SIMULATION target: корректный JSON с `TASK: []` проходит read_target как пустой, затем attach вызывает `.get` у list. Два новых MCP процесса получают isError с raw AttributeError вместо доменной target-диагностики. Остаются два durable attempt без observation, YAML не исполняется, повтор без внешнего исправления формы повторяет отказ. Ack/READY НЕ сфальсифицированы; после восстановления owned target key reconcile работает. | major | AU002-A F-AU002-02; `mockup/ports.py:31-39,67-71`, `mockup/admission.py:335-345`; `runtime/AU002_A/run-b944ea96/malformed-target/{responses,before-malformed,after-malformed,final-recovered,result}.json`. Закрытие: явная проверка формы target и безопасная структурированная ошибка; новые MCP процессы на list/null/scalar target не выбрасывают attribute/type ошибки, не создают ложный ack, сохраняют чужие записи; восстановление проверено физически. Это не новая production auth/OS гарантия и не ложный A1/A2 ack. | open |
 | TD-DOM-21 | D tooling: зарегистрировано ранее предложенное RV002-A-DEBT-01, без нового дублирующего finding. Общий `runtime/AB002_A/e2e_manifest.json` перезаписывается runner; ссылка без immutable run lineage может адресовать другой прогон. | minor | RV002-A-DEBT-01, `artifacts/REVIEWER_AB002_A.json:proposed_debts`; `mockup/ab002_matrix.py:364-408`. AU002 использует собственный `runtime/AU002_A/run-b944ea96/manifest.json`. Закрытие: immutable run-specific manifest + source/input fingerprints и cross-run lineage вместо shared pointer в сдаче. | open |
+## Claim-entry — долги, выявленные при обзоре 2026-11-10
 
+Формулировка с учётом будущего сращивания с OMH (живая привязка, независимый review, единый интерфейс ввода/вывода). Источник: обзор mockup/lite.py (claim/update/find/describe/start), mockup/server.py (LITE_SIGNATURE), docs/CLAIM_ANATOMY_AND_LINK_MARKERS.md.
+
+| ID | Долг | Severity | Источник | Статус |
+|---|---|---|---|---|
+| TD-DOM-22 | Блок внесения клаймов раздвоен: lite-профиль имеет dom_claim/dom_update/dom_find, строгий — только dom_submit с полным пакетом. Единый интерфейс ввода/вывода для создания клайма отсутствует; при сращивании с OMH нужен один путь с независимым review. | major | claim-entry review | open |
+| TD-DOM-23 | Type-specific required-поля (quote→source_ref, decision→
+ationale, ormula→expression, code→
+epository_ref+
+elative_path, data→rtifact_ref, concept→definition, 	ext factual→evidence) не помечены required в JSON Schema dom_claim; валидация только серверная, клиент не обнаруживает контракт. | minor | claim-entry review | open |
+| TD-DOM-24 | dom_update не возвращает diff старой/новой версии; нет явного «что изменилось» в ответе. | minor | claim-entry review | open |
+| TD-DOM-25 | Claim не связан с идентификатором задачи OMH: 
+equirement_refs — произвольные строки (R1/R2), не проверяются против OMH; при живой привязке нужен binding к OMH task/work (TD-DOM-08). | major | claim-entry review, TD-DOM-08 | open |
+| TD-DOM-26 | origin_version жёстко задан (lite-v1 / synthetic-artifact-v1); реальный OMH требует версионирование по источнику/ревизии. | minor | claim-entry review | open |
+| TD-DOM-27 | dom_claim (lite) саморецензирует (
+eview_level=self); независимый review недоступен в convenient-пути. При сращивании с OMH нужен независимый путь для claim-entry. | major | claim-entry review | open |
+| TD-DOM-28 | Нет идемпотентности на уровне ввода клайма (внешний ключ); дедупликация только по идентичному содержимому (content-hash). Повтор с другим payload не различается. | minor | claim-entry review | open |
+| TD-DOM-29 | Нет навигации по цепочке версий claim (
+ecord_id/ersion вычисляются, но нет API «показать все версии / diff»). | minor | claim-entry review | open |
+| TD-DOM-30 | Применимость (pplicability) и 
+equirement_refs задаются при внесении, но расширение применимости — отдельное событие; нет атомарного «внести клайм сразу в несколько веток». | minor | claim-entry review | open |
+| TD-DOM-31 | Маркеры связей M1 asis[], M2 
+efines, вычисляемые обратные ссылки (по CLAIM_ANATOMY_AND_LINK_MARKERS.md) не реализованы; дерево уточнений (refinement) отсутствует. | minor | claim-entry review, docs/CLAIM_ANATOMY | open |
