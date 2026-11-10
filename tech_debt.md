@@ -21,7 +21,7 @@
 | TD-DOM-15 | `STALE_CHECK` не имеет механизма актуализации: зависимость клайма пинится на точную ревизию ветки в иммутабельном `claim_snapshots`, `archive` локальна для ветки, API пересмотра нет. Два режима: `dependencies={}` — проверка не срабатывает никогда (так делает всё демо), пин — блокирует навсегда. Воспроизведено: `runtime/AU001/probe3.py` (S1), `probe6.py` (E1) | major | AU001 (F-AU-07) | open |
 | TD-DOM-16 | Проекция не переживает событие с неожиданной формой payload: `snapshot` падает `KeyError`, `trace`/`query` выбрасывают исключение наружу (`guarded` ловит только `Denied`/`OperationalError`), поэтому `CHAIN_BROKEN` не отдаётся. Воспроизведено вставкой события с корректным `previous_hash` и payload без `value` | major | AU001 (F-AU-05) | open |
 | TD-DOM-17 | Экспорт YAML не связан с цепочкой/БД: нет `chain_head`, `tx_id`, `event_hash`, поэтому `sha256` подтверждает только целостность файла, а не происхождение; `sync` не гейтит на `CHAIN_BROKEN` (export/sync проходят, блокирует только `trace`) | major | AU001 (F-AU-09/10) | open |
-| TD-DOM-18 | `converged` — монотонная защёлка: одно событие `converge` снимает `BRANCH_NOT_CONVERGED` навсегда, включая ревизии, добавленные после решения о сходимости. Воспроизведено: `runtime/AU001/probe_perturb2.py` (P1) | major | AU001 (F-AU-06) | open |
+| TD-DOM-18 | `converged` — монотонная защёлка: одно событие `converge` снимает `BRANCH_NOT_CONVERGED` навсегда, включая ревизии, добавленные после решения о сходимости. Воспроизведено: `runtime/AU001/probe_perturb2.py` (P1) | major | AU001 (F-AU-06) | **closed** (2026-11-10): в `projections.snapshot` флаг `converged` сбрасывается в `False` при любом контент-событии после `converge` (claim/applicability/archive/property/replacement/conflict/resolve/exclude). Проверено: P1 → после добавления нового общего контента `converged_flag=false`, `NOT_READY [BRANCH_NOT_CONVERGED]`. |
 
 ## Правило
 
@@ -29,12 +29,12 @@
 
 ## Сводка открытых долгов по областям (обновлено 2026-11-10)
 
-Закрыто в этом цикле: TD-DOM-12 (монотонность `branch_heads`), TD-DOM-13 (связь состояния доставки с фактом доставки). Ранее закрыто: TD-DOM-11. Остаётся открытым: 17 пунктов (TD-DOM-01…10, 14…21), из них TD-DOM-10 — in_progress.
+Закрыто в этом цикле: TD-DOM-12 (монотонность `branch_heads`), TD-DOM-13 (связь состояния доставки с фактом доставки), TD-DOM-18 (монотонная защёлка `converged`). Ранее закрыто: TD-DOM-11. Остаётся открытым: 16 пунктов (TD-DOM-01…10, 14…17, 19…21), из них TD-DOM-10 — in_progress.
 
 По областям (ветки AA/AB общие, если не указано иное):
 
 - **Хранилище/цепочка (общее):** TD-01 (внешний checkpoint цепочки), TD-02 (коллизия UUID), TD-05 (`guarded` маскирует OperationalError), TD-06 (OS-изоляция, ограничение макета), TD-16 (проекция на неожиданный payload).
-- **Ветки/сходимость (AA, AB, master):** TD-03 (реальный Git merge), TD-07 (аллокатор кодов веток), TD-14 (scope trace/resume), TD-15 (актуализация STALE_CHECK), TD-18 (монотонная защёлка `converged`).
+- **Ветки/сходимость (AA, AB, master):** TD-03 (реальный Git merge), TD-07 (аллокатор кодов веток), TD-14 (scope trace/resume), TD-15 (актуализация STALE_CHECK). (TD-18 закрыт.)
 - **Доставка (общее):** TD-19 (утечка метаданных между ветками), TD-20 (malformed target), TD-21 (lineage манифеста).
 - **OMH/живая привязка (общее):** TD-08 (живая привязка и аутентификация, Q01/Q02).
 - **Инфраструктура/качество (общее):** TD-04 (process death after_rename), TD-09 (детерминизм YAML), TD-10 (актуальность docs/STATUS, in_progress), TD-17 (provenance YAML-экспорта).

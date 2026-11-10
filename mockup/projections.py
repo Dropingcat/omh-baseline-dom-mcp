@@ -60,6 +60,11 @@ def snapshot(c,branch,revision,with_level=False):
         elif kind=='resolve': conflicts.discard(v['value']['conflict_ref'])
         elif kind=='converge': converged=True
         elif kind=='exclude': excluded.add(v['value']['branch'])
+        # TD-DOM-18: convergence is not a permanent latch.  Any content change
+        # after a 'converge' event invalidates it, so BRANCH_NOT_CONVERGED
+        # reappears until the branch is re-converged explicitly.
+        if kind != 'converge' and kind in ('claim','applicability','archive','property','replacement','conflict','resolve','exclude'):
+            converged = False
     # The owner-provided branch marker must be visible on every historical row,
     # not only on the current claim record.
     for entry in history:
