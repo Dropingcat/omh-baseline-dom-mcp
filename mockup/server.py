@@ -20,7 +20,7 @@ from mcp.server.models import InitializationOptions
 from mcp.server.stdio import stdio_server
 
 from .admission import Service
-from . import lite as lite_mod
+from . import claim_entry as claim_entry_mod
 from . import public_dto
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -130,7 +130,7 @@ TOOLS = [
 LITE_SIGNATURE = {
     'dom_describe': ({}, {}),
     'dom_start': ({}, {'request': str, 'goal': str, 'branches': list, 'adopt': bool}),
-    'dom_claim': ({'branch': str, 'type': str, 'text': str}, dict(lite_mod.COMMON_FIELDS, **lite_mod.FIELD_TYPES)),
+    'dom_claim': ({'branch': str, 'type': str, 'text': str}, dict(claim_entry_mod.COMMON_FIELDS, **claim_entry_mod.FIELD_TYPES)),
     'dom_update': ({'claim_id': str, 'text': str, 'reason': str}, {}),
     'dom_find': ({}, {'query': str, 'branch': str, 'type': str, 'requirement_ref': str, 'limit': int}),
 }
@@ -154,9 +154,9 @@ SIGNATURE = {
 
 
 STRICT_TOOL_NAMES = frozenset(t.name for t in TOOLS)
-LITE_TOOLS = [types.Tool(name=n, description=lite_mod.compose_description(n), inputSchema=lite_mod.input_schema(n))
-              for n in lite_mod.LITE_TOOL_NAMES]
-LITE_TOOL_NAMES = frozenset(lite_mod.LITE_TOOL_NAMES)
+LITE_TOOLS = [types.Tool(name=n, description=claim_entry_mod.compose_description(n), inputSchema=claim_entry_mod.input_schema(n))
+              for n in claim_entry_mod.LITE_TOOL_NAMES]
+LITE_TOOL_NAMES = frozenset(claim_entry_mod.LITE_TOOL_NAMES)
 SIGNATURE.update(LITE_SIGNATURE)
 
 

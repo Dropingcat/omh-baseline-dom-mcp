@@ -12,7 +12,7 @@ from . import delivery as delivery_facts
 from . import public_dto
 from functools import wraps
 from dataclasses import replace as _replace
-from . import lite as lite_mod
+from . import claim_entry as claim_entry_mod
 
 class IntegrityFailure(Exception):
     def __init__(self,result): self.result=result
@@ -90,7 +90,7 @@ class Service:
         self.profile=profile; self.lite=profile=='lite'
         if self.lite:
             # work/task/policy are computed by the server (never typed by the model)
-            work,task,policy=lite_mod.identity(self.directory)
+            work,task,policy=claim_entry_mod.identity(self.directory)
             self.context=_replace(self.context,work=work,task=task,policy=policy,branches=frozenset())
         self.store=Store(self.directory)
         self.fault_hook=lambda stage: None
@@ -391,7 +391,7 @@ class Service:
                 total+=1
                 if cl.get('review_level')=='independent': independent+=1
                 if any(heads.get(b)!=v for b,v in cl['dependencies'].items()): stale+=1
-        pending,rejected=lite_mod.pending_rejected(c,[s['branch'] for s in snaps])
+        pending,rejected=claim_entry_mod.pending_rejected(c,[s['branch'] for s in snaps])
         return dict(admitted_total=total,admitted_independent=independent,pending=pending,rejected=rejected,stale=stale)
 
     @guarded
@@ -650,12 +650,12 @@ class Service:
     # ---- WR-ADD (L0+L1): lite tools.  Logic lives in mockup/lite.py; every write goes
     # through the same submit -> review -> admit methods above (no bypass).
     @guarded
-    def describe(self): return lite_mod.describe(self)
+    def describe(self): return claim_entry_mod.describe(self)
     @guarded
-    def start(self,request=None,goal=None,branches=None,adopt=False): return lite_mod.start(self,request,goal,branches,adopt)
+    def start(self,request=None,goal=None,branches=None,adopt=False): return claim_entry_mod.start(self,request,goal,branches,adopt)
     @guarded
-    def claim(self,branch,type,text,**fields): return lite_mod.claim(self,branch,type,text,fields)
+    def claim(self,branch,type,text,**fields): return claim_entry_mod.claim(self,branch,type,text,fields)
     @guarded
-    def update(self,claim_id,text,reason): return lite_mod.update(self,claim_id,text,reason)
+    def update(self,claim_id,text,reason): return claim_entry_mod.update(self,claim_id,text,reason)
     @guarded
-    def find(self,query=None,branch=None,type=None,requirement_ref=None,limit=20): return lite_mod.find(self,query,branch,type,requirement_ref,limit)
+    def find(self,query=None,branch=None,type=None,requirement_ref=None,limit=20): return claim_entry_mod.find(self,query,branch,type,requirement_ref,limit)
