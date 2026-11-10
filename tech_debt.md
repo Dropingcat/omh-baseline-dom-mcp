@@ -87,8 +87,17 @@ ind, _rebuild_for_update) из mockup/lite.py в общий модуль mockup/
 | TD-DOM-22.4 | Per-type required-поля в JSON Schema dom_claim (TD-DOM-23): либо two-step schema, либо обогащение dom_describe списками required/optional по типу. | minor | 22.3 | open |
 | TD-DOM-22.5 | Идемпотентность на уровне ввода клайма (TD-DOM-28): опциональный idempotency_key в dom_claim/dom_update, проброс в _package/_commit. | minor | 22.1, 22.2 | open |
 | TD-DOM-22.6 | Навигация по цепочке версий / diff (TD-DOM-29): dom_claim_versions(claim_id) или ersion_chain в dom_find/dom_query; diff в ответе dom_update. | minor | 22.1 | open |
-| TD-DOM-22.7 | Независимый review в strict claim-entry (TD-DOM-27): Service.claim в strict отказывает при self-review (INDEPENDENCE_NOT_ENFORCED); проверка тестом. | major | 22.2, 22.3 | open |
+| TD-DOM-22.7 | Независимый review в strict claim-entry (TD-DOM-27): Service.claim в strict отказывает при self-review (INDEPENDENCE_NOT_ENFORCED); проверка тестом. | major | 22.2, 22.3 | open  **closed** (2026-11-10): strict claim submit -> review (root-B) -> admit DEMO_ADMITTED; find=1. |
 | TD-DOM-22.8 | Multi-branch атомарное внесение (TD-DOM-30): ranches: [...] в dom_claim. Высокий риск; отложить до OMH binding (TD-DOM-25/TD-DOM-08). | minor | 22.2, TD-DOM-08 | open (deferred) |
 | TD-DOM-22.9 | Binding к OMH task/work (TD-DOM-25): 
 equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major | TD-DOM-08 | open (blocked) |
 | TD-DOM-22.10 | Тесты + документация: MCP handshake, E2E, SPEC.md tool list, STATUS.md. | minor | 22.3, 22.4–22.9 | open |
+
+
+## Combat test 2026-11-10 (claim-entry block)
+
+Адверсариальный прогон (15 сценариев) блока внесения клаймов в strict-профиле: все отказы сработали корректно (INDEPENDENCE_NOT_ENFORCED, SCOPE_DENIED, UNKNOWN_TYPE, INVALID_FIELD, EMPTY_TEXT, TEXT_TOO_LARGE, DIGEST_MISMATCH, PROFILE_STRICT). Найдено 1 замечание minor: requirement_refs не валидируются по составу (TD-DOM-32).
+
+| ID | Долг | Severity | Источник | Статус |
+|---|---|---|---|---|
+| TD-DOM-32 | requirement_refs не валидируются по составу/длине/набору: произвольные строки (включая path-traversal) принимаются и хранятся. Потенциальная stored-injection при выводе в YAML/trace. | minor | combat test 2026-11-10 (A15) | open |
