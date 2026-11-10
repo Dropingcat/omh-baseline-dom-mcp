@@ -80,9 +80,10 @@ efines, вычисляемые обратные ссылки (по CLAIM_ANATOMY
 
 | ID | Поддолг (шаг плана) | Severity | Зависимости | Статус |
 |---|---|---|---|---|
-| TD-DOM-22.1 | Вынести логику claim-entry (uild_item, _validated_claim_args, _write_claim, _commit, claim, update, ind, _rebuild_for_update) из mockup/lite.py в общий модуль mockup/claim_entry.py; lite.py — тонкий re-export. | major | — | open |
-| TD-DOM-22.2 | Добавить Service.claim/update/find/describe/start в mockup/admission.py, делегирующие в claim_entry, с profile-dependent review gate (self в lite, independent в strict). | major | 22.1 | open |
-| TD-DOM-22.3 | Подключить dom_claim/dom_update/dom_find/dom_describe/dom_start к strict-профилю в server.py (TOOLS, SIGNATURE, dispatch, STRICT_TOOL_NAMES); обновить 	est_handshake_list_and_refusals и 	est_two_role_flow_over_stdio. | major | 22.1, 22.2 | open |
+| TD-DOM-22.1  **closed** (2026-11-10): claim_entry.py created, lite.py shim, admission/server switched. Tests 61 pass, demo exit 0. |
+ind, _rebuild_for_update) из mockup/lite.py в общий модуль mockup/claim_entry.py; lite.py — тонкий re-export. | major | — | open |
+| TD-DOM-22.2 | Добавить Service.claim/update/find/describe/start в mockup/admission.py, делегирующие в claim_entry, с profile-dependent review gate (self в lite, independent в strict). | major | 22.1 | open  **closed** (2026-11-10): Service.claim strict submits candidate (RECORDED_CANDIDATE); find/describe work in both profiles; update/start remain lite-only. Verified: strict claim->review->admit->find=1. |
+| TD-DOM-22.3 | Подключить dom_claim/dom_update/dom_find/dom_describe/dom_start к strict-профилю в server.py (TOOLS, SIGNATURE, dispatch, STRICT_TOOL_NAMES); обновить 	est_handshake_list_and_refusals и 	est_two_role_flow_over_stdio. | major | 22.1, 22.2 | open  **closed** (2026-11-10): 5 tools added to strict TOOLS; handshake test updated (17 tools); 7/7 mcp_stdio pass. |
 | TD-DOM-22.4 | Per-type required-поля в JSON Schema dom_claim (TD-DOM-23): либо two-step schema, либо обогащение dom_describe списками required/optional по типу. | minor | 22.3 | open |
 | TD-DOM-22.5 | Идемпотентность на уровне ввода клайма (TD-DOM-28): опциональный idempotency_key в dom_claim/dom_update, проброс в _package/_commit. | minor | 22.1, 22.2 | open |
 | TD-DOM-22.6 | Навигация по цепочке версий / diff (TD-DOM-29): dom_claim_versions(claim_id) или ersion_chain в dom_find/dom_query; diff в ответе dom_update. | minor | 22.1 | open |

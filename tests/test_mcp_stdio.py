@@ -29,7 +29,9 @@ PASSED_ENV = ('SYSTEMROOT', 'WINDIR', 'COMSPEC', 'PATH', 'PATHEXT', 'USERPROFILE
 TOOL_NAMES = {'dom_init', 'dom_resume', 'dom_submit', 'dom_review', 'dom_admit', 'dom_append',
               'dom_query', 'dom_trace', 'dom_export', 'dom_sync_status',
               # documented extras: spec-permitted outbox delivery + query alias
-              'dom_sync', 'dom_snapshot'}
+              'dom_sync', 'dom_snapshot',
+              # TD-DOM-22.3: claim-entry block now exposed in the strict profile too
+              'dom_describe', 'dom_start', 'dom_claim', 'dom_update', 'dom_find'}
 # SPEC.md:46 normative list; every one of these must exist on the wire.
 SPEC_TOOLS = {'dom_init', 'dom_resume', 'dom_submit', 'dom_review', 'dom_admit', 'dom_append',
               'dom_query', 'dom_trace', 'dom_export', 'dom_sync_status'}

@@ -125,6 +125,18 @@ TOOLS = [
         inputSchema={'type': 'object', 'additionalProperties': False,
                      'properties': {'branch': {'type': 'string'}},
                      'required': ['branch']}),
+
+    # TD-DOM-22.3: claim-entry block exposed in the strict profile too.
+    types.Tool(name='dom_describe', description=claim_entry_mod.compose_description('dom_describe'),
+               inputSchema=claim_entry_mod.input_schema('dom_describe')),
+    types.Tool(name='dom_start', description=claim_entry_mod.compose_description('dom_start'),
+               inputSchema=claim_entry_mod.input_schema('dom_start')),
+    types.Tool(name='dom_claim', description=claim_entry_mod.compose_description('dom_claim'),
+               inputSchema=claim_entry_mod.input_schema('dom_claim')),
+    types.Tool(name='dom_update', description=claim_entry_mod.compose_description('dom_update'),
+               inputSchema=claim_entry_mod.input_schema('dom_update')),
+    types.Tool(name='dom_find', description=claim_entry_mod.compose_description('dom_find'),
+               inputSchema=claim_entry_mod.input_schema('dom_find')),
 ]
 
 LITE_SIGNATURE = {

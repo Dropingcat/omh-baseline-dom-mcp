@@ -360,25 +360,43 @@ def _validated_claim_args(svc, branch, typ, text, fields):
 
 
 def claim(svc, branch, typ, text, fields):
-    _lite_only(svc)
     svc.capability('submit')
     svc.ready()
     raw, args, refs, reason, origin_version = _validated_claim_args(svc, branch, typ, text, fields)
     item = build_item(typ, text, raw, branch, args, refs, reason)
-    res = _write_claim(svc, branch, item, origin_version, reason, 'claim')
-    if 'claim_id' not in res:
-        return res
-    cid = res['claim_id']
-    steps = [
-        {'tool': 'dom_find', 'arguments': {'branch': branch, 'query': text[:30]}, 'why': 'confirm the claim is stored and findable'},
-        {'tool': 'dom_update', 'arguments': {'claim_id': cid, 'text': '<the full new text>', 'reason': '<why it changes>'},
-         'why': 'to change this claim later: creates a new version, this one stays in history'},
-        {'tool': 'dom_trace', 'arguments': {}, 'why': 'readiness: admitted_total and admitted_independent are separate numbers'},
-    ]
-    return {'status': 'ALREADY_RECORDED' if res['already'] else 'CLAIM_ADMITTED', 'simulated': True, 'claim_id': cid,
-            'record_id': res['record_id'], 'version': res['version'], 'branch': branch, 'type': typ,
-            'revision': res['revision'], 'review_level': res['review_level'], 'origin_version': origin_version,
-            'raw_sha256': res['raw_sha256'], 'next_steps': steps}
+    if svc.lite:
+        res = _write_claim(svc, branch, item, origin_version, reason, 'claim')
+        if 'claim_id' not in res:
+            return res
+        cid = res['claim_id']
+        steps = [
+            {'tool': 'dom_find', 'arguments': {'branch': branch, 'query': text[:30]}, 'why': 'confirm the claim is stored and findable'},
+            {'tool': 'dom_update', 'arguments': {'claim_id': cid, 'text': '<the full new text>', 'reason': '<why it changes>'},
+             'why': 'to change this claim later: creates a new version, this one stays in history'},
+            {'tool': 'dom_trace', 'arguments': {}, 'why': 'readiness: admitted_total and admitted_independent are separate numbers'},
+        ]
+        return {'status': 'ALREADY_RECORDED' if res['already'] else 'CLAIM_ADMITTED', 'simulated': True, 'claim_id': cid,
+                'record_id': res['record_id'], 'version': res['version'], 'branch': branch, 'type': typ,
+                'revision': res['revision'], 'review_level': res['review_level'], 'origin_version': origin_version,
+                'raw_sha256': res['raw_sha256'], 'next_steps': steps}
+    # strict profile: independent review required, so only submit a candidate;
+    # the caller then runs dom_review (different root) + dom_admit.
+    with svc.store.read() as c:
+        revision = svc.head(c, branch)
+    item_key = digest({'tag': 'claim', 'branch': branch, 'item': dict(item, local_id='')})[:40]
+    key = 'strict-claim-%s-r%d' % (item_key[:24], revision)
+    pkg = _package(svc, branch, revision, [item], key, 'claims', origin_version, reason)
+    sub = svc.submit(json.dumps(pkg))
+    if sub.get('status') != 'RECORDED_CANDIDATE':
+        return _surface(sub)
+    return {'status': 'RECORDED_CANDIDATE', 'simulated': True, 'candidate_id': sub['candidate_id'],
+            'intent_digest': sub['intent_digest'], 'branch': branch, 'type': typ,
+            'next_steps': [
+                {'tool': 'dom_review', 'arguments': {'candidate_id': sub['candidate_id'], 'intent_digest': sub['intent_digest']},
+                 'why': 'independent review required (different root) before admission'},
+                {'tool': 'dom_admit', 'arguments': {'candidate_id': sub['candidate_id'], 'review_id': '<review_id>',
+                                                    'idempotency_key': key, 'intent_digest': sub['intent_digest']},
+                 'why': 'atomic admission after an independent review'}]}
 
 
 def _rebuild_for_update(old_item, old_text, old_raw, new_text, new_raw, reason):
