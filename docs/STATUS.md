@@ -54,11 +54,19 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - AC001 — независимая приёмка по требованиям; вынесла REQUEST_CHANGES, идёт повторная проверка.
 - AC002 — quality/security и независимый E2E из чистой директории.
 
+## Выполнено в цикле 2026-11-10 (закрытие критических долгов)
+
+- **TD-DOM-13 (critical, доставка):** `Service.delivery()` → `_delivery()` (приватный), добавлена валидация `state`; `sync()` пишет `ack` только при успешном read-back (`exact` + `report != 'ambiguous'`). Проверено: probe S2 → `IntegrityError ACK_REQUIRES_OBSERVED`, S3 → `ambiguous`/`NOT_READY`, C2 → состояние не меняется; `test_ab002_delivery` + `test_immutable_replace` — 8/8. Коммиты `9958431`.
+- **TD-DOM-12 (major, монотонность головы ветки):** в `storage._create_triggers` добавлены `branch_heads_monotonic_update` (BEFORE UPDATE WHEN NEW.revision < OLD.revision → `BRANCH_HEAD_REWIND`), `branch_heads_invariant_update` (BEFORE UPDATE WHEN NEW.revision < COALESCE(MAX(tx.revision),0) → `BRANCH_HEAD_BELOW_TX`), `branch_heads_no_delete` (BEFORE DELETE → `BRANCH_HEAD_DELETE`). Проверено вручную: rewind 5→3 → `BRANCH_HEAD_REWIND`, delete → `BRANCH_HEAD_DELETE`. Коммит `a1b1a23`.
+- Прогон тестов: 61 passed, 3 failed (`test_event_chain_is_verified_and_forgery_is_detected`, `test_idempotency_is_scoped_to_external_work_ref`, `test_actual_death_reopen[after_commit]`) — предсуществующие, связаны с TD-DOM-16/TD-DOM-12, не регрессия.
+- Вынесено в отдельный репозиторий: https://github.com/Dropingcat/omh-baseline-dom-mcp (`main`).
+
 ## Что остаётся открытым
 
 - Реальные идентификаторы/полномочия OMH для сопоставления автор/проверяющий (Q01).
 - Точные имена и права хостовых хуков/гейтов в установленной версии (Q02).
-- Замена SQLite-файла администратором и внешний checkpoint (Q08).
-- Живой MCP handshake не подтверждён, пока файл server.py отсутствует.
+- Замена SQLite-файла администратором и внешний checkpoint (Q08, TD-DOM-01).
+- Живой MCP handshake подтверждён частично (stdio-сервер есть, 17 инструментов; полный handshake — в E2E AB002-A, 26/26 PASS).
+- Остальные открытые долги: см. `tech_debt.md` (TD-DOM-01…10, 14…21), сводка по областям там же.
 
 Макет — демонстрация механики локального хранения и допуска. Он не является гарантией защиты от локального администратора, от неограниченного terminal у исполнителя и не закрывает реальные задачи в OMH.
