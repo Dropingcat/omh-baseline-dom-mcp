@@ -56,21 +56,38 @@
 
 | ID | Долг | Severity | Источник | Статус |
 |---|---|---|---|---|
-| TD-DOM-22 | Блок внесения клаймов раздвоен: lite-профиль имеет dom_claim/dom_update/dom_find, строгий — только dom_submit с полным пакетом. Единый интерфейс ввода/вывода для создания клайма отсутствует; при сращивании с OMH нужен один путь с независимым review. | major | claim-entry review | open |
+| TD-DOM-22 | Блок внесения клаймов раздвоен: lite-профиль имеет dom_claim/dom_update/dom_find, строгий — только dom_submit с полным пакетом. Единый интерфейс ввода/вывода для создания клайма отсутствует; при сращивании с OMH нужен один путь с независимым review. | major | claim-entry review | open (analysis done) |
 | TD-DOM-23 | Type-specific required-поля (quote→source_ref, decision→
 ationale, ormula→expression, code→
 epository_ref+
-elative_path, data→rtifact_ref, concept→definition, 	ext factual→evidence) не помечены required в JSON Schema dom_claim; валидация только серверная, клиент не обнаруживает контракт. | minor | claim-entry review | open |
+elative_path, data→rtifact_ref, concept→definition, 	ext factual→evidence) не помечены required в JSON Schema dom_claim; валидация только серверная, клиент не обнаруживает контракт. | minor | claim-entry review | open (analysis done) |
 | TD-DOM-24 | dom_update не возвращает diff старой/новой версии; нет явного «что изменилось» в ответе. | minor | claim-entry review | open |
 | TD-DOM-25 | Claim не связан с идентификатором задачи OMH: 
 equirement_refs — произвольные строки (R1/R2), не проверяются против OMH; при живой привязке нужен binding к OMH task/work (TD-DOM-08). | major | claim-entry review, TD-DOM-08 | open |
 | TD-DOM-26 | origin_version жёстко задан (lite-v1 / synthetic-artifact-v1); реальный OMH требует версионирование по источнику/ревизии. | minor | claim-entry review | open |
 | TD-DOM-27 | dom_claim (lite) саморецензирует (
-eview_level=self); независимый review недоступен в convenient-пути. При сращивании с OMH нужен независимый путь для claim-entry. | major | claim-entry review | open |
+eview_level=self); независимый review недоступен в convenient-пути. При сращивании с OMH нужен независимый путь для claim-entry. | major | claim-entry review | open (analysis done) |
 | TD-DOM-28 | Нет идемпотентности на уровне ввода клайма (внешний ключ); дедупликация только по идентичному содержимому (content-hash). Повтор с другим payload не различается. | minor | claim-entry review | open |
 | TD-DOM-29 | Нет навигации по цепочке версий claim (
-ecord_id/ersion вычисляются, но нет API «показать все версии / diff»). | minor | claim-entry review | open |
+ecord_id/ersion вычисляются, но нет API «показать все версии / diff»). | minor | claim-entry review | open (analysis done) |
 | TD-DOM-30 | Применимость (pplicability) и 
-equirement_refs задаются при внесении, но расширение применимости — отдельное событие; нет атомарного «внести клайм сразу в несколько веток». | minor | claim-entry review | open |
+equirement_refs задаются при внесении, но расширение применимости — отдельное событие; нет атомарного «внести клайм сразу в несколько веток». | minor | claim-entry review | open (analysis done) |
 | TD-DOM-31 | Маркеры связей M1 asis[], M2 
 efines, вычисляемые обратные ссылки (по CLAIM_ANATOMY_AND_LINK_MARKERS.md) не реализованы; дерево уточнений (refinement) отсутствует. | minor | claim-entry review, docs/CLAIM_ANATOMY | open |
+## TD-DOM-22 — суб-долги (ветка унификации claim-entry)
+
+Источник: docs/TD22_CLAIM_ENTRY_UNIFICATION_PLAN.md. Статус родительского долга TD-DOM-22: open (анализ/суб-план выполнен, реализация не начата). Поддолги закрываются по мере реализации шагов плана; закрытие — с указанием проверки.
+
+| ID | Поддолг (шаг плана) | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-22.1 | Вынести логику claim-entry (uild_item, _validated_claim_args, _write_claim, _commit, claim, update, ind, _rebuild_for_update) из mockup/lite.py в общий модуль mockup/claim_entry.py; lite.py — тонкий re-export. | major | — | open |
+| TD-DOM-22.2 | Добавить Service.claim/update/find/describe/start в mockup/admission.py, делегирующие в claim_entry, с profile-dependent review gate (self в lite, independent в strict). | major | 22.1 | open |
+| TD-DOM-22.3 | Подключить dom_claim/dom_update/dom_find/dom_describe/dom_start к strict-профилю в server.py (TOOLS, SIGNATURE, dispatch, STRICT_TOOL_NAMES); обновить 	est_handshake_list_and_refusals и 	est_two_role_flow_over_stdio. | major | 22.1, 22.2 | open |
+| TD-DOM-22.4 | Per-type required-поля в JSON Schema dom_claim (TD-DOM-23): либо two-step schema, либо обогащение dom_describe списками required/optional по типу. | minor | 22.3 | open |
+| TD-DOM-22.5 | Идемпотентность на уровне ввода клайма (TD-DOM-28): опциональный idempotency_key в dom_claim/dom_update, проброс в _package/_commit. | minor | 22.1, 22.2 | open |
+| TD-DOM-22.6 | Навигация по цепочке версий / diff (TD-DOM-29): dom_claim_versions(claim_id) или ersion_chain в dom_find/dom_query; diff в ответе dom_update. | minor | 22.1 | open |
+| TD-DOM-22.7 | Независимый review в strict claim-entry (TD-DOM-27): Service.claim в strict отказывает при self-review (INDEPENDENCE_NOT_ENFORCED); проверка тестом. | major | 22.2, 22.3 | open |
+| TD-DOM-22.8 | Multi-branch атомарное внесение (TD-DOM-30): ranches: [...] в dom_claim. Высокий риск; отложить до OMH binding (TD-DOM-25/TD-DOM-08). | minor | 22.2, TD-DOM-08 | open (deferred) |
+| TD-DOM-22.9 | Binding к OMH task/work (TD-DOM-25): 
+equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major | TD-DOM-08 | open (blocked) |
+| TD-DOM-22.10 | Тесты + документация: MCP handshake, E2E, SPEC.md tool list, STATUS.md. | minor | 22.3, 22.4–22.9 | open |
