@@ -185,6 +185,20 @@ class Store:
                 parts.append(f'EXISTS(SELECT 1 FROM {table} WHERE {test})')
             c.execute(f"CREATE TRIGGER IF NOT EXISTS immutable_{table}_INSERT BEFORE INSERT ON {table} "
                       f"WHEN {' OR '.join(parts)} BEGIN SELECT RAISE(ABORT,'IMMUTABLE'); END")
+        # TD-DOM-12: branch_heads is mutable but MONOTONIC.  A rewind of the
+        # head (UPDATE ... SET revision=lower) hides transactions already
+        # stored and lets STALE_CHECK disappear, producing false readiness.
+        # Block any decrease, and any head below the max transaction revision.
+        c.execute("CREATE TRIGGER IF NOT EXISTS branch_heads_monotonic_update BEFORE UPDATE ON branch_heads "
+                  "WHEN NEW.revision < OLD.revision "
+                  "BEGIN SELECT RAISE(ABORT,'BRANCH_HEAD_REWIND'); END")
+        c.execute("CREATE TRIGGER IF NOT EXISTS branch_heads_invariant_update BEFORE UPDATE ON branch_heads "
+                  "WHEN NEW.revision < COALESCE((SELECT MAX(revision) FROM transactions WHERE branch=NEW.branch),0) "
+                  "BEGIN SELECT RAISE(ABORT,'BRANCH_HEAD_BELOW_TX'); END")
+        # A branch head may never be deleted: that would also hide history and
+        # break the FK from transactions.
+        c.execute("CREATE TRIGGER IF NOT EXISTS branch_heads_no_delete BEFORE DELETE ON branch_heads "
+                  "BEGIN SELECT RAISE(ABORT,'BRANCH_HEAD_DELETE'); END")
         # Append-only chain guard: a new event must extend the stored hash chain.
         # It does not replace verification (see admission.verify_chain), it only
         # blocks inserts that do not continue the current chain state.
