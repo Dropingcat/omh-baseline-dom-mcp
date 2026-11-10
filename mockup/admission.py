@@ -424,8 +424,11 @@ class Service:
         return dict(status='EXPORTED',handle=handle,sha256=sha,revision=snap['revision'],simulated=True)
 
     @guarded
-    def delivery(self,intent,state,payload):
-        # Compatibility surface refuses caller-supplied states, including for reviewers.
+    def _delivery(self,intent,state,payload):
+        # Compatibility surface: state may never be assigned by a caller, including
+        # reviewers.  Capability/scope/state are validated before the refusal so
+        # that no caller can forge a delivery state (TD-DOM-13, F-AU-03/F-AU-04).
+        if state not in ('pending','ambiguous','ack'): raise Denied('REJECTED')
         self.scope(); self.capability('admit'); self.ready()
         with self.store.read() as c:
             row=c.execute('SELECT branch FROM outbox WHERE id=?',(intent,)).fetchone()

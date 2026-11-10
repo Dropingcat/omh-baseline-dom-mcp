@@ -267,7 +267,7 @@ def immutable(d):
             probes.append(refused_sql(d,c,sql,params,expected,'forged-ack-'+str(n)))
     # Public helper cannot be used to assign state, even with reviewer capability.
     author=Service(d); reviewer=Service(d,role='reviewer')
-    public=[author.delivery(intent[0],'ack',{}),reviewer.delivery(intent[0],'ack',{})]
+    public=[author._delivery(intent[0],'ack',{}),reviewer._delivery(intent[0],'ack',{})]
     assert [r['status'] for r in public]==['INDEPENDENCE_NOT_ENFORCED','DELIVERY_ENGINE_ONLY'],public
     after=readback(d,'after-immutable')
     assert before==after
