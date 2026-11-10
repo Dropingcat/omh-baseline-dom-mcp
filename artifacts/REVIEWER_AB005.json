@@ -1,0 +1,124 @@
+{
+  "schema": "reviewer_verdict/v1",
+  "role": "REVIEWER",
+  "task": "AB005",
+  "reviewed_version": {
+    "code_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+    "file_count": 16,
+    "digest_method": "sha256(json.dumps(sorted mockup/**/*.py relpath->sha256 map with 'mockup/' posix prefix, sort_keys=True))",
+    "digest_recomputed_independently": true,
+    "digest_computed_by_reviewer": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+    "digest_matches_claim": true,
+    "probe": "runtime/RV005/digest_probe.py"
+  },
+  "decision": "APPROVE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "slice_verdicts": [
+    {
+      "id": "WS-F04-TYPED-ABSENCE",
+      "decision": "APPROVE",
+      "contract": "RS006 planning order[0] + AB005 card slice 1: in-grant OK, out-of-grant SCOPE_DENIED, granted-but-absent NO_SUCH_BRANCH on query/resume/sync_status/sync; no raw exception; no false SYNCED",
+      "checks": [
+        "digest: final ca227b17 confirmed on the SAME code state used for f04_after evidence (results/f04_after.json digest == ca227b17)",
+        "baseline_file_immunity: delivery.py/public_dto.py/server.py/tests(18)/tech_debt.md byte-identical to AU005 freeze 1ead2d45; only admission.py+storage.py differ",
+        "implementation: single physical check head()/require_branch() over branch_heads; sync_status/sync got explicit require_branch (do not pass through head); Denied->guarded->project_tool DomainError {status} path is pre-existing (public_dto.py:353-357, unchanged file) so NO_SUCH_BRANCH is a uniform typed enum, no server.py change needed (worker claim confirmed by diff)",
+        "own_runs: grant {AA,ZZ} fresh fixture, real MCP stdio subprocess per call, frames logged; 6 surfaces on ZZ -> NO_SUCH_BRANCH (query/resume/sync_status/sync/trace/export), 4 surfaces on AB -> SCOPE_DENIED (query/resume/sync_status/sync), AB export/trace also SCOPE_DENIED, AA healthy SNAPSHOT/RESUMED/SYNC_STATUS/SYNCED/EXPORTED/TRACE, sync.ZZ != SYNCED, trace(master) = TRACE not broken",
+        "no INTERNAL_ERROR: full frame scan over all my F-04 frames found 0 occurrences; worker's after matrix also shows 0",
+        "out-of-grant vs granted-but-absent remains distinguishable without widening (no exists-oracle: AB never reveals existence)",
+        "negative control (worker before-evidence independently re-read): f04_before.json shows INTERNAL_ERROR on query/resume/export/trace ZZ, empty SYNC_STATUS, false SYNCED -- the defect is real and is what changed"
+      ],
+      "evidence_refs": [
+        "runtime/RV005/results/rv005_f04_own.json (sha256 818e685e066db0289c95f230942867be860ea338f5473a521137af0d78c2c075)",
+        "runtime/RV005/f04/frames-*.jsonl (raw MCP frames, own PIDs)",
+        "runtime/RV005/admission.diff, runtime/RV005/storage.diff (surgical diff vs AU006 baseline snapshot)",
+        "runtime/AB005/results/f04_before.json / f04_after.json (worker evidence, independently re-read)",
+        "runtime/AB005/fixtures/f04/after/frames-*.jsonl (worker raw frames, real JSON-RPC)"
+      ],
+      "sha256": "818e685e066db0289c95f230942867be860ea338f5473a521137af0d78c2c075"
+    },
+    {
+      "id": "WS-F02-ADMIT-BINDING",
+      "decision": "APPROVE",
+      "contract": "RS006 planning order[1] + AB005 card slice 2 + DECISION_BRIEF L1+L2: order candidate->L1 digest-before-cache->L2 binding dedupe->review->remember; PK (work,operation,key,scope_digest); arbiter result_scope subset grant; submit bound too; migration user_version gate + BEGIN IMMEDIATE + legacy rows inert + immutable triggers recreated; positive control N-F02-3 byte-equal receipt with zero deltas",
+      "checks": [
+        "L1 order: admit.py:213 digest check BEFORE dedupe (line 216); own scenario C: same key + wrong digest -> DIGEST_MISMATCH, 0 new facts",
+        "L2 binding: dedupe matches (candidate_id,branch,review_id,digest) and gates stored result_scope subset of current grant; PK extended to 4 columns confirmed in storage.py DDL + live PRAGMA readback on worker-migrated copy",
+        "both mandatory RS006 corrections present: (1) PK + scope_digest column, legacy rows scope_digest='' (line 70-73 storage.py migration copies as-is); (2) arbiter result_scope subset grant (dedupe line 140-141); own scenario F: full-grant admit {AA,AB} then narrowed-grant {AA} replay -> SAME receipt byte-equal, 0 deltas, stored result_scope ['AA']",
+        "positive control N-F02-3 OWN RUN (runtime/RV005/probe_f02.py case A + results/rv005_f02_own.json): replay in fresh PID returns byte-equal text AND parsed receipt, zero deltas on candidates/reviews/transactions/events/outbox/delivery_attempts/delivery_observations/delivery_acks/idempotency, idempotency stays 2 rows (submit+admit), admit-row for key stays 1, replay status stays DEMO_ADMITTED (no REPLAY status substitution)",
+        "submit is bound too: submit row has scope_digest<>'' + candidate_id set (own readback), legacy submit rows -> IDEMPOTENCY_BINDING_UNKNOWN via same legacy-guard (code path dedupe line 129-132)",
+        "migration on OWN copy (runtime/RV005/probe_f02.py case E): old DDL DB -> dom_init -> INITIALIZED, user_version=1, v2 columns (candidate_id,review_id,branch,scope_digest,result_scope), legacy row inert (scope_digest='', candidate_id NULL, digest preserved), admit on legacy key -> IDEMPOTENCY_BINDING_UNKNOWN without rewriting row, fresh key -> DEMO_ADMITTED (new row), UPDATE legacy row -> IMMUTABLE (trigger recreated), fail-closed: old schema + user_version=5 -> MIGRATION_REQUIRED",
+        "own negatives: B -- foreign candidate with byte-equal digest, same key -> IDEMPOTENCY_BINDING_MISMATCH (0 facts); D -- missing candidate -> honest SCOPE_DENIED, no cache issuance",
+        "review checks not weakened: review() untouched by diff; admit still enforces STALE_REVIEW / INDEPENDENCE_NOT_ENFORCED / REVISION_CONFLICT after cache-miss; candidate() scope still before cache",
+        "no behavior outside contract: the only new DomainError codes are the contract-set (DIGEST_MISMATCH, IDEMPOTENCY_MISMATCH, IDEMPOTENCY_BINDING_MISMATCH, IDEMPOTENCY_BINDING_UNKNOWN, IDEMPOTENCY_REVIEW_MISMATCH, SCOPE_DENIED, NO_SUCH_BRANCH, MIGRATION_REQUIRED); all serialized through pre-existing guarded->project_tool uniform {'status'} DomainError path; replay returns original receipt status, no new statuses introduced (verified in own case A)",
+        "worker evidence re-read independently: f02_after_summary N-F02-1..11 all_pass=true; f02_after.json digest=ca227b17; worker legacy-migrated copy independently validated (v2 cols, uv=1, legacy row inert, immutable triggers present, UPDATE->IMMUTABLE); worker defect reproduction f02_before.json consistent with AU005-F-02 (cached AB receipt leak)"
+      ],
+      "evidence_refs": [
+        "runtime/RV005/results/rv005_f02_own.json (sha256 2c60556fe4f3ec9e6f279e47ff6ea8459d8f7d2bd82a1ab79e4b762482594e5e)",
+        "runtime/RV005/results/rv005_f02_narrow_own.json (sha256 85bf3a286dd489c663e11fe0e2590a718b3e23ac0dac7be52a9f804c5e984516)",
+        "runtime/RV005/f02a_positive|f02b_foreign|f02c_digest_l1|f02d_missing_candidate|f02e_legacy|f02e_failclosed|f02f_narrow/frames-*.jsonl (raw frames)",
+        "runtime/RV005/admission.diff, runtime/RV005/storage.diff",
+        "runtime/AB005/results/f02_before.json, f02_after.json, f02_after_summary.json",
+        "runtime/AB005/fixtures/f02/after/legacy-migrated/dom.sqlite3 (independent PRAGMA/SQL readback)",
+        "docs/SCHEMA_CHANGE_AB005.md (matches implementation)",
+        "docs/DECISION_BRIEF_2026-11-08.md (L1+L2 direction), runtime/RS006/planning_RS006.json (order, must_not_merge, negative_sets)"
+      ],
+      "sha256": "2c60556fe4f3ec9e6f279e47ff6ea8459d8f7d2bd82a1ab79e4b762482594e5e"
+    }
+  ],
+  "own_runs": [
+    {
+      "id": "rv005_f04_own",
+      "what": "WS-F04 surface matrix under grant {AA,ZZ} (ZZ granted-but-absent) via own launcher+client, real MCP subprocesses",
+      "artifact": "runtime/RV005/results/rv005_f04_own.json",
+      "sha256": "818e685e066db0289c95f230942867be860ea338f5473a521137af0d78c2c075",
+      "pids": ["7184 (submit)", "4304 (review+admit)", "15036 (surface matrix)"],
+      "verdict": "PASS (8/8 assertions)"
+    },
+    {
+      "id": "rv005_f02_own",
+      "what": "WS-F02: N-F02-3 positive control (byte-equal replay, zero deltas), foreign-candidate-same-digest BINDING_MISMATCH, L1 DIGEST_MISMATCH, missing-candidate SCOPE_DENIED, legacy migration on own copy + fail-closed MIGRATION_REQUIRED",
+      "artifact": "runtime/RV005/results/rv005_f02_own.json",
+      "sha256": "2c60556fe4f3ec9e6f279e47ff6ea8459d8f7d2bd82a1ab79e4b762482594e5e",
+      "verdict": "PASS (all scenarios)"
+    },
+    {
+      "id": "rv005_f02_narrow_own",
+      "what": "Safe narrowing replay: admit {AA,AB}, replay under {AA} -> same receipt byte-equal, 0 deltas (validates result_scope subset grant arbiter)",
+      "artifact": "runtime/RV005/results/rv005_f02_narrow_own.json",
+      "sha256": "85bf3a286dd489c663e11fe0e2590a718b3e23ac0dac7be52a9f804c5e984516",
+      "verdict": "PASS"
+    }
+  ],
+  "baseline_immunity": {
+    "method": "sha256 per file vs runtime/AU005/continue01_freeze.json (frozen at 1ead2d45) and vs AU006 source snapshots",
+    "changed": ["mockup/admission.py", "mockup/storage.py"],
+    "unchanged_14_of_16_mockup": ["__init__.py","ab002_binding.py","ab002_e2e.py","ab002_launcher.py","ab002_lock.py","ab002_matrix.py","delivery.py","demo.py","dom_contract.py","fixtures/__init__.py","ports.py","projections.py","public_dto.py","server.py"],
+    "tests_unchanged_count": 18,
+    "tests_changed": [],
+    "tests_new": [],
+    "tests_deleted": [],
+    "tech_debt_unchanged": true,
+    "delivery_public_dto_server_unchanged": true,
+    "omh_note": "Локальная OMH-сторона (delivery.py, ports.py, outbox-логика) байт-идентична базе; live OMH не вызывался (запрещено картой) - только mockup-контракт без изменений подтверждён",
+    "probe": "runtime/RV005/verify_baseline_files.py"
+  },
+  "not_checked": [
+    "истинно конкурентная гонка двух процессов: не гонялась (модель - сериализация BEGIN IMMEDIATE в transaction(); как у worker'а; рекомендация RS006 по live-гонке сохраняется)",
+    "полный pytest-прогон: tests/ байт-идентичны baseline (18 файлов), но не выполнялись",
+    "live OMH / сеть / Git / установка пакетов (запрещены картой)",
+    "N-F02-7 (тот же ключ у другого principal, operation-префикс): проверено физически worker'ом; reviewer не повторял (собственный минимум на срез превышен)",
+    "N-F02-9 race в двух живых процессах: проверено как детерминированная сериализация + worker'ом; одновременный запуск не выполнялся",
+    "N-F02-11 вариант NOT_INITIALIZED (БД отсутствует до dom_init): проверен worker'ом; не повторялся",
+    "дальняя корректность pick=rows[0] при нескольких submit-строках одного ключа под разными грантами: детерминированность покрыта result_scope-гейтом (код), множественные заполненные submit-строки одного ключа не гонялись"
+  ],
+  "observations": [
+    "sync/sync_status получили require_branch явно (не через head()) - единственная разница с query/resume/trace/export, что соответствует заявленной реализации",
+    "при записи submit-реплея без candidate_id dedupe выбирает rows[0]; выдача всё равно ограничена result_scope subset grant, поэтому межгрантовая утечка невозможна даже при нескольких строках ключа",
+    "head() теперь бросает NO_SUCH_BRANCH и из check_references/admit при granted-but-absent зависимости - это консистентно с WS-F04 (typed absence вместо INTERNAL_ERROR), новых статусов вне контракта нет"
+  ],
+  "report_ref": "reports/REVIEWER_AB005.md",
+  "continuation_required": false,
+  "written_at": "2026-11-08T14:55:00+00:00"
+}

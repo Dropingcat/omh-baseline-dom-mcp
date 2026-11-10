@@ -1,0 +1,5 @@
+name: dom-branches
+kind: backend
+version: "0.1.0"
+description: "Read-only DOM claim branches pane (omh-baseline-dom-mcp). Shows branches, claims, pending candidates, delivery state."
+has_dashboard: true

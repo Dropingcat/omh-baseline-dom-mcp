@@ -1,0 +1,126 @@
+{
+  "schema": "RS004-material/v1",
+  "role": "researcher",
+  "task": "RS004",
+  "continuation_of": [
+    {
+      "artifact": "artifacts/RESEARCHER_RS003_LINKS.json",
+      "sha256": "8da35bd446d66c2453e841558dcc92d88c557790cff97ae31e35deca0ee5cb86",
+      "status": "COMPLETE_MATERIAL, PASS_MATERIAL_HANDOFF_ONLY; extended, not re-done"
+    },
+    {
+      "artifact": "artifacts/ANALYST_AN004_FORKING.json",
+      "sha256": "11437e62b22083278cebd320283e53a02307b8f62d454f85f43c54d5490147a8",
+      "status": "COMPLETE_MATERIAL, accepted (hashes matched, exit0, 7/7 negative controls per task context); exact_question для Q-L2-01..04 скопированы отсюда дословно, не пересказаны"
+    }
+  ],
+  "product_acceptance": false,
+  "is_product_approval": false,
+  "product_verdict": "REQUEST_CHANGES",
+  "artifact_stage": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "written_at": "2026-11-07T00:00:00+03:00",
+  "material_scope": "Исследовательский материал по 6 точным вопросам: Q-L2-01..04 (дословно из принятого artifacts/ANALYST_AN004_FORKING.json) + Q-L2-05/06 (новые, из живого диалога заказчика этой сессии, зафиксированные в cards/RS004_LINKS_RESEARCHER.md). Расширяет, а не повторяет RS003 (identity/tips/FORKED/convergence/SourceRecord) и подтверждение AN004. Ничего не реализовано и не изменено в продукте/MCP/OMH. TD-DOM-18/19/20/21 открыты, P0 не отменён. Собственная синтетическая проверка (не продукт) выполнена: runtime/RS004/proto_rs004.py, 11/11 checks PASS.",
+  "questions": [
+    {
+      "id": "Q-L2-01",
+      "priority": "P1",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_01_05.json#/answers[id=Q-L2-01]",
+      "fragment_sha256": "d9371d98da5729e04d701015e790782868f827eedaf3b36001f131469b5d6e76",
+      "needs_user": ["Нужен ли auto-detect fork без декларации intent (продуктовое решение заказчика); если да — предложенный минимум: явная contradicts-связь, допущенная независимым от обоих siblings reviewer, не keyword similarity и не LLM-суждение."],
+      "execution_state": "NOT_TESTED (today's actual admission.py CAS behaviour read, not re-run against a live product process)"
+    },
+    {
+      "id": "Q-L2-02",
+      "priority": "P0_before_graph_introduction",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_02_06.json#/answers[id=Q-L2-02]",
+      "fragment_sha256": "5be666c6d2710818931eb1aa11c5047b99d0b5517684eda26eac1515e50b47c4",
+      "needs_user": ["Разрешена ли похожесть/duplicate-check между разными family_id в принципе, и если да — одинаково для duplicate-check и similarity-suggestion или по-разному (новое уточнение сверх исходного NU-01-смежного вопроса)."],
+      "execution_state": "NOT_TESTED (similarity API не существует в коде, NU-01 открыт)"
+    },
+    {
+      "id": "Q-L2-03",
+      "priority": "P1",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_03.json#/answers[id=Q-L2-03]",
+      "fragment_sha256": "d525959a2435c701e8fb91219adc9a3d798741316bdfd87256bd5251ccffe723",
+      "needs_user": [],
+      "execution_state": "EXECUTED_SYNTHETIC_ALGORITHM_ONLY (pin_stale(): fresh/pin_behind_text_changed/pin_behind_position_missing, 3/3 PASS); реальный omh_todo record не создавался/не изменялся"
+    },
+    {
+      "id": "Q-L2-04",
+      "priority": "P1",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_04.json#/answers[id=Q-L2-04]",
+      "fragment_sha256": "822986171207528504e07923cbcd1e324fe378bfcf868a9494ddf437952f050f",
+      "needs_user": [
+        "UD-06/NU-04 (субъект/критерии сходимости, кто закрывает reopen) остаются OPEN независимо от формы записи -- унаследовано из RS003.",
+        "Если заказчик имел в виду третий механизм (selection without merge, NU-02-смежный) -- нужно явное подтверждение."
+      ],
+      "execution_state": "NOT_TESTED (converge-событие с вектором и merges n-ary relation не реализованы в продукте)"
+    },
+    {
+      "id": "Q-L2-05",
+      "priority": "P0 (часть А) / inherits_Q-L2-02 (часть Б)",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_01_05.json#/answers[id=Q-L2-05]",
+      "fragment_sha256": "d9371d98da5729e04d701015e790782868f827eedaf3b36001f131469b5d6e76",
+      "needs_user": ["Part A: none. Part B: идентично needs_user Q-L2-02 (cross-referenced, не дублировано)."],
+      "execution_state": "EXECUTED_SYNTHETIC_ALGORITHM_ONLY (part A, byte-exact novelty check, 4/4 relevant checks PASS); part B NOT_TESTED (see Q-L2-02)"
+    },
+    {
+      "id": "Q-L2-06",
+      "priority": "P1 (тесно связан с Q-L2-03, один pin-механизм)",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS004/answers_02_06.json#/answers[id=Q-L2-06]",
+      "fragment_sha256": "5be666c6d2710818931eb1aa11c5047b99d0b5517684eda26eac1515e50b47c4",
+      "needs_user": [],
+      "execution_state": "EXECUTED_SYNTHETIC_ALGORITHM_ONLY (causal order by raw server_time, including explicit tie detection, 5/5 PASS); новый event kind НЕ реализован"
+    }
+  ],
+  "answer_fragments": [
+    {"path": "runtime/RS004/answers_01_05.json", "sha256": "d9371d98da5729e04d701015e790782868f827eedaf3b36001f131469b5d6e76", "question_ids": ["Q-L2-01", "Q-L2-05"]},
+    {"path": "runtime/RS004/answers_02_06.json", "sha256": "5be666c6d2710818931eb1aa11c5047b99d0b5517684eda26eac1515e50b47c4", "question_ids": ["Q-L2-02", "Q-L2-06"]},
+    {"path": "runtime/RS004/answers_03.json", "sha256": "d525959a2435c701e8fb91219adc9a3d798741316bdfd87256bd5251ccffe723", "question_ids": ["Q-L2-03"]},
+    {"path": "runtime/RS004/answers_04.json", "sha256": "822986171207528504e07923cbcd1e324fe378bfcf868a9494ddf437952f050f", "question_ids": ["Q-L2-04"]}
+  ],
+  "convergence_vs_merge_note": "Явно разведены по требованию карточки: merges (runtime/RS004/answers_04.json#/answers[0]/mechanism_merges) -- tips-level, одна family, n-ary, claim-admission + relation merges; converge (#/mechanism_converge) -- branch-level, вектор ревизий + criteria_digest + субъект + supersedes (DL-08). Карточный минимум (пара record_id+причина) зафиксирован как структурно недостаточный для ОБОИХ, не как единая форма; ESC-02 (AN004) подтверждена, не ослаблена.",
+  "own_execution": {
+    "runs": [
+      {
+        "id": "RUN-RS004-PROTO",
+        "script": "runtime/RS004/proto_rs004.py",
+        "script_sha256": "6a8d31f43b3aef5e6f6dc14f337ed28e6d5ee050a8c4a9b7378e97c9df466747",
+        "record": "runtime/RS004/proto_rs004_run_stdout.json",
+        "record_sha256": "07a90eea427ea942c86db89c0133978ebf612b0b21aa343849b299e97aaf71c8",
+        "argv": ["E:/opencode_harness_portable/.venv/Scripts/python.exe", "-I", "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS004\\proto_rs004.py"],
+        "exit_code": 0,
+        "checks_passed": 11,
+        "checks_total": 11
+      }
+    ],
+    "live_api_calls": [
+      {"id": "API01_RS004", "call": "tool_describe(names=['omh_todo'])", "purpose": "own independent re-confirmation of Q-L2-03 field semantics (item_text prefix guard, set drops items), separate from AN004's own API01 call"}
+    ],
+    "not_run": ["продуктовый код", "реальный MCP", "OMH (ни одна настоящая todo-запись не создавалась/не изменялась)", "сеть", "Git", "субагенты"]
+  },
+  "sources": {"ledger": "runtime/RS004/source_ledger.json", "ledger_sha256": "42cd2ff4306d9559a7dfcac11fa2e28d34093f961d5350e9f313c84d5fd5e88d", "count": 20},
+  "validation_ref": {
+    "receipt": "runtime/RS004/validation_receipt.json",
+    "receipt_sha256": "4db8c07a28f3875f474dbad88e2e2bb7eab8c9751c305bc10e9926e21a623454",
+    "validator": "runtime/RS004/validate.py",
+    "validator_sha256": "43a635a6f0fa7f72e1ac395f20d97ab8b84f978935f3d99f74ff4972d9a9f0d4",
+    "result": "25/25 checks PASS (18 positive + 7 negative controls), exit_code=0"
+  },
+  "limits": [
+    "Ничего из questions реализовано/протестировано на продукте/MCP/OMH; все выводы -- собственное чтение кода/API + синтетические прототипы, не E2E.",
+    "omh_todo вызван ЖИВЫМ tool_describe (read-only схема инструмента) собственным, отдельным от AN004, вызовом; ни одна todo-запись не создавалась/не изменялась.",
+    "Все предложенные DOM-поля/event kinds (plan_item_snapshot, plan_pin_went_stale, DUPLICATE_TIP_CONTENT, WARNING_REQUIRES_REVIEWER_CONFIRMATION и т.д.) -- предложение RS004, не утверждённый API.",
+    "Q-L2-01's/Q-L2-04's verification-сценарии НЕ выполнялись физически (требуют продуктового кода, которого для proposed-механизмов ещё нет, или реального запуска двух процессов -- запрещено мандатом); представлены как планы для будущего worker, как у AN004/RS003.",
+    "product_verdict=REQUEST_CHANGES; это не приёмка продукта."
+  ],
+  "remaining": [],
+  "continuation_required": false
+}

@@ -1,0 +1,16 @@
+# RV004 — CONTINUATION 01 (reviewer; догнать зелёный probe + финалы)
+
+Роль прежняя: REVIEWER TD19 (независимый). Полный контракт — cards/RV004_TD19_REVIEWER.md; статус/остаток — его PARTIAL. Продолжение той же роли, не пересоздание; родитель не дописывает вердикт.
+
+## Состояние (подтверждено; проверить самому)
+P=E:/opencode_harness_portable/projects/omh-baseline-dom-mcp.
+- Review практически завершён содержательно: digest 08aa9a9b… (16 файлов) независимо пересчитан; изменены ровно admission.py/server.py + добавлен public_dto.py (13 остальных mockup байт-в-байт = baseline); receipts worker подлинны (9 sha256+2 manifests); статический разбор против RS002 public_schemas/allowlists/append_event_value_allowlists — DTO fail-closed, Chain status-only, Broken фикс-форма, оба канала — один объект, raw-исключения не выходят, внутренний SQL-stamp (chain_head+все revisions+port_reported) сохранён; coverage чисто (тесты не тронуты, tech_debt TD19 open, endpoints не добавлены, grants не менялись); 4 бага МОЕГО предыдущего пробе-хара (не продукт): (1) reason — легальное поле RS002 (лишне в leak-scan), (2) A2-03 db_sha снимался ДО corruption, (3) DELIVERY ключ таргета = `demo:existing-task-AA001` (const TASK), (4) канарейки — в base64 `body_b64`. Значимые факты уже подтверждены: на всех поверхностях нет chain_head/head_hash/events/broken_event_id/broken_at_seq; 28 gate-ответов точный безопасный Broken; напрямую AB/ZZ SCOPE_DENIED; union видит AB; delivery ack=obs=attempt; internal stamp полный; A2-02 LEAK_CLOSED на seed 7107.
+
+## Точный остаток (только это)
+1. В rv004_probe.py применить 4 фикса (см. выше: убрать 'reason' из LEAK_KEYS; A2-03 снимать db после corrupt; DELIVERY ключ target_data.get(TASK); B-SIDE/export — b64-канарейки; исключать frames-*/stderr-* из скана).
+2. Прогнать с чистым env (без PYTHON* теней): `env -u PYTHONPATH -u PYTHON -u PYTHON_BIN -u PYTHON_VENV -u VIRTUAL_ENV -u PYTHONSCRIPT -u PYTHONHOME E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV004/rv004_probe.py --out runtime/RV004/run-aa-7107b --seed 7107` → все 5 чеков GREEN (A2-01/02/03, DELIVERY, B-SIDE). При продуктом FAIL append-admission — REQUEST_CHANGES с точным воспроизведением (это продукт, а не probe); при чистых — APPROVE.
+3. Написать artifacts/REVIEWER_AB003_TD19.json (decision: APPROVE или REQUEST_CHANGES; product_acceptance=false, is_approval=false; per-check evidence refs sha256; собственный digest; coverage/omissions; debt suggestion open/closed — приёмку долга НЕ выполнять, только recommendation), reports/REVIEWER_AB003_TD19.md (раздел 0 «подозревал→проверил→оказалось»; что опровергнуто — 4 probe-бага и т.д.), runtime/RV004/master-manifest + source ledger (все собственные receipts+hashes).
+4. completion_state=completed только при зелёном probe и существующих файлах.
+
+## Границы
+Запись ТОЛЬКО artifacts/REVIEWER_AB003_TD19.json, reports/REVIEWER_AB003_TD19.md, runtime/RV004/**. Продукт/AB003/SEC003/QA003/tech_debt/tests — read-only. Без Git/install/network/paid/субагентов/OMH delta. PY=E:/opencode_harness_portable/.venv/Scripts/python.exe, CWD=P, чистый env. При лимите — continuation.json той же роли с точным остатком; родитель финал не дописывает. Вердикт пишет сам исполнитель.

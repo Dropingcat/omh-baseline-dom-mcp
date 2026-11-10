@@ -1,0 +1,17 @@
+{
+  "analyst_id": "AN012",
+  "status": "PARTIAL",
+  "h_items": ["H9", "H11"],
+  "verified": [],
+  "remaining": ["live reproduction in isolated runtime", "source roots and digest", "three priced options", "prototype", "preregistered cold start", "negative controls", "validation"],
+  "root_causes": [],
+  "options": [],
+  "recommendation": null,
+  "prototype": {},
+  "cold_start": {"criteria": "From dom_resume only: identify stale declared/current basis, perform authorized rebase, require fresh independent review, admit; zero guessed arguments; expose pending sync; no false readiness.", "result": "NOT_RUN"},
+  "negative_controls": [],
+  "needs_user": [],
+  "conflicts_with_decisions": [],
+  "product_acceptance": false,
+  "is_approval": false
+}

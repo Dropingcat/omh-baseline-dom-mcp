@@ -1,0 +1,782 @@
+{
+  "schema": "auditor_verdict/v1",
+  "role": "AUDITOR",
+  "task": "AU005",
+  "continuation": "AU005_CONTINUE_01",
+  "status": "COMPLETE_WITH_LIMITS",
+  "completion_state": "completed_scoped_audit",
+  "first_artifact": false,
+  "verdict": "REQUEST_CHANGES",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "reviewed_version": {
+    "code_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+    "file_count": 16,
+    "digest_method": "sha256(json.dumps(sorted mockup/**/*.py relpath->sha256 map, sort_keys=True))",
+    "freeze": "runtime/AU005/continue01_freeze.json",
+    "code_unchanged_during_audit": true
+  },
+  "verdict_scope": {
+    "bmap_filter": "No counterexample in exercised scoped-map/typed/YAML/concurrency cases; inherited SQL-filter oracle mismatches 0.",
+    "AB004_delta_verdict": "REQUEST_CHANGES: scope-filtered YAML is not reconciled by view-aware delivery, F-01. This is not rejection of always-visible provenance.",
+    "whole_DOM_purpose": "NOT_READY_FOR_STATED_PURPOSE: partial working baseline/history/manual replacement do not implement graph/search/version-family/revalidation/live OMH.",
+    "not_product_acceptance": true
+  },
+  "requirements_policy": {
+    "O1": "Accepted requirement: do not suppress staleness or create false readiness. Current honest signal is not itself a defect; recovery gap TD15 remains.",
+    "O2": "Accepted: available claim always keeps origin. No automatic source-branch access/current-head/dependency exposure. Non-provenance membership/exclude is separate.",
+    "O3": "Accepted: bind transaction+receiver+source revision+view scope+byte hash. Current code FAILS; not needs_user.",
+    "search": "Accepted main scenario iterative re-centering. Depth1..3 TEST_PARAMETER per response, not total route. No grant expansion. Graph/search GAP; keyword variants not selected.",
+    "AU006": "Separate obligation/enforcement audit; do not expand AU005 or consume unfinished conclusions."
+  },
+  "section0_checked_suspicions": [
+    [
+      "Old s1 AB-canary hits mean all provenance is a leak",
+      "Field-level raw frames + new O2 policy",
+      "Shared origin/body is allowed; non-provenance lists separately open, not all O2 closed."
+    ],
+    [
+      "s2 D2 proves union-first delivery",
+      "Read s2 code + inherited SQL acks",
+      "Invalid virgin control: copied S was already synced, and read_all exports before sync. Rebuilt virgin controls in s4."
+    ],
+    [
+      "O1 accepted means hide stale to close channel",
+      "Read steering/REQUIREMENTS section9 + clean differential",
+      "Do not hide. Current stale signal is honest; useful revalidation still missing TD15."
+    ],
+    [
+      "s2 negative replay means no receipt leak",
+      "AB original returned REVISION_CONFLICT; repeat successful AB admission",
+      "Confirmed separate cross-grant receipt replay in two PIDs."
+    ],
+    [
+      "s3 summary crash means product injections fail",
+      "Read complete raw frames + YAML + SQL",
+      "38 claims/66 events admitted; later wire SYNCED and 132 actual acks. Client timeout/KeyError is harness defect; no fabricated final PID."
+    ],
+    [
+      "Gate regression exposes branch through corruption",
+      "6 successful corruptions x2 PIDs x7 tools",
+      "84 exact uniform Broken, no foreign locator, DB byte hash unchanged; NULL injection rejected by SQL."
+    ],
+    [
+      "Race test overlapping intervals alone proves mixed revisions",
+      "First race reader hit harness bound, saw revision1 only",
+      "Failed trial preserved, not PASS; new s6_continue02 sees heads1,2,3 and actual overlap without hits."
+    ],
+    [
+      "Branch ZZ granted should work consistently",
+      "Actual MCP matrix under trusted AA,ZZ",
+      "INTERNAL_ERROR on query/resume vs empty SYNC_STATUS/SYNCED; no raw/private leak."
+    ],
+    [
+      "Working resume means entire long-project goal works",
+      "Actual APIs + F-USE01..06 + SEARCH-USE01..08 acceptance",
+      "Stored baseline/history works. Graph/search, version tree, revalidation, live OMH are GAP, not E2E PASS."
+    ],
+    [
+      "Worker changed tests or forged precopy/manifests",
+      "Independent hashes/tests baseline/1714 manifest entries",
+      "All match, only3 source changes. Time-of-copy chronology not externally provable."
+    ]
+  ],
+  "coverage_seven_blocks": {
+    "1_filter": "Executed:16 grants,6 stored dependency variants, non-string/None/order/absent-map direct supplement; no key normalization.",
+    "2_values_O2": "Bidirectional explicit sharing, owner exclusion, conflict/replacement; field-level table below; policy reclassified without changing old runs.",
+    "3_channels": "Clean O1 differential; foreign-vs-absent7 tools plus submit/append/review/admit; init has no branch route. Missing granted ZZ exercised. Idempotency leak found. Actual concurrent admissions read overlap verified; statistical timing omitted explicitly.",
+    "4_delivery": "Virgin sequential/reversed grant controls and explicit export separated; ambiguity recovery physically read back; full internal stamp preserved.",
+    "5_integrity": "84 calls:7 tools x2 PIDs x6 successful delete/rebranch/truncated-payload corruptions. Uniform Broken, no locator, unchanged DB; NULL rejected by SQL.",
+    "6_injection": "38 admitted claims +28 append events; YAML/JSON/control strings round-trip;132 attempts/observations/acks and final wire SYNCED. Harness summary crash separately classified.",
+    "7_process": "Exact digest,3 changed files,18 baseline tests hashes,1714 worker manifest entries no mismatches, old s1/s2 preserved. No Git/install/network/config/OMH delta/product edits."
+  },
+  "findings": [
+    {
+      "id": "AU005-F-01",
+      "severity": "major",
+      "scope": "AB004 integration / O3 scoped YAML delivery",
+      "invariant": "An ack for a restricted view must not certify full delivery; identity binds transaction, receiver, source revision, view scope and delivered byte hash.",
+      "source": "mockup/admission.py:293-301,331-347,372-381; mockup/delivery.py:44-65; mockup/delivery.py:8-18",
+      "initial_conditions": "Virgin simulation DB: AB revision1, AA revision1 claim deps {AB:1}, no acks/exports; two separate copies AA-then-union and union-first.",
+      "repro": "s4_continue01.py delivery stage: dom_sync(AA) under {AA}, then dom_sync(AA) under {AA,AB}; compare SQL observations/acks and physical YAML with virgin union-first. Explicit export only AFTER both sync controls.",
+      "expected": "AA ack says scoped AA projection; union must reconcile/deliver its distinct bytes and receiver/view-bound receipt. A full internal stamp alone is insufficient.",
+      "actual": "Both return SYNCED; union-after-AA creates no new file/ack and retains {} dependencies; virgin union-first delivers {AB:1} with different fingerprint. Later explicit union export creates correct bytes but leaves old restricted ack untouched.",
+      "evidence": [
+        "runtime/AU005/s4_continue01/results.json:stages.delivery",
+        "runtime/AU005/continue01_verified.json:O3",
+        "runtime/AU005/s4_continue01/AA_then_union/dom.sqlite3",
+        "runtime/AU005/s4_continue01/union_first/dom.sqlite3"
+      ],
+      "debt_ref": "RV005 O3 now physically reproduced; new debt candidate, not duplicate of TD-DOM-13 ack-before-readback. No debt status modified.",
+      "minimal_complete_remedy": "View/receiver-aware delivery identity and receipt, with tx/source revision and exact bytes; preserve both projections without treating scoped ack as full; rerun sequential/reversed grant and lost-reply controls. No product fix performed.",
+      "confidence": "CONFIRMED"
+    },
+    {
+      "id": "AU005-F-02",
+      "severity": "major",
+      "scope": "OUT_OF_DELTA_SECURITY_FINDING: cross-grant idempotency replay",
+      "invariant": "Current launch scope governs every tool result, including cached receipts; candidate/key/digest/receipt must bind to one operation before reuse.",
+      "source": "mockup/admission.py:112-117,175-181; mockup/public_dto.py:155-159,374-376",
+      "initial_conditions": "demo-reviewer previously participated in successful AB admission; same principal now restricted to AA; knows prior AB key/digest (e.g. lost response), has unrelated accessible AA candidate. AB claim was never shared into AA.",
+      "repro": "dom_query(AB) -> SCOPE_DENIED. dom_admit(AA_candidate, unrelated review_id, prior_AB_key, prior_AB_digest) -> cached AB receipt. Fresh key with that digest -> DIGEST_MISMATCH. Repeat new PID.",
+      "expected": "No AB receipt; refuse mismatched binding or scope before returning cached result. Do not imply a new admission.",
+      "actual": "PIDs 5248 and 3204 return exact AB DEMO_ADMITTED receipt incl branch AB, revision1, private claim UUID and tx_id; SQL confirms actual AB transaction. Replay creates no new facts.",
+      "evidence": [
+        "runtime/AU005/s4_continue01/replay/frames-84519d44.jsonl",
+        "runtime/AU005/s5_continue01/replay/frames-03617a79.jsonl",
+        "runtime/AU005/continue01_verified.json:replay"
+      ],
+      "debt_ref": "NEW path, distinct from TD19 diagnostics and AU004-F-01 bmap; pre-existing admission path revealed by new conditions. s2 failed-AB-admission probe was not a negative proof.",
+      "minimal_complete_remedy": "Bind and authorize cached receipt against requested candidate/intent/current scope before return; test narrowed grants, lost-response recovery, foreign/new keys and mismatched review IDs.",
+      "confidence": "CONFIRMED_WITH_KNOWN_KEY_DIGEST_PRECONDITION"
+    },
+    {
+      "id": "AU005-F-03",
+      "severity": "minor",
+      "scope": "O2 non-provenance branch-valued fields",
+      "invariant": "Always-show-provenance does not authorize unrelated branch memberships/exclusion metadata; existing default scope rule remains outside that exception.",
+      "source": "mockup/public_dto.py:71-75,100-105,113-121; mockup/projections.py:25,47,53; mockup/admission.py:277-283",
+      "initial_conditions": "s1 F2 AA-only read: AA-origin a2 has original applicability [AA,AB]; owner exclusion AA->AB.",
+      "repro": "Read dom_query/dom_resume/dom_trace and YAML on AA with AA-only grant; compare exact fields, not all AB token occurrences.",
+      "expected": "Retain origin of visible b1; unrelated membership/exclusion handling must satisfy scope or separately specified explicit disclosure policy.",
+      "actual": "a2 origin AA exposes AB in ClaimItem.applicability; excluded_branches and visible exclude event expose AB. Those fields are not source provenance.",
+      "evidence": [
+        "runtime/AU005/continue01_reconciliation.json:O2_raw",
+        "runtime/AU005/s1/F2/frames-8c673884.jsonl"
+      ],
+      "debt_ref": "RV005 O2 non-provenance remainder; do not duplicate allowed origin part or claim full O2 closure.",
+      "minimal_complete_remedy": "Separate required provenance from membership/exclusion public policy and enforce resulting projection; preserve immutable internal admitted data.",
+      "confidence": "CONFIRMED_NAMES_ONLY_DEFAULT_POLICY_MISMATCH"
+    },
+    {
+      "id": "AU005-F-04",
+      "severity": "minor",
+      "scope": "OUT_OF_DELTA robustness of granted nonexistent branch",
+      "invariant": "A granted but absent branch is a typed absence/validation state, not internal processing failure or ambiguous success.",
+      "source": "mockup/admission.py:111,230-233,245-251,325-381; mockup/server.py:212-224",
+      "initial_conditions": "Trusted launcher grant {AA,ZZ}; only AA/AB exist. Invalid trusted grant is a fixture condition, not an attacker-controlled grant escalation.",
+      "repro": "s3 grant matrix AA_ZZ: dom_query(ZZ), dom_resume(ZZ), dom_sync_status(ZZ), dom_sync(ZZ).",
+      "expected": "Consistent typed no-such-branch/invalid-grant result, no raw exception and no grant widening.",
+      "actual": "query/resume INTERNAL_ERROR; sync_status empty SYNC_STATUS and sync SYNCED. No private bytes or raw locator disclosed.",
+      "evidence": [
+        "runtime/AU005/s3_continue02/checkpoint_gate.json:grant_matrix.AA_ZZ",
+        "runtime/AU005/continue01_verified.json:missing_branch_actual"
+      ],
+      "debt_ref": "New robustness candidate related to TD-DOM-07 fixed-branch limitation, not a confidentiality bypass.",
+      "minimal_complete_remedy": "Validate trusted grants/branch existence consistently, expose typed absence, keep out-of-grant branches indistinguishable.",
+      "confidence": "CONFIRMED_FIXTURE_LIMITED"
+    }
+  ],
+  "O2_field_classification": [
+    {
+      "fields": [
+        "Claim.origin_branch",
+        "Claim.origin_version",
+        "History.origin_branch",
+        "History.origin_version",
+        "Trace.origins.*.origin_branch",
+        "Trace.origins.*.origin_version",
+        "Residual.claim_origins[].origin_branch",
+        "Residual.claim_origins[].origin_version"
+      ],
+      "classification": "ALLOWED_PROVENANCE",
+      "reason": "Available/explicitly shared claim retains origin, including AB without AB grant. Origin version is immutable source label, not current branch head.",
+      "evidence": [
+        "s1 F1/F2 AA-only",
+        "s2 R1 claim_origins",
+        "s4 resume_history"
+      ]
+    },
+    {
+      "fields": [
+        "Claim.body_b64",
+        "Claim.item.body_b64",
+        "Claim.raw_sha256",
+        "Claim.item.metadata",
+        "Claim.item.reason",
+        "History.provenance.value",
+        "History.provenance.origin_version",
+        "History.provenance.reason",
+        "Claim.properties"
+      ],
+      "classification": "AVAILABLE_RECORD_DATA_NOT_TOKEN_LEAK",
+      "reason": "Body/metadata/comments/reasons of explicitly accessible records can contain AB strings. AB shared body is intentional; private AB branch events/properties are not thereby accessible. No blanket raw-token security oracle.",
+      "evidence": [
+        "s1 shared b1 body vs private b2 absent",
+        "s3 injection"
+      ]
+    },
+    {
+      "fields": [
+        "ClaimItem.applicability",
+        "History.provenance.value.item.applicability"
+      ],
+      "classification": "NON_PROVENANCE_SCOPE_EXCEPTION_NOT_GRANTED",
+      "reason": "AA-origin a2 exposes AB in applicability; not covered by always-show-origin decision. Foreign membership names remain a distinct policy/default-scope finding.",
+      "evidence": [
+        "s1 F2 AA-only a2 origin AA, item.applicability [AA,AB]"
+      ]
+    },
+    {
+      "fields": [
+        "Snapshot.excluded_branches",
+        "QueryResponse.excluded_branches",
+        "Trace.excluded_branches",
+        "TraceResponse.excluded_branches",
+        "Resume.snapshot.excluded_branches",
+        "Resume.trace.excluded_branches",
+        "History.provenance.value.value.branch for exclude"
+      ],
+      "classification": "NON_PROVENANCE_SCOPE_EXCEPTION_NOT_GRANTED",
+      "reason": "AA-only sees AB exclusion names, unrelated to source provenance. Owner role string is not proof of unrestricted global authority.",
+      "evidence": [
+        "s1 F2 AA-only",
+        "s2 exclude_by_AA_only_owner"
+      ]
+    },
+    {
+      "fields": [
+        "Claim.applicable_branches",
+        "History.provenance.value.value.branch for applicability"
+      ],
+      "classification": "TARGET_BRANCH_RELATION_SCOPED",
+      "reason": "Explicit target-branch applicability events fold into that branch; observed [AA] in AA and [AB] in AB, not the full source branch.",
+      "evidence": [
+        "s1 bidirectional sharing",
+        "admission.py:133",
+        "projections.py:37-40"
+      ]
+    },
+    {
+      "fields": [
+        "Claim.dependencies",
+        "History.provenance.dependencies",
+        "ReadSnapshot.revisions"
+      ],
+      "classification": "FOREIGN_KEYS_REMOVED",
+      "reason": "AA-only maps match SQL filtered by launch grant, union retains full maps; no marker/count.",
+      "evidence": [
+        "continue01_reconciliation.json bmap_oracle_mismatches=[]",
+        "s3 stored variants",
+        "s6 overlapping reads"
+      ]
+    },
+    {
+      "fields": [
+        "Snapshot.conflicts",
+        "History.provenance.value.value.conflict_ref",
+        "History.provenance.value.value.replacement_ref",
+        "History.provenance.value.value.url",
+        "History.provenance.value.value.locator",
+        "AppendValue.ref"
+      ],
+      "classification": "EXPLICIT_VISIBLE_EVENT_REFERENCE_NOT_AUTOMATIC_SOURCE_ACCESS",
+      "reason": "s1 AA-authored conflict explicitly names private b2 UUID; not a server-discovered locator, not evidence b2 body or AB neighbors were read. replacement restricted to branch-local visible records. Foreign reference/link policy is distinct from permitted provenance; do not call every user-supplied string an unauthorized leak.",
+      "evidence": [
+        "s1 a2 conflict value",
+        "admission.py:144-155"
+      ]
+    },
+    {
+      "fields": [
+        "Admitted.branch",
+        "Admitted.revision",
+        "Admitted.tx_id",
+        "Admitted.claim_ids"
+      ],
+      "classification": "FAIL_ON_CROSS_GRANT_REPLAY",
+      "reason": "Newly proven independent path: AA candidate plus prior AB idempotency key/digest returns AB private receipt before current digest/scope binding. Not permitted origin of an accessible claim.",
+      "evidence": [
+        "s4 replay",
+        "s5 replay_repeat"
+      ]
+    }
+  ],
+  "O1": {
+    "behavior": "CONFORMS_TO_NEW_DONT_HIDE_STALENESS_REQUIREMENT_IN_TESTED_CASE",
+    "evidence": "s2 clean before/after: unchanged AA query content/hash/head, R2 loses stale support; no false READY, accepted record kept.",
+    "remaining": "TD-DOM-15 authorized useful revalidation route GAP. Do not re-ask O1 decision."
+  },
+  "O3": {
+    "virgin_base_acks": 0,
+    "AA_and_union_both_SYNCED": true,
+    "AA_yaml_deps": [
+      {
+        "9abe5722-b60b-4113-a0ab-283b0910a5ab": {}
+      }
+    ],
+    "virgin_union_yaml_deps": [
+      {
+        "9abe5722-b60b-4113-a0ab-283b0910a5ab": {
+          "AB": 1
+        }
+      }
+    ],
+    "scoped_and_full_fingerprints_differ": true,
+    "union_after_AA_keeps_old_ack": true,
+    "union_sync_creates_no_new_yaml": true,
+    "explicit_export_creates_union_bytes_without_new_ack": true,
+    "actual_byte_hashes_verified": true,
+    "full_internal_stamp": true,
+    "recovered_ambiguous": true,
+    "physical_OMH_writes": 1,
+    "target_records": 1,
+    "acceptance": "FAIL: current ack omits view scope/receiver-specific payload identity; hash proves only actual scoped bytes, not full projection."
+  },
+  "purpose_audit": {
+    "verdict": "NOT_READY_FOR_STATED_PURPOSE",
+    "cases": [
+      {
+        "id": "F-USE-01",
+        "status": "WORKING_BASELINE_WITH_GRAPH_GAP",
+        "initial_task_and_rights": "New AA-only process must use explicitly shared AB claim.",
+        "real_API_actions": "Fresh PID dom_resume(AA), dom_query(AA,revision3), dom_query(AB); repeat new process after AA comment.",
+        "received_state_and_basis": "Same claim/body/raw hash/review/origin AB/synthetic-artifact-v1; exact branch history restored; AB whole-branch read denied.",
+        "can_continue": "Yes for stored baseline; not main graph exploration.",
+        "minimum_legal_next_step": "Continue from available shared claim, do not reprove admitted baseline or ask for full AB.",
+        "evidence": [
+          "s4 resume_history",
+          "continue01_verified.json resume"
+        ]
+      },
+      {
+        "id": "F-USE-02",
+        "status": "MANUAL_REPLACEMENT_WORKS_VERSION_TREE_GAP",
+        "initial_task_and_rights": "AA refinement after concurrent update, independent admission mandatory.",
+        "real_API_actions": "Read head -> submit candidate -> competitor link -> review/admit stale -> REVISION_CONFLICT -> reread -> new candidate/review/admit -> replacement.",
+        "received_state_and_basis": "Old A preserved archived; A.1 live; source link/reasons/history kept. Child field REJECTED UNKNOWN_FIELD.",
+        "can_continue": "Yes via manual replacement; no complete required version-tree/ContextPack E2E.",
+        "minimum_legal_next_step": "Reread conflict, resubmit exact current intent and independently admit; do not label ordinary replacement a family/version implementation.",
+        "evidence": [
+          "s4 refine",
+          "continue01_verified.json refine"
+        ]
+      },
+      {
+        "id": "F-USE-03",
+        "status": "HONEST_STALENESS_WITH_RECOVERY_GAP",
+        "initial_task_and_rights": "AA-only claim pins hidden AB basis; AB advances.",
+        "real_API_actions": "Inherited clean before/after raw frames, then new-process resume, local annotation, resume.",
+        "received_state_and_basis": "Query baseline unchanged; STALE_CHECK and MISSING_COVERAGE R2; NOT_READY; claim retained, visible deps{}.",
+        "can_continue": "Cannot finish trusted revalidation alone; a valid annotation does not heal basis.",
+        "minimum_legal_next_step": "Authorized independent revalidation/replacement; built-in routing/version flow GAP TD-DOM-15.",
+        "evidence": [
+          "s2 O1",
+          "s4 stale",
+          "continue01_verified.json stale"
+        ]
+      },
+      {
+        "id": "F-USE-04",
+        "status": "EXACT_BRANCH_HISTORY_WORKS_VERSION_FAMILY_GAP",
+        "initial_task_and_rights": "Restore an old shared claim version after further edits/restart.",
+        "real_API_actions": "New PIDs dom_query(AA,revision3) before/after admitted AA comment.",
+        "received_state_and_basis": "Historical snapshots equal excluding read timestamp/stamp; raw body hash and origin preserved; version label does not become AB current head.",
+        "can_continue": "Yes for exact branch revision, not absent claim-family version routing.",
+        "minimum_legal_next_step": "Request explicit historical branch revision via API; no manual filesystem assembly was needed in the agent path.",
+        "evidence": [
+          "s4 resume_history",
+          "continue01_verified.json resume"
+        ]
+      },
+      {
+        "id": "F-USE-05",
+        "status": "FAIL_O3_AND_LIVE_OMH_GAP",
+        "initial_task_and_rights": "Admitted AA result, change reader AA-only -> union; ambiguous reply recovery.",
+        "real_API_actions": "Virgin AA-only sync then union sync; virgin union-first control; separate explicit export; ambiguous sync then available sync.",
+        "received_state_and_basis": "Local ambiguity recovers without duplicate target write. Union-after-AA falsely reuses scoped ack. All targets simulation only; no OMH task acceptance.",
+        "can_continue": "Local retry yes; receiver/view-correct delivery no.",
+        "minimum_legal_next_step": "Do not treat SYNCED as full payload/task closure; proper view-bound delivery contract is already accepted requirement, not a repeated customer question.",
+        "evidence": [
+          "s4 delivery",
+          "continue01_verified.json O3"
+        ]
+      },
+      {
+        "id": "F-USE-06",
+        "status": "RESTRICTIONS_CLASSIFIED_AND_PURPOSE_GAPS_RETAINED",
+        "initial_task_and_rights": "Assess every encountered refusal against long-project usefulness.",
+        "real_API_actions": "Cross-reference actual refusals, recovery attempts, tools/list and requirements; no nonexistent API invented.",
+        "received_state_and_basis": "Necessary gates distinguished from missing recovery/features and actual delivery obstacle.",
+        "can_continue": "Not full-purpose ready: graph/search, version tree, live OMH, revalidation flow absent.",
+        "minimum_legal_next_step": "Use restrictions table and SEARCH-USE cases as future acceptance, not forced access/grant removal or new planner.",
+        "evidence": [
+          "purpose restrictions table",
+          "s4 api_inventory",
+          "s5",
+          "s6"
+        ]
+      }
+    ],
+    "findings": [
+      {
+        "id": "PURPOSE-GAP-01",
+        "severity": "major",
+        "status": "GAP",
+        "subject": "Iterative claim-centered graph/search",
+        "acceptance_cases": [
+          "SEARCH-USE-01",
+          "SEARCH-USE-02",
+          "SEARCH-USE-03",
+          "SEARCH-USE-04",
+          "SEARCH-USE-05",
+          "SEARCH-USE-06",
+          "SEARCH-USE-07",
+          "SEARCH-USE-08"
+        ],
+        "required": "Question A -> accessible AA11 plus origin and neighborhood -> relevant next center -> repeat. Depth1..3 TEST_PARAMETER applies to ONE response, not whole route; no grant expansion.",
+        "observed": "Real tools/list has 12 tools, no graph/search/claim-version neighborhood/readview/route recovery API. Not executed on imaginary APIs.",
+        "source": "REQUIREMENTS.md:137-157; docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md:44-57; mockup/server.py:36-134"
+      },
+      {
+        "id": "PURPOSE-GAP-02",
+        "severity": "major",
+        "status": "GAP",
+        "subject": "Refinement family/version tree and ContextPack",
+        "observed": "Manual new claim + replacement works and preserves old body/link/reasons; parent_claim_id UNKNOWN_FIELD. No family/tips/STALE_PARENT_LEAF/ContextPack mechanism. Outbox delivery_attempts exists physically but is NOT a context-reading-delivery log.",
+        "source": "mockup/dom_contract.py:6-17,63-121; s4 refine and api_inventory"
+      },
+      {
+        "id": "PURPOSE-GAP-03",
+        "severity": "major",
+        "status": "GAP_AND_EXISTING_DEFECT",
+        "subject": "Safe usable revalidation of hidden pinned basis",
+        "observed": "Honest STALE_CHECK and accepted claim preserved; local AA annotation leaves stale. No built-in authorized revalidation request/flow. Recreating a claim with dependencies={} is not revalidation and must not be called success.",
+        "debt_ref": "TD-DOM-15 (no duplicate new debt)"
+      },
+      {
+        "id": "PURPOSE-GAP-04",
+        "severity": "major",
+        "status": "GAP",
+        "subject": "Live OMH task/plan binding and evidence delivery",
+        "observed": "OMHPort is simulation-only local JSON target. Recovery/no-dup tested only in that mode. DOM has no observed live OMH acceptance; neither SYNCED nor local target closes task.",
+        "debt_ref": "TD-DOM-08; no live calls permitted"
+      }
+    ],
+    "restrictions": [
+      {
+        "rule": "SCOPE_DENIED on AB/ZZ outside grant",
+        "protects": "Private branch access/exists oracle",
+        "needed_path": "Continue using shared b1 without full AB",
+        "recovery": "dom_resume(AA) supplies baseline; no grant expansion needed; graph follow-up GAP",
+        "classification": "NECESSARY_WORKING_FOR_SHARED_BASELINE"
+      },
+      {
+        "rule": "launch-grant exact matching, no case/Unicode/whitespace normalization",
+        "protects": "Alias/homoglyph scope bypass",
+        "needed_path": "Read canonical authorized branch",
+        "recovery": "Use exact issued branch, never repair supplied token silently; malformed/absent trusted grant needs launcher validation",
+        "classification": "NECESSARY; AU005-F-04 robustness limit"
+      },
+      {
+        "rule": "independent submit -> review -> admit; no self-acceptance",
+        "protects": "Baseline integrity",
+        "needed_path": "Admit corrected claim",
+        "recovery": "Separate trusted reviewer works in demo; live issuer/auth GAP TD-DOM-08",
+        "classification": "NECESSARY_NOT_A_REASON_TO_REMOVE_CHECKS"
+      },
+      {
+        "rule": "REVISION_CONFLICT",
+        "protects": "Concurrent overwrite/lost update",
+        "needed_path": "Refine after other writer update",
+        "recovery": "Read actual head, create new key/candidate, independent review/admit; physically succeeds",
+        "classification": "NECESSARY_WITH_WORKING_RECOVERY"
+      },
+      {
+        "rule": "UNKNOWN_FIELD on proposed child parent field",
+        "protects": "Closed schema",
+        "needed_path": "Nested accepted clarification with exact lineage",
+        "recovery": "Manual new claim + replacement possible; actual version-family API is GAP",
+        "classification": "NECESSARY_VALIDATION_BUT_MISSING_REQUIRED_FEATURE"
+      },
+      {
+        "rule": "STALE_CHECK / CRITERIA_NOT_CURRENT",
+        "protects": "False readiness on moved source basis",
+        "needed_path": "Continue a long project after hidden basis advances",
+        "recovery": "Keep accepted baseline; authorized source revalidation required; no safe built-in request/version route",
+        "classification": "NECESSARY_SIGNAL_WITH_RECOVERY_GAP TD-DOM-15"
+      },
+      {
+        "rule": "SYNC_PENDING after ambiguous reply",
+        "protects": "False ack without verified reply reconciliation",
+        "needed_path": "Return already admitted result without duplication",
+        "recovery": "Retry sync; one physical target write, one record; verified only SIMULATION",
+        "classification": "NECESSARY_WITH_WORKING_LOCAL_RECOVERY"
+      },
+      {
+        "rule": "ack skip on later union sync",
+        "protects": "Intended idempotency/no duplicate delivery",
+        "needed_path": "Deliver newly requested full view",
+        "recovery": "Explicit export creates bytes but does not create correct receipt; protocol change needed",
+        "classification": "UNNECESSARY_OBSTACLE_AND_DEFECT AU005-F-01"
+      },
+      {
+        "rule": "CHAIN_BROKEN uniform gate",
+        "protects": "Untrusted event chain/foreign diagnostic locators",
+        "needed_path": "Trusted AA read while any global chain part corrupt",
+        "recovery": "Authorized operator restores verified source/checkpoint; no agent scope bypass. This is an exceptional integrity stop, not a healthy-project workflow",
+        "classification": "NECESSARY_FAIL_CLOSED"
+      },
+      {
+        "rule": "PUBLIC_PROJECTION_INVALID on visible malformed values / missing map",
+        "protects": "Closed public DTO type integrity",
+        "needed_path": "Read stored valid records",
+        "recovery": "Normal restricted JSON admission prevents those values; disposable injected damage requires operator investigation, no raw exception detail",
+        "classification": "NECESSARY_FAIL_CLOSED"
+      },
+      {
+        "rule": "SCOPE_REQUIRED when direct projection has scope=None",
+        "protects": "Accidental unscoped serialization",
+        "needed_path": "Authorized DTO export",
+        "recovery": "Trusted context grant supplied by current real service; not a user tool scope override",
+        "classification": "NECESSARY_WORKING"
+      },
+      {
+        "rule": "Absent graph/search/curator/keywords/tribunal APIs",
+        "protects": "No implemented restriction to credit",
+        "needed_path": "Main question-driven iterative retrieval and controlled convergence",
+        "recovery": "GAP with SEARCH-USE-01..08; do not simulate presence or choose keyword variant silently",
+        "classification": "MISSING_IMPLEMENTATION_NOT_SECURITY_PASS"
+      }
+    ],
+    "search_acceptance_cases": [
+      "SEARCH-USE-01",
+      "SEARCH-USE-02",
+      "SEARCH-USE-03",
+      "SEARCH-USE-04",
+      "SEARCH-USE-05",
+      "SEARCH-USE-06",
+      "SEARCH-USE-07",
+      "SEARCH-USE-08"
+    ],
+    "not_checked": [
+      "SEARCH-USE-01..08 are GAP/unexecutable, not passed.",
+      "No curator/tribunal/keywords choice implemented or simulated.",
+      "No AU006 enforcement campaign."
+    ]
+  },
+  "observations": [
+    {
+      "id": "AU005-OBS-OWNER",
+      "level": 3,
+      "classification": "AUTHORITY_SPEC_GAP_NOT_PROVEN_ESCALATION",
+      "actual": "s2 AA-only owner exclude AB was admitted and removed AB from master trace. Role owner has owner capability, but no separate target-scope/global-exclusion contract documented; do not infer authority from label.",
+      "source": "admission.py:132,144-155,277-283; ports.py:21-24",
+      "next": "Specify branch-local vs global exclusion authority and independently verify; not an assertion every owner operation is unauthorized."
+    },
+    {
+      "id": "AU005-OBS-REF",
+      "level": 2,
+      "classification": "EXPLICIT_REFERENCE_BOUNDARY",
+      "actual": "Visible AA conflict names private b2 UUID authored explicitly in AA; not evidence of reading private b2 body or server leak. Generic user-data reference policy remains separate from O2 provenance."
+    }
+  ],
+  "runtime_verification": {
+    "counts_by_evidence_group": {
+      "s1": {
+        "processes": 40,
+        "tool_calls": 156,
+        "exits": [
+          0
+        ]
+      },
+      "s2": {
+        "processes": 30,
+        "tool_calls": 101,
+        "exits": [
+          0
+        ]
+      },
+      "s4": {
+        "processes": 38,
+        "tool_calls": 67,
+        "exits": [
+          0
+        ]
+      },
+      "s5": {
+        "processes": 3,
+        "tool_calls": 37,
+        "exits": [
+          0
+        ]
+      },
+      "s6": {
+        "processes": 11,
+        "tool_calls": 1018,
+        "exits": [
+          0
+        ]
+      }
+    },
+    "gate": {
+      "cases": 6,
+      "pids": 12,
+      "tool_calls": 84,
+      "all_db_unchanged": true,
+      "all_no_locator": true
+    },
+    "s3_summary": "Checkpoints and raw salvage used; no fabricated full-run receipt.",
+    "concurrency": {
+      "calls": 996,
+      "reader_heads": [
+        1,
+        2,
+        3
+      ],
+      "writer_intervals": [
+        {
+          "start": 95933140000000,
+          "end": 95936515000000,
+          "branch": "AB",
+          "status": "DEMO_ADMITTED"
+        },
+        {
+          "start": 95936625000000,
+          "end": 95939703000000,
+          "branch": "AA",
+          "status": "DEMO_ADMITTED"
+        },
+        {
+          "start": 95939812000000,
+          "end": 95949062000000,
+          "branch": "AB",
+          "status": "DEMO_ADMITTED"
+        },
+        {
+          "start": 95949171000000,
+          "end": 95952359000000,
+          "branch": "AA",
+          "status": "DEMO_ADMITTED"
+        }
+      ],
+      "overlapped_calls": 966,
+      "errors": [],
+      "foreign_hits": [],
+      "all_channels_equal": true,
+      "statuses": {
+        "SNAPSHOT": 332,
+        "TRACE": 166,
+        "RESUMED": 166,
+        "SYNC_STATUS": 166,
+        "EXPORTED": 166
+      }
+    },
+    "tests_baseline_count": 18,
+    "tests_baseline_mismatches": [],
+    "worker_manifest": {
+      "precopy_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+      "live_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+      "changed_files": [
+        "mockup/admission.py",
+        "mockup/public_dto.py",
+        "mockup/server.py"
+      ],
+      "worker_manifest_entries": 1714,
+      "worker_manifest_mismatches": [],
+      "tests_unchanged_since_freeze": true,
+      "precopy_limitation": "Current frozen copy verifies exact old bytes; time-of-copy claim is not independently reconstructible without external checkpoint."
+    },
+    "old_s1_s2_unchanged": true,
+    "checks_errors": []
+  },
+  "not_checked": [
+    "Statistical timing/latency noninterference NOT_CHECKED; logical/status/length and overlap measured, no timing-security guarantee.",
+    "Arbitrary graph/search/version-family/ContextPack behavior GAP, not invented E2E; SEARCH-USE-01..08 unexecuted until implementation.",
+    "Live OMH/auth/OS isolation/Git/checkpoint outside permission and known gaps; no network calls.",
+    "Cross-machine YAML determinism, broad busy/read-only and full pytest not rerun (would write outside allowlist).",
+    "Pre-copy actual time sequence cannot be proven from current hashes; verifies old bytes, not historical timing.",
+    "s3 injection final whole-script PID/exit receipt missing; raw physical response and SQL confirm effect, not invented process success.",
+    "AU006 mandatory pre-task DOM consultation/enforcement explicitly outside this audit; no unfinished AU006 output used."
+  ],
+  "continuation_required": false,
+  "continuation_if_scope_expanded": "Same AUDITOR must use new immutable directories for any additional timing/latency or larger corpus probes; never rerun s1/s2 as if missing. Product missing APIs route to future implementation/research, not fabricated audit retries.",
+  "source_ledger": {
+    "REQUIREMENTS.md": {
+      "sha256": "62a760153bb3b8ff24bc5409cc46dc978898e04b51c44185a299f2a0130ceee7",
+      "classification": "input/source; read-only",
+      "latest_delta": "Append-only section10 routed to separate AU006; not AU005 enforcement scope. No AU006 conclusions read/accepted."
+    },
+    "docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md": {
+      "sha256": "faf245b1087a7be4e3af7de0dc3f0820fcafdab45c245cc08979ba0405ffe3be",
+      "classification": "input/source; read-only"
+    },
+    "docs/DECISION_BRIEF_2026-11-08.md": {
+      "sha256": "ab32820f5ed0464ee91f99d19e7a17b6c689e0320eb534477adbc4c312ffab3b",
+      "classification": "input/source; read-only",
+      "pre_continuation_sha256": "d1a0413652d36fa1c790d321aa849b8cff2823b485306399b3c4a9fd47d48f5a"
+    },
+    "docs/PL003_RECONCILIATION_AND_O2_DISCUSSION_2026-11-08.md": {
+      "sha256": "f44118e9ed1ce9952d5aa299d176904d7f2082a65e546d6ff4d885813f60cc08",
+      "classification": "input/source; read-only",
+      "pre_continuation_sha256": "f44118e9ed1ce9952d5aa299d176904d7f2082a65e546d6ff4d885813f60cc08"
+    },
+    "cards/AU005_CONTINUE_01.md": {
+      "sha256": "c15cccfcc7dee2daca70ad340499393c2231ef1cbdcd1bdc9ada372b5b08bc80",
+      "classification": "input/source; read-only",
+      "pre_continuation_sha256": "c15cccfcc7dee2daca70ad340499393c2231ef1cbdcd1bdc9ada372b5b08bc80"
+    },
+    "cards/AU005_AB004_AUDITOR.md": {
+      "sha256": "7b9298f2e3c4d7f60e8e20681d40ff42ae98130ea5208dacaca5a9ad7ab2b336",
+      "classification": "input/source; read-only",
+      "pre_continuation_sha256": "7b9298f2e3c4d7f60e8e20681d40ff42ae98130ea5208dacaca5a9ad7ab2b336"
+    },
+    "cards/AB004_AU004F01_WORKER.md": {
+      "sha256": "aad315f9657979d949ad54587d344910a1926ef4c49f89451556e4e2b354b31e",
+      "classification": "input/source; read-only"
+    },
+    "docs/SCHEMA_CHANGE_AU004F01.md": {
+      "sha256": "3971e1c5ed770c748f112699835b2c9fa6bd9105ca4ea330cce64b8fc33ef4b9",
+      "classification": "input/source; read-only"
+    },
+    "tech_debt.md": {
+      "sha256": "6c32af2751555ae60b19b2604e7e690e6e13a02de38ccd7fc452230c94e8d317",
+      "classification": "input/source; read-only"
+    },
+    "artifacts/WORKER_AB004_AU004F01.json": {
+      "sha256": "75487e979c73a47c3531d51852267ea5efcd99a62d4aa8b7c52a32362360d219",
+      "classification": "input/source; read-only"
+    },
+    "reports/WORKER_AB004_AU004F01.md": {
+      "sha256": "a0bc013329ef3424d630574d135cab42ac97c778d417ee7f5647ffc7db3e76ac",
+      "classification": "input/source; read-only"
+    },
+    "artifacts/REVIEWER_AB004_AU004F01.json": {
+      "sha256": "9c226bf2eca6170dc9cb567347d6fe87d217ab4709442239d5bfdb9c22bede67",
+      "classification": "input/source; read-only"
+    },
+    "reports/REVIEWER_AB004_AU004F01.md": {
+      "sha256": "757de2266a3dfcd60dbfdc3b79c51cb5479efd6e9aa8aead3882256079174091",
+      "classification": "input/source; read-only"
+    },
+    "runtime/RV005/field_inventory.json": {
+      "sha256": "3a0479f8e349305c8a787e6a11d0f7ddbe4d91db739bd64614e396617fbd92c1",
+      "classification": "input/source; read-only"
+    },
+    "artifacts/AUDITOR_AB003_TD19.json": {
+      "sha256": "6653a14a351c23ae0d6d6066d73d7fec230e9451595adcba014ba7a59a045f47",
+      "classification": "input/source; read-only"
+    }
+  },
+  "verified_by_commands": [
+    "env -u PYTHONPATH -u PYTHON -u PYTHON_BIN -u PYTHON_VENV -u VIRTUAL_ENV -u PYTHONSCRIPT -u PYTHONHOME E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/AU005/s3_continue02.py (exit1 harness summary; checkpoints/raw effects reconciled)",
+    "... python.exe -B runtime/AU005/continue01_reconcile.py (exit0)",
+    "... python.exe -B runtime/AU005/s4_continue01.py (exit0,38 process exits0)",
+    "... python.exe -B runtime/AU005/continue01_verify.py (exit0 consistency_verified=true)",
+    "... python.exe -B runtime/AU005/s5_continue01.py (exit0)",
+    "... python.exe -B runtime/AU005/s6_continue01.py (exit1 bound/no mixed revisions; preserved failed harness trial)",
+    "... python.exe -B runtime/AU005/s6_continue02.py (exit0 real mixed revision overlap)",
+    "... python.exe -B runtime/AU005/final_readback.py (must execute after artifact creation)"
+  ],
+  "files_written": [
+    "artifacts/AUDITOR_AB004_AU004F01.json",
+    "reports/AUDITOR_AB004_AU004F01.md",
+    "runtime/AU005/**"
+  ],
+  "write_scope": "No product/tests/debt/AB004/RV005/other audit writes. Disposable DB corruption inside own runtime fixtures only; never production protections.",
+  "report_ref": "reports/AUDITOR_AB004_AU004F01.md",
+  "manifest_ref": "runtime/AU005/FINAL_MANIFEST.json",
+  "final_verifier_ref": "runtime/AU005/final_readback.py",
+  "written_at": "2026-11-08T10:15:54.807395+00:00"
+}

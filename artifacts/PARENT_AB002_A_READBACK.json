@@ -1,0 +1,22 @@
+{
+  "role": "orchestrator",
+  "scope": "AB002-A parent rerun and physical read-back only; not independent acceptance",
+  "mode": "SIMULATION",
+  "live": "NOT_TESTED",
+  "run_directory": "runtime/AB002_A/matrix-66e2ca6b",
+  "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B -m mockup.ab002_e2e",
+  "cwd": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp",
+  "exit_code": 0,
+  "case_count": 26,
+  "coverage": {"PASS": 26, "FAIL": 0},
+  "physical_final_readback_equal": true,
+  "readback_files": "each case directory: parent-readback.json",
+  "mcp_process_receipts": 118,
+  "process_exits": {"0": 112, "71": 6},
+  "sql_probe_count": 111,
+  "required_worker_artifacts_present": true,
+  "source_tree_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+  "source_digest_method": "SHA256 of json.dumps(sorted mockup/**/*.py path-to-SHA256 mapping, sort_keys=True), UTF-8",
+  "not_checked": ["E11 revalidation policy", "LIVE OMH", "independent reviewer acceptance", "auditor acceptance", "whole-system readiness"],
+  "is_approval": false
+}

@@ -1,0 +1,98 @@
+{
+  "feasible": true,
+  "gate_id": "GATE001",
+  "role": "CONT-01",
+  "card": "cards/GATE001_CONTINUE_01.md",
+  "sandbox_home": "runtime/GATE001/home",
+  "isolation": "HERMES_HOME overridden to isolated sandbox home; live profile read-only",
+  "expected_fix": "G4 verifies FAIL_CLOSED (plugin pre_tool_call is in _HOOK_TIMEOUT_FAIL_CLOSED_HOOKS), not fail-open",
+  "runs": [
+    {
+      "id": "G1",
+      "mode": "interactive (one-shot agent session under sandbox HERMES_HOME)",
+      "task": "create probe.txt",
+      "verdict": "BLOCKED_OK",
+      "evidence": "hook_log.jsonl decision=block for write_file/search_files/terminal/read_file; probe.txt absent on disk; agent reply quotes gate message",
+      "latency_ms": 0.216,
+      "notes": "Block fired on first material write; agent saw 'сначала получи базлайн'. No file created."
+    },
+    {
+      "id": "G2",
+      "mode": "subagent via delegate_task",
+      "task": "create probe2.txt via delegated child",
+      "verdict": "BLOCKED_OK",
+      "evidence": "subagent_start/subagent_stop logged (parent local-9872... -> child session 20261108_155834_0caef2); child pre_tool_call entries (read_file/write_file/terminal/execute_code/patch etc.) decision=block; probe2.txt absent",
+      "latency_ms": 0.211,
+      "notes": "KEY RESULT: child session_id is DISTINCT from parent, and child tool calls pass through the same pre_tool_call gate and are blocked. Gate on host is NOT limited to main agent."
+    },
+    {
+      "id": "G3",
+      "mode": "non-interactive one-shot chat -q --oneshot, timed",
+      "task": "create probe3.txt",
+      "verdict": "BLOCKED_OK",
+      "evidence": "run terminated in 24.2s with exit code 0 (no deadlock); write_file etc. decision=block; probe3.txt absent",
+      "latency_ms": null,
+      "notes": "wall_duration_s=24.2, exit_code=0. Non-interactive run does not hang forever under a blocking gate."
+    },
+    {
+      "id": "G4",
+      "mode": "gate_state mode=raise (callback raises RuntimeError)",
+      "task": "create probe4.txt",
+      "verdict": "FAIL_CLOSED",
+      "evidence": "hook_log.jsonl decision=raise (RuntimeError: gate_probe deliberate raise) for write_file/terminal/read_file; agent reply reports tool blocked with 'преднамеренную ошибку'; probe4.txt absent; run wall 26.2s exit 0",
+      "latency_ms": 0.182,
+      "notes": "Confirms the code correction: pre_tool_call failure BLOCKS the tool (fail-closed) via _policy_error_block_directive. Gate cannot be silently disabled by a crashing hook. NOT fail-open as the original card assumed."
+    },
+    {
+      "id": "G5",
+      "mode": "MCP server (mcp_gateprobe_server.py, stdio) vs built-in tool",
+      "task": "call mcp__gateprobe__echo AND write_file under active block",
+      "verdict": "BLOCKED_OK",
+      "evidence": "hook_log.jsonl decision=block for mcp__gateprobe__echo (latency 32.85ms) and for write_file; tool_describe block; agent reply states call never reached MCP server; no files created",
+      "latency_ms": 32.85,
+      "notes": "MCP tool is routed through the SAME pre_tool_call hook as built-ins and is blocked identically. Slightly higher latency (~33ms) reflects deferred-tool discovery path. No MCP bypass hole observed."
+    }
+  ],
+  "latency_stats": {
+    "samples": 35,
+    "mean_ms": 1.412,
+    "median_ms": 0.206,
+    "max_ms": 32.850,
+    "min_ms": 0.170,
+    "block_count": 28,
+    "raise_count": 3,
+    "allow_count": 4,
+    "subagent_start": 1,
+    "subagent_stop": 1,
+    "false_blocks": 0
+  },
+  "decision_matrix": {
+    "permission_denied_local_bypass": "pre_tool_call block fires on every tool, including MCP and delegated child: gate is host-wide. E3 (host hook) is viable as a first-mile enforcement point independent of our dispatcher.",
+    "subagent_reached": "gate reaches delegated children; no hole where a subagent can bypass the host gate.",
+    "noninteractive_terminates": "one-shot run exits 0 in ~24s; gate does not deadlock unattended runs (need a typed 'get baseline' path for the agent, but it fails gracefully, not hangs).",
+    "fail_closed_on_raise": "hook exception => tool blocked; gate cannot be silently switched off by a crash. Still requires external monitoring to distinguish 'gate raised' from 'gate idle', because silently-allow is impossible but silently-block is noisy.",
+    "mcp_covered": "MCP and built-in tools share one pre_tool_call hook; no per-type bypass."
+  },
+  "architecture_recommendation": {
+    "enforcement_point": "E3 host pre_tool_call hook is technically sound and host-wide (covers main agent, subagents, built-in and MCP tools).",
+    "required_support": "a non-interactive 'get baseline' primed-allow mechanism so unattended/cron/subagent runs can pass the gate deliberately; external audit counter to catch silent fail-closed noise (too many blocks) and confirm gate liveness.",
+    "complements": "E1 (our launch wrapper) + E2 (DOM submit/admit requiring baseline receipt) still valuable; E3 closes the 'launched not by us' bypass. Recommend E1+E2 first, E3 as a hardening layer because it requires per-profile isolation, TTL cleanup, and operator exit-hatch.",
+    "not_proven_by_gate": "agent terminal cannot bypass MCP coverage (dedicated test not run); other hosts (opencode etc.) may differ; long-project reliability needs live operation."
+  },
+  "product_acceptance": false,
+  "is_approval": false,
+  "sandbox_cleaned": true,
+  "cleanup_evidence": {
+    "terminated_pids": [
+      7352,
+      3652
+    ],
+    "pid_3652_status": "already exited before CONT-02 started (spawn ledger pid not found)",
+    "pid_7352_status": "sandbox gateway `gateway run --quiet --idle-exit`; HERMES_HOME=E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/GATE001/home confirmed via psutil environ; terminated gracefully by CONT-02; confirmed gone via psutil",
+    "sandbox_confirm_method": "psutil environ() HERMES_HOME + cmdline --idle-exit; matched home/gateway_state.json (pid 7352, argv includes --idle-exit)",
+    "live_processes_untouched": "gateway pid 12768 (HERMES_HOME=C:/Users/Arhys/AppData/Local/hermes), Hermes.exe pid 2376 (Desktop), profile-writer gateway pid 5228, venv MCP servers pid 12032/13260/1912/1916 and children left running",
+    "home_deleted": true,
+    "final_tree": "runtime/GATE001 contains gate_state.json, hook_log.jsonl, MARKER.txt, mcp_gateprobe_server.py, sandbox/ - home/ absent",
+    "remaining_sandbox_processes": "none (only my own subagents inherit HERMES_HOME; no gateway/mcp process bound to GATE001/home remains)"
+  }
+}

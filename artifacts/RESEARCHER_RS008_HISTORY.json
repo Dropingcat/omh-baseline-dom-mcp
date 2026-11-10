@@ -1,0 +1,411 @@
+{
+ "task": "RS008",
+ "role": "RESEARCHER",
+ "status": "DONE",
+ "product_acceptance": false,
+ "is_approval": false,
+ "applied": false,
+ "completed_at": "2026-11-08T16:50:00+03:00",
+ "headline": "Историю работы над задачей можно получить из уже хранящихся событий (candidates+reviews+events+claims) детерминированно и без LLM; «почему» отвечается только записанными reason/intent/verdict — их минимум и кто пишет см. Q4; главный write-gap: продукт не умеет писать reject-вердикт (admission.py always approve) и не фиксирует «брошено».",
+ "q1_unit": {
+  "question": "Q1. Единица истории",
+  "answer": "Кандидат (одна подача/попытка) внутри ветки; ветка — ось времени; external_work_ref — контейнер истории; external_task_ref — атрибут-пин, НЕ единица",
+  "reasoning": [
+   "candidates уже содержит всё для «попытки»: payload (что именно пытались: items/operation), author/root (кто), created_at (когда), expected_branch_revision (против какой головы), idempotency_key, reason (зачем). admitted-исход связывается через claims/transactions, вердикт — через reviews, события — через events (branch, revision).",
+   "branch — естественная ось: timeline'ы веток строятся независимо (branch в ключе каждой линии), форк не смешивается.",
+   "work (external_work_ref) — контейнер: binding один на work; история агрегируется по work с разбиением по branch.",
+   "external_task_ref — атрибут: DOM планом не владеет (это константа TASK в фикстурах), пунктов плана внутри work может быть несколько -> единицей быть не может; используется как пин (текст/хеш пункта плана в OMH — вариант E).",
+   "«Не смешать две задачи»: (1) разные external_task_ref фильтруются по полю, (2) разные ветки — по branch, (3) каждый кандидат атомарен (одна попытка = один кандидат)."
+  ],
+  "cost": "0 — структурный выбор, код не требуется; влияет только на форму вывода (поле unit='work', ключи (branch, candidate_id)).",
+  "prototype_evidence": "results/history_*.json: каждый attempt имеет branch+candidate_id; пагинация идёт по (branch, candidate_id) — единица устойчива."
+ },
+ "q2_demonstrated": {
+  "note": "Машинные ответы на Q2(a-e) без чтения чужой ветки и без LLM — в runtime/RS008/results|answers; оракул O1-O8 8/8",
+  "method": "проекция (EXISTING/DELTA) + валидатор 23/23 PASS",
+  "q2a_established_existing": [
+   "claim-A2p",
+   "claim-A4",
+   "(superseded: claim-A1)"
+  ],
+  "q2b_why": "записанные reason события/кандидата/вердикта; отсутствие помечено REASON_ABSENT",
+  "q2c_rejected": [
+   "c3 reject: 'A2 contradicts baseline A1: misquoted the source'"
+  ],
+  "q2d_dropped": [
+   "c6: INFERRED (EXISTING) / DROPPED+FACT+why (DELTA)"
+  ],
+  "q2e_goal": "EXISTING: answerable=false; DELTA (intent+goal_ref): answerable=true"
+ },
+ "q3_variants": {
+  "question": "Q3. Варианты реализации (минимум пять) — матрица",
+  "legend": "Полнота: a=что установлено, b=почему так, c=что отвергли, d=что бросили, e=куда шли. Стоимость: оценочные LOC и длительность.",
+  "variants": [
+   {
+    "id": "A",
+    "name": "trace как есть + проекция-обёртка (dom_history поверх snapshot+trace+pending+sync)",
+    "completeness": {
+     "a": "полно",
+     "b": "частично (записанные reason)",
+     "c": "нет (write-gap: reject-вердикт не записывается продуктом)",
+     "d": "частично (только INFERRED по возрасту без admit)",
+     "e": "нет"
+    },
+    "cost": "150-250 LOC (+DTO схема), ~0.5-1 день; 0 миграций",
+    "leak_risk": "низкий: bmap-фильтры + эмиссионное правило (все ссылки строки в grant); DTO замкнут (public_dto.py)",
+    "llm_dependence": "нет (факты и строки reason как есть)",
+    "migration": "нет",
+    "at_10k_events": "вывод длинный, нужен keyset (доказан); fold O(n) на чтение",
+    "verdict": "минимум для a/частично b,d; c/e не закрывает без доработки"
+   },
+   {
+    "id": "B",
+    "name": "явный объект TASK с вехами и решениями (новая таблица task_history: milestones, decisions, goal_delta)",
+    "completeness": {
+     "a": "полно по записи",
+     "b": "полно где записано (решения декларируются)",
+     "c": "полно где записано",
+     "d": "полно где записано",
+     "e": "полно где goal записан"
+    },
+    "cost": "700-1200 LOC (таблицы+инструменты+DTO+миграция), 3-5 дней",
+    "leak_risk": "средний: новые свободные тексты (решения/причины) требуют фильтра; DTO-граница обязательна",
+    "llm_dependence": "факты — код; тексты решений — агент (добровольно, может врать/пропускать)",
+    "migration": "аддитивные таблицы + user_version gate (как v2)",
+    "at_10k_events": "ок при индексах (branch, seq)",
+    "verdict": "максимальная полнота, максимальная цена; избыточен, пока не доказана потребность в «почему» на уровне решений"
+   },
+   {
+    "id": "C",
+    "name": "журнал намерений, который агент объявляет заранее (intent-блок в envelope кандидата: goal_ref, why, alternatives)",
+    "completeness": {
+     "a": "полно",
+     "b": "хорошо где декларировано",
+     "c": "хорошо где декларировано",
+     "d": "хорошо где маркер drop",
+     "e": "хорошо: цепочка intent'ов = траектория цели"
+    },
+    "cost": "300-450 LOC (расширение envelope опциональным полем + 1 таблица + 1 инструмент), 1-2 дня; обратно совместимо (поле optional)",
+    "leak_risk": "средний: свободный текст intent'а — та же free-text оговорка O2",
+    "llm_dependence": "декларации пишет агент (LLM), но структурно добровольны; факты исхода — код",
+    "migration": "аддитивная таблица candidate_intents",
+    "at_10k_events": "ок (индекс по candidate)",
+    "verdict": "это и есть минимальный честный «почему» (Q4) — текст пишет тот, кто знает; рекомендован как C-lite"
+   },
+   {
+    "id": "D",
+    "name": "производное «повествование» из событий и вердиктов ревью (deterministic fold; никаких новых записей)",
+    "completeness": {
+     "a": "полно",
+     "b": "частично (reason строки)",
+     "c": "полно ЕСЛИ reject-вердикты есть в reviews (сегодня их нет — write-gap)",
+     "d": "частично: INFERRED по возрасту; факт — только с маркером drop",
+     "e": "нет"
+    },
+    "cost": "300-450 LOC, 1-2 дня; 0 миграций; это и есть прототип (режим EXISTING)",
+    "leak_risk": "низкий (правило эмиссии, доказано N-FOREIGN)",
+    "llm_dependence": "нет",
+    "migration": "нет",
+    "at_10k_events": "fold O(n) на каждый запрос — нужна материализация (одна строка на admit-tx) или курсорная пагинация",
+    "verdict": "фактическая основа любого варианта; c требует добавить write-path"
+   },
+   {
+    "id": "E",
+    "name": "история в OMH-плане, DOM только ссылается (plan_ref/план-задача на work; W8)",
+    "completeness": {
+     "a": "DOM: полно",
+     "b-e": "только там, где OMH хранит и отдаёт; DOM сам не отвечает"
+    },
+    "cost": "DOM: ~100 LOC (ссылка + чтение); зависит от готовности W8 и прав чтения OMH",
+    "leak_risk": "по политике OMH; DOM-сторона минимальна",
+    "llm_dependence": "OMH-сторона",
+    "migration": "нет в DOM (external_task_ref уже есть как пин)",
+    "at_10k_events": "OMH-сторона",
+    "verdict": "правильный дом для «куда шли/план»; не заменяет факты попыток (a-d), которые живут в DOM"
+   },
+   {
+    "id": "R",
+    "name": "Рекомендация: D (факты, код) + C-lite (intent + verdict reason + drop-маркер, агент) + обязательный reject write-path",
+    "completeness": {
+     "a-e": "все пять: a,d — код; b,c — вердикты+rationale; e — intent-цепочка; drop — маркер автора"
+    },
+    "cost": "D 300-450 + C-lite ~250 + reject-path ~80 LOC; суммарно 1.5-2.5 дня; 2 аддитивные таблицы (candidate_intents, lifecycle) + поле rationale в reviews + ветка decision=reject",
+    "leak_risk": "низкий при правиле эмиссии и DTO; free-text оговорка O2 фиксируется",
+    "llm_dependence": "только добровольные тексты (intent/reason/drop); все состояния — код",
+    "migration": "аддитивно, user_version gate",
+    "at_10k_events": "как D + материализация",
+    "verdict": "демонстрируется прототипом в режиме DELTA (23/23 проверок)"
+   }
+  ]
+ },
+ "q4_why": {
+  "question": "Q4. «Почему»: минимальная запись и кто пишет",
+  "answer": "Вектор цели НЕ обязателен. Минимум — четыре слоя, из которых «почему» собирается без LLM; кто пишет: код — факты, агент — тексты.",
+  "minimum_to_record": [
+   {
+    "slot": "envelope.reason кандидата",
+    "status": "УЖЕ ЕСТЬ (обязателен в dom_contract.validate)",
+    "who": "агент-автор",
+    "answers": "почему эта попытка / что она меняет (Q2b)"
+   },
+   {
+    "slot": "вердикт ревью: decision + rationale",
+    "status": "decision есть в shape, но продукт пишет только 'approve' (admission.py:203); rationale поля НЕТ",
+    "who": "ревьюер (независимый root)",
+    "answers": "почему принято/отвергнуто (Q2c)"
+   },
+   {
+    "slot": "маркер DROPPED + причина (dom_drop, root автора)",
+    "status": "НЕТ в схеме",
+    "who": "агент-автор (только root кандидата или owner)",
+    "answers": "что бросили и почему (Q2d)"
+   },
+   {
+    "slot": "intent: goal_ref + why (+alternatives) на кандидате",
+    "status": "НЕТ в схеме (аддитивная таблица candidate_intents)",
+    "who": "агент-автор, добровольно",
+    "answers": "куда шли и почему именно так (Q2b/e)"
+   }
+  ],
+  "who_writes": {
+   "code": "ADMITTED (admit), REVIEWED/REJECTED (вердикт), STALE_REVIEW/REVISION_CONFLICT (отказы admit), AWAITING_REVIEW (нет ревью) — все состояния деривируются из записей, LLM не нужен",
+   "agent": "reason, rationale ревью, intent, drop+причина — тексты; структурно добровольны, но отсутствие помечается REASON_ABSENT (не выдумывается)",
+   "rule": "текст без факта — голословен; факт без текста — нем («было сделано», но не «почему»). Оба слоя нужны, пишут их разные стороны — поэтому подлог одной стороной виден по второй"
+  },
+  "goal_vector_note": "траектория цели восстанавливается по цепочке intent'ов (goal_ref) в хронологии кандидатов; отдельный вектор цели в DOM не требуется. Без intent'ов отвечаемо только «что делали», «зачем» — нет (подтверждено: Q2e answerable=false в режиме EXISTING, true в DELTA).",
+  "prototype_evidence": [
+   "answers/q2_existing_AA.json#q2b_why (REASON_ABSENT-маркеры)",
+   "answers/q2_delta_AA.json#q2e_goal (траектория)"
+  ]
+ },
+ "q5_rejected_abandoned": {
+  "question": "Q5. Отклонённое и брошенное: различение, пометка, отсутствие ложных блокировок",
+  "answer": "Кто пишет терминальный маркер — тот и различает. reject пишет ревьюер (независимый root, проверка INDEPENDENCE уже есть), drop пишет автор кандидата (root==root кандидата). Два разных состояния, два разных автора — различение без суждения LLM.",
+  "cases": [
+   {
+    "case": "REJECTED (отказ ревью)",
+    "write_path": "dom_review с decision='reject' + rationale. СЕГОДНЯ В ПРОДУКТЕ ПУТИ НЕТ: review() жёстко пишет decision='approve' (admission.py:203), хотя состояние REJECTED уже деривируется в _pending_page (486) из decision != 'approve'. Write-gap — главное фактическое открытие RS008 по Q5.",
+    "read": "история: state=REJECTED + rationale; pending: state=REJECTED (метаданные, не текст)",
+    "not_established": "отклонённый кандидат НЕ создаёт claims (допуск не было) -> в snapshot его нет по построению; trace его не покрывает (N-ESTAB/N-ESTAB2 PASS)"
+   },
+   {
+    "case": "DROPPED (отказ автора / брошено)",
+    "write_path": "dom_drop {candidate_id, reason}: пишет только root автора кандидата или owner (root-match обязательно, как в инвариантах продукта). В EXISTING-режиме возможно только INFERRED (возраст>порога без admit) — эвристика, явно помечается, фактом не является.",
+    "read": "история: state=DROPPED + why_dropped (FACT) или marker=INFERRED",
+    "false_blocks": "DROPPED/REJECTED НЕ попадают в «нужно действие»: pending-счётчик отфильтровывает терминальные; кандидат не удаляется, повторная подача возможна (нет блокировок)",
+    "recent_not_dropped": "недавний REVIEWED-без-admit (c10, age 0.7d) НЕ помечается (P-DRP: только c6)"
+   },
+   {
+    "case": "STALE_REVIEW / REVISION_CONFLICT (факт кода)",
+    "write_path": "код: admit-отказ {'status':'STALE_REVIEW'} — уже существует как denial-код; в историю попадает как state REVIEWED + ревизия/ожидаемая голова (факт несовпадения), без эвристик",
+    "note": "четвёртый терминальный факт, отличающийся от обоих «отказов»: ревью было, admit не прошёл по стейлу"
+   }
+  ],
+  "distinction_without_llm": "автор маркера: reject — root ревьюера != root автора (INDEPENDENCE); drop — root == root автора; stale — код по хешам/головам. Все три — сравнение строк root'ов и равенство ревизий.",
+  "prototype_evidence": [
+   "c3: REJECTED+FACT, rationale выведен (P-REJ)",
+   "c6: INFERRED в EXISTING / DROPPED+FACT+why в DELTA (P-DRP)",
+   "c10: без маркера (P-DRP)"
+  ]
+ },
+ "q6_q7_leaks_fork": {
+  "question": "Q6. Политика утечек (согласовано с O2) + Q7. FORKED без выбора победителя",
+  "q6_leaks": {
+   "answer": "Правило эмиссии: строка истории видима grant'у iff branch строки в grant И все ссылки строки (deps, claim_ref, conflict_ref, replacement_ref) в grant. Чужая ветка исчезает ПОЛНОСТЬЮ: ни строк, ни маркеров, ни счётчиков (тот же стиль AU004-F-01: 'REMOVED (no marker, no counter)').",
+   "what_shown_own": [
+    "имена автора/root своих кандидатов (это и есть «происхождение», O2: показывать всегда)",
+    "вердикты и rationale своих ревью (review_id уже отдаётся; root ревьюера — для своих кандидатов)",
+    "причины (reason) своих событий/кандидатов"
+   ],
+   "what_never_foreign": [
+    "кандидаты, события, claims, головы, авторы, вердикты, rationale чужой ветки — ничего"
+   ],
+   "conflict_line_rule": "конфликт-событие своей ветки со ссылкой на чужие claim: невидимо (ссылка вне grant) — N-FOREIGN PASS: AA-only не содержит claim-B1/ev-conf-1; AA+AB видит обе линии (P-FORK)",
+   "free_text_waiver": "тело/причины своих кандидатов могут упоминать чужие имена — фильтр ключей этого не обещает (прямая цитата O2-решения: «фильтр ключей сам по себе не обещает, что имя AB нигде не встретится»). Формальную границу раскрытия надо испытать отдельно (в прототипе: свой drop-reason 'superseded by AB approach' легально проходит — чужых маркеров нет).",
+   "foreign_deps_rule": "кандидат с deps ⊄ grant невидим целиком (как в pending): ни элемента, ни счётчика",
+   "cost": "правило встроено в проекцию (одна функция фильтра), DTO-граница уже есть; новых рисков не вносит"
+  },
+  "q7_fork": {
+   "answer": "DOM «победителя» не выбирает никогда: форк-секция возвращает обе живые головы и конфликт-маркеры, winner всегда null; resolve фиксируется как факт автора (событие), а не суждение домена.",
+   "shape": "forks: [{branches, heads: {branch: revision}, conflict_events, winner: null}]",
+   "granted_both": "AA+AB: {AA:6, AB:1}, conflict_events=1, winner=null; конфликт-линия видна с обеих сторон; обе версии (claim-A4 и claim-B1) в established (P-FORK, established=3)",
+   "granted_aa_only": "видна только своя голова {AA:6}, конфликт-линия скрыта (ссылка на AB); факт «AB существует и разошлась» НЕ раскрывается — согласовано с bmap-правилом «no marker» (ReadSnapshot чужих ревизий не отдаёт). Открытый вопрос к заказчику: нужно ли показывать сам факт расхождения (без содержимого) — O2 это не закрепил.",
+   "no_winner_by_construction": "проекция не содержит поля winner/выбора: обе линии возвращаются рядом, агент (или его хост) решает; DOM только фиксирует resolve-факт, если он появится"
+  },
+  "prototype_evidence": [
+   "results/history_existing_AA.json#forks",
+   "results/history_existing_AA_AB.json#forks",
+   "N-FOREIGN",
+   "P-FORK"
+  ]
+ },
+ "q8_q9_q10": {
+  "question": "Q8. Объём: пагинация, сжатие без LLM, старое. Q9. Идемпотентность чтения. Q10. Проверяемость (эталон без LLM)",
+  "q8_volume": {
+   "pagination": "keyset (branch, seq/id) с after='branch:id', limit<=500, has_more по limit+1 — тот же механизм, что pending (admission._pending_page). Доказано: 3 страницы, ноль дублей, union==полный список, порядок стабилен (results/pagination.json).",
+   "compression_no_llm": [
+    "fold свойств в claims.properties (уже делает snapshot)",
+    "схлопывание по revision: «rev N: +claims [ids], events [kinds]»",
+    "дедуп идентичных событий в одной tx (count)",
+    "материализованный fold: 1 строка на admit-tx (history_materialized) — чтение O(1), запись в той же tx, что events"
+   ],
+   "old_events": "остаются на месте (SQLite: 100k событий ~ 70-200MB — терпимо), страницы ограничивают ответ; опционально events_archive для очень старых терминальных линий — те же IMMUTABLE-триггеры, перенос чанками по seq, маркер EVENTS_ARCHIVED, только по owner-команде (не автоматически)",
+   "numbers": "событие ~0.7-2KB; страница 100 линий <100KB; on-the-fly fold O(n) на запрос, материализация O(1)"
+  },
+  "q9_idempotent_read": {
+   "answer": "Чтение истории — только store.read() (BEGIN; rollback), ноль DML: не создаёт ack, не трогает outbox/delivery/idempotency, не двигает курсоры доставки. Идемпотентность = отсутствие побочных эффектов.",
+   "proof": [
+    "N-READ: sha256 файла БД до/после чтений идентичен",
+    "N-DETER: два прогона byte-identical",
+    "N-SQL: trace — 19 statements, все SELECT, ни одного внешнего эффекта"
+   ],
+   "caveat": "read_at (если добавить в ответ) — недетерминированное поле ОТВЕТА, но не состояние; два чтения между которыми прошла запись не обязаны совпадать (это не снапшот-изоляция между моментами, а отсутствие мутаций от самого чтения)"
+  },
+  "q10_verifiability": {
+   "answer": "Эталон = машинно-проверяемые тройки, выводимые ИЗ СЦЕНАРИЯ (сид известен по построению), а не «выглядит убедительно».",
+   "oracle_form": [
+    {
+     "kind": "contain",
+     "example": "established содержит {claim_id:'claim-A2p'}"
+    },
+    {
+     "kind": "entity-field-equals",
+     "example": "c3.decision == 'reject'"
+    },
+    {
+     "kind": "entity-field-contains",
+     "example": "c3.rationale содержит 'contradicts'"
+    },
+    {
+     "kind": "negative",
+     "example": "маркеры чужой ветки отсутствуют в AA-only выводе"
+    }
+   ],
+   "checker_without_llm": "сверка = сравнение dict/set: exact-equality для id/decision, substring-contains для текстов причин; негативные тройки — проверка отсутствия маркеров. Валидатор (validate_rs008.py) применяет 8 троек O1-O8 к ответам двух режимов — 8/8 PASS, механически.",
+   "agent_understood": "агент-читатель получает проекцию (не сид), пишет ответы в том же формате; те же тройки применяются к его ответам. Полное покрытие Q2(a-e) по тройкам = агент воспроизвёл факты истории. Обобщение/«понимание» за пределами фактов — вне эталона и не требуется для продолжения работы.",
+   "determinism_bonus": "детерминизм ответов (N-DETER) делает сверку устойчивой к повторам"
+  }
+ },
+ "prototype": {
+  "location": "runtime/RS008/prototype/ (rs008_lib.py: DDL-зеркало продукта+сид+проекция+ответы; run_prototype.py)",
+  "scenario": "AA: c1,c2,c4,c5,c7,c8 допущены (вкл. replacement и conflict), c3 REJECTED (planted reject-вердикт), c6 брошен автором, c10 свежий REVIEWED; AB: c9 допущен (форк)",
+  "validation": {
+   "status": "PASS",
+   "passed": 23,
+   "total": 23
+  },
+  "key_checks": {
+   "N-DETER": true,
+   "N-READ": true,
+   "N-SQL": true,
+   "N-LLM": true,
+   "P-ST-EX": true,
+   "P-ST-DL": true,
+   "P-EST": true,
+   "P-REJ": true,
+   "P-DRP": true,
+   "P-WHY": true,
+   "P-FORK": true,
+   "P-PAG": true,
+   "N-FOREIGN": true,
+   "N-ESTAB": true,
+   "N-ESTAB2": true,
+   "ORACLE-O1": true,
+   "ORACLE-O2": true,
+   "ORACLE-O3": true,
+   "ORACLE-O4": true,
+   "ORACLE-O5": true,
+   "ORACLE-O6": true,
+   "ORACLE-O7": true,
+   "ORACLE-O8": true
+  },
+  "pagination": {
+   "no_duplicates": true,
+   "union_equals_full": true,
+   "order_stable": true,
+   "pages": [
+    [
+     "c1",
+     "c10",
+     "c2"
+    ],
+    [
+     "c3",
+     "c4",
+     "c5"
+    ],
+    [
+     "c6",
+     "c7",
+     "c8"
+    ]
+   ]
+  },
+  "summary": {
+   "existing_AA": {
+    "attempts": 9,
+    "states": [
+     "ADMITTED",
+     "REJECTED",
+     "REVIEWED"
+    ],
+    "established": 2,
+    "amendments": [
+     "property",
+     "replacement"
+    ]
+   },
+   "existing_AA_AB": {
+    "attempts": 10,
+    "states": [
+     "ADMITTED",
+     "REJECTED",
+     "REVIEWED"
+    ],
+    "established": 3,
+    "forks": [
+     {
+      "branches": [
+       "AA",
+       "AB"
+      ],
+      "heads": {
+       "AA": 6,
+       "AB": 1
+      },
+      "conflict_events": 1,
+      "winner": null
+     }
+    ]
+   },
+   "delta_AA": {
+    "attempts": 9,
+    "states": [
+     "ADMITTED",
+     "DROPPED",
+     "REJECTED",
+     "REVIEWED"
+    ],
+    "established": 2,
+    "q2e_answerable": true
+   }
+  }
+ },
+ "artifacts_written": [
+  "artifacts/RESEARCHER_RS008_HISTORY.json",
+  "reports/RESEARCHER_RS008_HISTORY.md",
+  "runtime/RS008/prototype/rs008_lib.py",
+  "runtime/RS008/prototype/run_prototype.py",
+  "runtime/RS008/validate_rs008.py",
+  "runtime/RS008/validation_receipt.json",
+  "runtime/RS008/source_ledger.json",
+  "runtime/RS008/results/*.json",
+  "runtime/RS008/answers/*.json"
+ ],
+ "notes": [
+  "mockup/** правится параллельно (W1 pending, миграция v2): digest прочитанного — в runtime/RS008/source_ledger.json; наблюдения о коде могут устареть",
+  "REJECTED-вердикт в сид посажен напрямую в reviews (в продукте инструментом не записывается) — прототип доказывает проекцию и фиксирует write-gap",
+  "«Факт существования чужой ветки при форке» AA-only не показывается (no-marker правило) — открытый вопрос к заказчику, O2 не закрепляет",
+  "Правило эмиссии (все ссылки строки в grant) — расширение bmap-фильтра AU004-F-01 на строки истории"
+ ]
+}

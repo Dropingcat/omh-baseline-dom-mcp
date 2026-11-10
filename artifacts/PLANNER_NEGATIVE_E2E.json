@@ -1,0 +1,177 @@
+{
+  "role": "PL003 planner/test architect + threat modeling; not worker or accepting reviewer",
+  "task": "NEGATIVE_E2E_PLAN",
+  "status": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "verdict": "MATERIAL_READY_FOR_PARENT_VALIDATION_NOT_PRODUCT_SAFE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "auditor_verdict_retained": "REQUEST_CHANGES",
+  "executed_product_checks": 0,
+  "new_observed_product_findings": [],
+  "known_findings_retained": [
+    "TD-DOM-19 major OPEN",
+    "TD-DOM-20 major OPEN",
+    "TD-DOM-21 minor OPEN"
+  ],
+  "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+  "source_fingerprints_ref": "runtime/PL003/input_fingerprints.json",
+  "support_inputs_ref": "runtime/PL003/support_input_hashes.json",
+  "capability_inventory_ref": "runtime/PL003/capability_inventory.json",
+  "failure_map_ref": "runtime/PL003/failure_map.json",
+  "scenario_plan_ref": "runtime/PL003/scenario_plan.json",
+  "omh_plan_delta_ref": "runtime/PL003/omh_plan_delta.json",
+  "omh_applied": false,
+  "continuation_01": {
+    "card": "cards/PL003_CONTINUE_01.md",
+    "reason_of_previous_break": "provider HTTP 403 (model access), not work content",
+    "code_digest_unchanged": true,
+    "added": "H-LINK / CP-PL-17 / SC-H-LINK / GAP-LINKS (NOT_IMPLEMENTED, executed=0)",
+    "not_removed": "all earlier 23 rows/scenarios/gaps retained"
+  },
+  "requirements_amendment_ref": "runtime/PL003/requirements_amendment.json",
+  "requirements_sha256": {
+    "old": "2be43b2f8370e7e27df012831496af2d3bb000f66915975d8f24aff3e17310b8",
+    "new": "b1fec276a341ba01173499d499000061c9a34726529db3bdaaf14181971fac75",
+    "reason": "Parent appended section \"Пятое уточнение\" (2026-11-07) by explicit user instruction: baseline-loss motive + Obsidian-style self-sensing links. Expected parent change, not a defect or substitution; earlier quotes unchanged.",
+    "proof": "sha256(file with lines 23-28 removed) == old_sha256 (checked now and by validate_material.py)"
+  },
+  "cards": [
+    "cards/SEC003_SECURITY.md",
+    "cards/QA003_FAILURE_TESTER.md"
+  ],
+  "plan_ref": "docs/NEGATIVE_E2E_PLAN.md",
+  "report_ref": "reports/PLANNER_NEGATIVE_E2E.md",
+  "validation_ref": "runtime/PL003/validation.json",
+  "first_partial_ref": "runtime/PL003/first_artifact.json",
+  "immutable_evidence_ref": {
+    "run_id": "material-3f9556867fdb",
+    "path": "runtime/PL003/material-3f9556867fdb/manifest.json",
+    "sha256": "19309758a6a48dd3e8e34ad12c5f07d205fabf178dd5a6f2662d2b1b64daf3df",
+    "capture": "FINAL_FROZEN",
+    "latest_used": false
+  },
+  "coverage": {
+    "public_tools": 12,
+    "gap_count": 11,
+    "hypotheses": 24,
+    "checks": 24,
+    "scenario_groups": 24,
+    "inherited_LP_A2": 7,
+    "mandatory_operations": {
+      "write": [
+        "SC-LP-A2-05",
+        "SC-LP-A2-06",
+        "SC-HP-PL-01",
+        "SC-HP-PL-02",
+        "SC-HP-PL-03",
+        "SC-HP-PL-05",
+        "SC-HP-PL-08",
+        "SC-HP-PL-09",
+        "SC-HP-PL-10",
+        "SC-HP-PL-14",
+        "SC-HP-PL-15"
+      ],
+      "read": [
+        "SC-LP-A2-01",
+        "SC-LP-A2-02",
+        "SC-LP-A2-03",
+        "SC-LP-A2-04",
+        "SC-HP-PL-01",
+        "SC-HP-PL-03",
+        "SC-HP-PL-04",
+        "SC-HP-PL-06",
+        "SC-HP-PL-07",
+        "SC-HP-PL-08",
+        "SC-HP-PL-10",
+        "SC-HP-PL-13",
+        "SC-HP-PL-14",
+        "SC-HP-PL-15",
+        "SC-HP-PL-16",
+        "SC-H-LINK"
+      ],
+      "append-only update": [
+        "SC-HP-PL-03",
+        "SC-HP-PL-04",
+        "SC-HP-PL-05",
+        "SC-HP-PL-06",
+        "SC-HP-PL-13",
+        "SC-H-LINK"
+      ],
+      "selective search": [
+        "SC-HP-PL-11"
+      ],
+      "branch search": [
+        "SC-HP-PL-12"
+      ]
+    },
+    "executed_count": 0,
+    "graph_negative_controls": 5
+  },
+  "checked_suspicions": [
+    {
+      "suspicion": "REQUIREMENTS.md hash changed after planning (parent amendment) could hide substitution",
+      "checked": "Removed inserted lines 23-28 and re-hashed",
+      "result": "Equals old sha256 exactly: pure append-only insertion of the fifth clarification; refs 31-44/82-94 remapped +6"
+    },
+    {
+      "suspicion": "Obsidian-style links may already exist or be covered by snapshot link metadata",
+      "checked": "TOOLS names/schemas, dom_contract link spec, projections",
+      "result": "No backlink/neighbor/dashboard API; GAP-LINKS; H-LINK prepared as future check, NOT_IMPLEMENTED, not PASS"
+    },
+    {
+      "suspicion": "Search/refinement may already exist",
+      "checked": "AST complete TOOLS and ingress-to-projection source paths",
+      "result": "Dedicated selective/branch search and nested refinement GAP/NOT_IMPLEMENTED; snapshot/replacement not substituted"
+    },
+    {
+      "suspicion": "Prior material may hide TD19 or require YAML continuation",
+      "checked": "RS002 exact handoff, current code and AU/AN/reviewer reports",
+      "result": "TD19 remains inherited observed major, TD20 TASK:list known; fail-stop baseline, continuation not agreed"
+    },
+    {
+      "suspicion": "Graph/scopes/evidence refs might be plausible but broken",
+      "checked": "Independent static validator with broken-link/duplicate/fake-executed/unknown-gap negative controls",
+      "result": "All required material checks pass; no product attack executed"
+    }
+  ],
+  "verified_by_commands": [
+    {
+      "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/PL003/add_hlink.py",
+      "scope": "static JSON append of H-LINK + requirements amendment record"
+    },
+    {
+      "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/PL003/build_maps.py",
+      "scope": "static maps only"
+    },
+    {
+      "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/PL003/build_documents.py",
+      "scope": "document rendering only"
+    },
+    {
+      "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/PL003/validate_material.py",
+      "scope": "material validation only",
+      "pid": 7192,
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "executable": "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe"
+    }
+  ],
+  "limitations": [
+    "No MCP/process/SQL product E2E or attacks run by PL003; AST schema is not live tools/list",
+    "Simulation identity/OMH/Git/OS boundaries remain; independent trusted fixture oracle is not OS isolation",
+    "Search/refinement/multiwork/third-branch/live diagnostics absent; no missing API PASS",
+    "TD19 P0 prepared worker+independent recheck mandatory; not waived by plan or future scoped security verdict",
+    "RS002-DEC-CONTINUE unagreed; no imposed YAML continuation",
+    "Evidence hashes establish current consistency, not hostile OS WORM or preregistration of historical audit",
+    "No OMH/board/agent dispatch, no debt changes or product acceptance",
+    "Global skill writes forbidden; reusable workflow kept in own runtime docstrings"
+  ],
+  "remaining": [
+    "Parent independently validates material and applies prepared delta to existing OMH plan",
+    "Parent dispatches SEC003 then QA003 with completed SEC findings",
+    "Independent reviewer/auditor and explicit worker fix/recheck for findings; GAP implementation decisions remain outside PL003"
+  ],
+  "continuation_required": false,
+  "debt_status_changes": [],
+  "source_tests_configs_old_evidence_read_only": true
+}

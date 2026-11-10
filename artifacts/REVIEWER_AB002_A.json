@@ -1,0 +1,79 @@
+{
+  "role": "independent reviewer RV002-A; not worker/auditor/analyst",
+  "task": "AB002-A",
+  "module": "AB002-A",
+  "verdict": "APPROVE",
+  "completion_state": "completed",
+  "exact_scope": "Delta A1-A9 delivery observed/read-back/ack + integrity gate, representative storage errors and additive legacy migration. Real local stdio MCP/files/SQLite; OMH target SIMULATION only. Not full-system acceptance.",
+  "artifact_revision": {
+    "before_ref": "runtime/RV002_A/fingerprint_before.json",
+    "after_ref": "runtime/RV002_A/fingerprint_after.json",
+    "fingerprint_count": 42,
+    "before_after_unchanged": true,
+    "coverage": "recursive mockup Python, tests files, AB002_A cards, REQUIREMENTS.md",
+    "source_digest": "73264e77f24d59ff278ca6b0ebab5b1c4e7d4934e1a83f9dbb252ebab05be67e",
+    "method": "SHA256 compact sorted JSON mapping POSIX mockup .py path to SHA256 bytes. Different serialization from parent digest; all 34 worker-declared file hashes matched independently.",
+    "requirements_sha256": "2be43b2f8370e7e27df012831496af2d3bb000f66915975d8f24aff3e17310b8",
+    "additional_input_hashes_ref": "runtime/RV002_A/verification-summary.json:input_at_completion_hashes_only",
+    "input_limit": "RS001/AB002 plan/review protocol/delivery protocol/README additional hashes taken at completion only, not claimed as before/after preregistration."
+  },
+  "summary": {
+    "product_findings": 0,
+    "blocking_findings": 0,
+    "own_matrix_coverage": {"PASS": 26, "FAIL": 0, "NOT_TESTED": 0},
+    "independent_additional_coverage": {"PASS": 4, "FAIL": 0},
+    "own_matrix_MCP_receipts": 118,
+    "own_matrix_MCP_exits": {"0": 112, "71": 6},
+    "manual_MCP_receipts_including_retained_partial_probe": 28,
+    "manual_MCP_exits": {"0": 28},
+    "matrix_acks_independently_validated": 48,
+    "independent_negative_SQL_probes": 25,
+    "worker_final_states_physically_rechecked": 26,
+    "worker_declared_file_hashes_checked": 34,
+    "pytest": "Not rerun by reviewer; worker unit count is not acceptance."
+  },
+  "worker_deliverables": {
+    "verdict": "PASS for examined package",
+    "actual": "JSON/MD/protocol/fingerprints/manifests exist and parse; A1-A9 present. Every declared file hash and requirements hash match. All 26 worker final snapshots independently match current physical DB/target/export bytes.",
+    "immutable_manifest_ref": "runtime/AB002_A/matrix-61c246ab/manifest.json",
+    "shared_manifest_note": "Official runner overwrites runtime/AB002_A/e2e_manifest.json by design. Used own frozen manifest and worker immutable run-specific manifest instead of trusting mutable pointer.",
+    "evidence": ["artifacts/WORKER_AB002_A.json", "reports/WORKER_AB002_A.md", "runtime/AB002_A/protocol.md", "runtime/RV002_A/verification-summary.json", "runtime/RV002_A/verify_physical.py"]
+  },
+  "per_invariant": {
+    "A1": {"verdict":"PASS", "actual":"Delivered AA1/AB1, new AB2 pending; liar twice in distinct subprocess sessions reports ack. Readonly SQL: no new OMH ack, two unmatched observations/evidence null; old target bytes unchanged, trace SYNC_PENDING/NOT_READY. New PID recovery creates exactly one target record/write for new tx.", "source":["mockup/admission.py:307-362","mockup/delivery.py:44-75"], "evidence":["runtime/RV002_A/liar-resumed-populated/result.json","runtime/RV002_A/liar-resumed-populated/linked-readonly-SQL.json"]},
+    "A2": {"verdict":"PASS", "actual":"Independent readonly SQL joins ack->observation->attempt->outbox, checks intent/tx/digest/target, raw fingerprint/size/read_at/head/revisions. Absent/unmatched observation refused ACK_REQUIRES_OBSERVED/1811. Durable predecessor matches protocol/source.", "source":["mockup/delivery.py:8-36","mockup/admission.py:314-356","runtime/AB002_A/protocol.md"], "evidence":["runtime/RV002_A/negative-binding-byteexact-v2/probes.json","runtime/RV002_A/matrix-fresh-verification.json"]},
+    "A3": {"verdict":"PASS", "actual":"Own matrix six real exit71 deaths at commit/rename/send boundaries, new-PID recovery, pending/ambiguous concurrent reconcile. Target readback checks one write per tx. Source commits durable attempt before external effect under read snapshot, not SQLite write transaction.", "source":["mockup/admission.py:307-357","mockup/storage.py:100-113","mockup/ports.py:40-82"], "evidence":["runtime/RV002_A/frozen-manifest.json","runtime/RV002_A/matrix-fresh-verification.json","runtime/RV002_A/liar-resumed-populated/result.json"]},
+    "A4": {"verdict":"PASS", "actual":"Independent caller delivery UNKNOWN_TOOL, author sync denied, injected role INVALID_ARGUMENTS. Own matrix public Service.delivery author/reviewer denial and scoped spoof. Fixture identity not production auth.", "source":["mockup/server.py:120-180","mockup/admission.py:81-85","mockup/admission.py:296-308"], "evidence":["runtime/RV002_A/negative-binding-byteexact-v2/result.json","runtime/AB002_A/matrix-93345211/E8-S3-S5-spoof-incomplete/case.json","runtime/AB002_A/matrix-93345211/E10-S1-immutable-all-tables/case.json"]},
+    "A5": {"verdict":"PASS", "actual":"Own replay: 88 immutable +23 binding SQL probes. Independently designed 25 negatives: absent/unmatched observation, foreign intent/tx/digest/target attempts/ack candidates; REPLACE/IGNORE/UPSERT on attempts/observations/acks/claims/snapshots. Every probe precise trigger diagnostic/code1811 and exact DB SHA/rows/target/export/write-log bytes before/after.", "source":["mockup/storage.py:66-90","mockup/delivery.py:19-36","mockup/ab002_matrix.py:190-260"], "evidence":["runtime/RV002_A/negative-binding-byteexact-v2/probes.json","runtime/AB002_A/matrix-93345211/E10-S1-immutable-all-tables/immutable-probes.json","runtime/AB002_A/matrix-93345211/A1-A2-A5-S1-S6-binding-negatives/binding-probes.json"]},
+    "A6": {"verdict":"PASS", "actual":"Independent populated/resumed copies retain delivered targets/exports plus pending AA2. Last-event missing value with recalculated hash -> EVENT_SHAPE_INVALID; bad hash -> EVENT_HASH_MISMATCH. Six surfaces, AA+AB, two sessions per corruption: CHAIN_BROKEN/exact seq/NOT_READY. Physical DB and files byte-exact unchanged. Source holds verified read snapshot through output/effect; observation stores read_at/head/revisions.", "source":["mockup/admission.py:39-101","mockup/admission.py:220-294","mockup/admission.py:323-370"], "evidence":["runtime/RV002_A/corrupt-resumed-envelope/result.json","runtime/RV002_A/corrupt-resumed-envelope/after-injection.json","runtime/RV002_A/corrupt-resumed-envelope/after-refusals.json","runtime/RV002_A/corrupt-resumed-hash/result.json","runtime/RV002_A/corrupt-resumed-hash/after-injection.json","runtime/RV002_A/corrupt-resumed-hash/after-refusals.json"]},
+    "A7": {"verdict":"PASS", "actual":"Own matrix actual writer busy, NOTADB corruption, mode=ro, directory at DB path unavailable. Exact CANTOPEN/CANTOPEN_ISDIR code/name oracle, not arbitrary SQLite exception. Error response omits OS path/payload. Restored physical state checked.", "source":["mockup/admission.py:17-36","mockup/ab002_matrix.py:305-335"], "evidence":["runtime/AB002_A/matrix-93345211/E5-S1-S2-writer-lock/case.json","runtime/AB002_A/matrix-93345211/A7-S1-corrupt-database/case.json","runtime/AB002_A/matrix-93345211/A7-S1-read-only-database/case.json","runtime/AB002_A/matrix-93345211/A7-S1-unavailable-database/case.json"]},
+    "A8": {"verdict":"PASS within A, not global semantic acceptance", "actual":"Original AA/AB claims/snapshots/events/transactions/outbox preserved. Exact CRLF/combining Unicode/supplementary body bytes and SHA verified by SQL. AB origin visible after restart/query. SQL refusals byte-exact. Source trace never invokes owner close and reports owner_close_called=false; live OMH not contacted.", "source":["mockup/admission.py:193-216","mockup/admission.py:256-270","mockup/projections.py:4-53","mockup/dom_contract.py:89-97"], "evidence":["runtime/RV002_A/liar-resumed-populated/populated-before.json","runtime/RV002_A/liar-resumed-populated/final-physical.json","runtime/RV002_A/verify_physical.py","runtime/RV002_A/negative-binding-byteexact-v2/probes.json"]},
+    "A9": {"verdict":"PASS for compatible existing, legacy and enumerated incompatible layout", "actual":"Independent existing AA/AB DB resumes without reset. Own matrix legacy copy refuses until explicit additive init; preserves old rows, distrusts legacy ack, then reconciles. Incompatible-layout init MIGRATION_REQUIRED, unchanged physical state. No all-layout compatibility claim.", "source":["mockup/storage.py:54-99","mockup/admission.py:86-89","mockup/ab002_matrix.py:338-361"], "evidence":["runtime/AB002_A/matrix-93345211/A9-S1-legacy-additive/case.json","runtime/AB002_A/matrix-93345211/A9-incompatible-layout/case.json","runtime/RV002_A/liar-resumed-populated/result.json","runtime/RV002_A/matrix-fresh-verification.json"]}
+  },
+  "findings": [],
+  "comments": [],
+  "own_runs": [
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B -m mockup.ab002_e2e","pid":6484,"exit_code":0,"case_count":26,"run_directory":"runtime/AB002_A/matrix-93345211","evidence":["runtime/RV002_A/matrix-process.json","runtime/RV002_A/matrix-stdout.log","runtime/RV002_A/matrix-stderr.log","runtime/RV002_A/frozen-manifest.json"]},
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/independent_probes.py","pid":5192,"exit_code":1,"actual":"Partial first invocation: three cases PASS; fourth stopped on reviewer oracle expectation, not complete PASS.","evidence":["runtime/RV002_A/independent-summary-v1.json","runtime/RV002_A/independent_probes-v1.py"]},
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/independent_probes.py --negatives-only","pid":4632,"exit_code":0,"actual":"Fourth independent case completed; 25 exact negative SQL probes.","evidence":["runtime/RV002_A/independent-negative-v2.json","runtime/RV002_A/negative-binding-byteexact-v2/result.json"]},
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/verify_physical.py","pid":12300,"exit_code":0,"actual":"26 own and 26 worker physical final states match; 48 own matrix acks validated; source/tests/primary inputs unchanged.","evidence":["runtime/RV002_A/verification-summary.json","runtime/RV002_A/matrix-fresh-verification.json"]},
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/check_processes.py","exit_code":0,"actual":"0 matching Python mockup launcher/lock/server processes.","evidence":["runtime/RV002_A/process-check-v2.json"]}
+  ],
+  "reviewer_execution_notes": [
+    {"id":"RV002-A-N01","kind":"reviewer oracle correction, not product defect","actual":"V1 foreign ack reused already-acked observed UNIQUE key; IMMUTABLE before expected ACK_REQUIRES_OBSERVED. Exit1 retained.","resolution":"V2 uses real liar-produced unmatched observation before recovery, no unique collision; precise ACK_REQUIRES_OBSERVED/1811 and exact bytes. No product/test edits or broad catch.","evidence":["runtime/RV002_A/independent-summary-v1.json","runtime/RV002_A/independent-negative-v2.json"]},
+    {"id":"RV002-A-N02","kind":"failed process inspection","actual":"First inline PowerShell command suffered bash dollar expansion and decoding failure; nominal exit0 NOT accepted as evidence.","resolution":"Literal PowerShell argument in separate Python script, strict ErrorActionPreference/UTF8, successful v2 exact empty array. Both receipts retained.","evidence":["runtime/RV002_A/process-check.json","runtime/RV002_A/process-check-v2.json"]}
+  ],
+  "oracle_review": {
+    "C1":"Independently verified historical CHAIN_INTEGRITY/1811 and byte-exact before==after. Current E10 accepts only justified old-event replay diagnostic and still requires exact rollback/readback.",
+    "C2":"Exact SQLite extended code/name, not arbitrary exception. Resource regression retains real connections and requires closed handle.",
+    "current":"Relevant source/new delivery+resource regressions/immutable regression inspected; no skip/xfail or broad-except success in reviewed paths. Exhaustive historical diff not claimed."
+  },
+  "verified_by_commands": ["E:/opencode_harness_portable/.venv/Scripts/python.exe -B -m mockup.ab002_e2e","E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/independent_probes.py","E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/independent_probes.py --negatives-only","E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/verify_physical.py","E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/RV002_A/check_processes.py"],
+  "not_checked": ["E11/S4/new revalidation; UD-01..06 OPEN","AB002-B/C/D, derivable head, global branch/master convergence, baseline/stale and offline export provenance","LIVE OMH/Git/issuer/auth/real owner-close integration","OS sandbox/in-process/file-owner/lying read-back/self-consistent DB replacement/external checkpoint","Claim refinement tree deferred_to_researcher, not implemented or accepted here","Full Cartesian S0..S6 x E0..E12, production-scale/other OS/SDK/all schema-layout permutations","Own unit-suite/demo rerun and exhaustive historical repository diff; not claimed or substituted for E2E"],
+  "limitations": ["Delta APPROVE does not accept whole system or authorize deploy/task closure.","Raw stdio helper and fault launcher reused as transport/injection infrastructure; four extra scenarios and physical/SQL oracles are review-owned. Parent receipt not used as independent proof.","Fixture roles not production auth. Ack historical at read_at, not perpetual availability. Local idempotency not universal exactly-once.","Verified read snapshot spans external effect and may cause bounded writer busy; never write transaction across delivery.","Corruption only own disposable copies; no repair/rewind policy chosen.","Scripts/lessons stay in runtime/RV002_A; no global skills/plugin/docs/cards mutation within restricted scope."],
+  "proposed_debts": [{"proposed_id":"RV002-A-DEBT-01","severity":"minor","level":1,"scope":"future D tooling, non-blocking A","summary":"Prefer immutable run-specific manifest refs and frozen enriched provenance over shared mutable e2e_manifest pointer.","evidence":["mockup/ab002_matrix.py:364-408","runtime/RV002_A/frozen-manifest.json"],"closure":"Runner/report uses immutable run+fingerprint+manifest lineage across repeats.","registered":false,"reason":"Write scope permits only own verdict/report/runtime, not global debt register."}],
+  "findings_escape_hatch": {"level_1":["Reviewer failed oracle/process-check retained and corrected; no product changes."],"level_2":["Known B/C/D and production boundaries remain open; D evidence-tooling debt proposed here."],"level_3":[]},
+  "remaining": ["Sequential AU002-A auditor with new initial conditions; not launched by reviewer","Then analyst/researcher and next factory slice/fixes","Excluded full-system/author-decision obligations remain OPEN"],
+  "continuation_required": false,
+  "report_ref": "reports/REVIEWER_AB002_A.md"
+}

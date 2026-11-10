@@ -1,0 +1,758 @@
+{
+ "schema": "analyst_an007_au006_findings/v1",
+ "role": "ANALYST_AN007",
+ "task": "AN007",
+ "status": "COMPLETED",
+ "completion": "completed",
+ "first_artifact": "runtime/AN007/first_artifact.json",
+ "product_acceptance": false,
+ "is_approval": false,
+ "continuation_required": false,
+ "validation": {
+  "validator": "runtime/AN007/validate_an007.py",
+  "exit_code": 0,
+  "checks_count": 18,
+  "negative_controls_count": 6,
+  "negative_controls_result": "PASS (все 6 искажённых копий возбудили флаг, реальный артефакт чист)",
+  "validation_discrepancies": [],
+  "receipt": "runtime/AN007/validation_receipt.json",
+  "validated_at": "2026-11-08T14:21:00+03:00"
+ },
+ "sha256": {
+  "runtime/AN007/validate_an007.py": "40a6522bea776a3c6dff329cc744f9f02fdc19ed58b7eba294132b2a93fad497",
+  "runtime/AN007/negative_controls.json": "8a39b0b9f9c4bbd594e8dce95a25f62558bbc07d7f6755d0a3b669fb1ea8ee59",
+  "runtime/AN007/validation_receipt.json": "a5f07f74e2ada54cb0a26f5a8b1be493dab1fe1371a165577b0a61c1c020b830"
+ },
+ "code_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+ "code_digest_recomputed": true,
+ "code_digest_method": "SEC003: sha256(json.dumps({relpath_posix: file_sha256}, sort_keys=True)) over mockup/**/*.py, 16 files; verified equal to AU006 source_revision_end.json",
+ "source_ledger": "runtime/AN007/source_ledger.json",
+ "prefix_rule": "Все утверждения об AU006-F-xx — мои; AU005-F-xx упоминаются ТОЛЬКО как чужие (ведёт RS006 параллельно), не переоткрываются.",
+ "findings_map": [
+  {
+   "id": "AU006-F-01",
+   "severity": "blocking",
+   "classification": "KNOWN_GAP_RECONFIRMED_NEW_STDIO_PATH",
+   "question": "Где в цепочке init→submit→review→admit отсутствует проверка «базлайн выдан и прочитан»; какие минимальные точки (DOM/хост/обёртка) могли бы её нести; что доказуемо без живого хоста; что именно считается «сверкой».",
+   "chain_analysis": {
+    "dom_init": "P:mockup/admission.py:104-110. Проверяет только simulation-флаг (иначе OMH_BINDING_UNVERIFIED), форму запроса {external_work_ref,policy_digest}, scope(work), policy_digest==POLICY. НЕ выдаёт BaselinePacket, не фиксирует receipt, не требует знания о базлайне.",
+    "dom_submit": "P:mockup/admission.py:119-143. scope/capability/ready, строгий JSON+schema validate, external_task_ref==TASK, policy_digest==POLICY, check_references (admission.py:144-155) только по claim_ref/replacement_ref/supersedes внутри видимости. НЕ требует receipt/read/use-признака базлайна.",
+    "dom_review": "P:mockup/admission.py:164-173. capability/review, ready, candidate, root-независимость, digest match, фиксация review с snapshot_digest=digest(p.dependencies). НЕ проверяет ни выдачи, ни чтения базлайна.",
+    "dom_admit": "P:mockup/admission.py:175-220. candidate→dedupe→digest→review binding→STALE_REVIEW по declared dependencies→REVISION_CONFLICT→check_references. STALE_REVIEW (admission.py:186-187) сравнивает ТОЛЬКО заявленные dependencies с head; dependencies={} => any()=False => stale-тест не срабатывает (это AU006-F-02). НИ ОДНА точка не содержит условия issued/used task baseline.",
+    "vyvod": "Ни в одном из 4 методов нет ни проверки, ни поля, ни переданного контекста «базлайн выдан и прочитан». Проверка формы (наличие полей) есть; проверка наличия и использования контекста отсутствует. Наблюдение R01/R02: обе ветви (no-read и with-read) DEMO_ADMITTED; в no-read raw frames нет dom_query/snapshot/resume до submit."
+   },
+   "minimal_carrier_points": [
+    {
+     "layer": "DOM (mockup admission)",
+     "point": "submit/admit могут требовать в пакете обязательный receipt_id/BaselinePacket-ссылку, проверяемую против выданных на init/resume; сегодня ENVELOPE (dom_contract.py:6) таких полей не имеет → validate их отклонит как UNKNOWN_FIELD (dom_contract.py:71)",
+     "provable_without_live": "да: поле отсутствует в схеме, любой тест с ним даст REJECTED/UNKNOWN_FIELD — проверимо локально"
+    },
+    {
+     "layer": "DOM (server)",
+     "point": "server.py:36-134 — 12 инструментов, нет инструментов начать задачу/выдать receipt/begin_task/task_start; отсутствие инструмента доказуемо tools/list (server.py:194-196)",
+     "provable_without_live": "да: список инструментов статичен"
+    },
+    {
+     "layer": "Хост (pre_tool_call)",
+     "point": "O:hooks/tool_hooks.py:119-331 — единственный host-pre-tool хук OMH: правила пользователя (61-116), repeat guard, plan_stage gate (только write_file/patch, plan_stage_gate.py:156-235), team gate, board bridge. НИ ОДИН не проверяет DOM-базлайн; pre_llm_call (llm_hooks.py:488-729) инжектит только ограниченный role/todo/status-контекст",
+     "provable_without_live": "частично: source-bound отсутствие привязки доказуемо чтением (пути выше), но порядок вызова pre_tool_call до/после dispatch и реальное поведение хоста — UNVERIFIED (нужен NU-AU006-02)"
+    },
+    {
+     "layer": "Обёртка запуска (launcher)",
+     "point": "mockup/server.py:244-274 main(): роль/simulation задаются при запуске; обёртка может выдавать BaselinePacket до старта процесса — сегодня этого нет; фикстуры ролей в ports.py:21-24",
+     "provable_without_live": "частично: отсутствие в mockup доказуемо, живая сборка запуска — UNVERIFIED"
+    }
+   ],
+   "what_counts_as_reconciliation": {
+    "poluchenie_paketa": "BaselinePacket выдан хостом/DOM — фиксируется receipt_id со списком версий и хешем (docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md:155). Доказывает ДОСТАВКУ, не понимание.",
+    "chtenie": "UseReport/декларация агента (PLAN_IDENTITY:158-163). Декларация, не доказательство; receipt/хеш не доказывает понимание (REQUIREMENTS.md:163, TBO-02 TASK_BASELINE_OBLIGATION.md:21).",
+    "ssylka_na_versii": "dependencies/expected_branch_revision/requirement_refs в пакете — это declared use, формально проверяемое (STALE_REVIEW). Заказчик требует «предварительно сверившись с клаймами» — трёхшаговая схема PLAN_IDENTITY:131: агент предъявляет, код проверяет формально, независимый проверяющий судит по существу.",
+    "razdelenie": "Выдача != чтение != понимание != независимая достаточность. Их нельзя приравнивать (REQUIREMENTS.md:163)."
+   },
+   "provable_boundary": {
+    "bez_zhivogo_hosta_dokazuemo": [
+     "отсутствие поля/механизма в read-источниках (конкретные строки выше)",
+     "отсутствие инструментов выдачи в tools/list",
+     "wire-наблюдение R01/R02: no-read admitted (runtime/AU006/recheck/probe_results.json, r01_no_read new_author: init→submit без query; r02_with_read new_author: init→query→submit — обе ветви DEMO_ADMITTED)",
+     "STALE_REVIEW обходится dependencies={} (admission.py:187)"
+    ],
+    "bez_zhivogo_hosta_NE_dokazuemo": [
+     "порядок вызова pre_tool_call относительно первого инструментального вызова (хук до/после — свойство хоста, NU-AU006-02 H1)",
+     "fail-open/closed живых хуков при ошибке/таймауте (NU-AU006-02 H2)",
+     "стоит ли строить F-01 на хуках или нужна обёртка запуска (зависит от H1/H2)",
+     "возможность отказать в старте задачи без базлайна"
+    ]
+   },
+   "evidence": [
+    "runtime/AU006/recheck/r01_no_read/after.sql.json",
+    "runtime/AU006/recheck/probe_results.json",
+    "runtime/AU006/recheck/r02_with_read/after.sql.json"
+   ],
+   "sources": [
+    "P:mockup/admission.py:104-110;119-143;144-155;164-173;175-220",
+    "P:mockup/dom_contract.py:6-7;63-73",
+    "P:mockup/server.py:36-134;194-196;244-274",
+    "O:hooks/tool_hooks.py:61-116;119-331",
+    "O:hooks/llm_hooks.py:488-729",
+    "O:plan_stage_gate.py:156-235",
+    "P:docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md:118-189",
+    "P:REQUIREMENTS.md:159-163",
+    "P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:20-25"
+   ],
+   "fix_dependency_note": "F-01 — последний в порядке заказчика; зависит от F-02 (что сверять), F-05 (evidence), F-04 (resume) и от решения NU-01/NU-02 (где контроль). Не засчитывается через F-02/F-05: это разные контуры (host gate vs DOM admission vs OMH reducer)."
+  },
+  {
+   "id": "AU006-F-02",
+   "severity": "major",
+   "classification": "KNOWN_TD15_AND_BASIS_GAP_NEW_REPRO",
+   "question": "Полный перечень мест, где отсутствие поля трактуется как «ограничений нет»; что выключается; классификация: молчаливое отсутствие / явный пустой набор / несуществующая ссылка.",
+   "absence_inventory": [
+    {
+     "field": "dependencies (envelope, dom_contract.py:6)",
+     "type": "явный пустой набор (dependencies={} допускается validate)",
+     "validate": "P:mockup/dom_contract.py:78-79: тип dict, ключи только AA/AB, значения int>=0. Пустой dict проходит.",
+     "chto_vyklyuchaetsya": "admission.py:125 (цикл scope по dependencies пуст) и admission.py:187 (any(head!=v for b,v in deps.items()) = False) => STALE_REVIEW не срабатывает; ни один пин не проверяется",
+     "ekspluataciya": "R05: чтение AB rev0, move AB→rev1, кандидат с dependencies={} допускается (а адмит с явным {AB:0} отклоняется) — агент «забывает» упомянуть известные основания",
+     "evidence": "runtime/AU006/recheck/r05_restart_stale/after.sql.json"
+    },
+    {
+     "field": "requirement_refs (COMMON, dom_contract.py:7)",
+     "type": "явный пустой набор requirement_refs=[] (validate только тип list)",
+     "validate": "dom_contract.py:70: поле обязательно (иначе MISSING_FIELD), тип list; непустота/существование значений не проверяются",
+     "chto_vyklyuchaetsya": "выключения при admit нет (пустой список проходит); включения нет тоже: projections.py:59-70 — клайм с requirement_refs=[] никогда не покроет R1/R2, останется MISSING_COVERAGE, но не блокирует допуск отдельного кандидата",
+     "ekspluataciya": "R03: требование R-NOT-IN-PLAN (несуществующее) с demo-ссылкой проходит submit/review/admit; валидатор не проверяет существование",
+     "evidence": "runtime/AU006/recheck/r03_bases/after.sql.json"
+    },
+    {
+     "field": "метаданные-ссылки source_ref/artifact_ref/repository_ref (TYPE_FIELDS, dom_contract.py:8-15; admission.py:198)",
+     "type": "молчаливое отсутствие (необязательные строки) + несуществующая ссылка (существование не проверяется)",
+     "validate": "dom_contract.py:104-118: поля только по типу; существование источника/артефакта/репозитория НЕ проверяется",
+     "chto_vyklyuchaetsya": "проверка реальности источника цитаты/кода/данных; демо-путь принимает demo:nonexistent-claim",
+     "ekspluataciya": "R03: клайм text/quote с фиктивным источником admit проходит; независимая связь с фактическим артефактом не доказывается",
+     "evidence": "runtime/AU006/recheck/r03_bases/after.sql.json"
+    },
+    {
+     "field": "evidence (text factual обязателен, dom_contract.py:115)",
+     "type": "несуществующая ссылка: поле evidence обязано быть непустым, но существование упомянутых доказательств не проверяется",
+     "validate": "dom_contract.py:115: factual text требует непустой metadata.evidence, иначе MISSING; что лежит в списке — не проверяется",
+     "chto_vyklyuchaetsya": "связь утверждения с реальным источником",
+     "ekspluataciya": "текст «факт» со списком несуществующих evidence проходит валидацию схемы"
+    },
+    {
+     "field": "claim_ref/replacement_ref/supersedes (admission check_references 144-155)",
+     "type": "ИСКЛЮЧЕНИЕ — проверяется: cid not in visible/scoped => SCOPE_DENIED; supersedes сверяется с событием той же ветки и claim",
+     "validate": "admission.py:149-155",
+     "chto_vyklyuchaetsya": "ничего — это защищённое место (референсы клаймов существуют в скоупе)",
+     "ekspluataciya": "нет — отрицательный контроль R06: wrong TASK SCOPE_DENIED; check_references активна",
+     "evidence": "runtime/AU006/recheck/r06_controls/after.sql.json"
+    }
+   ],
+   "classification_rule": "Молчаливое отсутствие: необязательные поля, чьё отсутствие = «не заявлено» (source_ref и т.п.). Явный пустой набор: обязательные поля со значением пустого списка/словаря, проходящие validate (dependencies={}, requirement_refs=[]). Несуществующая ссылка: заполненные значения, не проверяемые на существование (R-NOT-IN-PLAN, demo:nonexistent-claim, source/artifact/repository refs).",
+   "impact": "Свежевыглядящий кандидат может опустить реально использованные основания; поля/policy digest — не пин базлайна и не доказательство независимой достаточности. TD-DOM-15 подтверждён новым путём (R05), не закрыт.",
+   "sources": [
+    "P:mockup/dom_contract.py:6-7;63-121",
+    "P:mockup/admission.py:119-143;144-155;175-220",
+    "P:mockup/projections.py:59-77"
+   ],
+   "fix_dependency_note": "F-02 первый в порядке заказчика; независим от F-04/F-05 по коду допуска, но определяет понятие «достаточных оснований» для F-01. Не засчитывается через F-05 (другой контур — OMH reducer).",
+   "evidence": [
+    "runtime/AU006/recheck/r03_bases/after.sql.json",
+    "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+    "runtime/AU006/recheck/r06_controls/after.sql.json"
+   ]
+  },
+  {
+   "id": "AU006-F-03",
+   "severity": "major",
+   "classification": "NEW_COMPLETION_BOUNDARY_REPRO_WITH_PRIOR_LIMITS",
+   "question": "Дерево состояний ready_for_owner_review: какие факты входят сейчас, какие обязаны входить; таблица текущее→требуемое.",
+   "ready_tree_current": {
+    "vhody": [
+     "Покрытие требований R1/R2 admitted клаймами (projections.py:59-71)",
+     "Отсутствие stale у declared dependencies (projections.py:64)",
+     "Конфликты пусты (projections.py:70,74)",
+     "converged=true (projections.py:75)",
+     "sync не pending (projections.py:76, admission.py:278)",
+     "traces непусто (admission.py:282)"
+    ],
+    "ready_formula": "admission.py:281-283: ready = not blockers and bool(traces); blockers = CRITERIA_NOT_CURRENT|CONFLICT|BRANCH_NOT_CONVERGED|SYNC_PENDING",
+    "owner_close_called": "admission.py:283 — всегда False; DOM никогда не вызывает закрытие владельца (TBO-08 GAP, AU006-G-06)"
+   },
+   "state_table": [
+    {
+     "fact": "admitted покрытие R1/R2",
+     "tekushchee": "входит (MISSING_COVERAGE блокер)",
+     "trebuetsya": "входит (без изменений)"
+    },
+    {
+     "fact": "stale declared dependency",
+     "tekushchee": "входит (STALE_CHECK) ТОЛЬКО если dependency объявлена",
+     "trebuetsya": "входит; + не-объявленные известные основания не должны молча пропадать (F-02)"
+    },
+    {
+     "fact": "конфликт не разрешён",
+     "tekushchee": "входит (CONFLICT блокер)",
+     "trebuetsya": "входит"
+    },
+    {
+     "fact": "незаписанный результат (файл/работа вне DOM)",
+     "tekushchee": "НЕ входит: R04 записал actual new_result.txt без DOM, READY сохранялся на всех стадиях",
+     "trebuetsya": "входит: результат задачи сопоставляется с артефактами (TBO-07); без этого DONE невозможен"
+    },
+    {
+     "fact": "pending кандидат без admitted tx",
+     "tekushchee": "НЕ входит: R04 финал candidates=4, transactions=3, claims=1; pending сохраняется, resume его не показывает, READY=true",
+     "trebuetsya": "входит: каждый обязательный кандидат требует disposition (admit/отклонение/обоснование); pending не заменяет завершённое ведение (TBO-04/07)"
+    },
+    {
+     "fact": "rejected вход/незавершённый результат",
+     "tekushchee": "НЕ входит: incomplete rejected result не меняет READY (R04)",
+     "trebuetsya": "входит: отклонённый ввод требует явной disposition-записи"
+    },
+    {
+     "fact": "no-new-knowledge комментарий без сопоставления",
+     "tekushchee": "НЕ входит: append bare комментарий после admitted R1/R2 не проверяется на соответствие реальному результату (R04: READY остался true)",
+     "trebuetsya": "входит: декларация «новых знаний нет» сопоставляется с прежними основаниями и фактическим результатом (TBO-07, PLAN_IDENTITY:176-178)"
+    },
+    {
+     "fact": "owner_close_called",
+     "tekushchee": "всегда False из mockup",
+     "trebuetsya": "раздельная приёмка OMH по независимым критериям (TBO-08); READY-for-review != DONE (PLAN_IDENTITY:170)"
+    }
+   ],
+   "proof_boundary": "owner_close_called=false и отсутствие живого OMH-закрытия: R04 — НЕ воспроизведённое реальное закрытие OMH; это локальное наблюдение READY в симуляции. Без разрешённого живого E2E (NU-02) реальное закрытие не доказано и не опровергнуто.",
+   "sources": [
+    "P:mockup/admission.py:254-283;383-392",
+    "P:mockup/projections.py:29-77",
+    "P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:36-40"
+   ],
+   "fix_dependency_note": "F-03 идёт вместе с F-04 (resume discovery даёт клиенту возможность dispose pending; F-03 требует disposition-контроля). F-05 (OMH evidence) даёт независимую проверку «пункт не закрыт одной активностью», но F-03 сам по себе — состояние trace в DOM. Не засчитывать F-03 через F-05.",
+   "evidence": [
+    "runtime/AU006/recheck/r04_completion/after.sql.json"
+   ]
+  },
+  {
+   "id": "AU006-F-04",
+   "severity": "major",
+   "classification": "FUNCTIONAL_RECOVERY_GAP_RUNTIME_CONFIRMED",
+   "question": "Что именно не отдаёт dom_resume и почему; минимум новому клиенту; отличие от восстановления после kill (которое работает).",
+   "resume_analysis": {
+    "chto_vozvrashchaet": "P:mockup/admission.py:383-392: статус RESUMED + snapshot + trace + sync + read_snapshot. Projection Resume не содержит pending",
+    "chto_ne_otdaet": "pending candidate id/digest/payload/key — запросов в candidates вообще нет в resume; discovery API отсутствует (server.py:36-134 — 12 инструментов, нет pending-перечисления)",
+    "pochemu": "не проекция, а отсутствующая функция: resume построен как «снимок+трейс+статус доставки» для уже известной ветки; ничего не спрашивает candidates WHERE status=pending",
+    "minimum_klientu": "endpoint/поле, перечисляющее authorized pending (id, intent_digest, branch, author, payload или payload-ссылку), чтобы клиент без старой памяти мог восстановить работу без старого idempotency key; отдельный грант-контроль — только своя ветка",
+    "otlichie_ot_kill": "R05 kill: старый клиент КАК ПРОЦЕСС сохранял payload+key снаружи и переиграл тот же key — это память клиента, а не discovery; новый клиент, не знающий key, не имеет пути обнаружить pending (resume_after_kill.json: только snapshot/trace/sync, candidates в ответе нет). Durable SQL есть, но он не решает потерю базлайна без API",
+    "ne_dubliruet": "TD-DOM-15 (переутверждение) и AN005 D-14 (журнал pending) — разные: здесь про обнаружение и продолжение без старого ключа"
+   },
+   "evidence": [
+    "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+    "runtime/AU006/recheck/r05_restart_stale/resume_after_kill.json",
+    "runtime/AU006/recheck/r05_restart_stale/after_conflict.sql.json"
+   ],
+   "sources": [
+    "P:mockup/admission.py:383-392;119-143;164-220",
+    "P:mockup/server.py:36-134",
+    "P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:42-43"
+   ],
+   "fix_dependency_note": "F-04 идёт перед/с F-03 (disposition pending требует discovery). Независим от F-02 (разные контуры). Не засчитывается через F-01/F-05."
+  },
+  {
+   "id": "AU006-F-05",
+   "severity": "major",
+   "classification": "SOURCE_BOUND_STANDALONE_FIXTURE_NOT_LIVE_CLOSE",
+   "question": "Как todo_evidence связывает пункт с результатом; что нужно для связи с DOM-результатом; как отличить «закрыт работой» от «закрыт активностью» без LLM.",
+   "evidence_mechanism": {
+    "kak_svyazyvaet": "O:todo_evidence.py: item.evidence={kind,ref}; kinds: tool_call (terminal exit_code==0), file_write (write_file bytes_written / patch success), pr/ci_run/team_check (не резолвятся). EVIDENCE_TOOLS=(terminal,write_file,patch) (todo_evidence.py:94-98). Ссылка привязывается при done-write по ОКНУ ВРЕМЕНИ (window item), НЕ по содержимому (todo_evidence.py:53-59)",
+    "chto_dokazyvaet": "что команда запускалась и как завершилась; привязка по времени и типу инструмента; текст команды/вывод/ответ модели не читаются (todo_evidence.py:61-62)",
+    "verdikty": "closed/failed/unresolved/window_empty/window_has_commands (todo_evidence.py:132-143); window_empty закрывает пункт (todo_evidence.py:140,427); effect_disposition none=failed, unknown=unresolved (todo_evidence.py:505-508)",
+    "nevozmozhnost": "независимая проверка содержания/соответствия задаче отсутствует по построению; reducer не может отличить unrelated exit0 от работы"
+   },
+   "what_needed_for_dom_binding": [
+    "новый evidence kind, напр. dom_result/dom_admit, с ref=tx_id/candidate_id/receipt_id",
+    "EVIDENCE_TOOLS, включающие DOM-инструменты (dom_submit/dom_review/dom_admit/dom_sync), и резолвер, читающий DOM SQL/фактический accepted tx, а не только exit_code",
+    "критерий закрытия = реальный admitted/delivered DOM-результат (tx, revision, receipt по O3), а не любой exit0",
+    "привязка окна остаётся, но НЕ достаточна: требуется task-специфичный признак (какой результат обязателен для пункта)",
+    "DOM-результат должен попасть в records, которые todo_evidence читает (сейчас messages role=tool, tool_name in EVIDENCE_TOOLS; DOM-вызовы фигурируют как обычные tool rows без специальной обработки)",
+    "не засчитывать MCP-only window (dom_submit REJECTED) как evidence"
+   ],
+   "activity_vs_work_without_llm": {
+    "determinirovano": "сравнение ref с реальным admitted tx в DOM (наличие transactions/claims/outbox ack), тип результата, соответствие requirement/evidence окна пункта; существование DOM-записи вместо exit_code",
+    "ostaetsya_suzhdeniem": "достаточность артефакта, семантическая связь «этот файл закрывает этот пункт» — независимый проверяющий (PLAN_IDENTITY:176-178), не LLM в автоматике",
+    "pravilo": "window_empty не должен закрывать DOM-обязательный пункт: для пункта, требующего admitted результата, отсутствие evidence = unresolved, не closed (обратное todo_evidence.py:427)"
+   },
+   "evidence": [
+    "runtime/AU006/host_fixture_recheck/results.json"
+   ],
+   "sources": [
+    "O:todo_evidence.py:9-68;79-98;132-143;350-427;497-529",
+    "O:todo_reconciliation.py:609-710;821-908",
+    "O:tools/todo_tool.py:221-357",
+    "O:completion_store.py:228-297;350-410"
+   ],
+   "fix_dependency_note": "F-05 — второй в порядке. Независим от F-02 (reducer vs admission), но оба нужны для F-01. Не засчитывается через F-03/F-04."
+  }
+ ],
+ "decision_matrix": {
+  "NU-AU006-01": {
+   "status": "последствия разобраны, выбор за заказчиком (needs_user=true)",
+   "axis_labels": [
+    "ложный DONE",
+    "потеря работы",
+    "тихое расхождение",
+    "стоимость",
+    "что скажет аудитор"
+   ],
+   "variants": [
+    {
+     "variant": "(а) останавливать только материальные изменения",
+     "false_done": "невозможен: admit/supersede/converge/подтверждение доставки/закрытие запрещены",
+     "work_loss": "возможна: работа идёт «в стол» файлом, в базе нет — ровно AU006-F-03",
+     "silent_drift": "низкий, НО неотличимо от «агент просто не записывал», если нет явного статуса «вне базы»",
+     "cost": "малая: DOM_UNAVAILABLE_READONLY + отказы в точках записи + разрешение чтения",
+     "auditor": "«работа продолжается без учёта; при восстановлении возможна частичная потеря и повтор» (DECISION_NU:21)",
+     "bypass_risk": "средний: агент продолжает и объявляет в чате; но в базе нет записи"
+    },
+    {
+     "variant": "(б) ограниченный офлайн-журнал с обязательной сверкой позже",
+     "false_done": "невозможен при жёстком PROVISIONAL и правиле «журнал не воспроизводится как факт»",
+     "work_loss": "минимальна: журнал хранит наблюдения/кандидаты/намерения",
+     "silent_drift": "высокий БЕЗ перепроверки: слепое воспроизведение журнала даёт «принятое», которого не было; обязательное условие жизнеспособности — записи ПЕРЕпроверяются по артефактам (хеши) при восстановлении",
+     "cost": "высокая: хеш-цепочка, идемпотентность, порядок слияния, конфликты, срок годности, правило «журнал не подтверждает доставку»",
+     "auditor": "«второй путь записи; частичное воспроизведение даёт тихое расхождение»",
+     "bypass_risk": "канал доверия: журнал пишет сам агент"
+    },
+    {
+     "variant": "(в) останавливать всё",
+     "false_done": "невозможен",
+     "work_loss": "не применимо (работа не идёт), но проект останавливается целиком при падении плагина",
+     "silent_drift": "низкий, НО практический обход остаётся: честный путь блокируется, а терминал работает → работа вне всякого учёта",
+     "cost": "минимальная (fail-closed уже есть в init, admission.py:105)",
+     "auditor": "«fail-closed корректен, но при недоступности инструмента работа продолжится вне DOM — гарантия иллюзорна»",
+     "bypass_risk": "высокий практически: худшее из двух"
+    },
+    {
+     "variant": "(г) [проверка 4-го варианта] разрешить работу ТОЛЬКО с явной регистрацией «вне базы» и автоматическим подъёмом при восстановлении",
+     "false_done": "невозможен: статус вне-базы не даёт accepted/ready",
+     "work_loss": "низкая: манифест вне-базы (список артефактов/хеши) сохраняется локально, при восстановлении поднимается в DOM как кандидаты",
+     "silent_drift": "низкий: регистрация явная и видимая в статусе; расхождение обнаружимо при сверке манифеста с артефактами",
+     "cost": "средняя: манифест/статус-признак + процедура подъёма (reconciliation при восстановлении), но БЕЗ второго источника правды, как в (б): манифест — заявка, перепроверяемая по артефактам",
+     "auditor": "«работа учтена как вне-базы; при восстановлении поднимается только то, что подтвердилось артефактами»",
+     "bypass_risk": "ниже (а): попытка объявить вне-базы работу поднимает её в статус, а не прячет; риск — самодекларативный манифест, поэтому подъём требует перепроверки",
+     "note": "Это НЕ (б): в (б) журнал — второй канал записи с хеш-цепочкой и PROVISIONAL-фактами; в (г) отдельной базы нет, есть реестр имён/хешей + статус «вне базы». Это фактически (а) + обязательная видимость (устраняет главный минус (а) — неотличимость от молчания, DECISION_NU:23,64). Вариант не упущен в карте DECISION_NU как отдельная сравнимая строка, там он рекомендован как «(а) как база + узкая часть (б)» (DECISION_NU:62-64); здесь выделен и сравним."
+    }
+   ],
+   "llm_only_unavailable": {
+    "chem_otlichaetsya": "DOM-недоступность = нет сервера/плагина: некому выдать пакет, проверить допуск, зафиксировать доставку; данные SQLite локальны, не теряются. LLM-недоступность = код работает (admission.py детерминированный, LLM в admit-пути не участвует), но нет суждения: куратор/трибунал/классификация влияния (impact class), семантическая достаточность, схождение",
+    "chto_rabotaet": "чтение, dom_query/resume/snapshot, submit кандидатов, локальная запись",
+    "chto_vstaet": "converge (схождение — суждение куратора per DECISION_BRIEF:66-89), классификация влияния (impact), независимая оценка достаточности, FORKED/NEW_VECTOR (решение человека/независимого ревьюера по PLAN_IDENTITY:52-53)",
+    "pravilo": "без суждения — только PROVISIONAL, никакой автоматической сходимости (DECISION_NU:66); нельзя запрещать чтение/фиксирование хода разрешённой работы (TBO-09:43)",
+    "osi": "ложный DONE: невозможен при правиле PROVISIONAL; потеря работы: нет (SQL); тихое расхождение: риск в очереди без disposition — кандидаты копятся; стоимость: очередь + ручной трибунал; аудитор: «без куратора только provisional; при нарушении — ложная сходимость»",
+    "ne_smeshivat": "это отдельный случай от недоступности DOM: политика (а)/(б)/(в) описана для DOM; для LLM-недоступности варианты сужаются: (а)/(б) допустимы, (в) избыточен (нечего останавливать — запись возможна), но converge и суждения встают",
+    "source": "P:docs/DECISION_NU_AU006_01_02_2026-11-08.md:66; P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:43; P:docs/DECISION_BRIEF_2026-11-08.md:84-89"
+   },
+   "needs_user": true,
+   "no_choice_made": true,
+   "recommendation_boundary": "Карта DECISION_NU рекомендует (а) + узкую часть (б) с жёсткими правилами 1-2 (DECISION_NU:60-66). Моя работа — последствия, не выбор. Решение за заказчиком; проверка «не упущен ли 4-й вариант» — да: вариант (г) выделен и сравним."
+  },
+  "NU-AU006-02": {
+   "status": "состав эксперимента разобран, разрешение за заказчиком/host-владельцем (needs_user=true)",
+   "purpose": "Измерить свойства ХОСТА (не DOM): порядок хука, fail-open/closed, возможность отказа старта, задержка, ложные отказы. Без этого F-01 не решить (хук или обёртка) и не доказать.",
+   "hypotheses": [
+    {
+     "id": "H1",
+     "hypothesis": "pre_tool_call/хук старта вызывается ДО первого инструментального вызова задачи",
+     "run": "изолированный профиль: старт задачи, инструментальный вызов; замер позиции хука в trace/dispatch",
+     "proved_if": "хук зарегистрирован до dispatch первого материального вызова (подпись в логе хука раньше вызова)"
+    },
+    {
+     "id": "H2",
+     "hypothesis": "при ошибке/таймауте хука поведение fail-open или fail-closed на текущем хосте",
+     "run": "fault injection: поднять исключение/таймаут в callback pre_tool и pre_llm, три прогона каждое",
+     "proved_if": "наблюдение block/allow по plugins_dispatch.py:59-67,275-324; plugins.py:1907-2048; model_tools.py:759-794"
+    },
+    {
+     "id": "H3",
+     "hypothesis": "хост может отказать в старте/материальной работе без выданного базлайна (не только логировать)",
+     "run": "задача без BaselinePacket: ожидаем либо block с внятным статусом, либо allow+логирование",
+     "proved_if": "реальный отказ до материального эффекта ИЛИ задокументированный allow (тогда политика только на DOM)"
+    },
+    {
+     "id": "H4",
+     "hypothesis": "задержка и ложные отказы приемлемы",
+     "run": "N>=30 стартов с хуком vs без; замер времени старта; доля ложных отказов при корректном baseline",
+     "proved_if": "p95 задержки и доля ложных отказов зафиксированы числами; порог — тестовый параметр, не норма"
+    },
+    {
+     "id": "H5",
+     "hypothesis": "изоляция: отдельный профиль/БД/ветка/задача; хук только для него; kill-switch; TTL; уборка",
+     "run": "полный прогон в отдельном профиле; соседние профили без хука не меняются; после — удаление артефактов",
+     "proved_if": "ни один живой план/ветка/профиль не затронут; артефакты только runtime-каталога эксперимента"
+    }
+   ],
+   "isolation_guarantees": [
+    "отдельный профиль/воркспейс с собственной DOM SQLite (runtime-каталог эксперимента)",
+    "отдельная тестовая ветка и отдельная задача, НЕ живые планы/ветки",
+    "хук включён только для тестового профиля; kill-switch (env/флаг) и TTL (срок жизни) обязательны",
+    "никаких сетевых/платных/живых OMH-закрытий: только изолированная копия хоста и его хуков",
+    "уборка: удаление временных профилей/БД после прогона; отсутствие следов в живых данных"
+   ],
+   "what_proved": [
+    "существование механизма (обязанность перестаёт быть регламентом)",
+    "порядок хука (H1)",
+    "fail-open/closed (H2)",
+    "возможность отказа (H3)",
+    "числа задержки/ложных отказов (H4)",
+    "изоляция (H5)",
+    "материал для аудитора (воспроизводимый сценарий)"
+   ],
+   "what_not_proved": [
+    "приёмка живым OMH на реальной задаче",
+    "обход через terminal/files (TD-DOM-06)",
+    "чужие хосты (opencode, сторонние клиенты)",
+    "полное crash-покрытие",
+    "безопасность вне тестового профиля"
+   ],
+   "cost_of_refusal": "F-01 останется UNVERIFIED_live: максимум «DOM отказывает, если спросили», но не «хост не даёт начать без базлайна»; защита держится на дисциплине агента (то, что AU006 признал несуществующим) (DECISION_NU:97-99)",
+   "needs_user": true,
+   "no_choice_made": true
+  }
+ },
+ "fix_order": {
+  "customer_agreed": "F-02 → F-05 → F-03+F-04 → F-01",
+  "dependency_check": [
+   {
+    "a": "F-02",
+    "b": "F-05",
+    "relation": "независимы по контурам (admission vs OMH reducer), можно начинать вместе; F-02 определяет «достаточные основания», F-05 — «результат-связь»",
+    "blocking": "нет"
+   },
+   {
+    "a": "F-05",
+    "b": "F-03",
+    "relation": "F-05 даёт OMH-сторону доказательства «не закрыто активностью»; F-03 — состояние trace в DOM; связь только в совместном критерии завершения",
+    "blocking": "нет"
+   },
+   {
+    "a": "F-04",
+    "b": "F-03",
+    "relation": "F-04 (discovery pending) — предусловие практического закрытия F-03: без discovery у клиента нет пути dispose pending; логически F-04 до F-03 или с ним",
+    "blocking": "частично: F-04 обязано идти до/вместе с F-03"
+   },
+   {
+    "a": "F-02/F-03/F-04/F-05",
+    "b": "F-01",
+    "relation": "F-01 (host gate сверки) — последний: ему нужны точные основания (F-02), честный evidence (F-05), восстановление (F-04) и определения завершения (F-03); плюс решения NU-01 и результат NU-02",
+    "blocking": "да: F-01 не может быть завершён раньше"
+   },
+   {
+    "a": "F-01",
+    "b": "NU-01/NU-02",
+    "relation": "F-01 зависит от выбора fault-policy (NU-01) и от изолированного живого эксперимента (NU-02): без них конкретное место контроля (хук/обёртка) не доказано",
+    "blocking": "да"
+   }
+  ],
+  "cannot_substitute": [
+   "F-02 != F-05: допуск оснований в DOM не заменяет evidence reducer в OMH, и наоборот",
+   "F-03 != F-05: состояние ready в trace не заменяет привязку пункта к DOM-результату",
+   "F-04 != F-02: discovery pending не заменяет проверку достаточности оснований",
+   "ни одна находка не закрывается «исправлением» другой: каждая требует своей негативной E2E",
+   "заказчик согласен с порядком — проверено по карте AN007 и DECISION_NU; не переоткрываю, а проверяю зависимости"
+  ]
+ },
+ "td_impact": {
+  "status": "ничего не закрыто и не открыто мной; debt_status_changes=[]",
+  "related_open": [
+   {
+    "td": "TD-DOM-15",
+    "finding": "AU006-F-02",
+    "relation": "прямое подтверждение нового пути (dependencies={} обход stale)",
+    "action": "остаётся open; F-02 уточняет repro"
+   },
+   {
+    "td": "TD-DOM-14",
+    "finding": "AU006-F-03",
+    "relation": "scope-готовность trace/ready — родственный контур",
+    "action": "остаётся open"
+   },
+   {
+    "td": "TD-DOM-18",
+    "finding": "AU006-F-03",
+    "relation": "converge-защёлка — часть «готовности»",
+    "action": "остаётся open"
+   },
+   {
+    "td": "TD-DOM-08",
+    "finding": "AU006-F-01",
+    "relation": "живая привязка OMH/аутентификация — предпосылка host gate",
+    "action": "остаётся open"
+   },
+   {
+    "td": "TD-DOM-06",
+    "finding": "NU-AU006-01(в)",
+    "relation": "terminal-обход — ограничение всякой fail-политики",
+    "action": "остаётся open"
+   }
+  ],
+  "new_candidates_not_assigned": [
+   "host start-gate без базлайна (из AU006-F-01) — кандидат на новый TD после решения NU-01/NU-02 и архитектуры места контроля",
+   "проверка достаточности/существования requirement_refs и evidence-ссылок (из AU006-F-02) — расширение TD-DOM-15, не новый ID",
+   "resume/pending discovery API (из AU006-F-04) — кандидат на новый TD (близок QA006-07)",
+   "DOM-evidence kind/резолвер в todo_evidence (из AU006-F-05) — кандидат (расширение контракта OMH hook)"
+  ],
+  "closure_guard": "закрытие любого TD — только с проверкой, подтверждающей фикс, и не мной; фиксирую открытым"
+ },
+ "questions_for_RS007": [
+  {
+   "id": "Q-AN007-01",
+   "finding_ref": "AU006-F-02",
+   "needs_user": false,
+   "exact_question": "Какая минимальная схема делает dependencies/requirement_refs/evidence-ссылки проверяемыми на достаточность и существование (резолв против реальных admitted claim/tx/артефактов), не ломая append-only и не требуя LLM в записи?",
+   "why": "R03/R05: неизвестные требования и пустые/фиктивные ссылки проходят submit/review/admit; STALE_REVIEW защищает только заявленные deps",
+   "source": "P:mockup/dom_contract.py:6-7,63-121; P:mockup/admission.py:144-155,175-220; P:mockup/projections.py:59-77",
+   "evidence": "runtime/AU006/recheck/r03_bases/after.sql.json; runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+   "positive_controls": [
+    "валидный root/hypothesis/disputed явно разрешён",
+    "явный пустой набор = явное «оснований нет» с обязательным обоснованием"
+   ],
+   "negative_controls": [
+    "dependencies={} не обходит stale при существующих известных основаниях",
+    "R-NOT-IN-PLAN отклоняется",
+    "фиктивный source_ref отклоняется"
+   ],
+   "fault_controls": [
+    "старые admitted клаймы без новых полей не ломаются",
+    "два кандидата с одинаковыми refs, разные ветки"
+   ]
+  },
+  {
+   "id": "Q-AN007-02",
+   "finding_ref": "AU006-F-05",
+   "needs_user": false,
+   "exact_question": "Какой контракт evidence-kind «DOM-результат» (ref=tx/receipt, резолвер по DOM, критерий admitted+delivered) встраивается в todo_evidence/reducer, чтобы window_empty не закрывал DOM-обязательные пункты, а unrelated exit0 НЕ засчитывался?",
+   "why": "сейчас EVIDENCE_TOOLS=terminal/write_file/patch (todo_evidence.py:94-98), window_empty=closed (todo_evidence.py:427) — активность != работа",
+   "source": "O:todo_evidence.py:9-68,79-98,132-143,350-427,497-529; O:todo_reconciliation.py:609-710,821-908",
+   "evidence": "runtime/AU006/host_fixture_recheck/results.json",
+   "positive_controls": [
+    "admitted tx закрывает пункт",
+    "обоснованный no-new-knowledge остаётся возможен"
+   ],
+   "negative_controls": [
+    "unrelated exit0 не закрывает DOM-пункт",
+    "dom_submit REJECTED не evidence",
+    "window_empty не закрывает DOM-пункт"
+   ],
+   "fault_controls": [
+    "DOM-БД недоступна → пункт unresolved, не закрыт",
+    "компакция/rewind не ломает привязку tx"
+   ]
+  },
+  {
+   "id": "Q-AN007-03",
+   "finding_ref": "AU006-F-03",
+   "needs_user": false,
+   "exact_question": "Какие детерминированные проверки trace обязаны войти в ready_for_owner_review, чтобы (1) незаписанный результат вне DOM, (2) pending/rejected кандидат без disposition и (3) bare no-new-knowledge не давали READY, сохраняя разрешённое «новых знаний нет»?",
+   "why": "R04: READY=true при file-записи вне DOM, pending кандидате и голом комментарии; owner_close_called=false",
+   "source": "P:mockup/admission.py:254-283; P:mockup/projections.py:29-77; P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:36-40",
+   "evidence": "runtime/AU006/recheck/r04_completion/after.sql.json",
+   "positive_controls": [
+    "все кандидаты disposed + результат admitted => READY",
+    "обоснованный no-new-knowledge с сопоставлением => READY"
+   ],
+   "negative_controls": [
+    "pending без disposition => NOT_READY",
+    "artifact-only без DOM => NOT_READY/DONE невозможен",
+    "bare no-new-knowledge => NOT_READY"
+   ],
+   "fault_controls": [
+    "rejected кандидат требует видимой записи причин",
+    "граница READY vs DONE не смешивается (TBO-07/08)"
+   ]
+  },
+  {
+   "id": "Q-AN007-04",
+   "finding_ref": "AU006-F-04",
+   "needs_user": false,
+   "exact_question": "Какой контракт resume/pending-discovery позволяет новому клиенту БЕЗ старого idempotency key обнаружить authorized pending кандидатов и продолжить ветку, не создавая дублей?",
+   "why": "resume отдаёт snapshot/trace/sync, но не candidates (admission.py:383-392); kill-recovery работает только на памяти старого клиента",
+   "source": "P:mockup/admission.py:383-392; P:mockup/server.py:36-134",
+   "evidence": "runtime/AU006/recheck/r05_restart_stale/resume_after_kill.json",
+   "positive_controls": [
+    "новый клиент с грантом видит свои pending",
+    "rebase сохраняет payload, повтор не дублирует tx"
+   ],
+   "negative_controls": [
+    "чужая ветка/principal не видна",
+    "без ключа не раскрываются чужие payload",
+    "повтор не создаёт второй корень"
+   ],
+   "fault_controls": [
+    "kill в разных окнах (submit/admit/sync)",
+    "усечённая БД"
+   ]
+  },
+  {
+   "id": "Q-AN007-05",
+   "finding_ref": "AU006-F-01",
+   "needs_user": true,
+   "exact_question": "После ответа на NU-01/NU-02: какой существующий host-компонент (pre_tool_call/plugins_dispatch/обёртка запуска) становится доверенной точкой «базлайн выдан и прочитан» и какой минимальный контракт (receipt_id, версии, use_report) он проверяет до материальной работы?",
+   "why": "F-01 blocking: обязательность сверки сейчас держится на дисциплине агента; решение о месте контроля — за заказчиком (NU-02), исполнение — за ресерчером",
+   "source": "P:mockup/admission.py:104-220; O:hooks/tool_hooks.py:119-331; P:docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md:152-189",
+   "evidence": "runtime/AU006/recheck/r01_no_read/after.sql.json; r02_with_read/after.sql.json",
+   "positive_controls": [
+    "выдача+чтение => материальная работа разрешена",
+    "discovery/read/repair доступны до гейта (TBO-03)"
+   ],
+   "negative_controls": [
+    "нет выдачи => материальная работа отклонена",
+    "чужой receipt => отказ",
+    "не выбран blanket deny-all"
+   ],
+   "fault_controls": [
+    "хук недоступен: fail-политика NU-01",
+    "два клиента с одним receipt_id"
+   ]
+  },
+  {
+   "id": "Q-AN007-06",
+   "finding_ref": "NU-AU006-01",
+   "needs_user": true,
+   "exact_question": "Какая реализация выбранного варианта (а)/(б)/(в)/(г) обеспечивает «нет ложного DONE» при недоступности DOM и отдельно при недоступности только LLM (куратор), с автоматическим подъёмом и перепроверкой по артефактам, и кто контролирует восстановление?",
+   "why": "G-07 P1: политика DOM/LLM outage не выбрана; выбор — заказчик, исполнимые проверки — ресерчер (QA006-10)",
+   "source": "P:docs/DECISION_NU_AU006_01_02_2026-11-08.md:10-66; P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:36-43",
+   "evidence": "docs/DECISION_NU (карта последствий а/б/в; вариант г — в моём decision_matrix)",
+   "positive_controls": [
+    "восстановление поднимает только подтверждённые артефакты",
+    "чтение/repair доступны всегда"
+   ],
+   "negative_controls": [
+    "никакой автоматической сходимости без куратора",
+    "PROVISIONAL не становится accepted",
+    "нет ложного DONE при outage"
+   ],
+   "fault_controls": [
+    "LLM недоступен, DOM доступен: submit работает, converge нет",
+    "DOM недоступен, LLM доступен: чтение/журнал работают, admit нет"
+   ]
+  },
+  {
+   "id": "Q-AN007-07",
+   "finding_ref": "NU-AU006-02",
+   "needs_user": true,
+   "exact_question": "Какой точный изолированный host-эксперимент (профиль/БД/ветка/задача/хук) измеряет H1-H5 (порядок хука, fail-open/closed, отказ старта, задержка, ложные отказы) с kill-switch и TTL, и кто его авторизует?",
+   "why": "F-01 и выбор «хук vs обёртка» требуют свойств хоста, неизмеримых в simulation (NU-02, QA006-01)",
+   "source": "P:docs/DECISION_NU_AU006_01_02_2026-11-08.md:68-103",
+   "evidence": "runtime/AU006/recheck/r06_controls_no_live (init с --no-simulation закрыт: OMH_BINDING_UNVERIFIED)",
+   "positive_controls": [
+    "в изоляции хук регистрируется и снимается",
+    "соседние профили не затронуты"
+   ],
+   "negative_controls": [
+    "без авторизации — не запускать",
+    "живые планы/ветки не участвуют",
+    "после — полная уборка"
+   ],
+   "fault_controls": [
+    "kill-switch срабатывает",
+    "TTL истёк — хук выключен"
+   ]
+  },
+  {
+   "id": "Q-AN007-08",
+   "finding_ref": "AU006-F-02/F-03/F-05",
+   "needs_user": false,
+   "exact_question": "Какие пороги/интервалы (checkpoint, budget дрейфа, частота сверки план-пространство↔DOM) остаются параметрами исследования, а какие обязаны быть константами контракта, и как они тестируются?",
+   "why": "TBO-04:28 «интервал checkpoint/батчинг — параметры исследования»; PLAN_IDENTITY:200 «бюджет дрейфа — тестовый параметр»; нельзя выбирать за заказчика",
+   "source": "P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:28; P:docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md:195-209",
+   "evidence": "docs/PLAN_IDENTITY (открытые вопросы Q14.4-14.5)",
+   "positive_controls": [
+    "константы не меняются без контракта",
+    "параметры покрыты симуляцией"
+   ],
+   "negative_controls": [
+    "ни один порог не выбран мной",
+    "интервал не становится обязательным правилом без решения"
+   ],
+   "fault_controls": [
+    "нет данных — параметр не калибруется"
+   ]
+  },
+  {
+   "id": "Q-AN007-09",
+   "finding_ref": "AU006-F-01/F-03",
+   "needs_user": false,
+   "exact_question": "Как разделяются «выдача/чтение/понимание/достаточность» в контрактах (BaselinePacket, UseReport, receipt) так, чтобы ни один артефакт не выдавался за другой, и как это тестируется негативно (foreign/stale replay, ложное прочитал)?",
+   "why": "TBO-02/REQ:163: квитанция != понимание; AU006-F-01: receipt/хеш не доказывают использование",
+   "source": "P:docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md:152-178; P:REQUIREMENTS.md:163",
+   "evidence": "docs/PLAN_IDENTITY (шаги 1-4 процедуры)",
+   "positive_controls": [
+    "delivery, ack, use_report, use_checked — отдельные сущности (QA006-03)"
+   ],
+   "negative_controls": [
+    "replay чужого receipt",
+    "receipt без фактического чтения",
+    "stale receipt"
+   ],
+   "fault_controls": [
+    "потеря receipt между выдачей и работой"
+   ]
+  },
+  {
+   "id": "Q-AN007-10",
+   "finding_ref": "AU006-F-02/F-04/F-05",
+   "needs_user": false,
+   "exact_question": "Какие негативные E2E фиксируют «не засчитывать друг за друга» (F-02!=F-05, F-03!=F-05, F-04!=F-02): какие физические факты (SQL counts, tx ids, receipts, конфигурация хуков) доказывают каждую находку закрытой отдельно?",
+   "why": "порядок исправлений заказчика и запрет взаимозачёта требуют per-finding доказательств",
+   "source": "порядок F-02→F-05→F-03+F-04→F-01 (карта AN007); матрица зависимостей",
+   "evidence": "runtime/AU006/recheck/*/after.sql.json; probe_results.json",
+   "positive_controls": [
+    "каждый фикс имеет собственный негативный набор",
+    "регресс соседней находки ловится"
+   ],
+   "negative_controls": [
+    "fix F-02 не трогает reducer",
+    "fix F-05 не меняет trace",
+    "fix F-04 не меняет admission"
+   ],
+   "fault_controls": [
+    "изменения только в runtime/AN007 и артефактах"
+   ]
+  }
+ ],
+ "gaps_acknowledged": [
+  "AU006-G-01..G-07 признаны как есть; F-01..F-05 — находки аудитора, не закрыты",
+  "Реальные host-хуки, живой OMH-close, live fail-injection, реальный principal/run — UNVERIFIED и вне моего скоупа без разрешения NU-02",
+  "O1/O2/O3, итеративный поиск, K1/K2/K3, хранитель базлайна — решения сохранены, не переоткрыты; вопросы по ним не повторяются",
+  "AU005-F-01..F-04 — чужая работа RS006 (deleg_1c220c2c); не дублирую, не переписываю, не засчитываю",
+  "G-03 P1: граф-API нет среди 12 инструментов (server.py:36-134); итеративный поиск — предложение RS003, не действующий API"
+ ],
+ "not_covered": [
+  "Живые пробы хоста/хуков (требуют NU-AU006-02 + авторизации)",
+  "Выбор варианта NU-01 (а/б/в/г) и зона восстановления — за заказчиком (needs_user)",
+  "Детальный дизайн фиксов каждого finding — за ресерчером (вопросы RS007)",
+  "Приёмка продукта: product_acceptance=false; проверка пакета AN007 — про артефакт, не про продукт",
+  "Полный ре-аудит AU005/O3 — собственность AU005/RS006",
+  "Миграционные схемы (новые поля receipts, таблицы) — ресерчер после Q-AN007-01/02",
+  "Пороги/интервалы checkpoint — параметры исследования, не выбраны (Q-AN007-08)"
+ ],
+ "debt_status_changes": [],
+ "orchestrator_claim_corrections": [
+  {
+   "claim": "«read-before-write gate есть в макете»",
+   "correction": "Нет в проверенном пути: R01 (no-read) и R02 (with-read) обе ветви DEMO_ADMITTED; dom_submit/review/admit не содержат условия чтения базлайна (admission.py:119-220). Проверено аудитором wire (probe_results.json), мной source-bound."
+  },
+  {
+   "claim": "«хуки fail-open» (AN005)",
+   "correction": "Уточнено AU006: pre_tool callback exception/timeout — block (plugins_dispatch.py:59-67,275-324; plugins.py:1907-2048), но OMH tool_hooks сам превращает некоторые ошибки в allow/no directive (tool_hooks.py:61-116,133-199), model_tools.py:759-794 продолжает при исключении dispatch. НЕ объявлять живую политику доказанной без NU-02."
+  },
+  {
+   "claim": "«в OMH вообще нет checkpoint/приёмочных механизмов»",
+   "correction": "Есть native dossier: todo_evidence (связь по времени, todo_evidence.py:140 - window_empty закрывает), completion_store (checkpoint model_declared_accepted, not_verified — completion_store.py:258,295-296), предупреждения на файловые правки (plan_stage_gate). Но ни один не связывает DOM baseline/приёмку — это и есть gap, а не отсутствие всего."
+  }
+ ],
+ "customer_quotes_verbatim": {
+  "obyazatelnost_sverki": "«тут нехватает правила и требования которое обеспечивает обязанность ведения этих веток и правил которые регламентируют выполнение новой задачи предварительно сверевшись с калймами связанными с пунктом плана» (REQUIREMENTS.md:161, TASK_BASELINE_OBLIGATION:7)",
+  "kvitanciya_ne_ponimanie": "«Квитанция выдачи контекста не доказывает понимание агентом; не подменять аудит наличием поля “прочитал”» (REQUIREMENTS.md:163)",
+  "instrument_ne_prepyatstvie": "«инструмент для долгого проекта, а не препятствие» (DECISION_NU:50)"
+ },
+ "written_at": "2026-11-08T15:00:00+03:00"
+}

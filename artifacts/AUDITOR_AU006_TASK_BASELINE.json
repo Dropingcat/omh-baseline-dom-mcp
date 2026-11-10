@@ -1,0 +1,2456 @@
+{
+  "schema": "auditor-au006-task-baseline/1.0",
+  "role": "AUDITOR",
+  "task": "AU006",
+  "status": "DONE_WITH_LIMITS",
+  "completion_state": "COMPLETE_WITHIN_DECLARED_LOCAL_AND_SOURCE_SCOPE",
+  "verdict": "REQUEST_CHANGES",
+  "first_artifact": "runtime/AU006/first_artifact.json",
+  "exact_scope": "Mandatory OMH task-baseline read/use/update/finish lifecycle; actual local raw stdio MCP simulation and disposable SQL; source-bound installed OMH/host/factory connections; no product fixes or live acceptance",
+  "source_revision": {
+    "mockup_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+    "method": "SEC003 relpath_posix -> sha256 map -> json.dumps(sort_keys=True) -> sha256",
+    "matches_requested_revision": true,
+    "ledger": "runtime/AU006/source_ledger.json",
+    "driver_freeze": "runtime/AU006/drivers_frozen.json",
+    "final_recheck": "runtime/AU006/source_revision_end.json",
+    "snapshot_count": 55
+  },
+  "customer_requirement_verbatim": "«и так - остается вопрос-  взаимодейсвтия-  DOM и OMH -   первй этап мы обсудили-  пункты плана  OMH создают базовые ветки клаймов- дальше агент в проессе выполнения задачи обновляет и ведет эти ветки - тут нехватает правила и требования которое обеспечивает обязанность ведения этих веток и  правил   которые регламентируют выполнение новой задачи предварительно сверевшись с калймами связанными с пунктом плана ?  это нужно уточнить и прогнать аудитора  проверь не забыл ли я что то ещё по этому вектору?»",
+  "customer_requirement_source": {
+    "ref": "P:docs/TASK_BASELINE_OBLIGATION_2026-11-08.md:5-9",
+    "sha256": "5cb826a269ab1313523200c6ecd34481d5f2a7995e08f2b36fa3d6bc665d57b2",
+    "snapshot": "runtime/AU006/sources/P/docs/TASK_BASELINE_OBLIGATION_2026-11-08.md"
+  },
+  "decisions_preserved": [
+    "O1: never conceal stale to produce false READY",
+    "O2: always show provenance of available/explicitly shared claim, not whole source branch",
+    "O3: receipt binds tx/recipient/source revision/view scope/delivered bytes hash"
+  ],
+  "checked_suspicions": [
+    {
+      "suspected": "В макете есть read-before-write gate, не замеченный parent?",
+      "checked": "Own R01/R02 raw MCP plus submit/schema/admit",
+      "found": "Нет в проверенном пути; обе ветви admitted. Не обобщать на все сессии."
+    },
+    {
+      "suspected": "external_task_ref/requirements/deps доказывают контекст?",
+      "checked": "R03 and R05; SQL references read back",
+      "found": "Нет; фиксированный wrong TASK блокируется, неизвестные requirements/evidence допускаются; пропущенный dep не проверяется."
+    },
+    {
+      "suspected": "Pending/rejected результат блокирует readiness?",
+      "checked": "R04 material artifact, pending and rejected, no-new-knowledge comment",
+      "found": "Нет; READY сохраняется. Реальное закрытие OMH не запускалось."
+    },
+    {
+      "suspected": "Рестарт теряет candidate или создаёт повтор?",
+      "checked": "Kill author; new PIDs; SQL; replay and rebase",
+      "found": "Данные не потеряны, повтор tx не создаёт дубль; discovery pending через resume отсутствует."
+    },
+    {
+      "suspected": "Все хуки хоста fail-open, как AN005?",
+      "checked": "Installed host plugins_dispatch.py + plugins.py + model_tools.py, OMH tool hooks",
+      "found": "Слишком широко: pre_tool callback exception/timeout fail-closed; internal OMH rules/home failures can allow, outer dispatch exception falls through; pre_verify is bounded guidance. Источник AN005 уточнён, не повторён на веру."
+    },
+    {
+      "suspected": "В OMH вообще нет baseline/checkpoint/приёмочных механизмов?",
+      "checked": "todo_store, todo_tool, completion_store, evidence reducer; harness controller sources",
+      "found": "Есть native dossier, evidence windows, prefix guards and factory typed gates; не DOM ContextPack/AcceptedBasis or trusted DOM lifecycle wiring."
+    },
+    {
+      "suspected": "Наличие passing tool evidence закрывает именно задачу?",
+      "checked": "Own standalone reducer over disposable SQL fixtures, negative failed/unknown controls",
+      "found": "Нет смысловой связи: unrelated pass closes, rejected MCP-only window empty. Это не live host close."
+    },
+    {
+      "suspected": "Рабочий graph API можно использовать вместо простого query?",
+      "checked": "Raw tools/list, schema, ITERATIVE spec",
+      "found": "Нет среди 12 tools. GAP, не реализован и не симулирован."
+    }
+  ],
+  "tbo_matrix": [
+    {
+      "id": "TBO-01",
+      "title": "Привязка задачи и основания",
+      "text": "Перед выдачей исполняемой задачи определить глобальную работу, действительный пункт OMH, снимок его текста/хеш, ветку работы и связанные клаймы на точных версиях. Номер позиции пункта без текста/версии не является устойчивой привязкой. Новая задача/подзадача получает явную связь с материнским базлайном; повторный старт не создаёт повторные корни.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "WORK/TASK/POLICY fixture binding; branch heads; idempotent dom_init for same fixture"
+      ],
+      "runtime_checked": [
+        "Repeated init leaves one binding and two heads; wrong fixture TASK is SCOPE_DENIED"
+      ],
+      "host_connection": "Existing todo and continuation dossier are native OMH, but no traced DOM import/handshake between them; no real plan edited.",
+      "gaps": [
+        "No OMH item-text/hash/version ingestion or stable task pin; no run binding; real todo uses position+prefix and same-text pairing, not globally stable item identity; roots across real sessions unverified"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/storage.py:54-99",
+          "sha256": "df09acf9406d8113d266a04779be753b1eb4c4c0d81bdd267e717a92271752e0",
+          "snapshot": "runtime/AU006/sources/P/mockup/storage.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "O:todo_store.py:230-281,327-423,880-1076,1138-1157",
+          "sha256": "bcbb5f5b7ac2a9224e951ef083645621180e73fbb28b86e641115829676530d7",
+          "snapshot": "runtime/AU006/sources/O/todo_store.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r01_no_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r03_bases/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ]
+    },
+    {
+      "id": "TBO-02",
+      "title": "Предварительная сверка и выдача контекста",
+      "text": "До существенных исполнительных изменений агент получает актуальный доступный контекст задачи: требование, принятые основания, происхождение, релевантный граф, конфликты/stale/остаток. Поиск использует ITERATIVE_CLAIM_SEARCH_2026-11-08.md. Фиксируется факт выдачи и точные версии. Чек «прочитал»/хеш/квитанция доказывает доставку/декларацию, НЕ понимание модели. В выводах агента должны быть ссылки на использованные основания; их достаточность проверяется независимо.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "dom_query historical snapshots, provenance, resume snapshots"
+      ],
+      "runtime_checked": [
+        "No-read author with pre-existing admitted baseline and explicit-read control both admitted another claim with empty bases"
+      ],
+      "host_connection": "pre_llm_call injects bounded role/todo/status guidance, not DOM task-claim context (O:hooks/llm_hooks.py:488-729).",
+      "gaps": [
+        "No mandatory context issue/read/use gate; no ContextPack/AcceptedBasis consumer; iterative graph search API absent; receipt cannot prove understanding"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/dom_contract.py:6-17,63-121",
+          "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+          "snapshot": "runtime/AU006/sources/P/mockup/dom_contract.py"
+        },
+        {
+          "ref": "P:mockup/server.py:36-134",
+          "sha256": "a8d733b75d5b42e9ddc3affcf8afb106664912a894e2f23a936434b6a955e4a6",
+          "snapshot": "runtime/AU006/sources/P/mockup/server.py"
+        },
+        {
+          "ref": "P:runtime/RS003/contracts.schema.json:3-5,154-376,445-554",
+          "sha256": "954870f699ba2bff246a7912e6cec978df3086aa45996f3167fecd407c001924",
+          "snapshot": "runtime/AU006/sources/P/runtime/RS003/contracts.schema.json"
+        },
+        {
+          "ref": "P:docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md:3-53",
+          "sha256": "faf245b1087a7be4e3af7de0dc3f0820fcafdab45c245cc08979ba0405ffe3be",
+          "snapshot": "runtime/AU006/sources/P/docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r01_no_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r02_with_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ]
+    },
+    {
+      "id": "TBO-03",
+      "title": "Контроль исполнения на доверенной границе",
+      "text": "Обязанность нельзя обеспечивать одним промптом или fail-open хуком. Выяснить, где host/dispatch/admission/completion реально проверяют привязку и актуальность контекста. Предлагаемый контекстный token/receipt, если нужен, должен связываться с задачей, principal/run, точным контекстом и политикой и не выдаваться себе самим агентом. Не считать строку роли полномочием.\nПоиск, диагностика, получение отсутствующего контекста и восстановление должны оставаться доступны до этой проверки: запрет всего на старте создаёт тупик. Терминал/файловые инструменты могут обойти MCP — где нет контроля на хосте, заявлять policy-only/GAP, не «обход невозможен».",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Scope/capability/schema and exact digest checks; same-root review refusal; non-simulation init fails closed"
+      ],
+      "runtime_checked": [
+        "Self-root review and author admission refused; live binding refused; no-read admission passes in fixture"
+      ],
+      "host_connection": "Real pre_tool callback exceptions/timeouts can block at host; OMH rules catch some failures and return allow; outer dispatch errors can also fall through. None of these paths checks DOM baseline; no live hook run.",
+      "gaps": [
+        "No attested task/run/context admission condition; launch roles are simulation, not identity; terminal/files can bypass MCP"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "O:hooks/tool_hooks.py:61-116,119-331",
+          "sha256": "3c21e50111529876ccf87d3d797d54f6b049e54e153966506439fb15b8ea837d",
+          "snapshot": "runtime/AU006/sources/O/hooks/tool_hooks.py"
+        },
+        {
+          "ref": "X:hermes_cli/plugins_dispatch.py:59-67,275-324",
+          "sha256": "aa12d2c3b48f0af1cfcb837a0b67459c59172b0d40825b7f9b6c09076e141742",
+          "snapshot": "runtime/AU006/sources/X/hermes_cli/plugins_dispatch.py"
+        },
+        {
+          "ref": "X:hermes_cli/plugins.py:1907-2048",
+          "sha256": "0da0ebe88da76f4a73d77fcc6942ef549154abbc573d52d74c1608bcb61efce4",
+          "snapshot": "runtime/AU006/sources/X/hermes_cli/plugins.py"
+        },
+        {
+          "ref": "X:model_tools.py:759-794",
+          "sha256": "252418e89742093a27cbb82b6abd3f7b4512045282fef119a2630ac9deb5fd0f",
+          "snapshot": "runtime/AU006/sources/X/model_tools.py"
+        },
+        {
+          "ref": "O:plan_stage_gate.py:156-235",
+          "sha256": "56a7143167f686c35d14017e62d23ec49bfe5f6d50c1fb2d34f76661f604917c",
+          "snapshot": "runtime/AU006/sources/O/plan_stage_gate.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r06_controls/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r01_no_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ]
+    },
+    {
+      "id": "TBO-04",
+      "title": "Ведение ветки по существенным изменениям",
+      "text": "Существенное новое основание, решение, результат, противоречие, изменение условий или уточнение записываются кандидатами с task/branch, исходными версиями, автором, причиной и evidence. Допуск независим. Не заставлять агента создавать новый клайм на каждый tool call или таймер: пустые повторы ухудшают базу. Интервал checkpoint/батчинг — параметры исследования, не выбранная норма. Журнал хода, heartbeat и принятый факт — разные вещи.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Immutable candidates/claims/events; reason, author, time and source version; admission outbox"
+      ],
+      "runtime_checked": [
+        "Artifact-only result is invisible to trace; pending candidate not treated as completed branch maintenance"
+      ],
+      "host_connection": "Host file-write evidence is generic activity, not required DOM branch maintenance.",
+      "gaps": [
+        "No meaningful-update checkpoint/no-op semantics or actual tool-result/artifact-to-branch reconciliation; automatic review is demo-only"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:254-283",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r04_completion/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ]
+    },
+    {
+      "id": "TBO-05",
+      "title": "Отклонения и конкуренция",
+      "text": "Если агент расходится с принятым базлайном — явная причина/новое свидетельство, не молчаливая замена. Перед записью сверить затронутые версии; конфликт приводит к reread/rebase/revalidation с сохранением уже сделанной работы. Изменение посторонней ветки не должно беспричинно перезапускать всю задачу. FORKED и pending-кандидат не выдавать за единственную принятую истину.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Expected branch revision and declared branch dependencies checked inside admission transaction"
+      ],
+      "runtime_checked": [
+        "Revision conflict preserves candidate; explicit AB pin becomes STALE_REVIEW; omitting pin after old AB read admits; manual rebase succeeds"
+      ],
+      "host_connection": "No traced host contract binds actual consumed bases to declared dependencies or handles rebase automatically.",
+      "gaps": [
+        "Caller can omit actual bases; no claim-version affected-only revalidation; immutable old pin remediation remains TD-DOM-15; no FORKED/refinement API"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/dom_contract.py:6-17,63-121",
+          "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+          "snapshot": "runtime/AU006/sources/P/mockup/dom_contract.py"
+        },
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        },
+        {
+          "ref": "P:tech_debt.md:12-24",
+          "sha256": "6c32af2751555ae60b19b2604e7e690e6e13a02de38ccd7fc452230c94e8d317",
+          "snapshot": "runtime/AU006/sources/P/tech_debt.md"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r05_restart_stale/after_conflict.sql.json"
+      ]
+    },
+    {
+      "id": "TBO-06",
+      "title": "Изменение плана/условий/прав",
+      "text": "Правка или перестановка пункта OMH не перепривязывает старый клайм по номеру автоматически. Изменившиеся основания и критерии требуют целевой проверки. Изменение гранта/авторства после выдачи контекста не наследует старые полномочия. Происхождение доступного клайма видно всегда — решение O2; это не право читать всю исходную ветку.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "source_bound",
+        "UNVERIFIED_live",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Provenance fields and static launch grants in fixture"
+      ],
+      "runtime_checked": [],
+      "host_connection": "Host todo advance checks current position/prefix; completion dossier compares caller-declared revision/environment. Neither is DOM criterion/grant revalidation.",
+      "gaps": [
+        "No live plan pin_behind, grant-revocation-after-read, criteria revision or task reassignment enforcement; prefix guard is not full-text revision binding; O2 accepted, not re-opened"
+      ],
+      "sources": [
+        {
+          "ref": "O:todo_store.py:230-281,327-423,880-1076,1138-1157",
+          "sha256": "bcbb5f5b7ac2a9224e951ef083645621180e73fbb28b86e641115829676530d7",
+          "snapshot": "runtime/AU006/sources/O/todo_store.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "P:runtime/RS003/contracts.schema.json:3-5,154-376,445-554",
+          "sha256": "954870f699ba2bff246a7912e6cec978df3086aa45996f3167fecd407c001924",
+          "snapshot": "runtime/AU006/sources/P/runtime/RS003/contracts.schema.json"
+        },
+        {
+          "ref": "P:docs/DECISION_BRIEF_2026-11-08.md:97-116",
+          "sha256": "ab32820f5ed0464ee91f99d19e7a17b6c689e0320eb534477adbc4c312ffab3b",
+          "snapshot": "runtime/AU006/sources/P/docs/DECISION_BRIEF_2026-11-08.md"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/source_search.json"
+      ]
+    },
+    {
+      "id": "TBO-07",
+      "title": "Завершение и отсутствие новых знаний",
+      "text": "Результат задачи связан с исходными требованиями и доказательствами: что использовано, что добавлено/уточнено, что проверено, что осталось. Разрешено «новых утверждений нет» с привязкой к прежним основаниям и фактическому результату; нельзя принуждать к выдуманным клаймам. Эта декларация сама по себе не доказывает отсутствия изменений: сопоставить с артефактами/выводами. Непринятые кандидаты и недоставленные результаты не считаются завершённым обязательным ведением ветки.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "trace reports coverage/currentness/conflicts/convergence/sync; owner_close_called=false"
+      ],
+      "runtime_checked": [
+        "READY-for-review remains true with material unrecorded result, pending candidate, rejected input and uncorroborated no-new-knowledge comment; host reducer fixture closes generic pass/file-write or empty MCP-only window"
+      ],
+      "host_connection": "Todo binds observed tool call ids in time windows; this does not prove command relevance or DOM admission/delivery; checkpoint remains model_declaration/not_verified.",
+      "gaps": [
+        "No independent result-vs-baseline/no-new-knowledge assessment; no task-scoped pending/rejected disposition at close; no live false-DONE/close test"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:254-283",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "O:todo_evidence.py:9-68,94-98,165-209,248-297,350-427,497-529",
+          "sha256": "644da0f2aa62d81cb2c06a15bd16dc9cbd374a10019c041ff01ef094cb61c965",
+          "snapshot": "runtime/AU006/sources/O/todo_evidence.py"
+        },
+        {
+          "ref": "O:todo_reconciliation.py:609-710,821-908",
+          "sha256": "7c9186149b2879734cffaf2503dc54e9b4cfee53be9a7de302844723194c42f7",
+          "snapshot": "runtime/AU006/sources/O/todo_reconciliation.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r04_completion/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/host_fixture_recheck/results.json"
+      ]
+    },
+    {
+      "id": "TBO-08",
+      "title": "Доставка и закрытие",
+      "text": "DOM-запись, доставка представления и закрытие задачи OMH раздельны. По принятому O3 receipt связывается с tx, получателем, исходной ревизией, областью и хешем доставленных байтов. Закрывает OMH по критериям и независимым evidence, а не автор/куратор своим флагом completed. Нет живого порта — SIMULATION/GAP.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Local atomic outbox, delivery attempts/observations/acks; DOM does not call owner close"
+      ],
+      "runtime_checked": [
+        "Simulated sync readback; trace never called owner close"
+      ],
+      "host_connection": "Delivery and owner acceptance correctly not conflated in mockup; live bridge/independent acceptance gate remains GAP/UNVERIFIED.",
+      "gaps": [
+        "OMHPort is local JSON target only; no real owner-close consumer tested; O3 full projection receipt correctness owned by AU005, not re-audited here"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:324-381",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:254-283",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r04_completion/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ]
+    },
+    {
+      "id": "TBO-09",
+      "title": "Сбой и повторная сессия",
+      "text": "После kill/падения провайдера/переподключения восстановить ту же работу и ветку, входной базлайн, pending-кандидатов и недоставленные операции. Повтор не дублирует факты/эффекты и не теряет сделанное. Недоступность LLM-куратора не должна запрещать чтение/фиксирование хода разрешённой работы. Сбой DOM и разрешённая работа вне него требуют явной политики: не утверждать fail-open/fail-stop без решения; в любом случае нельзя ложное DONE. Варианты исследовать.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "SQLite durable candidate storage; submission/admission idempotency; scoped resume snapshots/outbox"
+      ],
+      "runtime_checked": [
+        "Actual author process killed; new PID resumes same store; identical submit recovers candidate; conflict preserves it; manual reread/rebase works; repeated admit same tx; payload mismatch refused"
+      ],
+      "host_connection": "Native OMH continuation dossier exists; not a DOM resume/input-use bridge. No provider call required for local DOM reads/admission.",
+      "gaps": [
+        "Resume does not enumerate pending candidate/payload/key; no pending discovery API; DOM/LLM outage policy and all crash windows not tested"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:383-392",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/server.py:36-134",
+          "sha256": "a8d733b75d5b42e9ddc3affcf8afb106664912a894e2f23a936434b6a955e4a6",
+          "snapshot": "runtime/AU006/sources/P/mockup/server.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r05_restart_stale/resume_after_kill.json"
+      ]
+    },
+    {
+      "id": "TBO-10",
+      "title": "Делегирование и контроль обходов",
+      "text": "Субагент наследует задачу/основания явной передачей с отдельными правами; его результат связан с родителем и независимо проверен. Пробовать: start без контекста, с контекстом чужой задачи, старой версии/другого principal, повтор ключа, ложное «прочитал», обход через прямые tools, закрытие только самоотчётом. Логи всех переходов связаны с task/run/версией, с соблюдением scopes.",
+      "normative_status": "Customer obligation formalized as proposed TBO rule; proposed fields/thresholds are not implemented guarantees",
+      "status": [
+        "implemented_partial",
+        "wired_local_simulation",
+        "runtime_checked_partial",
+        "GAP",
+        "policy_only_remaining"
+      ],
+      "implemented": [
+        "Fixture server identity fixed at launch; no tool role override; root separation"
+      ],
+      "runtime_checked": [
+        "No-read path, wrong TASK, unknown receipt-field, stale/omitted deps and repeat-key negatives; standalone host reducer sensitivity controls"
+      ],
+      "host_connection": "subagent_start/stop observe lifecycle, never require DOM baseline; no live delegation performed.",
+      "gaps": [
+        "No explicit child DOM baseline handoff/capabilities tied to parent; foreign task/principal read receipt replay cannot be tested because receipt API absent; actual dispatch/terminal containment unverified"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "P:mockup/server.py:36-134",
+          "sha256": "a8d733b75d5b42e9ddc3affcf8afb106664912a894e2f23a936434b6a955e4a6",
+          "snapshot": "runtime/AU006/sources/P/mockup/server.py"
+        },
+        {
+          "ref": "O:hooks/tool_hooks.py:61-116,119-331",
+          "sha256": "3c21e50111529876ccf87d3d797d54f6b049e54e153966506439fb15b8ea837d",
+          "snapshot": "runtime/AU006/sources/O/hooks/tool_hooks.py"
+        },
+        {
+          "ref": "O:hooks/session_hooks.py:28-80",
+          "sha256": "4983213c4edab0deeb51ddf448ff3a54f702c1ad0fcd55d5f07cef9cfc4be405",
+          "snapshot": "runtime/AU006/sources/O/hooks/session_hooks.py"
+        },
+        {
+          "ref": "O:todo_evidence.py:9-68,94-98,165-209,248-297,350-427,497-529",
+          "sha256": "644da0f2aa62d81cb2c06a15bd16dc9cbd374a10019c041ff01ef094cb61c965",
+          "snapshot": "runtime/AU006/sources/O/todo_evidence.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r03_bases/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r06_controls/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/host_fixture_recheck/results.json"
+      ]
+    }
+  ],
+  "own_runs": [
+    {
+      "case": "r01_no_read",
+      "label": "seed_author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 15348,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r01_no_read\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r01_no_read\\seed_author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r01_no_read\\seed_author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r01_no_read\\seed_author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r01_no_read",
+      "label": "reviewer",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 13820,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r01_no_read\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r01_no_read\\reviewer.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r01_no_read\\reviewer.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r01_no_read\\reviewer.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r01_no_read",
+      "label": "new_author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 14132,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r01_no_read\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r01_no_read\\new_author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r01_no_read\\new_author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r01_no_read\\new_author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r02_with_read",
+      "label": "seed_author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 13964,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r02_with_read\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r02_with_read\\seed_author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r02_with_read\\seed_author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r02_with_read\\seed_author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r02_with_read",
+      "label": "reviewer",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 4152,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r02_with_read\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r02_with_read\\reviewer.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r02_with_read\\reviewer.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r02_with_read\\reviewer.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r02_with_read",
+      "label": "new_author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 5804,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r02_with_read\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r02_with_read\\new_author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r02_with_read\\new_author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r02_with_read\\new_author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_query",
+          "status": "SNAPSHOT",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r03_bases",
+      "label": "author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 9992,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r03_bases\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r03_bases\\author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r03_bases\\author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r03_bases\\author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "SCOPE_DENIED",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_submit",
+          "status": "REJECTED",
+          "isError": false
+        },
+        {
+          "id": 6,
+          "tool": "dom_submit",
+          "status": "REJECTED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r03_bases",
+      "label": "reviewer",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 8144,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r03_bases\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r03_bases\\reviewer.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r03_bases\\reviewer.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r03_bases\\reviewer.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r04_completion",
+      "label": "author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 1708,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r04_completion\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r04_completion\\author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r04_completion\\author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r04_completion\\author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_trace",
+          "status": "ready_for_owner_review",
+          "isError": false
+        },
+        {
+          "id": 6,
+          "tool": "dom_trace",
+          "status": "ready_for_owner_review",
+          "isError": false
+        },
+        {
+          "id": 7,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 8,
+          "tool": "dom_resume",
+          "status": "RESUMED",
+          "isError": false
+        },
+        {
+          "id": 9,
+          "tool": "dom_submit",
+          "status": "REJECTED",
+          "isError": false
+        },
+        {
+          "id": 10,
+          "tool": "dom_trace",
+          "status": "ready_for_owner_review",
+          "isError": false
+        },
+        {
+          "id": 11,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 12,
+          "tool": "dom_trace",
+          "status": "ready_for_owner_review",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r04_completion",
+      "label": "reviewer",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 13148,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r04_completion\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r04_completion\\reviewer.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r04_completion\\reviewer.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r04_completion\\reviewer.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 6,
+          "tool": "dom_sync",
+          "status": "SYNCED",
+          "isError": false
+        },
+        {
+          "id": 7,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 8,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 9,
+          "tool": "dom_sync",
+          "status": "SYNCED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r05_restart_stale",
+      "label": "author_before_kill",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 6296,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r05_restart_stale\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r05_restart_stale\\author_before_kill.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r05_restart_stale\\author_before_kill.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r05_restart_stale\\author_before_kill.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 1,
+      "killed_for_test": true
+    },
+    {
+      "case": "r05_restart_stale",
+      "label": "reviewer_before_kill",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 844,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r05_restart_stale\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_before_kill.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_before_kill.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_before_kill.stderr.log",
+      "operations": [],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r05_restart_stale",
+      "label": "author_after_kill",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 6860,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r05_restart_stale\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r05_restart_stale\\author_after_kill.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r05_restart_stale\\author_after_kill.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r05_restart_stale\\author_after_kill.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_resume",
+          "status": "RESUMED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_query",
+          "status": "SNAPSHOT",
+          "isError": false
+        },
+        {
+          "id": 6,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 7,
+          "tool": "dom_submit",
+          "status": "IDEMPOTENCY_MISMATCH",
+          "isError": false
+        },
+        {
+          "id": 8,
+          "tool": "dom_query",
+          "status": "SNAPSHOT",
+          "isError": false
+        },
+        {
+          "id": 9,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 10,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 11,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r05_restart_stale",
+      "label": "reviewer_after_kill",
+      "role_fixture": "reviewer",
+      "simulation": true,
+      "pid": 12212,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r05_restart_stale\\fixture",
+        "--role",
+        "reviewer",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_after_kill.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_after_kill.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r05_restart_stale\\reviewer_after_kill.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 5,
+          "tool": "dom_admit",
+          "status": "REVISION_CONFLICT",
+          "isError": false
+        },
+        {
+          "id": 6,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 7,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 8,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 9,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 10,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 11,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 12,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        },
+        {
+          "id": 13,
+          "tool": "dom_admit",
+          "status": "STALE_REVIEW",
+          "isError": false
+        },
+        {
+          "id": 14,
+          "tool": "dom_review",
+          "status": "DEMO_REVIEWED",
+          "isError": false
+        },
+        {
+          "id": 15,
+          "tool": "dom_admit",
+          "status": "DEMO_ADMITTED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r06_controls",
+      "label": "author",
+      "role_fixture": "author",
+      "simulation": true,
+      "pid": 7688,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r06_controls\\fixture",
+        "--role",
+        "author",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r06_controls\\author.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r06_controls\\author.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r06_controls\\author.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "INITIALIZED",
+          "isError": false
+        },
+        {
+          "id": 3,
+          "tool": "dom_submit",
+          "status": "RECORDED_CANDIDATE",
+          "isError": false
+        },
+        {
+          "id": 4,
+          "tool": "dom_admit",
+          "status": "INDEPENDENCE_NOT_ENFORCED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r06_controls",
+      "label": "same_root_helper",
+      "role_fixture": "helper",
+      "simulation": true,
+      "pid": 1096,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r06_controls\\fixture",
+        "--role",
+        "helper",
+        "--simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r06_controls\\same_root_helper.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r06_controls\\same_root_helper.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r06_controls\\same_root_helper.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_review",
+          "status": "INDEPENDENCE_NOT_ENFORCED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "r06_controls_no_live",
+      "label": "non_simulation",
+      "role_fixture": "author",
+      "simulation": false,
+      "pid": 8056,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.server",
+        "--directory",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\recheck\\r06_controls_no_live\\fixture",
+        "--role",
+        "author",
+        "--no-simulation"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "raw_stdin": "runtime\\AU006\\recheck\\r06_controls_no_live\\non_simulation.stdin.jsonl",
+      "raw_stdout": "runtime\\AU006\\recheck\\r06_controls_no_live\\non_simulation.stdout.jsonl",
+      "raw_stderr": "runtime\\AU006\\recheck\\r06_controls_no_live\\non_simulation.stderr.log",
+      "operations": [
+        {
+          "id": 2,
+          "tool": "dom_init",
+          "status": "OMH_BINDING_UNVERIFIED",
+          "isError": false
+        }
+      ],
+      "initialize": {
+        "jsonrpc": "2.0",
+        "id": 1,
+        "result": {
+          "protocolVersion": "2024-11-05",
+          "capabilities": {
+            "experimental": {},
+            "tools": {
+              "listChanged": false
+            }
+          },
+          "serverInfo": {
+            "name": "omh-dom-mockup",
+            "version": "0.1.0"
+          },
+          "instructions": "Synthetic DOM/OMH laboratory. All evidence is simulated; no live OMH, Git or issuer calls. Identity is assigned at launch, never by a tool call."
+        }
+      },
+      "exit_code": 0,
+      "killed_for_test": false
+    },
+    {
+      "case": "host_evidence_standalone",
+      "pid": 1844,
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AU006\\probe_host_evidence.py"
+      ],
+      "exit_code": 0,
+      "scope": "standalone existing evidence reducer over disposable state.db; not live hooks, not live OMH closure",
+      "evidence": "runtime/AU006/host_fixture_recheck/results.json"
+    }
+  ],
+  "observations_summary": {
+    "canonical_run": "runtime/AU006/recheck",
+    "stdio_checks": 53,
+    "stdio_passed": 53,
+    "stdio_processes": 17,
+    "host_fixture_cases": 5,
+    "host_fixture_passed": 5,
+    "note": "Probe checks PASS means observed expected attack/control outcomes, not TBO/product PASS. Earlier independent first run remains under runtime/AU006 and host_fixture; canonical repeat freezes corrected typed probe drivers before execution."
+  },
+  "findings": [
+    {
+      "id": "AU006-F-01",
+      "severity": "blocking",
+      "title": "Предварительная сверка не является условием submit/review/admit",
+      "classification": "KNOWN_GAP_RECONFIRMED_NEW_STDIO_PATH",
+      "invariant": "TBO-02/03/10: before substantive execution, issued task baseline must be checked on a trusted boundary.",
+      "repro": "R01: seed admitted A in AA rev1 with different process; fresh author init -> submit result B at rev1 with dependencies={} and requirement_refs=[]; reviewer init session -> review -> admit, no dom_query/snapshot/resume. R02 repeats on independent fixture after explicit query.",
+      "expected": "Without required issued/used task baseline the execution/admission path cannot count as compliant.",
+      "actual": "Both paths DEMO_ADMITTED at rev2; no-read raw frames contain no baseline read. No input or persisted read condition differentiates the paths. Does NOT establish that all agents never read or understand context.",
+      "evidence": [
+        "runtime/AU006/recheck/r01_no_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r02_with_read/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/dom_contract.py:6-17,63-121",
+          "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+          "snapshot": "runtime/AU006/sources/P/mockup/dom_contract.py"
+        }
+      ],
+      "prior_ref": "AN005 C-04/CD-06, TBO doc §2 (known absence, now direct own wire repro)",
+      "impact": "Obligation currently rests on agent obedience; valid hashes/independent fixture root do not establish prior context use.",
+      "required_next_check": "Authorized isolated host E2E: allow discovery/read/recovery, refuse material write without exact task baseline issuance/use basis, then allow current authorized context; record real principal/run. No blanket deny-all gate."
+    },
+    {
+      "id": "AU006-F-02",
+      "severity": "major",
+      "title": "Проверяются заявленные зависимости, но их достаточность обходится пропуском",
+      "classification": "KNOWN_TD15_AND_BASIS_GAP_NEW_REPRO",
+      "invariant": "TBO-01/02/05/07: current relevant bases and exact requirement coverage, not just field shape.",
+      "repro": "R03 unknown requirement R-NOT-IN-PLAN + demo:nonexistent-claim evidence is submitted/reviewed/admitted; missing field rejected. R05 read AB rev0; move AB to rev1; candidate with AB:0 rejected, same workflow omitting dependency admitted.",
+      "expected": "Declared references must be resolvable/adequate or explicitly root/hypothesis/disputed; independent semantic review must not be inferred from schema.",
+      "actual": "Unknown bases admitted by demo path. STALE_REVIEW correctly protects a declared pin, but dependencies={} bypasses the stale test; empty requirement_refs also admitted. Not a claim that real independent human review would approve false content.",
+      "evidence": [
+        "runtime/AU006/recheck/r03_bases/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/dom_contract.py:6-17,63-121",
+          "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+          "snapshot": "runtime/AU006/sources/P/mockup/dom_contract.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        }
+      ],
+      "prior_ref": "TD-DOM-15; AN005 CD-05/CD-06; RS003 AcceptedBasis/Grounds are proposals",
+      "impact": "Fresh-looking candidate can omit actual known old inputs; fields/policy digest are not a task baseline pin or independent adequacy proof.",
+      "required_next_check": "After trusted issuance, test missing/unknown/wrong task/outdated bases separately from valid root inputs and independent dissent. A known wrong fixture TASK refusal is not arbitrary OMH integration."
+    },
+    {
+      "id": "AU006-F-03",
+      "severity": "major",
+      "title": "READY-for-review не учитывает несведённый результат и pending кандидата",
+      "classification": "NEW_COMPLETION_BOUNDARY_REPRO_WITH_PRIOR_LIMITS",
+      "invariant": "TBO-04/07: unadmitted/pending/rejected work cannot stand in for completed branch maintenance.",
+      "repro": "R04: admitted R1/R2 coverage + converge + sync => READY. Write actual disposable new_result.txt without DOM; submit material contradictory pending candidate; attempt incomplete rejected result; append bare no-new-knowledge comment and sync. Query trace/resume between stages; independent SQL.",
+      "expected": "A task close controller must reconcile actual result and every mandatory candidate disposition; pending is not accepted truth.",
+      "actual": "At every stage READY-for-owner-review remains true. Final SQL candidates=4, transactions=3, claims=1; pending candidate persists with no admitted tx. Resume does not surface it. owner_close_called remains false: NOT a reproduced real OMH close.",
+      "evidence": [
+        "runtime/AU006/recheck/r04_completion/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:254-283",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:383-392",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        }
+      ],
+      "prior_ref": "TD-DOM-14 scope and TD-DOM-18 convergence latch are related but distinct; no new TD registered",
+      "impact": "A host treating READY as sufficient global compliance can miss branch maintenance. Correctness of narrow admitted-fact trace is not enough for task lifecycle obligation.",
+      "required_next_check": "Authorized isolated host completion E2E for artifact-only, pending-only, rejected-only, justified no-new-knowledge, and pure self-report; prove exact owner refusal/acceptance and no forged close."
+    },
+    {
+      "id": "AU006-F-04",
+      "severity": "major",
+      "title": "После рестарта pending сохранён в SQL, но не обнаруживается через resume",
+      "classification": "FUNCTIONAL_RECOVERY_GAP_RUNTIME_CONFIRMED",
+      "invariant": "TBO-09: recover same work, pending candidates and exact baseline after process loss.",
+      "repro": "R05 persist candidate, kill author PID, start new author PID, dom_resume(AA), inspect SQL; resubmit with externally retained original payload/key, provoke conflict, reread/rebase new candidate, repeat admission.",
+      "expected": "Resume/discovery should expose authorized pending work and enough recovery identity, not require old client memory.",
+      "actual": "SQL retains pending candidate; resume returns snapshot/trace/sync/read_snapshot only, no pending ids/payload/keys. Original key+payload replay recovers same id; manual rebase preserves body; repeated admission returns same tx. No loss of SQL facts was observed.",
+      "evidence": [
+        "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+        "runtime/AU006/recheck/probe_results.json",
+        "runtime/AU006/recheck/r05_restart_stale/after_conflict.sql.json",
+        "runtime/AU006/recheck/r05_restart_stale/resume_after_kill.json"
+      ],
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:383-392",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/server.py:36-134",
+          "sha256": "a8d733b75d5b42e9ddc3affcf8afb106664912a894e2f23a936434b6a955e4a6",
+          "snapshot": "runtime/AU006/sources/P/mockup/server.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:119-155",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/admission.py:164-220",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        }
+      ],
+      "prior_ref": "REQUIREMENTS §5.5/§6; AN005 D-14 (pending journal scope); TD-DOM-15 revalidation distinct",
+      "impact": "Durable storage does not alone solve loss-of-baseline after session restart; without the old key the MCP client has no pending discovery path.",
+      "required_next_check": "New isolated client with NO old candidate id/key/payload must discover its authorized pending work, retain candidate through rebase and avoid duplicates. Do not simulate a missing graph/queue API."
+    },
+    {
+      "id": "AU006-F-05",
+      "severity": "major",
+      "title": "Нативный todo-evidence доказывает активность, не выполнение DOM-обязанности",
+      "classification": "SOURCE_BOUND_STANDALONE_FIXTURE_NOT_LIVE_CLOSE",
+      "invariant": "TBO-07/08: completion evidence must relate to exact requirement, DOM branch maintenance and delivery, not any successful tool result.",
+      "repro": "Run actual standalone todo_evidence.py against own disposable state.db: unrelated terminal exit0, failing terminal control, only MCP dom_submit REJECTED, only file_write, absent tool ref. No plugin hooks registered or run.",
+      "expected": "A task-specific completion contract cannot infer baseline reconciliation or DOM acceptance from unrelated exit0/file_write or an unrecognized MCP-only window.",
+      "actual": "Reducer returns closed / failed / window_empty / closed / unresolved respectively. EVIDENCE_TOOLS only terminal/write_file/patch; no DOM result binding. In native source, unverified_done_items counts window_empty as closed; completion dossier remains model_declaration and not_verified (a correct limitation).",
+      "evidence": [
+        "runtime/AU006/host_fixture_recheck/results.json"
+      ],
+      "sources": [
+        {
+          "ref": "O:todo_evidence.py:9-68,94-98,165-209,248-297,350-427,497-529",
+          "sha256": "644da0f2aa62d81cb2c06a15bd16dc9cbd374a10019c041ff01ef094cb61c965",
+          "snapshot": "runtime/AU006/sources/O/todo_evidence.py"
+        },
+        {
+          "ref": "O:todo_reconciliation.py:609-710,821-908",
+          "sha256": "7c9186149b2879734cffaf2503dc54e9b4cfee53be9a7de302844723194c42f7",
+          "snapshot": "runtime/AU006/sources/O/todo_reconciliation.py"
+        },
+        {
+          "ref": "O:tools/todo_tool.py:221-357",
+          "sha256": "be675b830c7d69b9814604a8e192d227aba5d0f47d5baad91102aee54ce16fb1",
+          "snapshot": "runtime/AU006/sources/O/tools/todo_tool.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        }
+      ],
+      "prior_ref": "todo_evidence.py:53-68 explicitly states time-not-content limitation; AN005 hooks findings narrower",
+      "impact": "Even stronger observed activity evidence does not establish task-relevant check or admitted/delivered DOM result. No claim that a live OMH task was actually closed by these fixtures.",
+      "required_next_check": "Authorized host run with task-labelled checks and DOM results: an unrelated successful command and rejected/pending MCP operation must not discharge required task-baseline obligations; valid no-new-knowledge stays possible."
+    }
+  ],
+  "gaps": [
+    {
+      "id": "AU006-G-01",
+      "priority": "P0",
+      "title": "Нет подтверждённого контролирующего host start/write/finish контура DOM",
+      "state": "GAP_SOURCE_BOUND_AND_LIVE_UNVERIFIED",
+      "sources": [
+        {
+          "ref": "O:hooks/tool_hooks.py:61-116,119-331",
+          "sha256": "3c21e50111529876ccf87d3d797d54f6b049e54e153966506439fb15b8ea837d",
+          "snapshot": "runtime/AU006/sources/O/hooks/tool_hooks.py"
+        },
+        {
+          "ref": "O:plan_stage_gate.py:156-235",
+          "sha256": "56a7143167f686c35d14017e62d23ec49bfe5f6d50c1fb2d34f76661f604917c",
+          "snapshot": "runtime/AU006/sources/O/plan_stage_gate.py"
+        },
+        {
+          "ref": "O:hooks/verify_hooks.py:31-99",
+          "sha256": "ba096b525527ec592a50ce0a082f1af2631b135fde2b92ed66e18a8750ef4384",
+          "snapshot": "runtime/AU006/sources/O/hooks/verify_hooks.py"
+        },
+        {
+          "ref": "X:hermes_cli/plugins_dispatch.py:59-67,275-324",
+          "sha256": "aa12d2c3b48f0af1cfcb837a0b67459c59172b0d40825b7f9b6c09076e141742",
+          "snapshot": "runtime/AU006/sources/X/hermes_cli/plugins_dispatch.py"
+        },
+        {
+          "ref": "X:model_tools.py:759-794",
+          "sha256": "252418e89742093a27cbb82b6abd3f7b4512045282fef119a2630ac9deb5fd0f",
+          "snapshot": "runtime/AU006/sources/X/model_tools.py"
+        },
+        {
+          "ref": "H:docs/master-plan/ORCHESTRATOR_WORKFLOW_AND_CLARIFICATIONS.md:11-46",
+          "sha256": "301dcb0722a4d009c3682349b8e1cf472a96596a996860caa3f6ce094ef910bd",
+          "snapshot": "runtime/AU006/sources/H/docs/master-plan/ORCHESTRATOR_WORKFLOW_AND_CLARIFICATIONS.md"
+        },
+        {
+          "ref": "H:scripts/code-factory/code_factory_runner.py:89-92,144-177",
+          "sha256": "315b92ea6bbc9f2655621d524aaeeb0d72c5d2be0d4a621b1f141f510caea548",
+          "snapshot": "runtime/AU006/sources/H/scripts/code-factory/code_factory_runner.py"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/source_search.json"
+      ],
+      "detail": "Traced OMH/hooks/native completion and four factory controller sources contain no DOM context issuance/use/close binding. Real mechanisms exist for other purposes; lexical zero is not proof of absence across every host/harness path. Live configuration, enabled plugins and actual caller path were intentionally not probed."
+    },
+    {
+      "id": "AU006-G-02",
+      "priority": "P0",
+      "title": "OMH-пункт не пинится как точный снимок; нет автоматической ingest/init корней",
+      "state": "GAP",
+      "sources": [
+        {
+          "ref": "O:todo_store.py:230-281,327-423,880-1076,1138-1157",
+          "sha256": "bcbb5f5b7ac2a9224e951ef083645621180e73fbb28b86e641115829676530d7",
+          "snapshot": "runtime/AU006/sources/O/todo_store.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        },
+        {
+          "ref": "P:mockup/storage.py:54-99",
+          "sha256": "df09acf9406d8113d266a04779be753b1eb4c4c0d81bdd267e717a92271752e0",
+          "snapshot": "runtime/AU006/sources/P/mockup/storage.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        }
+      ],
+      "detail": "Todo item has no stable id; advance checks position+prefix, whole-list pairing by same text. updated_at is not immutable item history. Native dossier freezes scope, but acceptance/revision are declared and no DOM linkage was traced. Fixed WORK/TASK cannot validate arbitrary OMH tasks."
+    },
+    {
+      "id": "AU006-G-03",
+      "priority": "P1",
+      "title": "Основной iterative claim search, refinement/FORKED и ContextPack — не действующий API",
+      "state": "GAP_NOT_SIMULATED",
+      "sources": [
+        {
+          "ref": "P:mockup/server.py:36-134",
+          "sha256": "a8d733b75d5b42e9ddc3affcf8afb106664912a894e2f23a936434b6a955e4a6",
+          "snapshot": "runtime/AU006/sources/P/mockup/server.py"
+        },
+        {
+          "ref": "P:docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md:3-53",
+          "sha256": "faf245b1087a7be4e3af7de0dc3f0820fcafdab45c245cc08979ba0405ffe3be",
+          "snapshot": "runtime/AU006/sources/P/docs/ITERATIVE_CLAIM_SEARCH_2026-11-08.md"
+        },
+        {
+          "ref": "P:runtime/RS003/contracts.schema.json:3-5,154-376,445-554",
+          "sha256": "954870f699ba2bff246a7912e6cec978df3086aa45996f3167fecd407c001924",
+          "snapshot": "runtime/AU006/sources/P/runtime/RS003/contracts.schema.json"
+        }
+      ],
+      "evidence": [
+        "runtime/AU006/recheck/r04_completion/tools_list.json"
+      ],
+      "detail": "Actual tools/list has 12 tools; no graph/neighbor/search/task-start/context receipt/refinement endpoint. SEARCH-USE-01..08 cannot pass on this product. RS003 proposed schema is not runtime code."
+    },
+    {
+      "id": "AU006-G-04",
+      "priority": "P0",
+      "title": "Principal/run, изменение грантов и subagent baseline handoff не связаны с DOM",
+      "state": "GAP_AND_LIVE_UNVERIFIED",
+      "sources": [
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "O:hooks/session_hooks.py:28-80",
+          "sha256": "4983213c4edab0deeb51ddf448ff3a54f702c1ad0fcd55d5f07cef9cfc4be405",
+          "snapshot": "runtime/AU006/sources/O/hooks/session_hooks.py"
+        },
+        {
+          "ref": "P:mockup/dom_contract.py:6-17,63-121",
+          "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+          "snapshot": "runtime/AU006/sources/P/mockup/dom_contract.py"
+        }
+      ],
+      "detail": "Static launch identity/scopes in simulation; observer callbacks do not authorize inherited claim-version scope. No receipt to replay across foreign task/principal exists; rejection of unknown fields is not receipt-binding enforcement."
+    },
+    {
+      "id": "AU006-G-05",
+      "priority": "P1",
+      "title": "Meaningful update/no-op, no-new-knowledge, affected-only revalidation не определены исполнимо",
+      "state": "POLICY_ONLY_AND_KNOWN_TD15_18",
+      "sources": [
+        {
+          "ref": "P:mockup/projections.py:29-77",
+          "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+          "snapshot": "runtime/AU006/sources/P/mockup/projections.py"
+        },
+        {
+          "ref": "P:tech_debt.md:12-24",
+          "sha256": "6c32af2751555ae60b19b2604e7e690e6e13a02de38ccd7fc452230c94e8d317",
+          "snapshot": "runtime/AU006/sources/P/tech_debt.md"
+        },
+        {
+          "ref": "P:runtime/RS003/contracts.schema.json:3-5,154-376,445-554",
+          "sha256": "954870f699ba2bff246a7912e6cec978df3086aa45996f3167fecd407c001924",
+          "snapshot": "runtime/AU006/sources/P/runtime/RS003/contracts.schema.json"
+        }
+      ],
+      "detail": "Branch-level dependency hashes and converge latch cannot replace claim-version semantic revalidation. O1 forbids false READY; do not cure stale deadlock by dropping actual pins. Thresholds/checkpoint intervals are research parameters, not selected rules."
+    },
+    {
+      "id": "AU006-G-06",
+      "priority": "P0",
+      "title": "Доставка в simulation target не есть приёмка живым OMH",
+      "state": "SIMULATION_LIVE_UNVERIFIED",
+      "sources": [
+        {
+          "ref": "P:mockup/admission.py:324-381",
+          "sha256": "f33ff336b8c5356c2a04efab5a955031615cbffb64f24c070445527ecc6a745c",
+          "snapshot": "runtime/AU006/sources/P/mockup/admission.py"
+        },
+        {
+          "ref": "P:mockup/ports.py:1-39,64-82",
+          "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+          "snapshot": "runtime/AU006/sources/P/mockup/ports.py"
+        },
+        {
+          "ref": "O:completion_store.py:228-297,350-410",
+          "sha256": "1f5f5d4d7ae4963fa202c5b8c8134c75f7ab4adc83c7d7d54d3ee17f315a39be",
+          "snapshot": "runtime/AU006/sources/O/completion_store.py"
+        }
+      ],
+      "detail": "Local JSON attachment readback was observed; real task evidence attachment, owner acceptance and O3 complete-vs-scoped projection acceptance remain unverified here. AU005 owns O1/O2/O3 security retest; no duplicate full sweep."
+    },
+    {
+      "id": "AU006-G-07",
+      "priority": "P1",
+      "title": "Политика DOM/LLM outage, repair и полезной работы вне DOM не выбрана",
+      "state": "NEEDS_RESEARCH_NEEDS_USER",
+      "sources": [
+        {
+          "ref": "O:hooks/tool_hooks.py:61-116,119-331",
+          "sha256": "3c21e50111529876ccf87d3d797d54f6b049e54e153966506439fb15b8ea837d",
+          "snapshot": "runtime/AU006/sources/O/hooks/tool_hooks.py"
+        },
+        {
+          "ref": "O:hooks/verify_hooks.py:31-99",
+          "sha256": "ba096b525527ec592a50ce0a082f1af2631b135fde2b92ed66e18a8750ef4384",
+          "snapshot": "runtime/AU006/sources/O/hooks/verify_hooks.py"
+        },
+        {
+          "ref": "O:plan_stage_gate.py:156-235",
+          "sha256": "56a7143167f686c35d14017e62d23ec49bfe5f6d50c1fb2d34f76661f604917c",
+          "snapshot": "runtime/AU006/sources/O/plan_stage_gate.py"
+        }
+      ],
+      "detail": "Do not claim blanket fail-open or fail-stop. Read/discovery/repair must remain usable before material-work gate; no false DONE. Scope and restoration/exception approval belong to owner decision."
+    }
+  ],
+  "policy_only": [
+    "Mandatory before-task baseline reconciliation and meaningful branch maintenance are customer obligations, not yet enforced end-to-end in inspected path.",
+    "Context token, HandoffReceipt, AcceptedBasis, UseReport and affected-only policies are proposed contracts, not shipped product APIs.",
+    "Read receipt/delivery byte hash establishes issuance/declaration only; independent use adequacy must be assessed separately; model understanding not proven.",
+    "No thresholds/checkpoint interval/semantic matching strategy chosen by auditor; O1/O2/O3 already decided and retained."
+  ],
+  "not_checked": [
+    "No live host hooks, plugins loading, real OMH task mutation, live acceptance or production identity tests: explicitly prohibited.",
+    "No full AU005 security sweep; O1/O2/O3 receipt scope/provenance leakage fixes not independently re-audited here.",
+    "No graph search/refinement/ContextPack E2E: API absent in inspected mockup; RS003 prototypes not substituted.",
+    "No network, model/curator provider, Git command/install, additional agent, secrets or private user-state read.",
+    "No all-window crash suite or kill during outbox send/commit: actual kill here is after pending submit; existing source mechanisms are not a crash-coverage claim.",
+    "No live fail-open/fail-closed hook fault injection; host execution/configuration of read source may differ and remains UNVERIFIED.",
+    "No exhaustive inventory of every host/harness worktree or controller; source_search scope is explicit and bounded.",
+    "No direct filesystem attack on product/live DB; actual artifact-only write and all SQL fixtures confined to runtime/AU006."
+  ],
+  "needs_research": [
+    {
+      "id": "QA006-04",
+      "priority": "P1",
+      "question": "Как основной итеративный поиск сохраняет исходный вопрос, frontier/visited versions и продолжение после лимита/stale/смены прав, не путая локальную depth 1..3 с длиной маршрута?",
+      "required_output": "Existing RS003 contract extension and SEARCH-USE-01..08 experiment plan; K1/K2/K3 only after comparative simulation; no implementation invented.",
+      "basis": [
+        "AU006-G-03"
+      ]
+    },
+    {
+      "id": "QA006-06",
+      "priority": "P1",
+      "question": "Как переутвердить только затронутые точные версии и сохранить работу при конфликте без удаления pin, бесконечного stale и полного перезапуска из-за посторонней ветки?",
+      "required_output": "Alternatives for immutable revalidation/amendment; direct TD-DOM-15/18 regression; distinguish FORKED, pending and accepted.",
+      "basis": [
+        "AU006-F-02",
+        "AU006-F-04",
+        "AU006-G-05"
+      ]
+    },
+    {
+      "id": "QA006-07",
+      "priority": "P1",
+      "question": "Как новый клиент без старых candidate id/key/payload обнаруживает authorized pending и недоставленные операции, продолжает ту же ветку и не создаёт корни/факты повторно?",
+      "required_output": "Resume/discovery contract, loss-of-client-state and process-kill acceptance tests; show existing mechanisms vs GAP.",
+      "basis": [
+        "AU006-F-04"
+      ]
+    },
+    {
+      "id": "QA006-10",
+      "priority": "P1",
+      "question": "Какая риск-ограниченная fault policy оставляет чтение/диагностику/восстановление и разрешённую работу доступными при отказе DOM/LLM/hooks, но запрещает ложное DONE?",
+      "required_output": "Compare fail-stop material changes, bounded offline journal, owner-authorized exception; who controls recovery, how reconciled; thresholds remain research parameters.",
+      "basis": [
+        "AU006-G-07"
+      ]
+    }
+  ],
+  "needs_user": [
+    {
+      "id": "NU-AU006-01",
+      "question": "Owner choose authorized failure/degraded-work policy after analyst comparison, not O1/O2/O3.",
+      "alternatives": [
+        "Fail-stop only material effects while read/repair allowed",
+        "Bounded explicit offline journal then mandatory reconciliation, no DONE",
+        "Owner-authorized time/scope exception with independent reconciliation"
+      ],
+      "no_choice_made": true
+    },
+    {
+      "id": "NU-AU006-02",
+      "question": "Authorize exact isolated host test target and controlling owner before live hooks/OMH close experiments.",
+      "no_choice_made": true
+    }
+  ],
+  "questions_to_analyst": [
+    {
+      "id": "QA006-01",
+      "priority": "P0",
+      "question": "Какой существующий host/dispatch/completion компонент владеет обязательностью TBO и какой точный разрешённый isolated live E2E докажет его вызов до материальной работы и до закрытия?",
+      "required_output": "Trace map tool->host gate->task/run/claim pins->effect->independent close; test both no-context refusal and useful read/repair allowed.",
+      "basis": [
+        "AU006-F-01",
+        "AU006-G-01"
+      ]
+    },
+    {
+      "id": "QA006-02",
+      "priority": "P0",
+      "question": "Как сшить реальный todo без устойчивого item id с immutable текстом/хешем пункта, включая одинаковые тексты, перестановку, split/rename, повторный старт и новую сессию, не пересоздавая план ради предупреждений?",
+      "required_output": "Contract and negative fixtures for exact item snapshot and idempotent plan-root ingestion; compare existing checkpoint rather than replace OMH.",
+      "basis": [
+        "AU006-G-02"
+      ]
+    },
+    {
+      "id": "QA006-03",
+      "priority": "P0",
+      "question": "Какие исполнимые проверки доказывают выдачу точного контекста, declared use и независимую достаточность оснований, не приравнивая receipt/хеш к пониманию?",
+      "required_output": "Separate delivery, acknowledgment, use_report, independent use_checked; bind task/run/principal/source revisions/policy; foreign and stale replay negatives.",
+      "basis": [
+        "AU006-F-01",
+        "AU006-F-02"
+      ]
+    },
+    {
+      "id": "QA006-04",
+      "priority": "P1",
+      "question": "Как основной итеративный поиск сохраняет исходный вопрос, frontier/visited versions и продолжение после лимита/stale/смены прав, не путая локальную depth 1..3 с длиной маршрута?",
+      "required_output": "Existing RS003 contract extension and SEARCH-USE-01..08 experiment plan; K1/K2/K3 only after comparative simulation; no implementation invented.",
+      "basis": [
+        "AU006-G-03"
+      ]
+    },
+    {
+      "id": "QA006-05",
+      "priority": "P0",
+      "question": "Что контроллер сопоставляет с фактическими изменёнными артефактами/решениями, чтобы различить существенное обновление, no-op и обоснованное «новых знаний нет», а pending/rejected не были завершением?",
+      "required_output": "Semantic and deterministic checks separated; task-scoped disposition of candidates and evidence, no claim per tool call.",
+      "basis": [
+        "AU006-F-03",
+        "AU006-F-05"
+      ]
+    },
+    {
+      "id": "QA006-06",
+      "priority": "P1",
+      "question": "Как переутвердить только затронутые точные версии и сохранить работу при конфликте без удаления pin, бесконечного stale и полного перезапуска из-за посторонней ветки?",
+      "required_output": "Alternatives for immutable revalidation/amendment; direct TD-DOM-15/18 regression; distinguish FORKED, pending and accepted.",
+      "basis": [
+        "AU006-F-02",
+        "AU006-F-04",
+        "AU006-G-05"
+      ]
+    },
+    {
+      "id": "QA006-07",
+      "priority": "P1",
+      "question": "Как новый клиент без старых candidate id/key/payload обнаруживает authorized pending и недоставленные операции, продолжает ту же ветку и не создаёт корни/факты повторно?",
+      "required_output": "Resume/discovery contract, loss-of-client-state and process-kill acceptance tests; show existing mechanisms vs GAP.",
+      "basis": [
+        "AU006-F-04"
+      ]
+    },
+    {
+      "id": "QA006-08",
+      "priority": "P0",
+      "question": "Какая граница доверия реально ограничивает terminal/files/direct SQL и переопределение principal/grant, и как передаются отдельные права/основания дочернему агенту?",
+      "required_output": "Threat model, existing sandbox/ACL/dispatch ownership and revocation checks; policy-only wherever no containment.",
+      "basis": [
+        "AU006-G-04",
+        "TD-DOM-06",
+        "TD-DOM-08"
+      ]
+    },
+    {
+      "id": "QA006-09",
+      "priority": "P0",
+      "question": "Какие независимые критерии закрытия проверяет OMH после DOM admission и доставки, и как он не принимает unrelated exit0/file-write/self-report за TBO-compliance?",
+      "required_output": "Owner acceptance source and authorized real E2E; preserve O3 tx/recipient/source_revision/view_scope/byte_hash; do not ask O1/O2/O3 again.",
+      "basis": [
+        "AU006-F-03",
+        "AU006-F-05",
+        "AU006-G-06"
+      ]
+    },
+    {
+      "id": "QA006-10",
+      "priority": "P1",
+      "question": "Какая риск-ограниченная fault policy оставляет чтение/диагностику/восстановление и разрешённую работу доступными при отказе DOM/LLM/hooks, но запрещает ложное DONE?",
+      "required_output": "Compare fail-stop material changes, bounded offline journal, owner-authorized exception; who controls recovery, how reconciled; thresholds remain research parameters.",
+      "basis": [
+        "AU006-G-07"
+      ]
+    }
+  ],
+  "verified_by_commands": [
+    {
+      "command": "clean PYTHON env; PYTHONDONTWRITEBYTECODE=1 AU006_RECHECK=1 E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/AU006/probe_stdio.py",
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "exit_code": 0
+    },
+    {
+      "command": "same clean env; AU006_RECHECK=1 .../python.exe -B runtime/AU006/probe_host_evidence.py",
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "exit_code": 0
+    },
+    {
+      "command": ".../python.exe -B runtime/AU006/freeze_sources.py",
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "exit_code": 0
+    }
+  ],
+  "threat_model": "Trusted local launcher and filesystem for MCP fixtures; fixture roles not authentication. An executor with unrestricted terminal/files can bypass MCP; no OS containment proven (TD-DOM-06). Actual host runtime hooks not exercised.",
+  "escaped_findings": [
+    {
+      "level": 2,
+      "items": [
+        "AU006-F-01..05",
+        "AU006-G-01..07"
+      ],
+      "action": "Recorded only in allowed audit outputs; no duplicate tech debt or registry writes."
+    },
+    {
+      "level": 3,
+      "items": [
+        "AU006-G-01",
+        "AU006-G-04",
+        "AU006-G-06",
+        "NU-AU006-01/02"
+      ],
+      "action": "Escalated to parent/next analyst for owner-bound enforcement and authorized live verification."
+    }
+  ],
+  "adversarial_checklist": {
+    "domain_coverage": "All TBO-01..10 mapped; live and graph gaps explicit",
+    "fact_concept_consistency": "Own raw frames + SQL + source hashes",
+    "concept_diversity": "N/A no product solution chosen",
+    "source_specificity": "Exact local path:line + sha256; network prohibited",
+    "triz_correctness": "N/A no TRIZ solution",
+    "estimates_realism": "No fabricated timings/budgets; only measured process/check counts"
+  },
+  "remaining": [
+    {
+      "scope": "Product follow-up, not unfinished AU006 deliverable",
+      "items": [
+        "Authorize isolated live host wiring/closure test; identify controlling component",
+        "Analyst contracts/questions QA006-01..10; exact recovery/discovery and task snapshot design",
+        "AU005 independent final security/O1/O2/O3 verdict stays with AU005"
+      ]
+    }
+  ],
+  "continuation_required": false,
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "output_files": [
+    "artifacts/AUDITOR_AU006_TASK_BASELINE.json",
+    "reports/AUDITOR_AU006_TASK_BASELINE.md",
+    "runtime/AU006/**"
+  ],
+  "verification": "runtime/AU006/verification.json",
+  "manifest": "runtime/AU006/frozen_manifest.json"
+}

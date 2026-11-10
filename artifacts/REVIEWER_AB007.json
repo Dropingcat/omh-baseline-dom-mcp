@@ -1,0 +1,76 @@
+{
+  "schema": "reviewer_artifact/v1",
+  "role": "REVIEWER",
+  "task": "RV007",
+  "ticket": "AB007 repeat review on 3cd21d96 (F1/F2/F3 + regression + AU008-A-01)",
+  "reviewed_version": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+  "digest_recomputed": {
+    "method": "sha256(json.dumps({'mockup/<posix-relpath>': sha256(file_bytes)}, sort_keys=True)) over 16 mockup/**/*.py (__pycache__ excluded)",
+    "n_files": 16,
+    "computed": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+    "matches_claimed": true,
+    "diff_vs_before": "против snapshot c26812b3/** изменён ровно mockup/admission.py (15 остальных mockup/**/*.py идентичны, проверено cmp по файлам: только admission.py DIFF)",
+    "own": "пересчитано независимым скриптом RV007 (не worker'овским); MATCH=true"
+  },
+  "decision": "CONFORM",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "checks": [
+    {"id": "RV007-DIG", "area": "digest+differential", "ok": true,
+     "detail": "3cd21d96... пересчитан независимо (=); только mockup/admission.py отличается от snapshot_c26812b3/** (посимвольно cmp: admission.py DIFF, остальные 15 файлов SAME)"},
+    {"id": "RV007-F1", "area": "cursor_validation", "ok": true,
+     "detail": "после ''/:x/AA:/AA:x:y/AA/123 -> типизированный REJECTED (и через Python-guarded resume, и на сыром MCP-кадре); None и AA:<valid-uuid> -> RESUMED; raw wire frame: empty/colon_x/AA_colon/AA_x_y/AA_only все REJECTED, valid/no_after RESUMED"},
+    {"id": "RV007-F2", "area": "pagination_full_walk_invariant", "ok": true,
+     "detail": "инвариант «при count>0 union страниц == полное видимое множество, каждая строка ровно 1 раз, без застревания» выполнен на 5 собственных walk-ах: AA l1/l2, full l1/l2, AB l1 — единообразно union==ref, dupes=0, stuck=false, empty_midwalk=false, last_has_more=false"},
+    {"id": "RV007-F3", "area": "has_more_not_exists_signal", "ok": true,
+     "detail": "в гранте AA (grant=AA), где в ветке есть deps-foreign c4 (4f0ce33c): limit=2 -> items=2, has_more=FALSE (не сигналит о скрытой строке); limit=1 -> has_more=TRUE (сигналит о видимой след. строке, корректно); c4 никогда не появляется в items; w3 (только admitted) -> NO_PENDING count=0"},
+    {"id": "RV007-B04", "area": "no_out_of_contract_behavior", "ok": true,
+     "detail": "next_cursor на проводе ОТСУТСТВУЕТ (сырой frame: top_keys=={count,has_more,items,page,status}, page=={after,limit} точно — контракт RS007 сохранён); курсор 'AA :x' (пробел) возвращает только in-грант строки (branch AB в гранте), чужое branch:id не раскрывается; пустая страница при count>0 в mid-walk не возникает (empty_midwalk=false у всех walk)"},
+    {"id": "RV007-REG", "area": "rs007_regression", "ok": true,
+     "detail": "контракт RS007 цел: top/page keys точны, limit 1..500 (0/501/str/bool REJECTED), статусы {NO_PENDING,PENDING_PRESENT}; анти-oracle count точный (AA=2, AB=1, AA_AB=4 == перечислимые наборы); admitted исключён; payload-текст/body_b64/source_ref не утекают; NO_SUCH_BRANCH на granted-but-absent ('CC'), SCOPE_DENIED на вне-грант, DIGEST_MISMATCH у review и admit"},
+    {"id": "RV007-AU008A01", "area": "au008_a01_closure", "ok": true,
+     "detail": "w6 (бывший underfill limit=2->1) теперь: AA-грант limit=2 -> items=2, count=2, has_more=false — недополнения нет (closed_no_underfill=true). Причина: фильтры видимости перенесены в SQL до LIMIT"},
+    {"id": "RV007-MIG", "area": "migration_v2_idempotent", "ok": true,
+     "detail": "legacy (uv<2) init OK, повторный init OK, снапшот схемы (uv=2, колонки, 2 индекса, 39 immutable-триггеров) идентичен после рерана -> idempotent=true"}
+  ],
+  "findings": [
+    {"id": "RV007-NOTE-01", "severity": "info", "claim": "курсор 'AA :x' (с пробелом) принимается как RESUMED",
+     "evidence": "own_probes.f1 + отдельная проба: возвращает 1 in-грант строку (branch AB), foreign leak = []",
+     "impact": "не уязвимость и не нарушение контракта — задокументированное осознанное поведение (SCHEMA_CHANGE_AB007 §5), не расширяет surface; зафиксировано как факт"}
+  ],
+  "own_runs": [
+    {"id": "rv007_own_probes", "what": "5 собственных walk (AA l1/l2, full l1/l2, AB l1) + F1 через Python-guarded и сырой MCP frame + F3/анти-oracle/admitted/text-leaks/typed gates (NO_SUCH_BRANCH/SCOPE_DENIED/DIGEST_MISMATCH) + limit-границы + миграция v2 идемпотентна + AU008-A-01 на w6",
+     "artifact": "runtime/RV007/probes/rv007_own_probes.py",
+     "results": "runtime/RV007/results/own_probes.json",
+     "sha256_probe": "251460d74b58ec9990ce666785b65f792ce4e752cbc05d97b6cbbd6fbdc6cb9f",
+     "sha256_results": "f696ea7e99c790223998d70ef4bd0f6add8b4deb69fe305130ebc37dc67a105e",
+     "verdict": "F1/F2/F3/B04/REG/AU008-A-01/MIG — все PASS; AA :x задокументирован как info"},
+    {"id": "rv007_raw_mcp_frame", "what": "собственный raw stdio MCP-client (без SDK): handshake + dom_resume AA limit=2; сырые кадры; top/page keys exact, next_cursor отсутствует на проводе",
+     "artifact": "runtime/RV007/results/frame_full_resume.jsonl",
+     "sha256": "4748ff52a88b37cb844b1f40a944f8ce08a6731ed7dd1d3945691d4c156e943c",
+     "verdict": "PASS — контракт RS007 на проводе сохранён, нового поля нет"},
+    {"id": "rv007_digest_recompute", "what": "независимый пересчёт digest + пофайловое cmp против snapshot_c26812b3/**",
+     "verdict": "PASS — 3cd21d96... совпадает; изменён только admission.py"}
+  ],
+  "evidence_refs": [
+    {"path": "runtime/RV007/probes/rv007_own_probes.py", "sha256": "251460d74b58ec9990ce666785b65f792ce4e752cbc05d97b6cbbd6fbdc6cb9f"},
+    {"path": "runtime/RV007/results/own_probes.json", "sha256": "f696ea7e99c790223998d70ef4bd0f6add8b4deb69fe305130ebc37dc67a105e"},
+    {"path": "runtime/RV007/results/frame_full_resume.jsonl", "sha256": "4748ff52a88b37cb844b1f40a944f8ce08a6731ed7dd1d3945691d4c156e943c"}
+  ],
+  "not_checked": [
+    "полный pytest-прогон tests/ (вне write_scope RV007)",
+    "perf-замеры p100k (взяты из WORKER_AB007/probe_after; не повторялись — собственный минимум был функциональный)",
+    "live OMH/сеть/Git/установка (запрещены картой)",
+    "истинно конкурентная гонка admit (вне среза)"
+  ],
+  "observations": [
+    "фикс F2 реализован выбраным пути 'фильтры до LIMIT' (без отдельного next_cursor): страница всегда наполнена видимыми строками, empty-страница при count>0 в mid-walk невозможна, а next_cursor не появился — контракт не расширен",
+    "count остаётся точным и независимым от страницы (анти-exists-oracle) — подтверждено равенством count==len(полное видимое) на 3 грантах",
+    "хитрый keyset-курсор 'AA :x' (пробел) возвращает только in-грант данные, чужое не раскрывает — соответствует SCHEMA_CHANGE_AB007 §5 (осознанно)"
+  ],
+  "baseline_immunity": "продукт read-only: mockup/**, docs/ и artifacts прошлых ролей не изменялись; все записи только runtime/RV007/**, artifacts/REVIEWER_AB007.json, reports/REVIEWER_AB007.md; git/install/network не использовались",
+  "report_ref": "reports/REVIEWER_AB007.md",
+  "continuation_required": false,
+  "written_at": "2026-11-08T18:05:00+03:00"
+}

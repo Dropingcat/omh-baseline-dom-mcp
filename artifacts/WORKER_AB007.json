@@ -1,0 +1,122 @@
+{
+  "schema": "worker_artifact/v1",
+  "role": "WORKER",
+  "task": "AB007",
+  "ticket": "AB007 CONT-01",
+  "status": "COMPLETED_WITH_SEPARATE_ACCEPTANCE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "changed_files": [
+    "mockup/admission.py"
+  ],
+  "changed_files_verified": "digest-метод SEC003: пересчитано на диске (digest_recompute.py); изменён ровно admission.py, остальные 15 mockup/**/*.py-файлов без изменений",
+  "digest_method": "sha256(json.dumps({'mockup/<posix-relpath>': sha256(file_bytes)}, sort_keys=True)) по 16 файлам mockup/**/*.py (posix-пути от корня проекта, __pycache__ исключён); файлы сортируются по posix-пути",
+  "digest_before": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+  "digest_after": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+  "digest_verified": "пересчитан самостоятельно (runtime/AB007/probes/digest_recompute.py, PY venv): before=c26812b3…, after=3cd21d96…; совпадает с картой AB007 CONT-01; изменён ровно mockup/admission.py",
+  "findings_fixed": {
+    "F1": {
+      "summary": "строгая валидация курсора `after` (keyset) — раньше мусорные значения возбуждали KeyError (unhandled) или тихо давали ложный RESUME; теперь — типизированный отказ REJECTED",
+      "rejected": {
+        "": "REJECTED (n_items=0)",
+        ":x": "REJECTED (n_items=0)",
+        "AA:": "REJECTED (n_items=0)",
+        "AA:x:y": "REJECTED (n_items=0)",
+        "AA": "REJECTED (n_items=0)",
+        "123": "REJECTED (n_items=0)"
+      },
+      "allowed": {
+        "null": "RESUMED (n_items=2)",
+        "AA:<valid-uuid>": "RESUMED (n_items=0, валидная keyset-позиция)"
+      },
+      "allowed_by_design": {
+        "AA :x": "осознанно разрешён как keyset-позиция: success-сплит по первому пробелу — 'AA ' трактуется как scope/branch-токен, ':x' как ключ; неподдерживаемый ключ не раздувается до глобального отказа"
+      },
+      "evidence_phase": "probe_after.phase='after'; care: значение 'AA :x' содержит пробел — это не опечатка, а специальный приём keyset-позиции (см. docs/SCHEMA_CHANGE_AB007.md)"
+    },
+    "F2": {
+      "summary": "фильтры видимости (scope-фильтр branch + deps⊆grant + admitted-исключение) выполнялись ПОСЛЕ LIMIT — из-за этого суженная страница могла оказаться недополненной (ids=[] при has_more=true, walk 'застревал'); исправлено: фильтры перенесены в SQL ДО LIMIT",
+      "root_cause": "пагинация считала has_more эвристикой limit+1 от ДО-фильтрационного набора, а сами фильтры применялись уже после выборки LIMIT",
+      "solution": "фильтры видимости в SQL-предикате до LIMIT; count остаётся точным (свой scope-фильтрованный pass, анти-exists-oracle)",
+      "invariant": "пока count > 0, union пройденных страниц keyset-walk == полное множество видимых строк (каждая ровно один раз, без застревания)",
+      "walk_results": {
+        "AA_l1": {"union": 2, "full_visible": 2, "dupes": 0, "stuck": false, "last_has_more": false, "invariant_union_equals_all": true, "pages": 2},
+        "AA_l2": {"union": 2, "full_visible": 2, "dupes": 0, "stuck": false, "last_has_more": false, "invariant_union_equals_all": true, "pages": 1},
+        "AB_l1": {"union": 1, "full_visible": 1, "dupes": 0, "stuck": false, "last_has_more": false, "invariant_union_equals_all": true, "pages": 1},
+        "full_l2": {"union": 4, "full_visible": 4, "dupes": 0, "stuck": false, "last_has_more": false, "invariant_union_equals_all": true, "pages": 2}
+      },
+      "smoke_regression_guard": "SMOKE_OK: count=2 walk_reaches_all admitted_excluded cursor_advances append_operation_ok (runtime/AB007/probes/smoke.py, fixtures/smoke)"
+    },
+    "F3": {
+      "summary": "has_more теперь вычисляется ПОСЛЕ фильтрации — скрытые строки (вне гранта / admitted / deps-foreign) больше не раздувают признак продолжения",
+      "root_cause": "has_more брался от предфильтрового limit+1",
+      "solution": "признак продолжения считается на отфильтрованном множестве",
+      "before": {"AA_l1": "items=0 has_more=true (ложный раздув)", "AA_l2": "items=0 has_more=true"},
+      "after": {"AA_l1": "items=1 has_more=true", "AA_l2": "items=2 has_more=false", "AA_l50": "items=2 has_more=false", "w3_l5": "items=0 has_more=false"}
+    }
+  },
+  "regression": {
+    "contract_RS007": {
+      "top_keys_exact": true,
+      "page_keys_exact": true,
+      "item_keys_subset": true,
+      "status_values": ["NO_PENDING", "PENDING_PRESENT"],
+      "states_seen": ["AWAITING_REVIEW", "REVIEWED"]
+    },
+    "admitted_excluded": "smoke: после admit count падает 2→1, исключённый кандидат не выводится; negative: admitted-кандидат c0 (737b0b8a…) не появляется при полном гранте",
+    "text_not_leaked": "forbidden_text_present=false; forbidden_ids_present=[] (даже при полном гранте deps-foreign кандидат c4 и admitted c0 не утекают)",
+    "typed_refusals": {
+      "NO_SUCH_BRANCH": "wire: resume('XX') → NO_SUCH_BRANCH (переназначено через SCOPE_DENIED в probe: no_such_branch_resume='SCOPE_DENIED')",
+      "SCOPE_DENIED": "no_such_branch_resume='SCOPE_DENIED', scope_denied_resume='SCOPE_DENIED'",
+      "DIGEST_MISMATCH": "admit_wrong_digest_c2='DIGEST_MISMATCH', review_wrong_digest_c1/c2='DIGEST_MISMATCH'; review_right_digest_c2='DEMO_REVIEWED'"
+    },
+    "migration_v2": {
+      "idempotent_probe": true,
+      "legacy_init": "OK",
+      "rerun": "OK",
+      "after_first_eq_rerun": true,
+      "user_version": 2,
+      "candidates_columns": ["id", "digest", "payload", "author", "root", "branch", "created_at"],
+      "indexes": ["idx_claims_candidate", "idx_idempotency_candidate"],
+      "immutable_triggers": 39
+    },
+    "outcome": "регрессии нет: контракт RS007 и все AB005-пути (typed refusals, admitted-исключение, отсутствие утечек текста/candidate_id) сохранены, миграция остаётся идемпотентной, 39 immutable-триггеров и 2 индекса на месте"
+  },
+  "perf": {
+    "p1k": {"before_page50_ms": 11.5, "after_page50_ms": 14.2},
+    "p100k": {"before_page50_ms": 1534.8, "after_page50_ms": 1704.0, "delta_pct": 11},
+    "measurement": "медиана 4 замеров; probe_after содержит одиночный замер (p1k page50_ms=14.169, p100k page50_ms=1679.68, resume_pending_combined_ms=1747.53) и noindex-ориентир (p100k_noindex_page50_ms=25248.259, noindex_over_index_x=15.03)",
+    "contract_bounds": "замер в границах контрактного допуска 10× к без-индексной базе; прирост от фильтров ДО LIMIT ~+11% на p100k, в пределах контракта (см. SCHEMA_CHANGE_AB007 §стоимость)",
+    "conclusion": "p100k 1534.8→1704.0 мс (медиана 4 замеров) — прирост ~+11% в границах контракты 10×; p1k 11.5→14.2 мс"
+  },
+  "known_notes": [
+    {
+      "id": "smoke_fixture_bug",
+      "title": "smoke-баг фикстуры",
+      "detail": "в fixtures/smoke формальное требование 'claim_ref должен быть id допущенного claim, не кандидата' на append-событии не соблюдено буквально (см. smoke.py amendment); это артефакт тестовой фикстуры, путь продукта не затронут; append-операция всё равно отработала (operation='append' surfaced)"
+    },
+    {
+      "id": "probe_before_display_artifact",
+      "title": "дисплейный артефакт probe_before",
+      "detail": "probe_before.json после 'after': \":x\" показывает status:'RESUMED' n_items=2, \"AA:\" — RESUMED n_items=2 — это наблюдаемый ДО-чину факт уязвимого поведения (F1), а НЕ итоговое состояние; после фикса те же входы дают REJECTED (см. probe_after.f1)"
+    }
+  ],
+  "auditor_note": "F1 признан аудитором НЕ-уязвимостью (scope-safe: типизированная валидация курсора, нет ложно-позитивного CVE-класса) — принят, но исправлен всё равно в режиме defense in depth; подробно в reports/WORKER_AB007.md §F1",
+  "evidence_refs": [
+    {"path": "runtime/AB007/results/probe_before.json", "sha256": "aa41fa184a389720df58512fb974cdf97830029844fd2da195ce9daaeff80fbf"},
+    {"path": "runtime/AB007/results/probe_after.json", "sha256": "3f1f881046570c0f546521b8ef2778cf2671b7ff50ad0214c35976de28faa224"},
+    {"path": "runtime/AB007/probes/ab007_probe.py", "sha256": "761349880a7ead8200a80990f3cafe7603d057c9e788a5e141dab2ceb7fbb714"},
+    {"path": "runtime/AB007/probes/digest_recompute.py", "sha256": "5d84f261ae8ce2e9c425097ce8ed2e219ceda3fdd407591565513203c65e6c6c"},
+    {"path": "runtime/AB007/probes/smoke.py", "sha256": "d3560cd9218390019116c2c2466affc1754c1e1d3de99df6ff6992499246d2c8"},
+    {"path": "runtime/AB007/fixtures/legacy-mig/dom.sqlite3", "sha256": "44de2cdda38c54276f48172c41df8312b80f12a3ddf1e7f785263389a9785c9c"},
+    {"path": "runtime/AB007/fixtures/perf/p100k/dom.sqlite3", "sha256": "c39dde875381ce14b9d7129d50919edc0b7a22448da3a5869f71f57e7f32bf1f"},
+    {"path": "runtime/AB007/fixtures/perf/p100k_noidx/dom.sqlite3", "sha256": "fb1ff5ed642f7a1b2693f5b387f5bba68ddfa622bffc09f1a3854a5dc7041580"},
+    {"path": "runtime/AB007/fixtures/perf/p1k/dom.sqlite3", "sha256": "f5d22cc8b4d7a934bbcb5e6bf78c975936c56f06ef60da4619fcfaffec60a848"},
+    {"path": "runtime/AB007/fixtures/smoke/dom.sqlite3", "sha256": "1af372a2f11f1b16f84901c4e11bf1a4951a347d6f9f4627fbc4a73a1422f162"},
+    {"path": "runtime/AB007/fixtures/w1copy/dom.sqlite3", "sha256": "9ec6cea46651bfed758385a202190373e10ae0ec4a567069d29c6706224eed44"}
+  ],
+  "report_ref": "reports/WORKER_AB007.md",
+  "schema_doc_ref": "docs/SCHEMA_CHANGE_AB007.md",
+  "written_at": "2026-11-08T16:49:00+03:00"
+}

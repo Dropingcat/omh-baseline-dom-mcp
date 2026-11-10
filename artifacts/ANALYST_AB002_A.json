@@ -1,0 +1,1354 @@
+{
+  "role": "ANALYST AN002-A; ПОЧЕМУ, not worker/reviewer/auditor/researcher",
+  "task": "AB002-A",
+  "status": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "product_acceptance": false,
+  "input_verdicts": {
+    "reviewer": "RV002-A APPROVE within A1-A9 SIMULATION",
+    "auditor": "AU002-A REQUEST_CHANGES; completed",
+    "resolution": "New in-scope negative fact blocks affected A acceptance; prior delivery evidence not annulled and not confidentiality proof."
+  },
+  "contract_application": {
+    "authority": "Task card explicitly orders analysis after REQUEST_CHANGES. General 08 §3 APPROVE-only prerequisite is overridden for this causal handoff, not used to authorize deploy. Project paths follow card/shared process; no extra harness-root artifact.",
+    "write_scope": "Only own JSON, MD, runtime/AN002_A/**; debts/source/tests/docs/cards/plugins read-only."
+  },
+  "input_source_hashes": [
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/cards/AN002_A_ANALYST.md",
+      "sha256": "fb7148ee125ef6afa4cf6b79070a2b559e31dc3a2191953352f8431f50a4cf53",
+      "bytes": 11225,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/REQUIREMENTS.md",
+      "sha256": "2be43b2f8370e7e27df012831496af2d3bb000f66915975d8f24aff3e17310b8",
+      "bytes": 19800,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/artifacts/AUDITOR_AB002_A.json",
+      "sha256": "d8e238d911b29a4ac64e842e44566b70455247837c5cef66258dc1a8776835f1",
+      "bytes": 14813,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/reports/AUDITOR_AB002_A.md",
+      "sha256": "6a0563877cd720829185b18fca5cbd8a3f1234592eead9d42e2d27d9ff24320d",
+      "bytes": 14631,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/artifacts/REVIEWER_AB002_A.json",
+      "sha256": "17d998b0ca183b809dc757e2c3f85169392d18fdf3051865ed0b6d915f391f1c",
+      "bytes": 15085,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/reports/REVIEWER_AB002_A.md",
+      "sha256": "9c86dd6481fb1e91d7bf413cef6863baec02e9bac9b3eccf25c486032ea68af5",
+      "bytes": 13540,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/cards/AB002_A_WORKER.md",
+      "sha256": "f8fd0b6f737d9e23ac55608d14363599f9ce63806acf8adf638d4163a93ad236",
+      "bytes": 14677,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/docs/AB002_PLAN.md",
+      "sha256": "129c526751325f328de4811d2580737f2f73a4cd83ad16bcbd14d0e7d25e0a86",
+      "bytes": 4177,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/RS001_HANDOFF.md",
+      "sha256": "ab961cbae823af5ae4816a1cdb5676074ef81279b7fca0a89e6ab19b944d90c0",
+      "bytes": 22133,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/RS001_RESEARCH.json",
+      "sha256": "15d1d74f535b3e5579e2e11e542efe972862120f884f945f4749183e04974f7d",
+      "bytes": 56588,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/tech_debt.md",
+      "sha256": "6c32af2751555ae60b19b2604e7e690e6e13a02de38ccd7fc452230c94e8d317",
+      "bytes": 11259,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/admission.py",
+      "sha256": "1f35db09af7ed738dcb8a5665e10ae23782961267bbf9370e922b69e28eea42e",
+      "bytes": 24210,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/ports.py",
+      "sha256": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+      "bytes": 4496,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/server.py",
+      "sha256": "10e0223ccc5a97a6fdb885c07053f97efd29afbad4ab193290e34cd07204cd76",
+      "bytes": 12687,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/delivery.py",
+      "sha256": "0973b9b6d757a05bcae337a7642ac5d779dd9226167243f7339cc3ec08f5d6a9",
+      "bytes": 4879,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/storage.py",
+      "sha256": "df09acf9406d8113d266a04779be753b1eb4c4c0d81bdd267e717a92271752e0",
+      "bytes": 8271,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/README.md",
+      "sha256": "f5fc4b0d599d5f7cd2c44454c4019f68bc2860a45b22200a08e3db7e02ef0f1f",
+      "bytes": 37536,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/ab002_matrix.py",
+      "sha256": "d2cb8b342fb593326a1e926e59bc854c86b7095d06357034a4654064bd7b3ee5",
+      "bytes": 23638,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/templates/NEGATIVE_E2E_SECURITY_CONTRACT.md",
+      "sha256": "f21c5b3bff6f8ed5ee698f54e5028d372da7b4314d9c6f99f2b784bb77cd3215",
+      "bytes": 17385,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/cards/PL003_NEGATIVE_E2E_PLANNER.md",
+      "sha256": "b7872350b960245080e4d28e72a4792256dcdd507751d2dac36e517cd592a601",
+      "bytes": 8497,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/verification.json",
+      "sha256": "6817c6ca2c2b2647529704879584f3aec748ac9e6a80245c79fb5c6d3c512dcb",
+      "bytes": 4788,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/fingerprints-after.json",
+      "sha256": "ee85ea71c4251fe557514084142921dd8566f8e230ceaf5b89988642fc4d1b78",
+      "bytes": 4333,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/manifest.json",
+      "sha256": "97a93c529d338d849001790b5647308b7a15ff61c5cdfbe231332c80399a3a2c",
+      "bytes": 52973,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/scope/result.json",
+      "sha256": "724524ac250adce98e66b4b17b3ff2a1e52f6a2991384c547b78a159ee757ad6",
+      "bytes": 1855,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/scope/restricted-before-hidden.json",
+      "sha256": "2c02b113d8fa7c549dbb2c3865cdaf745a4310224e52c1ae20cbf73161253105",
+      "bytes": 14983,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/scope/restricted-after-hidden.json",
+      "sha256": "80d9b752c63c8194ec1dcd1e7097a60bc2343d9141bd2b1952d622bfa0467008",
+      "bytes": 14983,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/scope/positive-control.json",
+      "sha256": "d1fc3627832e6695d73468ca2fafe1f836a42c756e86c49f7629c31e0a44b20a",
+      "bytes": 2835,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/middle/injection.json",
+      "sha256": "61787f191a648d01ed1cb0dcce82d75f1180259703717c220fb5f4971c23db61",
+      "bytes": 310,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/middle/responses.json",
+      "sha256": "c0ac8443ed9560b8c754b74f0d27498b63086f11c59289653700438f53079962",
+      "bytes": 13876,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/middle/result.json",
+      "sha256": "a610aec3604d9e08b095d90d330b41c5838c404a9c7b95903ce3fb3a6f55dec8",
+      "bytes": 561,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/middle/injected-before.json",
+      "sha256": "68b22929b4df6e1a39a3f058294f7cd0ad3201427816c881875b02947f93ec30",
+      "bytes": 74519,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/middle/after-refusals.json",
+      "sha256": "68b22929b4df6e1a39a3f058294f7cd0ad3201427816c881875b02947f93ec30",
+      "bytes": 74519,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/malformed-target/result.json",
+      "sha256": "c0e2f683a1aa4ed061e77273b8ec56a3d01ebbe768fe46241e98ea264eac5b90",
+      "bytes": 10751,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/malformed-target/responses.json",
+      "sha256": "9bf53bba25c71cc30c1004095d398ff0c8135858b3860edf7a973659df64cb85",
+      "bytes": 18582,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/malformed-target/before-malformed.json",
+      "sha256": "e247f37cf683924c3f877bea7558e59a9f2c553274453ddb3fd4244c59f30fc3",
+      "bytes": 10576,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/malformed-target/after-malformed.json",
+      "sha256": "dd1f0fe8d8c722c832a04f26042e0a92a205f3e48bc01f734fddd9df2748c9c2",
+      "bytes": 11319,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/AU002_A/run-b944ea96/malformed-target/final-recovered.json",
+      "sha256": "fbe2ddaf645b10e8482720439c2e1748946ebe34391dde2dfe83156554cf14b3",
+      "bytes": 23433,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/docs/CODERS/08_ANALYST_RESEARCHER_CONTRACT.md",
+      "sha256": "a659489e85014b394e96ef947b3a0fc9d7bf6a1c1b0dc26eec1dc65f545d79e1",
+      "bytes": 16108,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/docs/CODERS/09_FINDINGS_ESCAPE_HATCH.md",
+      "sha256": "4672c5ce1e633305e05465d57b757a1ec09e2bbfad00a2435a63caa14308bcf4",
+      "bytes": 7095,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/shared/code-factory-process.md",
+      "sha256": "10e0fb1ab7af39c5ac948962807021c81fa290590b74e75f9d3e96d223ca9b39",
+      "bytes": 9924,
+      "capture": "analysis-time; not preregistered audit fingerprint"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/runtime/RV002_A/independent_probes.py",
+      "sha256": "e01f6275d1b4fc141689be1bf8b33e4b9dc543b7ca55f57faa8f47ef478f0be1",
+      "bytes": 15339,
+      "capture": "analysis-time supplemental; not preregistered audit hash"
+    },
+    {
+      "path": "E:/opencode_harness_portable/projects/omh-baseline-dom-mcp/mockup/ab002_e2e.py",
+      "sha256": "7058d10664de87b53d96c57fad1658233ee74c49618d7644b811914ad02f9061",
+      "bytes": 6602,
+      "capture": "analysis-time supplemental; not preregistered audit hash"
+    }
+  ],
+  "source_requirements": [
+    {
+      "id": "R-ACL",
+      "statement": "Общая база не даёт неограниченного чтения; разрешённая информация задаётся техкартой, сервером проверяется scope.",
+      "evidence": [
+        "E-A2-02",
+        "E-A2-03",
+        "E-A2-14"
+      ]
+    },
+    {
+      "id": "R-INTEGRITY",
+      "statement": "A6: до выдачи и side effect единый integrity gate; при порче структурированный отказ, не READY, без нового эффекта; сохранить согласованный read snapshot.",
+      "evidence": [
+        "E-A2-04"
+      ]
+    },
+    {
+      "id": "R-DELIVERY",
+      "statement": "A1-A5: ответ порта не ack; долговечный predecessor, точный readback/observed, защищённая связь ack. Нет универсального exactly-once.",
+      "evidence": [
+        "E-A2-04",
+        "E-A2-11",
+        "E-A2-12",
+        "E-A2-36"
+      ]
+    },
+    {
+      "id": "R-IMMUTABLE",
+      "statement": "Не редактировать исходное тело/ссылки; не терять accepted данные и прослеживаемость. Ownership посторонних target keys — защитное ограничение из finding, а не новая live-гарантия.",
+      "evidence": [
+        "E-A2-01",
+        "E-A2-04",
+        "E-A2-40"
+      ]
+    },
+    {
+      "id": "R-NEGATIVE-E2E",
+      "statement": "Карта реальных мест отказа -> checks -> PL003 -> SEC003 -> QA003; positive controls, физический readback и явные GAP, не счётчик unit tests.",
+      "evidence": [
+        "E-A2-37",
+        "E-A2-38",
+        "E-A2-45"
+      ]
+    },
+    {
+      "id": "R-EVIDENCE",
+      "statement": "Приёмка на точной версии и устойчивом происхождении evidence; mutable pointer не идентифицирует run. Предложение D остаётся открытым.",
+      "evidence": [
+        "E-A2-32",
+        "E-A2-33",
+        "E-A2-34",
+        "E-A2-43",
+        "E-A2-46"
+      ]
+    }
+  ],
+  "evidence_catalog": [
+    {
+      "id": "E-A2-01",
+      "path": "REQUIREMENTS.md",
+      "locator": "31-44",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-02",
+      "path": "REQUIREMENTS.md",
+      "locator": "46-52",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-03",
+      "path": "REQUIREMENTS.md",
+      "locator": "82-98",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-04",
+      "path": "cards/AB002_A_WORKER.md",
+      "locator": "32-42",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-05",
+      "path": "mockup/admission.py",
+      "locator": "39-101",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-06",
+      "path": "mockup/admission.py",
+      "locator": "220-277",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-07",
+      "path": "mockup/admission.py",
+      "locator": "307-370",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-08",
+      "path": "mockup/ports.py",
+      "locator": "31-39",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-09",
+      "path": "mockup/ports.py",
+      "locator": "64-82",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-10",
+      "path": "mockup/server.py",
+      "locator": "197-215",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-11",
+      "path": "mockup/delivery.py",
+      "locator": "19-36",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-12",
+      "path": "mockup/delivery.py",
+      "locator": "44-75",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-13",
+      "path": "mockup/storage.py",
+      "locator": "100-113",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-14",
+      "path": "mockup/README.md",
+      "locator": "298-323",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-15",
+      "path": "runtime/AU002_A/run-b944ea96/scope/restricted-before-hidden.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-16",
+      "path": "runtime/AU002_A/run-b944ea96/scope/restricted-after-hidden.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-17",
+      "path": "runtime/AU002_A/run-b944ea96/scope/positive-control.json",
+      "locator": "/claims",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-18",
+      "path": "runtime/AU002_A/run-b944ea96/scope/result.json",
+      "locator": "/actual/direct_AB_denials",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-19",
+      "path": "runtime/AU002_A/run-b944ea96/middle/injection.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-20",
+      "path": "runtime/AU002_A/run-b944ea96/middle/responses.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-21",
+      "path": "runtime/AU002_A/run-b944ea96/middle/injected-before.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-22",
+      "path": "runtime/AU002_A/run-b944ea96/middle/after-refusals.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-23",
+      "path": "runtime/AU002_A/run-b944ea96/malformed-target/responses.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-24",
+      "path": "runtime/AU002_A/run-b944ea96/malformed-target/before-malformed.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-25",
+      "path": "runtime/AU002_A/run-b944ea96/malformed-target/after-malformed.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-26",
+      "path": "runtime/AU002_A/run-b944ea96/malformed-target/final-recovered.json",
+      "locator": "",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-27",
+      "path": "runtime/AU002_A/run-b944ea96/malformed-target/result.json",
+      "locator": "/actual/proof",
+      "kind": "auditor_evidence"
+    },
+    {
+      "id": "E-A2-28",
+      "path": "artifacts/REVIEWER_AB002_A.json",
+      "locator": "/per_invariant/A6",
+      "kind": "predecessor"
+    },
+    {
+      "id": "E-A2-29",
+      "path": "runtime/RV002_A/independent_probes.py",
+      "locator": "121-152",
+      "kind": "predecessor_source"
+    },
+    {
+      "id": "E-A2-30",
+      "path": "mockup/ab002_e2e.py",
+      "locator": "26-35",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-31",
+      "path": "mockup/ab002_matrix.py",
+      "locator": "150-187",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-32",
+      "path": "mockup/ab002_matrix.py",
+      "locator": "364-408",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-33",
+      "path": "artifacts/REVIEWER_AB002_A.json",
+      "locator": "/proposed_debts/0",
+      "kind": "predecessor"
+    },
+    {
+      "id": "E-A2-34",
+      "path": "tech_debt.md",
+      "locator": "30-36",
+      "kind": "registry"
+    },
+    {
+      "id": "E-A2-35",
+      "path": "runtime/RS001_RESEARCH.json",
+      "locator": "/questions",
+      "kind": "prior_research"
+    },
+    {
+      "id": "E-A2-36",
+      "path": "runtime/RS001_HANDOFF.md",
+      "locator": "18-35",
+      "kind": "prior_research"
+    },
+    {
+      "id": "E-A2-37",
+      "path": "templates/NEGATIVE_E2E_SECURITY_CONTRACT.md",
+      "locator": "23-95",
+      "kind": "future_contract"
+    },
+    {
+      "id": "E-A2-38",
+      "path": "cards/PL003_NEGATIVE_E2E_PLANNER.md",
+      "locator": "1-39",
+      "kind": "future_contract"
+    },
+    {
+      "id": "E-A2-39",
+      "path": "artifacts/AUDITOR_AB002_A.json",
+      "locator": "/findings",
+      "kind": "input_verdict"
+    },
+    {
+      "id": "E-A2-40",
+      "path": "reports/AUDITOR_AB002_A.md",
+      "locator": "36-48",
+      "kind": "input_verdict"
+    },
+    {
+      "id": "E-A2-41",
+      "path": "E:/opencode_harness_portable/docs/CODERS/08_ANALYST_RESEARCHER_CONTRACT.md",
+      "locator": "95-111",
+      "kind": "normative"
+    },
+    {
+      "id": "E-A2-42",
+      "path": "E:/opencode_harness_portable/docs/CODERS/09_FINDINGS_ESCAPE_HATCH.md",
+      "locator": "17-47",
+      "kind": "normative"
+    },
+    {
+      "id": "E-A2-43",
+      "path": "E:/opencode_harness_portable/shared/code-factory-process.md",
+      "locator": "101-158",
+      "kind": "normative"
+    },
+    {
+      "id": "E-A2-44",
+      "path": "mockup/server.py",
+      "locator": "35-118",
+      "kind": "source"
+    },
+    {
+      "id": "E-A2-45",
+      "path": "cards/AN002_A_ANALYST.md",
+      "locator": "42-65",
+      "kind": "task_contract"
+    },
+    {
+      "id": "E-A2-46",
+      "path": "docs/AB002_PLAN.md",
+      "locator": "11-24",
+      "kind": "plan"
+    },
+    {
+      "id": "E-A2-47",
+      "path": "runtime/AU002_A/verification.json",
+      "locator": "",
+      "kind": "auditor_verification"
+    },
+    {
+      "id": "E-A2-48",
+      "path": "runtime/AU002_A/run-b944ea96/manifest.json",
+      "locator": "",
+      "kind": "immutable_manifest"
+    }
+  ],
+  "causes": [
+    {
+      "id": "C-A2-01",
+      "findings": [
+        "F-AU002-01"
+      ],
+      "debts": [
+        "TD-DOM-19"
+      ],
+      "severity": "major",
+      "scope": "IN_SCOPE A6 + preserved ACL",
+      "classification": "bug / specification nonconformance",
+      "symptom": "AA-only MCP caller при неизменных AA claims видит AB revision 0→1 на шести ответах. При broken среднем AB event получает запрещённый UUID и глобальные seq/count. Прямые AB вызовы отклоняются.",
+      "root_cause": "Scope авторизует запрошенную ветку, но не замыкает область данных всего response envelope. integrity_gate использует глобальную проверку как одновременно внутренний доказательный stamp и готовую публичную проекцию. Все branch_heads и общий chain_head добавляются уже после scope-проверки; verify_chain возвращает глобальные локаторы без классификации по полномочиям.",
+      "causal_class": "Unscoped derived metadata / diagnostic information flow across the authorization boundary; internal proof-public response conflation.",
+      "causal_path": [
+        "scope(branch) в query/status/export/resume проверяет AA и работает; сам guard не обойдён.",
+        "verify_chain SELECT всей events обязателен для текущей глобальной цепи; сам по себе не причина disclosure.",
+        "integrity_gate:92-93 собирает revisions всех веток и global chain_head; :98-100 вставляет необработанный chain в IntegrityFailure.",
+        "_trace:262,270 отдельно возвращает global chain; resume:369 вкладывает этот trace. Фильтр только read_snapshot.revisions оставит healthy count/head канал.",
+        "guarded:34 и MCP serializer:213-215 возвращают эти поля caller в text и structuredContent; origins scoped на :96-97, но соседние chain/stamp этим не защищены."
+      ],
+      "boundary_violated": "Авторизация запрошенного объекта != авторизация всех derived fields. Конфиденциальность ветки/объекта охватывает metadata и диагностику, а не только plaintext claims.",
+      "violated_requirements": [
+        "R-ACL",
+        "R-INTEGRITY"
+      ],
+      "root_vs_symptom": "Root — отсутствие отдельного actor-scoped output-контракта для integrity evidence; AB revision, UUID, seq/count/head — разные симптомы одного класса. Не причина: необходимость глобальной проверки, плохой claim-body filter, OS-admin, fixture auth или TD-DOM-14 branch/master readiness.",
+      "why_previous_review_missed": {
+        "observed": "RV corruption проверял status, exact seq/reason, NOT_READY и неизменные байты через MCP helper без branch-grant параметра; его default reviewer-контекст не создаёт AA-only vs hidden AB differential. Runner spoof проверяет запрещённую ZZ/role, а не разрешённый AA envelope при changing AB. A6/Q-09/Q-11 oracle требовал локатор, не различая аудиторию.",
+        "process_cause": "Перенос критерия «диагностика содержит locator» в общий oracle без второй оси «кто имеет право видеть locator». Успешный fail-closed был ошибочно достаточным для A6 при сохранённой общей ACL-обязанности.",
+        "limit": "Это вывод из сохранённых сценариев/условий, не утверждение о мотивах reviewer и не доказательство отсутствия любых иных непрочитанных проверок."
+      },
+      "minimal_scenario": "Одно общее work, AA-only actor, принята AA1. Снять query/snapshot/trace/resume/status/export; независимый AB actor штатно допускает AB1; повторить AA и positive AB control. Отдельно на копии повредить средний AB event и открыть два AA-only MCP процесса: refuse без выпуска, но без foreign locator.",
+      "physical_evidence": "Перепарсены сохранённые before/after и positive control: claims AA совпадают, все шесть chain_head меняются, trace.chain.events 1→2 и resume.trace.chain.events 1→2. Middle: 14 отказов, семь tools, два PID, во всех UUID инъекции AB seq2; before/after physical JSON совпадают.",
+      "evidence": [
+        "E-A2-03",
+        "E-A2-04",
+        "E-A2-05",
+        "E-A2-06",
+        "E-A2-07",
+        "E-A2-10",
+        "E-A2-14",
+        "E-A2-15",
+        "E-A2-16",
+        "E-A2-17",
+        "E-A2-18",
+        "E-A2-19",
+        "E-A2-20",
+        "E-A2-21",
+        "E-A2-22",
+        "E-A2-28",
+        "E-A2-29",
+        "E-A2-30",
+        "E-A2-31",
+        "E-A2-35"
+      ],
+      "certainty": {
+        "level": "high",
+        "basis": "Current code path plus immutable auditor response differential and reparse; no new E2E.",
+        "uncertain": "Привилегированный diagnostic transport/role не выбран. Timing, все logs/search/cursors и plaintext body leak не доказаны."
+      },
+      "recommendation_boundary": "Сохранить глобальный gate и snapshot consistency. Разделить internal proof и публичную actor-scoped проекцию на всех вложенных выходах. Не объявлять CHAIN_OK/READY ради сокрытия чужой порчи. Минимальный статус блокировки может раскрывать общую недоступность: абсолютная indistinguishability healthy/broken не обещается; explicit safe health contract нужен RS002-A."
+    },
+    {
+      "id": "C-A2-02",
+      "findings": [
+        "F-AU002-02"
+      ],
+      "debts": [
+        "TD-DOM-20"
+      ],
+      "severity": "major",
+      "scope": "OUT_OF_SCOPE A; SIMULATION external nested target robustness",
+      "classification": "bug / robustness gap, registered obligation",
+      "symptom": "Два новых MCP процесса на TASK=[] получают isError с raw AttributeError без domain status; OMH intent ambiguous, YAML pending. Нет false ack/READY.",
+      "root_cause": "Port валидирует только внешний JSON object. read_target сводит отсутствующий target и присутствующий malformed nested value к одинаковому {}. attach заново читает сырой nested value и предполагает dict, вызывая .get у list. Read и write paths не имеют единого shape-контракта.",
+      "causal_class": "Lossy validation / absent-invalid conflation at an external data boundary, compounded by exception escape and sequential fail-stop fanout.",
+      "causal_path": [
+        "ports._load:31-35 проверяет лишь корневой dict, не форму target.",
+        "read_target:38-39 превращает TASK:list в {}, pre-read видит отсутствие tx и переходит к attach.",
+        "attach:67-71: store.get(target,{}).get(tx) на list выбрасывает AttributeError до target write.",
+        "admission:335-345 ловит OSError/ValueError, не AttributeError; guarded:30-36 тоже не переводит его в доменный статус; server:199-209 ловит только ToolInput. Сохранённый wire показывает SDK generic error, а не domain response.",
+        "Attempt уже committed на :315-319. Observation :348-356 не достигается; ORDER BY revision,kind даёт OMH_EVIDENCE перед YAML_EXPORT, исключение прерывает весь for. Повтор в новом процессе заново встречает ту же внешнюю форму."
+      ],
+      "boundary_violated": "Недоверенное внешнее состояние должно быть явно валидировано до интерпретации/мутации. Файл отсутствует, key отсутствует и key присутствует неверного типа — разные состояния. Владение своим key не разрешает reset всего target store.",
+      "violated_requirements": [
+        "R-DELIVERY",
+        "R-IMMUTABLE"
+      ],
+      "root_vs_symptom": "Root — разрыв nested shape validation между чтением и attach; raw exception и блокировка следующего intent — последствия. Просто catch AttributeError скроет неверную семантику {} и не даст ясного контракта. Два attempt без observation сами по себе не нарушение A2: predecessor durable, ack не создан. YAML-isolation desired robustness, не уже установленная formal A-гарантия.",
+      "why_previous_review_missed": {
+        "observed": "RV/runner target вариации покрывали available/unavailable/liar/ambiguous/crash-after-send и корректные populated target; malformed nested TASK:list не включён. Корневой JSON-валидатор создаёт ложное ощущение валидации всей цели.",
+        "process_cause": "Fault modes адаптера и протокол ack проверялись, но внешний shape не был отдельной осью initial conditions; transport exit0 не оракул доменного отказа.",
+        "limit": "Нельзя из этого вывести производственную auth-уязвимость или факт испытания null/scalar/всех иных layouts."
+      },
+      "minimal_scenario": "Один admitted pending AA tx; собственный TASK=[] и unrelated target. Два свежих процесса resume→sync→status/trace. Затем исправить только owned key до {}, reconcile новым процессом и физически прочитать store/write log/ack связи.",
+      "physical_evidence": "Сохранённые PIDs 11740/7796: одинаковый raw list.get error; after-malformed counts attempts=2, observations=0, acks=0 и target bytes без изменений. Recovery counts observations=2, acks=2, один OMH write/target tx, unrelated target сохранён.",
+      "evidence": [
+        "E-A2-04",
+        "E-A2-07",
+        "E-A2-08",
+        "E-A2-09",
+        "E-A2-10",
+        "E-A2-11",
+        "E-A2-12",
+        "E-A2-13",
+        "E-A2-23",
+        "E-A2-24",
+        "E-A2-25",
+        "E-A2-26",
+        "E-A2-27",
+        "E-A2-32",
+        "E-A2-36",
+        "E-A2-39",
+        "E-A2-40"
+      ],
+      "certainty": {
+        "level": "high_for_TASK_list",
+        "basis": "Port source and wire/physical evidence converge; owned-key recovery isolates cause.",
+        "uncertain": "Null/scalar/nested tx-record layouts, dynamic concurrent replacement и политика продолжения остальных intents не испытаны здесь."
+      },
+      "recommendation_boundary": "RS002-A определяет общий валидатор и честный результат invalid/unavailable/ambiguous; blanket swallow, silent reset target, перезапись неизвестных ключей, фиктивное observed=matched или ack запрещены. Решение о per-intent continuation предложить явно, не выдавать за существующую норму."
+    },
+    {
+      "id": "C-A2-03",
+      "findings": [],
+      "debts": [
+        "TD-DOM-21"
+      ],
+      "severity": "minor",
+      "scope": "Known RV002-A-DEBT-01 / future D tooling, not a new product finding",
+      "classification": "technical debt / evidence provenance risk",
+      "symptom": "Shared runtime/AB002_A/e2e_manifest.json перезаписывается при следующем run; голая ссылка не определяет прежний набор кейсов.",
+      "root_cause": "Имя текущего указателя смешано с идентичностью immutable evidence. Run-specific manifest есть, но shared pointer также используется для progress и может попасть в отчёт без frozen lineage.",
+      "causal_class": "Mutable evidence-reference / run identity conflation.",
+      "causal_path": [
+        "ab002_matrix:366 создаёт новый run; :397,405,408 обновляют shared pointer, :408 сохраняет run-specific manifest.",
+        "Повтор меняет shared target; старый отчёт без manifest hash/source-input linkage начинает указывать на другой run."
+      ],
+      "boundary_violated": "Evidence точной версии/запуска != актуальное состояние global progress pointer.",
+      "violated_requirements": [
+        "R-EVIDENCE"
+      ],
+      "root_vs_symptom": "Не причина TD19/20, не доказанная порча данных продукта или ложность immutable auditor evidence. Это независимый риск доказательной базы; не новый TD и не повод повторять весь аудит.",
+      "why_previous_review_missed": {
+        "observed": "Не пропущен: reviewer нашёл и предложил RV002-A-DEBT-01; auditor зарегистрировал TD-DOM-21 и использовал собственный run-specific manifest.",
+        "process_cause": "Оставался proposal из-за write scope reviewer; регистрация сделана auditor.",
+        "limit": "Не установлена фактическая подмена текущих audit evidence; такой вывод был бы необоснован."
+      },
+      "minimal_scenario": "В будущем tooling-check выполнить два изолированных run и убедиться, что первый manifest+hash остаётся адресуемым, независимо от shared latest pointer.",
+      "physical_evidence": "Исходник runner явно сохраняет обе ссылки; RV proposed_debts и tech_debt.md сопоставляют прежний proposal с TD21; auditor manifest run-b944ea96 не является shared pointer.",
+      "evidence": [
+        "E-A2-32",
+        "E-A2-33",
+        "E-A2-34",
+        "E-A2-48"
+      ],
+      "certainty": {
+        "level": "high_for_pointer_design",
+        "basis": "Current runner source and explicit prior debt registration.",
+        "uncertain": "Новый two-run E2E tooling replay не выполнялся; глобальная пригодность всех исторических report pointers не проверена."
+      },
+      "recommendation_boundary": "Закреплять run-specific manifest/hash и source/input fingerprints в будущей сдаче. Не удалять старые runs, не переименовывать TD и не закрывать debt только этим анализом."
+    }
+  ],
+  "findings_coverage": [
+    {
+      "finding": "F-AU002-01",
+      "debt": "TD-DOM-19",
+      "cause_refs": [
+        "C-A2-01"
+      ],
+      "question_refs": [
+        "Q-A2-01",
+        "Q-A2-02"
+      ],
+      "planner_point_refs": [
+        "LP-A2-01",
+        "LP-A2-02",
+        "LP-A2-03",
+        "LP-A2-04"
+      ],
+      "state": "causally_analyzed_not_fixed",
+      "scope": "IN_SCOPE A6+ACL",
+      "evidence": [
+        "E-A2-15",
+        "E-A2-16",
+        "E-A2-17",
+        "E-A2-18",
+        "E-A2-19",
+        "E-A2-20",
+        "E-A2-21",
+        "E-A2-22"
+      ]
+    },
+    {
+      "finding": "F-AU002-02",
+      "debt": "TD-DOM-20",
+      "cause_refs": [
+        "C-A2-02"
+      ],
+      "question_refs": [
+        "Q-A2-03",
+        "Q-A2-04"
+      ],
+      "planner_point_refs": [
+        "LP-A2-05",
+        "LP-A2-06"
+      ],
+      "state": "causally_analyzed_registered_out_of_scope_not_fixed",
+      "scope": "OUT_OF_SCOPE A",
+      "evidence": [
+        "E-A2-23",
+        "E-A2-24",
+        "E-A2-25",
+        "E-A2-26",
+        "E-A2-27"
+      ]
+    },
+    {
+      "finding": null,
+      "debt": "TD-DOM-21",
+      "prior_proposal": "RV002-A-DEBT-01",
+      "new_duplicate_finding": false,
+      "cause_refs": [
+        "C-A2-03"
+      ],
+      "question_refs": [
+        "Q-A2-05"
+      ],
+      "planner_point_refs": [
+        "LP-A2-07"
+      ],
+      "state": "known_prior_debt_role_explained_not_closed",
+      "scope": "future D tooling",
+      "evidence": [
+        "E-A2-32",
+        "E-A2-33",
+        "E-A2-34",
+        "E-A2-48"
+      ]
+    }
+  ],
+  "priorities": [
+    {
+      "priority": "P0",
+      "severity": "major",
+      "debt": "TD-DOM-19",
+      "action": "RS002-A scoped-output/diagnosis contract -> updated worker fix card -> independent review/audit; do not defer existing leak to PL003 or accept affected A."
+    },
+    {
+      "priority": "P1",
+      "severity": "major",
+      "debt": "TD-DOM-20",
+      "action": "RS002-A target shape + failure boundary contract, orchestrator schedules explicit out-of-scope robustness slice; no silent widening of A and no debt disappearance."
+    },
+    {
+      "priority": "P2",
+      "severity": "minor",
+      "debt": "TD-DOM-21",
+      "action": "Keep immutable refs in handoff now, research minimal D lineage contract; no new duplicate debt or acceptance claim."
+    }
+  ],
+  "questions_for_researcher": [
+    {
+      "id": "Q-A2-01",
+      "exact_question": "Как разделить полный внутренний integrity stamp и actor-scoped публичную проекцию healthy-ответа так, чтобы ни read_snapshot.revisions/chain_head, ни trace.chain и resume.trace.chain не раскрывали скрытую ветку, сохранив verified read snapshot и внутреннюю привязку delivery evidence?",
+      "finding_refs": [
+        "F-AU002-01"
+      ],
+      "debt_refs": [
+        "TD-DOM-19"
+      ],
+      "source_requirement_refs": [
+        "R-ACL",
+        "R-INTEGRITY",
+        "R-DELIVERY"
+      ],
+      "source_locations": [
+        "mockup/admission.py:90-101",
+        "mockup/admission.py:220-277",
+        "mockup/admission.py:323-370"
+      ],
+      "expected_contract": "Field-level allowlist по launch-time grants для каждого top-level/nested выхода; внутренние global proof и observation facts не теряют привязку. Global hash нельзя считать безопасным только потому, что это hash. Query/snapshot alias, trace/resume, status/export и sync перечислены отдельно; формат scoped token, если нужен, только предложить с семантикой, не подменять им global доказательство.",
+      "e2e_criterion": {
+        "action": "AA-only actor, AA фиксирована; B actor меняет hidden AB, B positive control; шесть healthy outputs и новый PID, плюс permitted sync actor с теми же AA grants.",
+        "expected": "Permitted содержимое сохраняется, запрещённые revisions/count/head/IDs не появляются ни в text, ни structured/nested outputs; direct AB по-прежнему denied. Sync-вариант новый, не заявлен как уже исполненный healthy audit.",
+        "physical_fact": "Raw MCP field-level differential с исключением документированных read_at, positive AB control, точные AA bytes и readback/SQL observation→attempt→intent; gate остаётся глобальным."
+      },
+      "delta_from_RS001": "Не повторяет Q-11 о местоположении gate: gate уже работает; нужен контракт публикации его побочных полей.",
+      "evidence": [
+        "E-A2-05",
+        "E-A2-06",
+        "E-A2-07",
+        "E-A2-15",
+        "E-A2-16",
+        "E-A2-17",
+        "E-A2-18"
+      ],
+      "priority": "P0_before_affected_A_acceptance"
+    },
+    {
+      "id": "Q-A2-02",
+      "exact_question": "Какой минимальный безопасный CHAIN_BROKEN ответ допустим restricted actor при повреждении forbidden AB, и как отдельно сохранить точный привилегированный locator без UUID/seq/count/revisions/глобальных хешей в restricted ответе и без ослабления глобального fail-closed?",
+      "finding_refs": [
+        "F-AU002-01"
+      ],
+      "debt_refs": [
+        "TD-DOM-19"
+      ],
+      "source_requirement_refs": [
+        "R-ACL",
+        "R-INTEGRITY"
+      ],
+      "source_locations": [
+        "mockup/admission.py:48-70",
+        "mockup/admission.py:90-100",
+        "mockup/admission.py:30-36",
+        "mockup/server.py:197-215"
+      ],
+      "expected_contract": "Таблица public/privileged/internal диагностических полей; права admin locator не выводить из имени reviewer/owner и не расширять actor grants. Если защищённого диагностического канала ещё нет — назвать GAP и предложить безопасную схему, не изобретать реализованный endpoint. Статус общей блокировки допускается как обязательный health signal; строгая неразличимость healthy/broken при глобальном gate не обещается. Correlation token, если предлагается, не должен быть стабильным foreign ID/hash surrogate.",
+      "e2e_criterion": {
+        "action": "Middle forbidden AB invalid-UTF8 и отдельно wrong hash на disposable populated копии; AA-only actor, два свежих процесса, семь tools; затем authorized privileged locator control по выбранному контракту.",
+        "expected": "Structured refusal, NOT_READY, нет эффекта/exports и forbidden locator; глобальная порча всё ещё блокирует AA. Привилегированный оракул точно находит испорченный event без выдачи его restricted actor.",
+        "physical_fact": "Raw text/structured error scan, target/export/DB before==after, admin oracle к fixture locator, без shared diagnostic handle утечки."
+      },
+      "delta_from_RS001": "Q-09/Q-11 требовали locator, но не адресата. Новый вопрос устраняет противоречие locator vs branch confidentiality, не выбирает rewind/repair.",
+      "evidence": [
+        "E-A2-05",
+        "E-A2-10",
+        "E-A2-19",
+        "E-A2-20",
+        "E-A2-21",
+        "E-A2-22",
+        "E-A2-28",
+        "E-A2-29",
+        "E-A2-35"
+      ],
+      "priority": "P0_before_affected_A_acceptance"
+    },
+    {
+      "id": "Q-A2-03",
+      "exact_question": "Какой единый read/attach shape-контракт различает отсутствующий файл/target key и присутствующий TASK со значением list/null/scalar, а также неверный tx record, не нормализуя malformed данные в пустую карту и не меняя чужие keys?",
+      "finding_refs": [
+        "F-AU002-02"
+      ],
+      "debt_refs": [
+        "TD-DOM-20"
+      ],
+      "source_requirement_refs": [
+        "R-DELIVERY",
+        "R-IMMUTABLE"
+      ],
+      "source_locations": [
+        "mockup/ports.py:31-39",
+        "mockup/ports.py:64-82",
+        "mockup/admission.py:335-345"
+      ],
+      "expected_contract": "State table absent/valid/invalid/unavailable/conflicting с явным domain diagnosis; чтение и locked attach применяют согласованную проверку nested shape. Запрещены silent reset/auto-coercion/удаление unknown data и ложный ack; сохранять evidence причину без raw payload/path. Валидатор/ошибка — предложенный механизм для out-of-scope обязательства, не исправление A заочно.",
+      "e2e_criterion": {
+        "action": "Fresh и populated target, собственный key отсутствует/{}/[]/null/scalar; присутствуют unrelated keys и existing tx. Для каждого два новых процесса и controlled correction только own key.",
+        "expected": "Malformed выдаёт domain error без Attribute/TypeError и без мутации target/ack; отсутствующий key штатно создаётся, валидные и чужие данные не теряются. После явного исправления восстановление.",
+        "physical_fact": "Original bytes при отказе, foreign-key equality, raw MCP, SQL matched/ack false до exact readback, recovery write log без дубликата."
+      },
+      "delta_from_RS001": "Не повторяет общий Q-01 о readback: уточняет доверенную форму самого readback источника, выявленную TASK:list.",
+      "evidence": [
+        "E-A2-08",
+        "E-A2-09",
+        "E-A2-23",
+        "E-A2-24",
+        "E-A2-25",
+        "E-A2-26",
+        "E-A2-27",
+        "E-A2-40"
+      ],
+      "priority": "P1_registered_out_of_scope_obligation"
+    },
+    {
+      "id": "Q-A2-04",
+      "exact_question": "Как согласовать доменное завершение попытки при target shape failure и независимые intents одного sync: что фиксировать как failed/unobserved/ambiguous, когда продолжать YAML, какой aggregate результат вернуть и как повтором не подделать readback/ack?",
+      "finding_refs": [
+        "F-AU002-02"
+      ],
+      "debt_refs": [
+        "TD-DOM-20"
+      ],
+      "source_requirement_refs": [
+        "R-DELIVERY",
+        "R-INTEGRITY"
+      ],
+      "source_locations": [
+        "mockup/admission.py:307-362",
+        "mockup/admission.py:30-36",
+        "mockup/server.py:197-215",
+        "mockup/delivery.py:44-75"
+      ],
+      "expected_contract": "Разделить ошибку доказанно до эффекта и ошибку с возможным эффектом; durable attempt не равен observed. Нельзя сохранять пустой raw как успешное наблюдение. Дать допустимые transition/aggregate states и явное предложение per-intent isolation либо fail-stop с rationale. YAML continuation — запрошенная robustness-доработка, не ретроактивная A2-гарантия; если нужен новый product choice — отдельно эскалировать, не выбирать молча.",
+      "e2e_criterion": {
+        "action": "Malformed OMH + pending YAML; два retry процесса; затем owned correction/reconcile; отдельно обрыв после send с uncertain outcome.",
+        "expected": "Truthful structured SYNC_PENDING/target diagnosis или согласованный эквивалент, NOT_READY и no false ack. YAML поведение соответствует выбранному контракту; uncertain outcome не маркируется доказанным no-effect.",
+        "physical_fact": "Attempt/observation/ack SQL lineage и server frames, target/YAML before/after, one-write recovery. Отсутствие observation не считать самостоятельным A2 fail."
+      },
+      "delta_from_RS001": "Не переделывает общий автомат Q-02/Q-03: узкий новый переход внешней shape-ошибки и граница отказа fanout.",
+      "evidence": [
+        "E-A2-07",
+        "E-A2-10",
+        "E-A2-11",
+        "E-A2-12",
+        "E-A2-23",
+        "E-A2-25",
+        "E-A2-27",
+        "E-A2-36",
+        "E-A2-40"
+      ],
+      "priority": "P1_registered_out_of_scope_obligation"
+    },
+    {
+      "id": "Q-A2-05",
+      "exact_question": "Какой минимальный immutable evidence reference должен фиксировать run-specific manifest, его hash и source/input lineage, чтобы повтор runner не переназначал evidence прежнего отчёта через shared e2e_manifest.json?",
+      "finding_refs": [],
+      "debt_refs": [
+        "TD-DOM-21"
+      ],
+      "source_requirement_refs": [
+        "R-EVIDENCE",
+        "R-NEGATIVE-E2E"
+      ],
+      "source_locations": [
+        "mockup/ab002_matrix.py:364-408",
+        "artifacts/REVIEWER_AB002_A.json#/proposed_debts/0",
+        "tech_debt.md:36"
+      ],
+      "expected_contract": "Сдача адресует immutable run manifest+hash+fingerprints; latest pointer допустим только для progress/navigation, не sole evidence. First/failed run и прежние evidence сохраняются; existing TD21 без дубликата.",
+      "e2e_criterion": {
+        "action": "В будущем D/tooling выполнить два изолированных run и разрешить refs первого отчёта после второго; изменить latest pointer только как штатный эффект нового run.",
+        "expected": "Первый bundle/manifest hash и version lineage остаются теми же; mismatched artifact version обнаруживается, не становится PASS.",
+        "physical_fact": "Два run-specific manifests, fingerprints, ref resolution/hash comparison и retention старого bundle. Этот two-run check сейчас не запускался."
+      },
+      "delta_from_RS001": "Новый узкий tooling вопрос из уже замеченного reviewer proposal; не повтор исследования A или полный новый D план.",
+      "evidence": [
+        "E-A2-32",
+        "E-A2-33",
+        "E-A2-34",
+        "E-A2-48"
+      ],
+      "priority": "P2_future_D_and_evidence_hygiene"
+    }
+  ],
+  "requires_user_decision": [],
+  "decision_limits": {
+    "existing_UD_01_to_06": "OPEN/unchanged; not reselected. No new author choice needed merely to stop prohibited metadata disclosure.",
+    "escalate_if": "RS002-A discovers need for new privileged live diagnostic capability, repair policy or product per-intent guarantee: record explicit needs-user rather than silently choose.",
+    "current_user_blocker": false
+  },
+  "unverified": [
+    "No fresh product E2E in this analyst role; existing immutable frames reparsed and current source/frozen hashes checked.",
+    "Privileged diagnostic routing/authorization and safe health-signal schema are proposed research deliverables, not existing tested functionality.",
+    "Healthy AA-only sync and omitted/master branch differential are source-derived extensions, not newly observed runs.",
+    "Null/scalar/tx-record malformed target, concurrent external replacement and chosen per-intent continuation behavior not executed.",
+    "Search/ranking/count/snippets/cursor/cache/log/timing channels not accepted; TOOLS inventory has no dedicated selective search or refinement API, PL003 must mark GAP rather than substitute snapshot.",
+    "No two-run tooling replay, full Cartesian security, LIVE OMH/Git/auth/issuer/OS sandbox/external checkpoint or B/C/D acceptance.",
+    "Analysis-time hashes are not preregistered source fingerprints; historical audit run provenance remains auditor-owned.",
+    "No fresh-context or cross-model review: non-interactive subagent, agent dispatch prohibited; bounded self-questioning only."
+  ],
+  "next_step": "Parent dispatches RS002-A with this JSON+MD and exact Q-A2-01..05; research resolves only these deltas. Then parent prepares updated worker card for TD19 and separately scopes TD20; independent fix/review/audit. PL003 -> SEC003 -> QA003 remains sequential mandatory after analyst→researcher part/current updated cycle card, not executed here.",
+  "planner_handoff": {
+    "state": "PREPARED_CAUSAL_INPUT_NOT_PLANNER_EXECUTION",
+    "sequence": "After completed AN002-A -> RS002-A and updated current-cycle card, PL003 -> SEC003 -> QA003; SEC findings feed QA, independent review/audit afterward.",
+    "points": [
+      {
+        "id": "LP-A2-01",
+        "state": "OBSERVED_EXISTING_EVIDENCE",
+        "debt_refs": [
+          "TD-DOM-19"
+        ],
+        "source_locations": [
+          "mockup/admission.py:90-101",
+          "mockup/admission.py:220-246",
+          "mockup/admission.py:273-277",
+          "mockup/admission.py:364-370"
+        ],
+        "data_path": "AA scope -> global integrity stamp -> public read_snapshot",
+        "check_id": "CHK-A2-01",
+        "check": "AA fixed / hidden AB changes; scan revisions and chain_head on six surfaces + authorized scoped sync.",
+        "actor_scope": "AA-only author; separately AA-only admit-capable actor for sync",
+        "oracle": "AB positive control + field-level raw MCP differential; no filesystem access for caller",
+        "evidence": [
+          "E-A2-15",
+          "E-A2-16",
+          "E-A2-17",
+          "E-A2-18"
+        ],
+        "question_refs": [
+          "Q-A2-01"
+        ]
+      },
+      {
+        "id": "LP-A2-02",
+        "state": "OBSERVED_EXISTING_EVIDENCE",
+        "debt_refs": [
+          "TD-DOM-19"
+        ],
+        "source_locations": [
+          "mockup/admission.py:256-270",
+          "mockup/admission.py:369"
+        ],
+        "data_path": "verify_chain -> _trace.chain -> trace and resume.trace",
+        "check_id": "CHK-A2-02",
+        "check": "После фильтра stamp продолжать искать events/head_hash в nested chain; existing frames показывают 1→2 при fixed AA.",
+        "actor_scope": "AA-only reader",
+        "oracle": "Отдельный nested field inventory, fixed AA + AB positive control",
+        "evidence": [
+          "E-A2-06",
+          "E-A2-15",
+          "E-A2-16"
+        ],
+        "question_refs": [
+          "Q-A2-01"
+        ]
+      },
+      {
+        "id": "LP-A2-03",
+        "state": "OBSERVED_EXISTING_EVIDENCE",
+        "debt_refs": [
+          "TD-DOM-19"
+        ],
+        "source_locations": [
+          "mockup/admission.py:48-70",
+          "mockup/admission.py:94-100",
+          "mockup/admission.py:30-36",
+          "mockup/server.py:213-215"
+        ],
+        "data_path": "broken foreign event -> IntegrityFailure -> text and structuredContent",
+        "check_id": "CHK-A2-03",
+        "check": "Middle hidden AB corruption/restart on seven tools: retain global refusal, no foreign UUID/seq/count/revisions; admin locator separate.",
+        "actor_scope": "AA-only actor; privileged fixture oracle kept separate",
+        "oracle": "Raw error field scan + exact physical before==after + admin diagnosis",
+        "evidence": [
+          "E-A2-19",
+          "E-A2-20",
+          "E-A2-21",
+          "E-A2-22"
+        ],
+        "question_refs": [
+          "Q-A2-02"
+        ]
+      },
+      {
+        "id": "LP-A2-04",
+        "state": "SOURCE_DERIVED_HYPOTHESIS_NOT_EXECUTED",
+        "debt_refs": [
+          "TD-DOM-19"
+        ],
+        "source_locations": [
+          "mockup/admission.py:248-258",
+          "mockup/admission.py:364-370"
+        ],
+        "data_path": "omitted branch -> master trace UNKNOWN early return, but outer integrity stamp attached first",
+        "check_id": "CHK-A2-04",
+        "check": "AA-only dom_trace without branch/master plus resume nested output; UNKNOWN не считать доказательством отсутствия metadata leakage.",
+        "actor_scope": "AA-only reader vs explicit union actor",
+        "oracle": "Current entrypoint inventory + positive union control + hidden-AB differential; no new finding before execution",
+        "evidence": [
+          "E-A2-06",
+          "E-A2-07",
+          "E-A2-44"
+        ],
+        "question_refs": [
+          "Q-A2-01",
+          "Q-A2-02"
+        ]
+      },
+      {
+        "id": "LP-A2-05",
+        "state": "OBSERVED_TASK_LIST_ONLY_OTHER_SHAPES_HYPOTHESES",
+        "debt_refs": [
+          "TD-DOM-20"
+        ],
+        "source_locations": [
+          "mockup/ports.py:31-39",
+          "mockup/ports.py:64-71"
+        ],
+        "data_path": "external JSON -> read normalization -> raw locked attach",
+        "check_id": "CHK-A2-05",
+        "check": "Absent vs list/null/scalar/current tx malformed; unrelated keys survive; no silent reset; locked reread same contract.",
+        "actor_scope": "Permitted AA sync; fixture owner sets only disposable target",
+        "oracle": "Raw MCP + exact target bytes + foreign key equality before/after and controlled recovery",
+        "evidence": [
+          "E-A2-23",
+          "E-A2-24",
+          "E-A2-25",
+          "E-A2-26"
+        ],
+        "question_refs": [
+          "Q-A2-03"
+        ]
+      },
+      {
+        "id": "LP-A2-06",
+        "state": "OBSERVED_TASK_LIST_SEQUENCE_CONTRACT_PENDING",
+        "debt_refs": [
+          "TD-DOM-20"
+        ],
+        "source_locations": [
+          "mockup/admission.py:312-357",
+          "mockup/server.py:197-215",
+          "mockup/delivery.py:68-75"
+        ],
+        "data_path": "durable attempt -> uncaught exception -> observation not reached -> YAML later intent starved",
+        "check_id": "CHK-A2-06",
+        "check": "Two fresh retries and correction; domain status/partial delivery/ambiguous truthfulness, then crash after possible effect. No fallback ack.",
+        "actor_scope": "Permitted sync actor; unrelated target retained",
+        "oracle": "SQL attempt/observation/ack links, write count, raw isError vs structured status; YAML outcome after research decision",
+        "evidence": [
+          "E-A2-23",
+          "E-A2-25",
+          "E-A2-26",
+          "E-A2-27",
+          "E-A2-40"
+        ],
+        "question_refs": [
+          "Q-A2-04"
+        ]
+      },
+      {
+        "id": "LP-A2-07",
+        "state": "KNOWN_DEBT_SOURCE_CONFIRMED_NO_NEW_TWO_RUN_PROBE",
+        "debt_refs": [
+          "TD-DOM-21"
+        ],
+        "source_locations": [
+          "mockup/ab002_matrix.py:364-408"
+        ],
+        "data_path": "report -> shared mutable manifest pointer -> subsequent run",
+        "check_id": "CHK-A2-07",
+        "check": "Immutable source/input/manifest lineage after second run; latest pointer not canonical evidence.",
+        "actor_scope": "Evidence tooling, not model caller ACL",
+        "oracle": "Run-specific manifest/hash and frozen source/input tuple; retain earlier failures",
+        "evidence": [
+          "E-A2-32",
+          "E-A2-33",
+          "E-A2-34",
+          "E-A2-48"
+        ],
+        "question_refs": [
+          "Q-A2-05"
+        ]
+      }
+    ],
+    "mandatory_operations": [
+      "write",
+      "read",
+      "append-only update",
+      "selective search",
+      "branch search",
+      "export/status/error",
+      "restart/concurrency/recovery"
+    ],
+    "inventory_rule": "Rebind file:line to current fingerprint at dispatch. Dedicated selective search/refinement absent from inspected TOOLS: GAP/NOT_IMPLEMENTED until inventory changes. Never downgrade known TD19 to mere hypothetical or replace it with generic checklist.",
+    "omh_plan_application": "Planner prepares exact OMH delta; only parent applies after checking artifacts. This analyst makes no OMH/API/board updates.",
+    "non_negotiable": [
+      "Keep global integrity gate/read snapshot consistency",
+      "No global success masking corruption",
+      "No silent target reset or foreign-key overwrite",
+      "No fake ack/observed/readiness",
+      "No broader caller grants to pass ACL checks",
+      "No blanket all-channels-safe or full-system acceptance"
+    ]
+  },
+  "deferred_requirements": [
+    {
+      "requirement": "Nested claim refinement tree",
+      "state": "deferred_to_researcher",
+      "source_requirement": "REQUIREMENTS.md:19-21,42-43",
+      "context": "Arbitrary-depth append-only child claims; last independently admitted refinement current in relevant branch; concurrent siblings/dependent revalidation remain research policy. Separate future research context, not executable A fix and not one of the five new issue questions.",
+      "evidence": [
+        "E-A2-01"
+      ],
+      "implemented": false
+    },
+    {
+      "requirement": "AB002-B/C/D, UD-01..06, LIVE integrations/security boundary",
+      "state": "OPEN_UNCHANGED",
+      "context": "This analysis does not close roadmap obligations or substitute negative specialist cycle."
+    }
+  ],
+  "self_challenge": [
+    {
+      "claim": "TD19 caused by unscoped envelope rather than broken scope()",
+      "counterexample_checked": "Direct AB denied while AA response changes with AB; origins filter exists but stamp/chain unfiltered.",
+      "result": "Supported; do not disable global verifier."
+    },
+    {
+      "claim": "TD20 root is nested shape mismatch, not false ack",
+      "counterexample_checked": "No ack/observations before correction; two fresh processes repeat, own-key correction restores one-write.",
+      "result": "Supported TASK:list; no universal malformed-shape claim."
+    },
+    {
+      "claim": "TD21 invalidates auditor evidence",
+      "counterexample_checked": "Auditor uses own run-specific manifest; frozen hashes match.",
+      "result": "Rejected; TD21 is independent provenance risk, not cause or invalidation of TD19/20."
+    },
+    {
+      "claim": "Exact response equality can hold for healthy and globally corrupted hidden branch",
+      "counterexample_checked": "Preserving fail-closed necessarily changes availability/status.",
+      "result": "Rejected; confidentiality requirement covers identifiers/metadata, with explicit minimal health signal contract."
+    }
+  ],
+  "adversarial_checklist": {
+    "domain_coverage": "Both findings + known TD21 and required deferred/planner scope covered; omissions explicit.",
+    "fact_concept_consistency": "Each causal chain linked to current source and immutable evidence; no fixes/acceptance inferred.",
+    "concept_diversity": "Confidentiality projection, external shape/exception boundary, evidence provenance distinct.",
+    "source_specificity": "Local versioned file:line and JSON locators; no invented network/DOI.",
+    "triz_correctness": "Not applicable: no TRIZ/IFR solution authored.",
+    "estimates_realism": "No fabricated timing/cost/safety estimates."
+  },
+  "findings_escape_hatch": {
+    "level_1": "Owned report/JSON/validator only; no product fix.",
+    "level_2": [
+      "TD-DOM-20 registered out-of-scope obligation analyzed",
+      "TD-DOM-21 existing RV proposal acknowledged without duplicate; no registry edit"
+    ],
+    "level_3": "[ESCALATED] TD-DOM-19 remains REQUEST_CHANGES to parent/RS002-A then factory fix; analysis is not acceptance."
+  },
+  "own_execution": {
+    "command": "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/AN002_A/inspect_inputs.py",
+    "exit_code": 0,
+    "actual": "Existing auditor evidence reparse; 42 current frozen fingerprints match; no new product scenario.",
+    "evidence_extract_ref": "runtime/AN002_A/evidence_extract.json",
+    "frozen_comparison_ref": "runtime/AN002_A/frozen_comparison.json",
+    "initial_artifact_ref": "runtime/AN002_A/first_artifact.json"
+  },
+  "validation_ref": "runtime/AN002_A/validation.json",
+  "report_ref": "reports/ANALYST_AB002_A.md",
+  "continuation_required": false,
+  "debt_status_changes": []
+}

@@ -1,0 +1,154 @@
+{
+  "schema": "hygiene_wave/v1",
+  "role": "CONT-01",
+  "wave": 2,
+  "generated_at": "2026-11-08T12:52:26+00:00",
+  "task": "HY001 CONT-01 — дописать выходы волны 2 после готового механизма (runtime/LIVE/lib). История волны 1 не переписывалась.",
+  "product_acceptance": false,
+  "is_approval": false,
+  "basis": {
+    "criteria": "runtime/LIVE/acceptance_wave2.json (C1a, C1b, C2..C7)",
+    "validator": "runtime/LIVE/lib/verify_run.py",
+    "wave1_run": "artifacts/LIVE_WAVE1_RUN.json + runtime/LIVE/wave1/**",
+    "selftests": "runtime/LIVE/hygiene_selftest/hy-01, hy-02"
+  },
+  "changed_in_lib": [
+    {
+      "file": "runtime/LIVE/lib/runner.py",
+      "module": "W3-слой записи сценария",
+      "what": [
+        "один процесс-таймлайн: монотонная seq, на каждый реальный процесс свой client_id; обрыв записывается строкой kind=interrupt (tool=_reconnect_new_client, новый client_id) в тот же timeline.jsonl — а не склейкой двух логов",
+        "кадр на каждый шаг: raw/step{seq}_{tool}.json всегда пишется, кроме синтетической строки reconnect",
+        "intent_matches_effect — функция(status) (OK→true, иначе false), не ручное значение",
+        "env_events структурно: failpoint + ts + effect (не свободный текст msg)"
+      ],
+      "why": "волна 1 дала D3_FRAME (кадров нет), D3_INTENT (ручное значение), D3_SPLICE (склейка без границы), D4_DOUBT (сомнения не в артефакте), D1 (summary.json не записан)"
+    },
+    {
+      "file": "runtime/LIVE/lib/verify_run.py",
+      "module": "авто-сверка перед сдачей",
+      "what": [
+        "сверяет live-артефакт ↔ таймлайны/кадры/summary.json/копии DOM-баз на диске",
+        "машино-проверяемые коды: D1 (complete без summary), D2 (число шагов), D3_FRAME / D3_INTENT / D3_SPLICE / D3_ENV, D4_DOUBT / D4_REFUSAL, D6 (ревизии артефакта vs DOM-база)",
+        "выход: PASS (exit 0) при отсутствии расхождений, иначе список и exit 1"
+      ],
+      "why": "машино-проверяемый заслон: на волне 1 обязан ПАДАТЬ, на чистом самопрогоне — проходить"
+    },
+    {
+      "file": "runtime/LIVE/lib/w2util.py",
+      "module": "общие утилиты записи (волна 2)",
+      "what": [
+        "write_summary: пишет summary.json со ВСЕМИ полями сценария (doubts, refusals, env_events, missing_frames)",
+        "seed_scenario: фикстура через ДВА независимых principal (owner submit + reviewer review/admit) поверх реального MCP + fixture_snapshot"
+      ],
+      "why": "summary.json был обязателен (код D1); волна 1 его не писала для L1-01"
+    }
+  ],
+  "wave1_result": {
+    "artifact": "artifacts/LIVE_WAVE1_RUN.json",
+    "root": "runtime/LIVE/wave1",
+    "verdict": "FAIL",
+    "exit_code": 1,
+    "discrepancies_total": 9,
+    "by_code": {
+      "D1": 1,
+      "D3_FRAME": 4,
+      "D3_INTENT": 1,
+      "D3_SPLICE": 1,
+      "D4_DOUBT": 2
+    },
+    "discrepancies": [
+      {
+        "code": "D1",
+        "scenario": "L1-01",
+        "detail": "complete без summary.json на диске",
+        "refs": [
+          "artifacts/LIVE_WAVE1_RUN.json (scenarios.L1-01.status=complete)",
+          "runtime/LIVE/wave1/L1-01/summary.json (отсутствует)"
+        ]
+      },
+      {
+        "code": "D3_FRAME",
+        "scenario": "L1-01",
+        "detail": "шаг seq=1 tool=dom_resume без кадра",
+        "refs": [
+          "runtime/LIVE/wave1/L1-01/timeline.jsonl",
+          "runtime/LIVE/wave1/L1-01/raw/step1_dom_resume.json (отсутствует)"
+        ]
+      },
+      {
+        "code": "D3_FRAME",
+        "scenario": "L1-02",
+        "detail": "шаги seq=1 dom_resume, seq=3 dom_query, seq=5 dom_review без кадров",
+        "refs": [
+          "runtime/LIVE/wave1/L1-02/timeline.jsonl",
+          "runtime/LIVE/wave1/L1-02/raw/step1_dom_resume.json",
+          "runtime/LIVE/wave1/L1-02/raw/step3_dom_query.json",
+          "runtime/LIVE/wave1/L1-02/raw/step5_dom_review.json (отсутствуют)"
+        ]
+      },
+      {
+        "code": "D3_INTENT",
+        "scenario": "L1-02",
+        "detail": "шаг seq=3 status=DENIED intent_matches_effect=True против функции (DENIED→False) — ручное значение",
+        "refs": [
+          "runtime/LIVE/wave1/L1-02/timeline.jsonl (seq 3)"
+        ]
+      },
+      {
+        "code": "D3_SPLICE",
+        "scenario": "L1-02",
+        "detail": "процессов exec=2, но нет события interrupt/границы — таймлайн склеен из двух процессов без отметки",
+        "refs": [
+          "runtime/LIVE/wave1/L1-02/raw/exec-085cb52a.jsonl",
+          "runtime/LIVE/wave1/L1-02/raw/exec-*.jsonl (второй процесс)",
+          "runtime/LIVE/wave1/L1-02/raw/env.log (без failpoint)"
+        ]
+      },
+      {
+        "code": "D4_DOUBT",
+        "scenario": "L1-03",
+        "detail": "сомнение из summary (seq=4 dom_query SCOPE_DENIED) отсутствует в doubts артефакта",
+        "refs": [
+          "runtime/LIVE/wave1/L1-03/summary.json (doubts[0])",
+          "artifacts/LIVE_WAVE1_RUN.json (scenarios.L1-03.doubts=[])"
+        ]
+      },
+      {
+        "code": "D4_DOUBT",
+        "scenario": "L1-04",
+        "detail": "сомнение из summary (seq=8 dom_review INDEPENDENCE_NOT_ENFORCED) отсутствует в doubts артефакта",
+        "refs": [
+          "runtime/LIVE/wave1/L1-04/summary.json (doubts)",
+          "artifacts/LIVE_WAVE1_RUN.json (scenarios.L1-04.doubts)"
+        ]
+      }
+    ]
+  },
+  "clean_run_result": {
+    "artifact": "runtime/LIVE/hygiene_selftest/LIVE_WAVE2_RUN.json",
+    "root": "runtime/LIVE/hygiene_selftest",
+    "verdict": "PASS",
+    "exit_code": 0,
+    "checked": ["hy-01"]
+  },
+  "h02_verify_input": "runtime/LIVE/hygiene_selftest/LIVE_WAVE2_RUN_h02.json",
+  "h02_verify_result": "runtime/LIVE/LIVE_WAVE2_VERIFY_h02.json",
+  "selftests": [
+    {
+      "id": "hy-01",
+      "script": "runtime/LIVE/hygiene_selftest/hy01_selftest.py",
+      "scenario": "одна ветка AA, один чистый процесс, свежий базлайн, llm_judge доступен",
+      "what": "правильный прогон W3: complete, admit независимым reviewer (submit→review→admit), кадры на каждый шаг, intent_matches_effect — функция(status), env_events структурные (0), summary.json со всеми полями",
+      "verify": "PASS (exit 0), расхождений 0"
+    },
+    {
+      "id": "hy-02",
+      "script": "runtime/LIVE/hygiene_selftest/hy02_selftest.py",
+      "scenario": "одна ветка AA, failpoint kill_process_then_new_client after step 2, продолжение в том же таймлайне",
+      "what": "проверяет W3#1/#4: обрыв на шаге 3 (транспортный MCPError), запись env_events с ts+effect, продолжение строкой kind=interrupt с новым client_id в тот же timeline.jsonl (единая seq), кадры у всех шагов кроме синтетической строки reconnect, intent функционален",
+      "verify": "PASS (exit 0), расхождений 0"
+    }
+  ],
+  "conclusion": "Механизм (runtime/LIVE/lib) рабочий: verify_run.py PADET на волне 1 (9 расхождений D1/D3_FRAME/D3_INTENT/D3_SPLICE/D4_DOUBT, exit 1) и ПРОХОДИТ на чистом прогоне hy-01 (PASS exit 0). Прогон hy-02 (kill+reconnect в одном таймлайне) также прошёл проверку (PASS exit 0, результат в runtime/LIVE/LIVE_WAVE2_VERIFY_h02.json). Критерий C1 (acceptance) разделён на C1a (содержимое чужой ветки не раскрывается) и C1b (происхождение расшаренного клайма раскрывается легально по O2); acceptance_wave1.json не тронут."
+}

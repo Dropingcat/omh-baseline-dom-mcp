@@ -1,0 +1,492 @@
+{
+ "schema": "worker_artifact/v1",
+ "role": "WORKER",
+ "slice": "L7",
+ "status": "DONE_WITH_NOTES",
+ "changed_files": [],
+ "new_files": [
+  "mockup/overview.py",
+  "plugin/dom-branches/INSTALL.md",
+  "plugin/dom-branches/plugins/dom-branches/dashboard/manifest.json",
+  "plugin/dom-branches/plugins/dom-branches/dashboard/plugin_api.py",
+  "plugin/dom-branches/desktop-plugins/dom-branches/plugin.js",
+  "runtime/L7/home/dom.sqlite3 (copy of ORIENT)",
+  "runtime/L7/probes/{check_l7.py,router_check.py,digest.py,checks.json,overview_copy.json,pytest_before.txt,pytest_after.txt,digest_before.txt,digest_after.txt,plugin_check.mjs}",
+  "runtime/L7/jsshim/**",
+  "runtime/L7/{neg,hh*}/** (test fixtures)",
+  "artifacts/WORKER_L7.json",
+  "reports/WORKER_L7.md"
+ ],
+ "digest_product_before": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+ "digest_product_after": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+ "digest_note": "new file excluded from the 16-file digest by construction; existing 16 files byte-identical",
+ "checks": [
+  {
+   "name": "overview.counts_equal_sql",
+   "ok": true,
+   "overview": {
+    "branches": 2,
+    "claims": 4,
+    "pending": 1,
+    "rejected": 0
+   },
+   "sql": {
+    "branches": 2,
+    "claims": 4,
+    "candidates": 4,
+    "pending_or_rejected": 1
+   }
+  },
+  {
+   "name": "overview.preview_le_160",
+   "ok": true,
+   "max_preview": 160
+  },
+  {
+   "name": "overview.pending_no_body",
+   "ok": true,
+   "pending_keys": [
+    "age_seconds",
+    "author",
+    "branch",
+    "candidate_id",
+    "created_at",
+    "dependencies",
+    "operation",
+    "payload_length",
+    "review_id",
+    "root",
+    "state"
+   ]
+  },
+  {
+   "name": "overview.review_level_null_when_absent",
+   "ok": true
+  },
+  {
+   "name": "overview.preview_binary",
+   "ok": true
+  },
+  {
+   "name": "readonly.sha_and_files_unchanged",
+   "ok": true,
+   "sha_before": "3f94533b978695297f110fa9a0f705d7521d6331ae825a96d425de3e54070eac",
+   "sha_after": "3f94533b978695297f110fa9a0f705d7521d6331ae825a96d425de3e54070eac",
+   "files": [
+    "dom.sqlite3"
+   ]
+  },
+  {
+   "name": "readonly.writes_impossible",
+   "ok": true,
+   "attempts": [
+    [
+     "INSERT INTO binding VALUES(9,'x','y')",
+     "OperationalError: attempt to write a readonly database"
+    ],
+    [
+     "CREATE TABLE zz(a)",
+     "OperationalError: attempt to write a readonly database"
+    ],
+    [
+     "DELETE FROM claims",
+     "OperationalError: attempt to write a readonly database"
+    ],
+    [
+     "PRAGMA user_version=9",
+     "OperationalError: attempt to write a readonly database"
+    ]
+   ]
+  },
+  {
+   "name": "live_db_unchanged_vs_copy_source",
+   "ok": true,
+   "sha": "3f94533b978695297f110fa9a0f705d7521d6331ae825a96d425de3e54070eac"
+  },
+  {
+   "name": "neg.outside_runtime",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.outside_runtime.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.project_root_itself",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.project_root_itself.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.runtime_root_itself",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.runtime_root_itself.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.dotdot",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.dotdot.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.relative_dotdot",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.relative_dotdot.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.link_out_symlink",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "directory must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.link_out_symlink.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.dbfile_symlink_out",
+   "ok": true,
+   "status": "DIRECTORY_REFUSED",
+   "error": "database must be inside the project runtime",
+   "leaked": []
+  },
+  {
+   "name": "neg.dbfile_symlink_out.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.missing_db",
+   "ok": true,
+   "status": "NO_DATABASE",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.missing_db.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.missing_dir",
+   "ok": true,
+   "status": "NO_DATABASE",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.missing_dir.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.corrupt_db",
+   "ok": true,
+   "status": "READER_ERROR",
+   "error": "DatabaseError",
+   "leaked": []
+  },
+  {
+   "name": "neg.corrupt_db.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.zero_byte_db",
+   "ok": true,
+   "status": "EMPTY_DATABASE",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.zero_byte_db.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.empty_db",
+   "ok": true,
+   "status": "EMPTY_DATABASE",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.empty_db.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.unknown_user_version",
+   "ok": true,
+   "status": "OK",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.unknown_user_version.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.missing_tables_partial",
+   "ok": true,
+   "status": "OK",
+   "error": null,
+   "leaked": []
+  },
+  {
+   "name": "neg.missing_tables_partial.cli",
+   "ok": true,
+   "rc": 0
+  },
+  {
+   "name": "neg.unknown_branch",
+   "ok": true
+  },
+  {
+   "name": "neg.invalid_branch",
+   "ok": true
+  },
+  {
+   "name": "overview.limit",
+   "ok": true
+  },
+  {
+   "name": "backend.imports_without_fastapi",
+   "ok": true
+  },
+  {
+   "name": "backend.good_roundtrip",
+   "ok": true,
+   "status": "OK"
+  },
+  {
+   "name": "backend.branch_filter",
+   "ok": true
+  },
+  {
+   "name": "backend.config_foreign_directory",
+   "ok": true,
+   "error": "directory is outside the project runtime"
+  },
+  {
+   "name": "backend.config_dotdot",
+   "ok": true,
+   "error": "directory is outside the project runtime"
+  },
+  {
+   "name": "backend.config_relative",
+   "ok": true,
+   "error": "directory must be absolute"
+  },
+  {
+   "name": "backend.config_wrong_type",
+   "ok": true,
+   "error": "dom-branches.json must be {\"directory\": \"<run dir>\"}"
+  },
+  {
+   "name": "backend.config_missing_key",
+   "ok": true,
+   "error": "dom-branches.json must be {\"directory\": \"<run dir>\"}"
+  },
+  {
+   "name": "backend.config_link_out",
+   "ok": true,
+   "error": "directory is outside the project runtime"
+  },
+  {
+   "name": "backend.config_missing_file",
+   "ok": true
+  },
+  {
+   "name": "backend.config_bad_json",
+   "ok": true
+  },
+  {
+   "name": "backend.subprocess_start_error_is_record",
+   "ok": true
+  },
+  {
+   "name": "backend.subprocess_timeout_is_record",
+   "ok": true
+  },
+  {
+   "name": "backend.invalid_branch",
+   "ok": true
+  },
+  {
+   "name": "backend.nonzero_exit_is_record",
+   "ok": true
+  },
+  {
+   "name": "backend.no_shell_and_isolated_flags",
+   "ok": true
+  },
+  {
+   "name": "backend.fastapi_in_project_venv",
+   "ok": true,
+   "available": false,
+   "note": "router/HTTP 200 path exercised only if available"
+  },
+  {
+   "name": "plugin.imports_allowed",
+   "ok": true,
+   "imports": [
+    "@hermes/plugin-sdk",
+    "react",
+    "react/jsx-runtime"
+   ]
+  },
+  {
+   "name": "plugin.no_jsx",
+   "ok": true,
+   "lt_count": 0
+  },
+  {
+   "name": "plugin.no_hex_rgb_hsl",
+   "ok": true
+  },
+  {
+   "name": "plugin.no_named_colors",
+   "ok": true,
+   "found": []
+  },
+  {
+   "name": "plugin.colors_via_theme_tokens",
+   "ok": true,
+   "vars": [
+    "--chrome-action-hover",
+    "--dt-font-mono",
+    "--font-mono",
+    "--ui-stroke-tertiary",
+    "--ui-text-primary",
+    "--ui-text-quaternary",
+    "--ui-text-secondary",
+    "--ui-text-tertiary",
+    "--ui-yellow"
+   ]
+  },
+  {
+   "name": "plugin.pane_zone_right_title",
+   "ok": true
+  },
+  {
+   "name": "plugin.poll_ge_5s_useQuery",
+   "ok": true,
+   "poll_ms": 5000
+  },
+  {
+   "name": "plugin.i18n_ru_en",
+   "ok": true
+  },
+  {
+   "name": "plugin.read_only_no_mutations",
+   "ok": true
+  },
+  {
+   "name": "plugin.simulation_badge_and_states",
+   "ok": true
+  },
+  {
+   "name": "plugin.every_component_defined_or_imported",
+   "ok": true,
+   "unimported": []
+  },
+  {
+   "name": "plugin.node_check",
+   "ok": true,
+   "rc": 0,
+   "stderr": ""
+  },
+  {
+   "name": "plugin.js_node_shim_register",
+   "ok": true,
+   "fact": "node 22 with stub @hermes/plugin-sdk/react (runtime/L7/jsshim/run.mjs): register() gives 1 pane area=panes title=dom placement=right, defaultEnabled=false, i18n en/ru same keys, paneModel states gateway/reader error/NO_DATABASE/loading/ok, review_level badge self/independent/—, delivery 6/1/2, POLL_MS=5000. Stub only; NOT an app load."
+  },
+  {
+   "name": "backend.router_http200_hermes_venv_testclient",
+   "ok": true,
+   "fact": "router_check.py under Hermes venv python (fastapi TestClient): /overview 200 OK 2 branches; /branch?branch=AA 200; /branch without branch 200 {error}; foreign directory 200 {error}. TestClient, not the real gateway."
+  },
+  {
+   "name": "regression.pytest",
+   "ok": true,
+   "before": "3 failed, 61 passed",
+   "after": "3 failed, 61 passed",
+   "same_failed_set": [
+    "test_integrity_contracts::test_event_chain_is_verified_and_forgery_is_detected",
+    "test_integrity_contracts::test_idempotency_is_scoped_to_external_work_ref",
+    "test_storage_faults::test_actual_death_reopen[after_commit]"
+   ],
+   "note": "3 failures pre-exist (baseline before any L7 file was used by tests); run with PYTHONPATH=P, -p no:cacheprovider; -I variant fails collection (cwd not on sys.path)"
+  },
+  {
+   "name": "regression.product_digest",
+   "ok": true,
+   "before": "16 3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "after_excluding_overview": "16 3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "method": "sha256(json.dumps({'mockup/<posix relpath>': sha256(bytes)}, sort_keys=True)) over mockup/**/*.py excl. __pycache__; the new overview.py is passed as an exclusion (runtime/L7/probes/digest.py <P> mockup/overview.py) so the 16-file digest stays 3cd21d96...; with overview.py included there are 17 files and the digest naturally differs"
+  }
+ ],
+ "checks_total": 72,
+ "checks_failed": [],
+ "deviations": [
+  "Backend runs `PY -I -B -c <bootstrap with sys.path.insert(P)> --directory ...` instead of `PY -I -m mockup.overview` + PYTHONPATH: -I makes the interpreter ignore PYTHONPATH and cwd, so the literal form cannot import mockup. Isolation intent (no user site, no PYTHON* env, no bytecode) preserved; PYTHONPATH=P is still set but inert.",
+  "binding has no `instance` column; `instance` = run dir relative to runtime/ (e.g. L7/home); `policy_prefix` (12 chars) added.",
+  "`simulated` is not stored as a column; derived from transaction receipts (all simulated=true -> true), default true when no receipt evidence (simulated_source says which).",
+  "last_tx_at taken from the first event payload server_time of the branch's latest transaction (transactions has no time column); null if absent.",
+  "claims[] is a flat list with a `branch` field, up to `limit` (default 200) PER branch; claims_count is the exact total per branch.",
+  "A DB with no tables (zero-byte or fresh sqlite) returns status EMPTY_DATABASE; corrupt -> READER_ERROR; refused dir -> DIRECTORY_REFUSED (all with an `error` text without paths for the last two where applicable)."
+ ],
+ "not_verified": [
+  "load/render of plugin.js in the Hermes Desktop app (Reload desktop plugins, pane appears right of omh, visual layout)",
+  "mounting of the backend router by the real running gateway (only TestClient + pure functions checked)",
+  "plugin id dom-branches in plugins.enabled and plugin dir without plugin.yaml/__init__.py being accepted by the host loader beyond dashboard discovery (code read in _discover_dashboard_plugins only)",
+  "review_level badge with real data (no column exists yet; only null path and the shim levelView tested)",
+  "delivery ack counting uses delivery_acks+matched observation structure, not delivery.confirmed() fingerprint/evidence re-verification",
+  "writer profile install (no writer run dir chosen; INSTALL.md has a placeholder)"
+ ],
+ "untouched": [
+  "existing mockup/** (16 files, digest unchanged)",
+  "tests/",
+  "tech_debt.md",
+  "Hermes home/config/profiles (nothing installed)",
+  "runtime/ORIENT (sha256 3f94533b... unchanged)",
+  "runtime/WRITER"
+ ],
+ "product_acceptance": false,
+ "is_approval": false,
+ "continuation": null
+}

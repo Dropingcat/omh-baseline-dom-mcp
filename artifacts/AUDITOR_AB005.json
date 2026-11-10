@@ -1,0 +1,129 @@
+{
+  "schema": "auditor_verdict/v1",
+  "role": "AUDITOR",
+  "task": "AB005",
+  "continuation": "AU007",
+  "status": "COMPLETE_WITH_LIMITS",
+  "verdict": "APPROVE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "reviewed_version": {
+    "code_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+    "file_count": 16,
+    "digest_method": "sha256(json.dumps(sorted mockup/**/*.py relpath->sha256 map, sort_keys=True))",
+    "recomputed_independently": true
+  },
+  "boundaries": {
+    "delivery.py": "0973b9b6d757a05b (== AB004 freeze)",
+    "public_dto.py": "c327b8051eec6f52 (== AB004 freeze)",
+    "server.py": "a8d733b75d5b42e9 (== AB004 freeze)",
+    "tech_debt.md": "6c32af2751555ae6 (not modified by AB005 write_scope)",
+    "see_card_clause_8": "delivery.py/open_dto.py/server.py/tests/tech_debt.md/OMH not changed; digest matches; product_acceptance=false"
+  },
+  "slice_verdicts": [
+    {
+      "id": "WS-F04-TYPED-ABSENCE",
+      "verdict": "APPROVED"
+    },
+    {
+      "id": "WS-F02-ADMIT-BINDING",
+      "verdict": "APPROVED"
+    }
+  ],
+  "findings": [
+    {
+      "severity": "low",
+      "summary": "Corrupted idempotency result (invalid JSON) causes an untyped INTERNAL_ERROR when the immutable guard is bypassed",
+      "invariant": "idempotency result must stay parseable; corruption must not crash or leak",
+      "repro": "runtime/AU007/runs/c5c_corrupt: after dropping immutable_idempotency_UPDATE, UPDATE result=x'7b6f6f7073' then dom_admit replay",
+      "expected": "typed status or safe refusal without INTERNAL_ERROR",
+      "actual": "replay_status_with_corrupt_row=INTERNAL_ERROR (generic; fails closed, no detail leak)",
+      "evidence": "runtime/AU007/results/au007_probe2.json C5C_corrupt"
+    },
+    {
+      "severity": "low",
+      "summary": "Principal separation is operation-string namespacing, not cryptographic identity",
+      "invariant": "same key not reused across principals",
+      "repro": "C2 other_principal -> INDEPENDENCE_NOT_ENFORCED; worker N-F02-7 2 operation rows for same key",
+      "expected": "separate idempotency namespace per principal",
+      "actual": "operation='admit:'+principal separates; documented semantics, not a defect"
+    }
+  ],
+  "own_runs": [
+    {
+      "run": "C1_PID1",
+      "attack_status": "DIGEST_MISMATCH",
+      "pid": 2548
+    },
+    {
+      "run": "C1_PID2",
+      "attack_status": "DIGEST_MISMATCH",
+      "pid": 13700
+    },
+    {
+      "run": "C2_BYPASS",
+      "status": {
+        "_real_ab_fullgrant_control": "DEMO_ADMITTED",
+        "other_principal_ab": "INDEPENDENCE_NOT_ENFORCED",
+        "reuse_abkey_aaown_digest": "IDEMPOTENCY_BINDING_MISMATCH",
+        "submitvar_named_key_admit": "DEMO_ADMITTED"
+      }
+    },
+    {
+      "run": "C3_MIGRATION",
+      "legacy_key": "IDEMPOTENCY_BINDING_UNKNOWN",
+      "fresh_key": "DEMO_ADMITTED",
+      "idempotent_rerun": true
+    },
+    {
+      "run": "C4_IMMUTABLE",
+      "update": "ERR:IMMUTABLE",
+      "delete": "ERR:IMMUTABLE"
+    },
+    {
+      "run": "C5_SCOPE",
+      "unsafe_narrow": "SCOPE_DENIED",
+      "restore_replay": "DEMO_ADMITTED"
+    },
+    {
+      "run": "C5B_safe_narrow",
+      "replay_under_AA": "DEMO_ADMITTED",
+      "byte_equal": true,
+      "deltas_all_zero": true,
+      "leak_outside_grant": false
+    },
+    {
+      "run": "C6_POSITIVE",
+      "first": "DEMO_ADMITTED",
+      "replay": "DEMO_ADMITTED",
+      "byte_equal": true,
+      "deltas_all_zero": true
+    },
+    {
+      "run": "C7_F04",
+      "ZZ_all_NO_SUCH_BRANCH": true,
+      "no_internal": true,
+      "ZZ_sync_not_synced": true
+    },
+    {
+      "run": "C5C_corrupt",
+      "guard_blocks_update": "IMMUTABLE",
+      "replay_after_bypass": "INTERNAL_ERROR"
+    },
+    {
+      "run": "C5D_no_idem_table",
+      "recreated": true,
+      "v2_columns": true,
+      "user_version": 1
+    }
+  ],
+  "not_checked": [
+    "true concurrent two-process race on one DB (only serialized BEGIN IMMEDIATE tested by worker; AU007 did not reproduce true concurrency and does not treat serialization as proof)",
+    "full pytest suite (tests out of write_scope)",
+    "byte audit of every worker frames-*.jsonl sha against WORKER_AB005.json claims (fixture DBs and result JSONs all present; not each frame line cross-hashed)",
+    "live OMH / network / git (forbidden by card)"
+  ],
+  "report_ref": "reports/AUDITOR_AB005.md",
+  "written_at": "2026-11-08"
+}

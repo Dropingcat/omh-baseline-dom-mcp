@@ -1,0 +1,1618 @@
+{
+  "schema": "AN003-material/v1",
+  "role": "analyst",
+  "task": "AN003",
+  "continuation": "01",
+  "artifact_stage": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "written_at": "2026-11-07T21:06:17.477282+03:00",
+  "product_verdict": "REQUEST_CHANGES",
+  "product_acceptance": false,
+  "acceptance": false,
+  "is_product_approval": false,
+  "material_scope": "causal analysis and exact research handoff; no product implementation or product execution",
+  "completion_gate": "Only own structural/source/coverage validation may complete material; no TD or product acceptance follows.",
+  "source_ledger_ref": "runtime/AN003/source_ledger.json",
+  "source_vector_sha256": "7b39af2259b1ab5c47d18cef570c51835994e80216396683029966e6d0e87066",
+  "source_revision_limit": "Current hashes only; former AN003 had no frozen source vector, so historical revision equivalence is unknown.",
+  "initial_partial_preserved": "runtime/AN003/initial_partial.json",
+  "continuation_observation": {
+    "previous_state": "PARTIAL_FIRST_WRITE at 2026-11-07T13:01:48.587733+03:00; report/runtime absent before this continuation",
+    "last_source_result": "2026-11-07 13:01:49 (transcript S27:68)",
+    "interrupted": "2026-11-07 20:10:01; waiting for model response (25691.5s elapsed), cause unknown",
+    "not_inferred": "Not completed, not a proved seven-hour analysis, not an established iteration cap.",
+    "evidence": [
+      {
+        "source_id": "S27",
+        "start": 65,
+        "end": 70
+      },
+      {
+        "source_id": "S28",
+        "start": 1,
+        "end": 41
+      }
+    ]
+  },
+  "customer_steering": {
+    "exact_quote": "да именно так и говорил т.е  роительный клайм сверху- а все новые но с этим жи идом в его деревое как бы они новые но кабы они в нем вложены",
+    "confirmed_meaning": "Родитель сверху, новые неизменяемые версии вложены в его дерево и относятся к одному логическому клайму; исходник не меняется. Не переоткрывать подтверждённый смысл.",
+    "engineering_open": "Logical identity and record/version identity are distinct. Composite (logical ID, version/record ID) does not inherently violate immutability; field names/schema not approved.",
+    "keywords": "needs_user; answer да to или does not choose claim/edge/both. Independent analysis not blocked.",
+    "evidence": [
+      {
+        "source_id": "S01",
+        "start": 33,
+        "end": 43
+      },
+      {
+        "source_id": "S22",
+        "start": 23,
+        "end": 32
+      }
+    ]
+  },
+  "verdicts_summary": {
+    "inherited": "AB003 prepared card reports AU002-A REQUEST_CHANGES; AN002/RS002 completed material is not product acceptance. TD19/20/21 OPEN per prepared input, not re-adjudicated.",
+    "own": "Static analysis completed only after own validator; no independent product verdict or E2E execution by AN003.",
+    "evidence": [
+      {
+        "source_id": "S29",
+        "start": 9,
+        "end": 13
+      },
+      {
+        "source_id": "S29",
+        "start": 38,
+        "end": 43
+      }
+    ]
+  },
+  "priorities": [
+    {
+      "priority": "P0",
+      "item": "Preserve TD19/public DTO security prerequisite before graph introduction; exact TD19/SEC003 scheduling not decided."
+    },
+    {
+      "priority": "P1",
+      "item": "Deliver acceptance-grounded context; identity/fork/pins/sources/admission contracts researched before worker feature implementation."
+    },
+    {
+      "priority": "P2",
+      "item": "Keyword ownership needs_user; weighted neighbor UX only after scoped graph foundations."
+    }
+  ],
+  "material_not_found_or_not_inspected": [
+    "No frozen source vector from former AN003; cannot prove unchanged source revision.",
+    "No parallel customer session logs read; causal attribution there remains unknown.",
+    "No fresh reviewer/auditor product verdicts executed or reconstructed; inherited prepared card used as declared input.",
+    "Live OMH plan/API and actual model context use not inspected; no state changes made."
+  ],
+  "not_implemented_unverified": [
+    "No basis/refines/accepted_context/typed versioned graph implementation introduced.",
+    "Current mockup has storage/admission/review/dependency primitives, not a completed linked-baseline delivery system.",
+    "F JS, Dataview, scorer/config and MCP integration were not executed.",
+    "H-LINK remains GAP_NOT_IMPLEMENTED; no new tools/list or live security probe performed.",
+    "No runtime product regressions, migrations, concurrency, crash-recovery, Git or live OMH tested.",
+    "TD19/SEC003 order and YAML continuation after OMH failure deliberately undecided."
+  ],
+  "own_execution": "Only source reads/hashes, file generation and structural validator are executed in this continuation; future verification recipes in questions are NOT_EXECUTED.",
+  "review_method": {
+    "mode": "degraded_self_check_no_fresh_subagent",
+    "cross_model": "skipped: non-interactive delegated context; nested delegation/network/paid forbidden",
+    "claim": "Artifact separates confirmed meaning, engineering options, existing primitives, future hypotheses and product acceptance.",
+    "counterchecks": [
+      "Could a common logical ID be immutable? Yes with distinct version record key; categorical orchestrator note corrected.",
+      "Could metadata already encode partial admission? Yes; do not claim complete absence.",
+      "Could URL immutability hold without remote snapshot? Recorded URL yes, remote content reproducibility no.",
+      "Could hidden corruption affect generic availability? Yes global gate intentionally preserved; not all-output noninterference claimed.",
+      "Could F files be ready YAML? No, actual source disagrees."
+    ]
+  },
+  "critic_checklist": [
+    {
+      "id": "domain_coverage",
+      "state": "covered",
+      "note": "Four causal classes, M1-M7/table, F, graph/TD19, RS003 and plans mapped."
+    },
+    {
+      "id": "fact_concept_consistency",
+      "state": "covered_static_only",
+      "note": "Evidence refs linked; runtime hypotheses labeled unverified."
+    },
+    {
+      "id": "concept_diversity",
+      "state": "covered",
+      "note": "Identity models and keywords/grounds policy alternatives left open."
+    },
+    {
+      "id": "source_specificity",
+      "state": "covered_local",
+      "note": "Exact allowlisted files/lines and current hashes; no network per scope."
+    },
+    {
+      "id": "triz_correctness",
+      "state": "not_applicable",
+      "note": "No TRIZ claims."
+    },
+    {
+      "id": "estimates_realism",
+      "state": "not_applicable",
+      "note": "No fabricated time/cost estimates; interruption not attributed."
+    }
+  ],
+  "validation": {
+    "validator": "runtime/AN003/validate.py",
+    "receipt": "runtime/AN003/validation_receipt.json",
+    "state": "PASS",
+    "checks": "JSON shape, source existence/current SHA256/line bounds, question IDs and coverage, M1-M7/C-A..D completeness, report cross-references, negative controls, output hashes; not semantic truth/product E2E."
+  },
+  "causal_analysis": [
+    {
+      "id": "C-A",
+      "class": "not_delivered",
+      "severity": "major",
+      "confidence": "high_for_mockup_gap; unknown_for_other_session",
+      "observation": "resume returns scoped snapshot+trace+sync; no task-linked ancestry/basis context pack. A document URL or memory entry does not prove delivery of its relevant fragment.",
+      "mechanism": "A.1 can arrive without A's grounds; retrieval repeats discovery rather than recovering the accepted baseline.",
+      "evidence": [
+        {
+          "source_id": "S06",
+          "start": 365,
+          "end": 370
+        },
+        {
+          "source_id": "S03",
+          "start": 6,
+          "end": 17
+        }
+      ],
+      "hypothesis_boundary": "User reports repeated loss (S01:25-27), but the other session was not inspected; actual cause there unknown.",
+      "required_distinction": "persisted != selected != delivered != read != used",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02"
+      ]
+    },
+    {
+      "id": "C-B",
+      "class": "delivered_without_acceptance_provenance",
+      "severity": "major",
+      "confidence": "high_static_only",
+      "observation": "The mockup is not wholly without acceptance metadata: claim_snapshots pins dependencies+review_id, admission records author/root/time/reason, trace returns check_refs and stale reasons. It lacks a coherent per-version accepted_context including fact, grounds, acceptor, conditions and reopen policy.",
+      "mechanism": "Bare factual text and a review ID do not let a resumed agent distinguish accepted under conditions from candidate, superseded or stale.",
+      "evidence": [
+        {
+          "source_id": "S04",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "source_id": "S06",
+          "start": 163,
+          "end": 206
+        },
+        {
+          "source_id": "S05",
+          "start": 55,
+          "end": 77
+        }
+      ],
+      "hypothesis_boundary": "No evidence about what acceptance metadata reached the parallel session.",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-07"
+      ]
+    },
+    {
+      "id": "C-C",
+      "class": "delivered_but_not_binding",
+      "severity": "major",
+      "confidence": "medium_inference_from_static_scope",
+      "observation": "Admission constrains bytes/references/revisions, not an agent's private reasoning. A context package alone cannot guarantee respect for accepted facts.",
+      "mechanism": "If the execution/return contract has no requirement to cite the exact accepted baseline and justify divergence, the agent may rediscover A or replace it rhetorically without a controlled state change.",
+      "evidence": [
+        {
+          "source_id": "S06",
+          "start": 174,
+          "end": 206
+        },
+        {
+          "source_id": "S02",
+          "start": 40,
+          "end": 42
+        },
+        {
+          "source_id": "S01",
+          "start": 104,
+          "end": 108
+        }
+      ],
+      "hypothesis_boundary": "Not a claim that current tools enforce cognition; no live task delivery was exercised.",
+      "question_refs": [
+        "Q-L-02",
+        "Q-L-07"
+      ]
+    },
+    {
+      "id": "C-D",
+      "class": "no_explicit_reopen_rule",
+      "severity": "major",
+      "confidence": "high_static_gap; policy_proposed",
+      "observation": "Conflict/resolve/replacement events exist but no accepted-fact reopen reason taxonomy/authorization or typed refinement transition is defined in the current contract.",
+      "mechanism": "Without conditions for reopening, every follow-up can reset the decision instead of extending its immutable lineage. Conversely an unconditional do-not-reopen flag would preserve incorrect/outdated claims.",
+      "evidence": [
+        {
+          "source_id": "S03",
+          "start": 89,
+          "end": 97
+        },
+        {
+          "source_id": "S05",
+          "start": 41,
+          "end": 47
+        },
+        {
+          "source_id": "S01",
+          "start": 64,
+          "end": 65
+        }
+      ],
+      "hypothesis_boundary": "New contrary evidence, source correction or changed applicability are candidate reasons, not an approved final enum. Forgetting alone warrants retrieving grounds, not changing acceptance.",
+      "question_refs": [
+        "Q-L-07",
+        "Q-L-08"
+      ]
+    }
+  ],
+  "marker_critique": [
+    {
+      "id": "M1",
+      "severity": "major",
+      "proposal": "immutable basis[] in ORIGIN",
+      "assessment": "Grounds must be recoverable, but immutable creation-time grounds are not the whole evolving evidence history, and origin is not justification. Mandatory nonempty basis for every record risks fabricated grounds and blocks genuine root inputs.",
+      "invariant": "Keep recorded grounds immutable; later evidence/corrections append separately with provenance. Distinguish user requirement/observation/hypothesis and explicit missing grounds; do not silently choose mandatory policy.",
+      "status": "not_implemented",
+      "evidence": [
+        {
+          "source_id": "S02",
+          "start": 32,
+          "end": 38
+        },
+        {
+          "source_id": "S03",
+          "start": 7,
+          "end": 15
+        }
+      ],
+      "question_refs": [
+        "Q-L-03"
+      ]
+    },
+    {
+      "id": "M2",
+      "severity": "major",
+      "proposal": "immutable refines on child",
+      "assessment": "Fits confirmed nested immutable versions, but logical claim identity and record/version identity must be separated. Common logical ID plus distinct immutable version/record ID can preserve immutability; the orchestrator's blanket claim to the contrary is unsupported. tree_id/record_id/parent_ref are not approved field names.",
+      "invariant": "Parent above; new versions nested within the same logical claim; original bytes unchanged. A record address must identify one immutable version; existing IDs stay unchanged. AA11/АА11 are literal discussion examples, not AA001 task IDs.",
+      "status": "not_implemented; meaning_confirmed_not_needs_user",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 33,
+          "end": 43
+        },
+        {
+          "source_id": "S01",
+          "start": 64,
+          "end": 65
+        },
+        {
+          "source_id": "S04",
+          "start": 31,
+          "end": 36
+        }
+      ],
+      "question_refs": [
+        "Q-L-04",
+        "Q-L-05"
+      ]
+    },
+    {
+      "id": "M3",
+      "severity": "major",
+      "proposal": "typed link event, target pin, note, optional keywords",
+      "assessment": "Current link is only url+locator. Typed relations need direction, endpoint type, role, vocabulary version and bounded structured validation; a closed vocabulary is necessary but not sufficient. A semantic supports edge is not a proof. Branch dependency pins are useful precedent, not implemented per-edge version pins.",
+      "invariant": "No hidden target metadata; updates append instead of altering existing links. Similarity suggestions cannot become admitted semantic edges automatically.",
+      "status": "not_implemented",
+      "evidence": [
+        {
+          "source_id": "S03",
+          "start": 89,
+          "end": 98
+        },
+        {
+          "source_id": "S05",
+          "start": 62,
+          "end": 65
+        },
+        {
+          "source_id": "S02",
+          "start": 73,
+          "end": 80
+        }
+      ],
+      "question_refs": [
+        "Q-L-06",
+        "Q-L-08",
+        "Q-L-11"
+      ]
+    },
+    {
+      "id": "M4",
+      "severity": "major",
+      "proposal": "accepted_state derived from review/converge",
+      "assessment": "Do not conflate candidate review, actual admission, current validity, branch convergence, delivery and owner acceptance. A review/converge flag alone cannot show who accepted which content under which dependencies. Demo review is explicitly simulated.",
+      "invariant": "Derive state from admitted version plus exact review/policy/dependency snapshot; preserve previous state and expose stale/unknown rather than falsely current. Do not label proposed fields implemented.",
+      "status": "partial_primitives_only",
+      "evidence": [
+        {
+          "source_id": "S06",
+          "start": 163,
+          "end": 202
+        },
+        {
+          "source_id": "S05",
+          "start": 55,
+          "end": 77
+        }
+      ],
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-07",
+        "Q-L-08"
+      ]
+    },
+    {
+      "id": "M5",
+      "severity": "critical",
+      "proposal": "derived backlinks/neighbors/dashboard",
+      "assessment": "Derived does not mean safe or necessarily never persisted: materialized indexes/caches may be appropriate, but not authoritative. Grants must constrain candidates and accessible edges before counts, scoring, sorting, top-k, pagination and cache lookup/output. Post-filtering leaks through ranks/counts/deltas.",
+      "invariant": "Authorized views must not reveal hidden branch existence/IDs/counts/revisions or changes. H-LINK is a known gap, not a new reproduced defect.",
+      "status": "not_implemented; security_blocker_for_introduction",
+      "evidence": [
+        {
+          "source_id": "S02",
+          "start": 44,
+          "end": 50
+        },
+        {
+          "source_id": "S06",
+          "start": 90,
+          "end": 100
+        }
+      ],
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-10"
+      ]
+    },
+    {
+      "id": "M6",
+      "severity": "major",
+      "proposal": "sources[] common subblock, local/external, locator/digest",
+      "assessment": "Subblock should be an append-only event/view usable for all content types, not a mutable list inserted into the original claim. local/external is not trust, permission or immutability. An external URL without snapshot leaves remote content unpinned but does not mutate the immutable recorded URL; a digest without retained bytes is not reproducibility. Local files can change too.",
+      "invariant": "Retain exact recorded locator and evidence revision/bytes where permitted; re-fetch and source correction are new events. Avoid secrets, arbitrary path/URL access and unintended fetches.",
+      "status": "not_implemented; quote/code/data_have_partial_primitives",
+      "evidence": [
+        {
+          "source_id": "S03",
+          "start": 9,
+          "end": 15
+        },
+        {
+          "source_id": "S02",
+          "start": 75,
+          "end": 80
+        },
+        {
+          "source_id": "S01",
+          "start": 59,
+          "end": 60
+        }
+      ],
+      "question_refs": [
+        "Q-L-12"
+      ]
+    },
+    {
+      "id": "M7",
+      "severity": "major",
+      "proposal": "derived branches[] with effective revision",
+      "assessment": "Separate immutable origin from applicability and from access grants. Current projection has applicable_branches, but no per-branch since-revision in that list; it must not be described as complete membership/history or grant. Historical views must not silently use current branch eligibility/pins.",
+      "invariant": "Origin never rewritten; explicit applicability events do not transfer authority, rewrite admission dependencies or automatically move the accepted leaf of another branch.",
+      "status": "partial_primitives_only",
+      "evidence": [
+        {
+          "source_id": "S05",
+          "start": 4,
+          "end": 25
+        },
+        {
+          "source_id": "S05",
+          "start": 29,
+          "end": 53
+        },
+        {
+          "source_id": "S01",
+          "start": 63,
+          "end": 66
+        }
+      ],
+      "question_refs": [
+        "Q-L-05",
+        "Q-L-08",
+        "Q-L-09"
+      ]
+    }
+  ],
+  "anatomy_table_corrections": [
+    {
+      "id": "AT-01",
+      "severity": "minor",
+      "text": "TYPE-META table is abbreviated, not full schema: e.g. quote also requires source_b64 and multiple types require assumptions/attribution. ORIGIN author/time are in admitted event provenance; no claim-level server_time column. Exact field locations matter for DTO review.",
+      "evidence": [
+        {
+          "source_id": "S02",
+          "start": 13,
+          "end": 18
+        },
+        {
+          "source_id": "S03",
+          "start": 8,
+          "end": 15
+        },
+        {
+          "source_id": "S06",
+          "start": 198,
+          "end": 206
+        }
+      ]
+    },
+    {
+      "id": "AT-02",
+      "severity": "major",
+      "text": "link/comment remain in snapshot.history provenance but snapshot does not fold them into dedicated link/comment claim fields. Do not say they are lost from storage; do not claim a ready graph/context pack exists.",
+      "evidence": [
+        {
+          "source_id": "S05",
+          "start": 29,
+          "end": 53
+        }
+      ]
+    },
+    {
+      "id": "AT-03",
+      "severity": "major",
+      "text": "Events and nested versions are distinct immutable records in one derived tree. Stable deterministic order needs branch revision plus an event-order/tie-breaker, not client timestamps alone. Last means latest independently admitted applicable version under an explicit fork policy, not latest candidate globally.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 21,
+          "end": 41
+        },
+        {
+          "source_id": "S07",
+          "start": 19,
+          "end": 25
+        }
+      ],
+      "question_refs": [
+        "Q-L-04",
+        "Q-L-05",
+        "Q-L-13"
+      ]
+    },
+    {
+      "id": "AT-04",
+      "severity": "major",
+      "text": "Keyword placement remains needs_user: the answer да to an или question selects neither claim nor edge nor both. Compare choices without stopping independent work; do not ask again about the confirmed nested tree.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 35,
+          "end": 43
+        }
+      ],
+      "question_refs": [
+        "Q-L-11"
+      ]
+    },
+    {
+      "id": "AT-05",
+      "severity": "major",
+      "text": "New fields are not a harmless decoration: validate emits UNKNOWN_FIELD (required=false still an error); submit rejects any error. Update schema/admission/storage/DTO/projections together only in a future authorized worker scope.",
+      "evidence": [
+        {
+          "source_id": "S03",
+          "start": 63,
+          "end": 74
+        },
+        {
+          "source_id": "S06",
+          "start": 118,
+          "end": 126
+        }
+      ]
+    }
+  ],
+  "F_reuse": [
+    {
+      "id": "F-01",
+      "mechanism": "Контейнер с явным интерфейсом, точными anchors и related[]; локальный и глобальный dashboard разделены.",
+      "source_functions": "readme architecture; article-template front matter",
+      "evidence": [
+        {
+          "source_id": "S11",
+          "start": 12,
+          "end": 81
+        },
+        {
+          "source_id": "S16",
+          "start": 30,
+          "end": 69
+        }
+      ],
+      "borrow": "Структурированный вход и объяснимый scoped context view; links как отдельные append-only записи DOM, не редактируемый front matter.",
+      "do_not_claim": "README описывает намерение, не ACL enforcement; completeness_score в template допускает manual, не доказана вычисляющая приёмку функция.",
+      "verification_state": "static_only; not_executed",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-12",
+        "Q-L-14"
+      ]
+    },
+    {
+      "id": "F-02",
+      "mechanism": "Контролируемые типы с direction и endpoint/anchor validation rules; два неодинаковых словаря.",
+      "source_functions": "relation_type.yaml markdown list v1.0; relation-types.md v1.2 table and rules",
+      "evidence": [
+        {
+          "source_id": "S12",
+          "start": 1,
+          "end": 39
+        },
+        {
+          "source_id": "S13",
+          "start": 13,
+          "end": 18
+        },
+        {
+          "source_id": "S13",
+          "start": 73,
+          "end": 127
+        }
+      ],
+      "borrow": "Идея versioned vocabulary и точного target anchor; DOM-specific семантика должна быть исследована.",
+      "do_not_claim": "relation_type.yaml — Markdown с YAML-подобным заголовком, не готовая машинная схема. extends_model/compares_with против extends_method/compares_methods — не один проверенный канон; не нормализовать молча.",
+      "verification_state": "static_only; not_executed",
+      "question_refs": [
+        "Q-L-06",
+        "Q-L-14"
+      ]
+    },
+    {
+      "id": "F-03",
+      "mechanism": "getNested, parseNumeric, computeSimilarity: совпадения полей + общие tags + gaussian proximity года + nested parameter comparison + optional confidence penalty; findSimilarArticles получает весь tagged corpus, исключает current, считает score, threshold и sort.",
+      "source_functions": "getNested:15-18; parseNumeric:25-29; computeSimilarity:38-103; findSimilarArticles:112-129",
+      "evidence": [
+        {
+          "source_id": "S14",
+          "start": 15,
+          "end": 136
+        }
+      ],
+      "borrow": "Отделимый чистый scorer по уже разрешённому набору, explanation of score и versioned config — гипотеза reuse.",
+      "do_not_claim": "Не trust/admission/causal support. parseNumeric regex теряет знак и не конвертирует units; truthiness пропускает 0, duplicated tags могут завышать score; глобальный tagged corpus не grants. strength в template и confidence в scorer расходятся. Нужны synthetic tests; ничего не запускалось.",
+      "verification_state": "static_only; not_executed",
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-14"
+      ]
+    },
+    {
+      "id": "F-04",
+      "mechanism": "Файл similarity-weights.yaml фактически JS: defaultConfig с дробями, top-level await dv.io.load того же пути, object spread loaded, встроенный scorer и dv.table.",
+      "source_functions": "defaultConfig:7-35; loader:38-48; inline computeSimilarity:65-117; render:119-149",
+      "evidence": [
+        {
+          "source_id": "S15",
+          "start": 1,
+          "end": 149
+        },
+        {
+          "source_id": "S03",
+          "start": 19,
+          "end": 43
+        }
+      ],
+      "borrow": "Только намерение конфигурируемых весов/порогов после явного schema/parser/versioning решения.",
+      "do_not_claim": "Это не проверенный YAML-config loader: парсинг YAML в данном тексте отсутствует; какой тип реально возвращает dv.io.load здесь не запускалось. Inline scorer не содержит confidence penalty основной JS версии. Float из F не допустим в текущем dom-c14n/v1; не менять canonicalization или выбирать scale/decimal encoding молча.",
+      "verification_state": "static_only; not_executed",
+      "question_refs": [
+        "Q-L-14"
+      ]
+    },
+    {
+      "id": "F-05",
+      "mechanism": "runUniversalCards выбирает dv.pages по folder/type, enrichVirtualFields мутирует page virtual fields; backlinkCount суммирует global app.metadataCache.resolvedLinks[source][target]. renderCards применяет filters/search/sort и UI tables; path-keyed window.cardScriptCache хранит UI state.",
+      "source_functions": "enrichVirtualFields:753-772; getCardScriptCache:1079-1082; page selection:2887-2893; renderCards:3172-3175",
+      "evidence": [
+        {
+          "source_id": "S17",
+          "start": 751,
+          "end": 772
+        },
+        {
+          "source_id": "S17",
+          "start": 1077,
+          "end": 1082
+        },
+        {
+          "source_id": "S17",
+          "start": 2887,
+          "end": 2893
+        },
+        {
+          "source_id": "S17",
+          "start": 3170,
+          "end": 3175
+        }
+      ],
+      "borrow": "Derived virtual columns и UI sections, не ready server. В данном счётчике считаются link occurrences, не обязательно число уникальных соседних карточек.",
+      "do_not_claim": "Folder/type фильтр не branch grants; global backlinks не ограничен отобранными страницами. DOM injection/UI APIs/Obsidian globals, cache и update-check нельзя переносить как MCP runtime. Сеть/скрипт не запускались.",
+      "verification_state": "static_only; not_executed",
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-10",
+        "Q-L-14"
+      ]
+    }
+  ],
+  "graph_security": {
+    "status": "future_requirements_not_implementation_or_new_reproduction",
+    "existing_debt": "TD-DOM-19 OPEN (inherited observed finding); use existing ID, no duplicate registration",
+    "existing_check": "H-LINK / CP-PL-17 / SC-H-LINK / GAP-LINKS; GAP_NOT_IMPLEMENTED; PL003 NOT_EXECUTED_BY_PL003",
+    "evidence": [
+      {
+        "source_id": "S21",
+        "start": 30,
+        "end": 36
+      },
+      {
+        "source_id": "S10",
+        "start": 1691,
+        "end": 1761
+      },
+      {
+        "source_id": "S06",
+        "start": 90,
+        "end": 100
+      },
+      {
+        "source_id": "S29",
+        "start": 27,
+        "end": 43
+      }
+    ],
+    "surfaces": [
+      {
+        "id": "G-01",
+        "channel": "backlinks and count",
+        "risk": "AB→AA reveals hidden source ID/existence/degree even if target is AA",
+        "requirement": "Apply permissions to both endpoints and edge before list/count/inverse construction",
+        "question_refs": [
+          "Q-L-09"
+        ]
+      },
+      {
+        "id": "G-02",
+        "channel": "neighbors/similarity/ranking/top-k/dashboard",
+        "risk": "Hidden content changes visible scores/order/totals/clusters/orphans even after row redaction",
+        "requirement": "Candidate selection and aggregation over visible subgraph first; scoring/sort/top-k/paging next; no hidden count footer",
+        "question_refs": [
+          "Q-L-09",
+          "Q-L-14"
+        ]
+      },
+      {
+        "id": "G-03",
+        "channel": "n-hop/shared node traversal and ancestry",
+        "risk": "A legitimate shared node expands into forbidden parents/siblings/neighbors",
+        "requirement": "Re-authorize each hop and relation; sharing/applicability is not transitive grant; missing context must not reveal number or identity of hidden records",
+        "question_refs": [
+          "Q-L-01",
+          "Q-L-05",
+          "Q-L-09"
+        ]
+      },
+      {
+        "id": "G-04",
+        "channel": "pins/revision/stale/check age",
+        "risk": "Forbidden target revisions and stale bit/delta reveal hidden change",
+        "requirement": "No hidden revision vectors or comparative freshness derived from forbidden targets in public output; preserve internal proof and strict global gate separately",
+        "question_refs": [
+          "Q-L-08",
+          "Q-L-09"
+        ]
+      },
+      {
+        "id": "G-05",
+        "channel": "cache/cursors/invalidation/logs/errors",
+        "risk": "Union warm cache or cursor reused by AA; hidden invalidation alters totals/timing; diagnostics expose foreign IDs",
+        "requirement": "Bind policy/grants/authorized revision scope; reject cross-scope cursor safely; closed error DTO; analyze timing separately rather than claim constant-time",
+        "question_refs": [
+          "Q-L-10"
+        ]
+      },
+      {
+        "id": "G-06",
+        "channel": "graph append and endpoint validation",
+        "risk": "Forbidden/not-found difference becomes ID oracle; partial edge/outbox creates hidden mutation",
+        "requirement": "Atomic authorized validation+admission; generic scope-safe error; no partial graph or delivery writes",
+        "question_refs": [
+          "Q-L-06",
+          "Q-L-09"
+        ]
+      }
+    ],
+    "boundary_order_proposal": "trusted context → authorized branch/record/edge set at one read snapshot → relation traversal/count/score/pin projection → closed DTO → both MCP channels/YAML/log policy. Internal chain verification/proof remains full, not redacted in-place.",
+    "noninterference_exception": "Do not falsely promise all responses identical despite hidden corruption: AB003 intentionally preserves a global integrity gate and safe generic CHAIN_BROKEN/NOT_READY. Differential no-leak checks for healthy hidden changes must be distinguished from this accepted generic fail-closed bit; foreign locators/revisions/counts remain forbidden.",
+    "future_oracle": "At fixed AA, compare hidden AB 0 vs 8 edges with B/union positive control; compare text/structured/nested/errors/YAML/targets/cursors/cache and before/after SQL; fixture oracle privileged and separate. Missing API remains GAP, not fake PASS.",
+    "acceptance_state": "not_implemented/unverified; structural material PASS cannot close TD19"
+  },
+  "context_pack_requirements_proposal": {
+    "status": "research_requirements_not_approved_field_names",
+    "minimum_semantics": [
+      "fact and exact immutable record/version address",
+      "logical claim family and permitted ancestry",
+      "grounds/source quote and exact locator/snapshot",
+      "admission/review evidence and acceptor identity/role",
+      "branch/read revision and dependency/policy/criteria snapshot",
+      "applicability conditions, assumptions and unresolved alternatives",
+      "current/archived/stale/unverified states kept distinct",
+      "authorized reopen reason, authority and evidence",
+      "task/run/card reference and explicit authorized remainder",
+      "pack provenance/digest and delivery receipt separate from content truth"
+    ],
+    "execution_obligation": "Result cites the exact consumed baseline and scoped revisions; divergence requires new evidence/reopen trail and independent review. Acknowledging receipt is observable; comprehension is not proven by receipt.",
+    "missing_context_policy": "Do not fabricate basis or treat hidden/missing ancestry as complete. Safe explicit incomplete context/remainder is not permission to infer hidden ancestors. Research bounded retrieval/pagination and task-specific selection, not a dump of the global graph.",
+    "question_refs": [
+      "Q-L-01",
+      "Q-L-02",
+      "Q-L-03",
+      "Q-L-07"
+    ]
+  },
+  "plan_impact": [
+    {
+      "target": "AB003/TD19",
+      "action": "Preserve narrow P0 public DTO fix and internal proof. Do not add graph/basis/refinement/search fields to this fix. Later graph fields must be closed-schema, scope-first from one verified read snapshot.",
+      "not_do": "No product/card rewrite by AN003; no free dict future extension; no grants increase; no TD closure.",
+      "evidence": [
+        {
+          "source_id": "S29",
+          "start": 25,
+          "end": 43
+        }
+      ],
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-10",
+        "Q-L-13"
+      ]
+    },
+    {
+      "target": "AB002 plan B/C/D",
+      "action": "B scope/DTO foundations precede graph introduction; C should incorporate accepted nested version identity, branch-local current leaf, pin/revalidate/fork semantics and separate admission/convergence; D needs immutable run manifests and schema/link validation. Do not reopen delivered A with unrelated feature expansion.",
+      "not_do": "Do not resolve UD-02/06 silently or weaken exact revision checks; no code changes from analysis.",
+      "evidence": [
+        {
+          "source_id": "S18",
+          "start": 18,
+          "end": 28
+        },
+        {
+          "source_id": "S08",
+          "start": 67,
+          "end": 104
+        },
+        {
+          "source_id": "S07",
+          "start": 17,
+          "end": 39
+        }
+      ],
+      "question_refs": [
+        "Q-L-03",
+        "Q-L-04",
+        "Q-L-05",
+        "Q-L-07",
+        "Q-L-08",
+        "Q-L-13"
+      ]
+    },
+    {
+      "target": "FULL_IMPLEMENTATION_PLAN",
+      "action": "After RS003, orchestrator should separate confirmed meaning from proposed field layout; add context delivery/use and reopened-baseline E2E acceptance, graph isolation matrix and schema migration. Correct blanket common-ID immutability claim and F YAML assumption in future append-only clarification, not by editing source here.",
+      "not_do": "No new tree confirmation; no live/Git/OMH guarantees from a runnable mockup; avoid repeating stale stage summaries as current state.",
+      "evidence": [
+        {
+          "source_id": "S19",
+          "start": 80,
+          "end": 90
+        },
+        {
+          "source_id": "S01",
+          "start": 35,
+          "end": 43
+        }
+      ],
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-04",
+        "Q-L-14"
+      ]
+    },
+    {
+      "target": "OMH existing plan/technical cards (not inspected live)",
+      "action": "Parent launches RS003 after material checks, attaches exact Q-L-xx, primary quotes/current hashes, accepted-context semantic requirements, non-delivery distinction and evidence-producing commands. Planning metadata PREPARED/done_unverified is not observed completion. OMH stays task/status owner.",
+      "not_do": "No OMH mutation/status claims or API guesses; no autonomous duplicate scheduler; installed/live OMH shape unverified.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 45,
+          "end": 51
+        },
+        {
+          "source_id": "S19",
+          "start": 84,
+          "end": 90
+        },
+        {
+          "source_id": "S22",
+          "start": 34,
+          "end": 46
+        }
+      ],
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-07"
+      ]
+    },
+    {
+      "target": "Ordering and explicit non-decisions",
+      "action": "Requirement dependency only: independently accepted TD19/public DTO foundation before introducing graph; AN003 → parent material validation → RS003 → updated worker scope → worker/reviewer/auditor cycle. Preserve P0. Exact TD19-vs-SEC003 execution order belongs to parent, not this analysis.",
+      "not_do": "Do not decide YAML continuation on OMH failure or TD19/SEC sequence; keywords ambiguity blocks only dependent keyword scope.",
+      "evidence": [
+        {
+          "source_id": "S22",
+          "start": 28,
+          "end": 32
+        },
+        {
+          "source_id": "S19",
+          "start": 84,
+          "end": 89
+        },
+        {
+          "source_id": "S29",
+          "start": 13,
+          "end": 13
+        }
+      ],
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-11"
+      ]
+    }
+  ],
+  "escalations": [
+    {
+      "level": 2,
+      "severity": "major",
+      "finding": "Orchestrator note conflates logical ID with immutable record key; common logical claim_id need not break immutability.",
+      "action": "Recorded critical correction for parent/RS003; source untouched, schema not selected.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 41,
+          "end": 43
+        },
+        {
+          "source_id": "S22",
+          "start": 26,
+          "end": 28
+        }
+      ],
+      "question_refs": [
+        "Q-L-04"
+      ]
+    },
+    {
+      "level": 2,
+      "severity": "major",
+      "finding": "F filenames/README overstate readiness: vocabulary .yaml is Markdown; weights .yaml is JS; strength/confidence and vocab names drift.",
+      "action": "Recorded adapter/reject boundaries, no F edits or new debt ID; parent can route future source-quality work if needed.",
+      "evidence": [
+        {
+          "source_id": "S12",
+          "start": 1,
+          "end": 10
+        },
+        {
+          "source_id": "S15",
+          "start": 1,
+          "end": 48
+        },
+        {
+          "source_id": "S16",
+          "start": 49,
+          "end": 55
+        },
+        {
+          "source_id": "S13",
+          "start": 73,
+          "end": 82
+        }
+      ],
+      "question_refs": [
+        "Q-L-06",
+        "Q-L-14"
+      ]
+    },
+    {
+      "level": 3,
+      "severity": "critical",
+      "finding": "Graph introduction must not repeat existing TD19 metadata leak; H-LINK is future GAP, not independently reproduced vulnerability.",
+      "action": "ESCALATED to parent as P0 dependency; no duplicate TD and no change of TD19 status.",
+      "evidence": [
+        {
+          "source_id": "S21",
+          "start": 30,
+          "end": 36
+        },
+        {
+          "source_id": "S10",
+          "start": 1735,
+          "end": 1761
+        }
+      ],
+      "question_refs": [
+        "Q-L-09",
+        "Q-L-10"
+      ]
+    },
+    {
+      "level": 3,
+      "severity": "major",
+      "finding": "Keyword ownership unresolved; UD-02/06 policy forks inherited; engineering record-key choice not a new user re-confirmation of the tree.",
+      "action": "ESCALATED product choices with limited dependent scope; independent analysis complete.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 35,
+          "end": 43
+        },
+        {
+          "source_id": "S08",
+          "start": 234,
+          "end": 238
+        }
+      ],
+      "question_refs": [
+        "Q-L-03",
+        "Q-L-05",
+        "Q-L-07",
+        "Q-L-08",
+        "Q-L-11"
+      ]
+    }
+  ],
+  "questions_for_RS003": [
+    {
+      "id": "Q-L-01",
+      "priority": "P1",
+      "exact_question": "Каков минимальный версионированный контракт accepted_context/context pack для продолжения A.1, который доставляет сам факт A, точное основание, принявшего и доказательство допуска, ревизию/условия применимости, текущий статус проверки и правило переоткрытия, не выдавая чужой контекст?",
+      "why": "Хранение уже есть частично, но resume не собирает причинный пакет по задаче; review_id не равен понятному принятому базлайну.",
+      "evidence": [
+        {
+          "source_id": "S06",
+          "start": 365,
+          "end": 370
+        },
+        {
+          "source_id": "S19",
+          "start": 84,
+          "end": 89
+        }
+      ],
+      "expected_answer_type": "Таблица полей/владельцев/обязательности/источников + схема вычисления и отказов + связь с OMH task/card/run; варианты, не неявное утверждение API.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Будущий E2E: сессия 1 допускает A с основанием; новый процесс получает карту A.1; один предок недоступен, затем доступен положительным контролем.",
+        "expected": "Разрешённые основания и условия доставлены с точными refs; при недоступности явный безопасный остаток без имени/числа скрытого предка и без ложного complete.",
+        "physical_evidence": [
+          "raw task/card payload и MCP text+structured",
+          "сохранённый pack с digest/revision",
+          "SQL admitted records и grants receipt",
+          "отдельные PID/exit"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-02",
+      "priority": "P1",
+      "exact_question": "Какая проверяемая цепочка отличит persisted/selected/delivered/read-or-acknowledged/used для принятого контекста и потребует от исполнителя ссылки на этот базлайн либо обоснованного отклонения, не обещая доказать внутреннее мышление агента?",
+      "why": "Память и наличие файла не доказывают ни доставку, ни использование; статус delivered не должен стать новым голословным ack.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 25,
+          "end": 27
+        },
+        {
+          "source_id": "S01",
+          "start": 104,
+          "end": 108
+        },
+        {
+          "source_id": "S19",
+          "start": 84,
+          "end": 89
+        }
+      ],
+      "expected_answer_type": "Последовательность handoff/receipt/result checks с пределом доказуемости и независимым oracle.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Создать будущие прогоны с опущенным pack, старым pack и правильным pack; исполнитель пытается сдать результат без baseline refs или молча заменить A.",
+        "expected": "Контроль выявляет недоставку/устаревание/необоснованное отклонение; receipt не объявляется доказательством понимания; правильный результат проходит независимую проверку.",
+        "physical_evidence": [
+          "dispatch и result payloads",
+          "digest-bound receipt",
+          "отчёт независимого проверяющего",
+          "raw reject/accept responses"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-03",
+      "priority": "P1",
+      "exact_question": "Как отделить неизменяемые основания при создании от поздних append-only подтверждений/опровержений и представить корневой ввод без basis, legacy без записанного основания и criterion-клайм без baseline, не вынуждая агента выдумывать ссылки?",
+      "why": "M1 смешивает origin и justification; RS001 Q-07/UD-02 оставляет reject против NO_BASELINE открытым.",
+      "evidence": [
+        {
+          "source_id": "S02",
+          "start": 32,
+          "end": 38
+        },
+        {
+          "source_id": "S08",
+          "start": 93,
+          "end": 104
+        }
+      ],
+      "expected_answer_type": "Матрица типов ввода/grounds/status/coverage + варианты политики и точная развилка UD-02.",
+      "uncertainty_type": "mixed_engineering_product",
+      "needs_user": [
+        "UD-02: отказ либо непокрывающая informational запись; не решать повторно без источника"
+      ],
+      "verification": {
+        "action": "В будущем подать корневую цитату заказчика, гипотезу без оснований, criterion без dependencies, legacy и поздний source correction.",
+        "expected": "Никаких фиктивных grounds и ложного покрытия; старый grounds не изменён; поздний evidence добавлен; результат соответствует утверждённой политике.",
+        "physical_evidence": [
+          "requests/rejections с field paths",
+          "SQL before/after",
+          "исторический snapshot",
+          "trace coverage"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-04",
+      "priority": "P1",
+      "exact_question": "Сравни схемы идентичности для уже подтверждённого дерева: общий logical claim ID + уникальный record/version ID (в том числе составной ключ) против уникальных immutable node IDs + общий logical/root ID; как адресовать цитату/версию и parent без изменения прежних IDs и исходника?",
+      "why": "Категорическое утверждение, будто общий claim_id обязательно нарушает immutability, неверно без определения record key; смысл вложенного дерева уже подтверждён.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 35,
+          "end": 43
+        },
+        {
+          "source_id": "S04",
+          "start": 31,
+          "end": 36
+        },
+        {
+          "source_id": "S22",
+          "start": 23,
+          "end": 28
+        }
+      ],
+      "expected_answer_type": "Сравнительная таблица ключей, FK, публичного адреса, migration/compatibility и failure cases; имена полей не объявлять утверждёнными.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Будущая fixture: один логический клайм с двумя допущенными версиями и событием; дубликат record key, ссылка на старую версию, попытка перезаписи исходника.",
+        "expected": "Обе версии адресуемы однозначно под тем же логическим клаймом; дубль/перезапись отвергнуты; старая ссылка воспроизводима; AA11/АА11 и AA001 не нормализованы друг в друга.",
+        "physical_evidence": [
+          "DDL и migration proposal",
+          "SQL keys/FK/integrity receipts",
+          "до/после raw SHA256 тел",
+          "MCP historical lookup"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-05",
+      "priority": "P1",
+      "exact_question": "Как определяется последнее актуальное принятое вложенное уточнение в ветке при двух concurrent siblings, reject, archive, переносе применимости и semantic merge, если время кандидата и глубина не дают права молча выбрать победителя?",
+      "why": "Подтверждённая вложенность не определяет concurrency/fork arbitration; исходник нельзя глобально архивировать лишь из-за дочерней версии в другой ветке.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 64,
+          "end": 66
+        },
+        {
+          "source_id": "S07",
+          "start": 19,
+          "end": 25
+        }
+      ],
+      "expected_answer_type": "Branch-local state machine + CAS/atomicity/idempotency choices + список только реально продуктовых развилок.",
+      "uncertainty_type": "mixed_engineering_product",
+      "needs_user": [
+        "Если механизмы оставляют смысловую конкуренцию двух independently admitted siblings — явный субъект выбора, не выбор аналитика"
+      ],
+      "verification": {
+        "action": "Два будущих процесса уточняют одного родителя; один reject, затем оба admissible; kill до/после commit, retry, применимость второй ветке.",
+        "expected": "Нет потерь и тихого победителя; candidate не заменяет accepted; старый snapshot и чужой актуальный лист не меняются автоматически; восстановление атомарно.",
+        "physical_evidence": [
+          "PID/exit и fault receipts",
+          "SQL/version lineage before/after",
+          "MCP current/historical tree",
+          "readback после рестарта"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-06",
+      "priority": "P1",
+      "exact_question": "Какой минимальный версионированный словарь typed relations нужен DOM для basis/refinement/support/contradiction/use и каковы direction, endpoint kinds, inverse derivation, supersession и строгая валидация без автоматического превращения similarity в доказательство?",
+      "why": "F содержит разные версии словаря и несовпадающие имена; закрытого списка без семантики/проверки ссылок недостаточно.",
+      "evidence": [
+        {
+          "source_id": "S12",
+          "start": 10,
+          "end": 30
+        },
+        {
+          "source_id": "S13",
+          "start": 13,
+          "end": 18
+        },
+        {
+          "source_id": "S13",
+          "start": 106,
+          "end": 127
+        },
+        {
+          "source_id": "S03",
+          "start": 89,
+          "end": 98
+        }
+      ],
+      "expected_answer_type": "Небольшая relation matrix + migration/versioning + reject codes + mapping F tokens без молчаливого переименования.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "В будущем подать неизвестный relation type, несовместимые endpoint kinds, несуществующий/чужой endpoint и duplicate reverse edge; допустить валидную связь контролем.",
+        "expected": "Строгие безопасные отказы без partial rows; inverse не дублирует authoritative edge; valid control видим только допустимым акторам.",
+        "physical_evidence": [
+          "closed schema",
+          "raw MCP frames",
+          "SQL graph/outbox diff",
+          "scoped backlinks output"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-07",
+      "priority": "P1",
+      "exact_question": "Как раздельно вывести admitted/accepted/current/stale/converged/delivered/owner-closed и кто может переоткрыть принятое при новом противоречии, исправлении источника или изменении условий, не переписывая прежнее решение и не превращая отсутствие воспоминания в reopen?",
+      "why": "M4 review/converge недостаточен; blanket запрет пересмотра тоже неверен; UD-06 не решён.",
+      "evidence": [
+        {
+          "source_id": "S06",
+          "start": 163,
+          "end": 191
+        },
+        {
+          "source_id": "S05",
+          "start": 55,
+          "end": 77
+        },
+        {
+          "source_id": "S08",
+          "start": 67,
+          "end": 90
+        }
+      ],
+      "expected_answer_type": "Независимые state dimensions и transition table с authority/evidence/reopen reason; продуктовые choices выделены.",
+      "uncertainty_type": "mixed_engineering_product",
+      "needs_user": [
+        "UD-06: субъект/критерии сходимости и область revalidation"
+      ],
+      "verification": {
+        "action": "Будущий E2E: review без admit; admit без delivery; новая противоречащая версия; забытое основание; revalidate на новой базе.",
+        "expected": "Ни review, ни ack не означают owner close; забывание ведёт к retrieval, не молчаливому reopen; новая проверка не редактирует старую.",
+        "physical_evidence": [
+          "immutable review/admission/reopen records",
+          "trace per-state output",
+          "OMH result readback при разрешённой интеграции",
+          "historical receipts"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-08",
+      "priority": "P1",
+      "exact_question": "Как различить pin точной record/version, pin ревизии ветки и ссылку на актуальную линию; когда связь или проверка становится stale и как scoped revalidate добавляет новое основание, не переключая старое доказательство на новый смысл и не раскрывая ревизию запрещённой цели?",
+      "why": "dependencies branch→revision уже есть, но не как link pin; простое head!=pin консервативно и не доказывает содержательного изменения; CHECK_AGED не утверждён.",
+      "evidence": [
+        {
+          "source_id": "S05",
+          "start": 62,
+          "end": 71
+        },
+        {
+          "source_id": "S06",
+          "start": 185,
+          "end": 202
+        },
+        {
+          "source_id": "S08",
+          "start": 80,
+          "end": 103
+        },
+        {
+          "source_id": "S02",
+          "start": 75,
+          "end": 80
+        }
+      ],
+      "expected_answer_type": "Pin semantics matrix + temporal/read-snapshot contract + strict-default compatibility + UD-02/06 deltas.",
+      "uncertainty_type": "mixed_engineering_product",
+      "needs_user": [
+        "UD-02/UD-06 остаются OPEN; нельзя ослабить stale до aged молча"
+      ],
+      "verification": {
+        "action": "Будущие чтения: старая ревизия, новая нерелевантная транзакция, новое смысловое уточнение target; затем grants revoked и independent revalidate.",
+        "expected": "Старый snapshot воспроизводим; прежний pin неизменён; актуальность не возникает без проверки; скрытая target revision/stale delta не выдана.",
+        "physical_evidence": [
+          "read snapshot vector",
+          "SQL edge/dependency history",
+          "raw public errors and trace",
+          "revalidate proof record"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-09",
+      "priority": "P0_before_graph_introduction",
+      "exact_question": "Как реализовать и независимо проверить scope-first non-disclosure для graph/backlinks/neighbors/counts/ranking/dashboard/pins и n-hop traversal через явно shared node, сохранив глобальный integrity gate и closed public DTO?",
+      "why": "Это развитие H-LINK CP-PL-17, не новый зарегистрированный TD19; global metadata уже демонстрирует опасную границу.",
+      "evidence": [
+        {
+          "source_id": "S10",
+          "start": 1691,
+          "end": 1756
+        },
+        {
+          "source_id": "S06",
+          "start": 90,
+          "end": 100
+        },
+        {
+          "source_id": "S29",
+          "start": 27,
+          "end": 43
+        }
+      ],
+      "expected_answer_type": "Boundary diagram/field allowlists + differential oracle matrix L1-L8 + правила authorized sharing и единственного допустимого global failure bit.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "После появления API: fixed AA, hidden AB 0 vs 8 links, входящие/исходящие/n-hop/similarity и forbidden append; положительный B/union control. Пока API нет — GAP, не PASS.",
+        "expected": "AA-visible data/ranks/counts/cursors не меняются от скрытого AB; no endpoint existence oracle; rejected append атомарен. Global CHAIN_BROKEN может блокировать по утверждённому safe contract, но не раскрывает locator/revision/count.",
+        "physical_evidence": [
+          "raw MCP text+structured/nested",
+          "authorized fixture oracle отдельно",
+          "all-table SQL/targets/exports before/after",
+          "frozen run-specific manifest+grants/PID/exit"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-10",
+      "priority": "P0_before_graph_introduction",
+      "exact_question": "Как ограничить cache keys, invalidation, cursor reuse, top-k и вычисление stale видимым подграфом/политикой/grants/revision, чтобы warm union cache или изменение скрытой ветки не меняли ответ AA-only и не утекали через диагностику/логи?",
+      "why": "Фильтрация готового глобального ранжирования недостаточна; F caches keyed by note path не являются security boundary.",
+      "evidence": [
+        {
+          "source_id": "S17",
+          "start": 1077,
+          "end": 1082
+        },
+        {
+          "source_id": "S10",
+          "start": 1735,
+          "end": 1746
+        }
+      ],
+      "expected_answer_type": "Cache/cursor threat table, invalidation contract и измеримые проверки с явным пределом timing guarantees.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Будущий union actor греет cache; AA повторяет запрос с union cursor, затем меняются grants и только AB data; повтор после рестарта.",
+        "expected": "Нет cross-actor reuse или скрытых delta/count; unauthorized cursor безопасно отвергнут; данные не переживают отзыв прав как доступные. Отдельно оценён timing риск без голословного constant-time.",
+        "physical_evidence": [
+          "request/response pairs",
+          "cache/cursor receipts без секретов",
+          "grant transition records",
+          "scoped output diffs and restart log"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-11",
+      "priority": "P2_needs_user",
+      "exact_question": "Сравни ключевые слова на логическом клайме/его версии, на ребре и в обоих местах: какие поисковые/смысловые задачи решает каждый вариант, как append-only исправления и scope влияют на индекс; затем сформулируй заказчику один точный выбор, не трактуя ответ да на или как утверждение обоих?",
+      "why": "Седьмое уточнение оставляет только место keywords неоднозначным; дерево не нуждается в новом подтверждении.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 33,
+          "end": 43
+        },
+        {
+          "source_id": "S16",
+          "start": 30,
+          "end": 55
+        }
+      ],
+      "expected_answer_type": "Короткая decision table + точная needs_user формулировка и зависимый scope, без выбора вместо заказчика.",
+      "uncertainty_type": "product_with_engineering_comparison",
+      "needs_user": [
+        "keyword location/ownership not confirmed"
+      ],
+      "verification": {
+        "action": "После выбора: добавить claim keyword и/или edge keyword, append исправление, проверить поиск из AA-only и union и историческую выдачу.",
+        "expected": "Индекс следует выбранному контракту; старые bytes/labels сохранены; скрытые keywords не раскрываются через suggestions/counts.",
+        "physical_evidence": [
+          "точная цитата решения пользователя",
+          "schema version",
+          "SQL append events",
+          "raw scoped search and history results"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-12",
+      "priority": "P1",
+      "exact_question": "Каков общий append-only source subblock для local/external источников: что неизменно записывается (URL/path, locator, bytes/hash/version, capture time, provenance), что делать без разрешённого снимка и как добавлять новую редакцию, не считая locality меткой доверия и не инициируя произвольный fetch?",
+      "why": "M6 неверно отождествляет неизменность URL с неизменностью удалённого содержимого; локальный путь тоже изменяем; digest без bytes не гарантирует воспроизведение.",
+      "evidence": [
+        {
+          "source_id": "S02",
+          "start": 75,
+          "end": 80
+        },
+        {
+          "source_id": "S03",
+          "start": 9,
+          "end": 15
+        },
+        {
+          "source_id": "S01",
+          "start": 59,
+          "end": 60
+        }
+      ],
+      "expected_answer_type": "Source record/event schema + acquisition/trust/permission matrix + states pinned/unpinned/unavailable, not silent success.",
+      "uncertainty_type": "mixed_engineering_product",
+      "needs_user": [
+        "Если нужна retention/retrieval policy за пределами разрешений — эскалировать, не fetch автоматически"
+      ],
+      "verification": {
+        "action": "Будущие synthetic local/external fixtures меняют содержимое при том же locator; снимок отсутствует/повреждён; добавляется correction и выполняется рестарт.",
+        "expected": "Старый locator/снимок не переписан; неприкреплённое содержимое явно unverified; hash mismatch отказ; нет сетевого/файлового доступа вне allowlist.",
+        "physical_evidence": [
+          "retained source bytes+SHA256",
+          "append event SQL",
+          "historical view/readback",
+          "raw rejection and acquisition permission receipt"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-13",
+      "priority": "P1",
+      "exact_question": "Как единый производный tree view различает строки-события и вложенные immutable версии одного logical claim, детерминированно упорядочивает их, пагинирует глубокую цепь без предметного лимита глубины и мигрирует closed schemas/DTO/YAML без свободных будущих dict?",
+      "why": "UI отступ не задаёт идентичность/ordering; текущие UNKNOWN_FIELD и DTO allowlists требуют согласованного изменения; cycles/resources важны.",
+      "evidence": [
+        {
+          "source_id": "S01",
+          "start": 35,
+          "end": 41
+        },
+        {
+          "source_id": "S03",
+          "start": 63,
+          "end": 98
+        },
+        {
+          "source_id": "S07",
+          "start": 24,
+          "end": 25
+        },
+        {
+          "source_id": "S09",
+          "start": 871,
+          "end": 945
+        }
+      ],
+      "expected_answer_type": "Typed row schema, stable ordering+continuation contract, migration/compatibility и bounded resource strategy без произвольного product depth cap.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Будущая длинная цепь+siblings+same timestamp events, циклический/чужой parent, pages с разными grants и старый клиент/экспорт.",
+        "expected": "Нет рекурсивного crash, пропусков/дублей и hidden total; полный authorized обход; цикл/чужой parent отклонён; старый клиент не принимает неизвестную форму молча.",
+        "physical_evidence": [
+          "typed schemas/version negotiation",
+          "all page/cursor responses",
+          "SQL lineage counts by independent oracle",
+          "historical export bytes+hash"
+        ]
+      }
+    },
+    {
+      "id": "Q-L-14",
+      "priority": "P2",
+      "exact_question": "Какие минимальные механизмы F переносимы после отделения от Dataview: related+anchor, weighted visible-neighbor scoring, derived backlink count и UI; какие проверки нужны против расхождения словарей, JS в similarity-weights.yaml, strength/confidence drift и запрещённых float в dom-c14n/v1?",
+      "why": "Название файла и README не подтверждают работающий config/MCP; score не является приёмкой/истинностью.",
+      "evidence": [
+        {
+          "source_id": "S14",
+          "start": 38,
+          "end": 136
+        },
+        {
+          "source_id": "S15",
+          "start": 7,
+          "end": 48
+        },
+        {
+          "source_id": "S16",
+          "start": 49,
+          "end": 69
+        },
+        {
+          "source_id": "S03",
+          "start": 19,
+          "end": 43
+        }
+      ],
+      "expected_answer_type": "Reuse/adapter/reject table с точными functions/locators и отдельным протоколом synthetic offline проверки; не обещание скопировать готовый backend.",
+      "uncertainty_type": "engineering",
+      "needs_user": [],
+      "verification": {
+        "action": "Будущий разрешённый offline prototype: pinned synthetic visible set, malformed/missing config, 0/negative/unit numeric examples, duplicated tags и same inputs restart.",
+        "expected": "Детерминированное объяснимое ранжирование либо явный config rejection; no silent fallback success; scores не повышают acceptance, decimals имеют явно выбранное compatible encoding.",
+        "physical_evidence": [
+          "frozen input/config/vocabulary hashes",
+          "actual runner stdout/exit",
+          "component outputs and rank explanation",
+          "MCP integration evidence отдельно после реализации"
+        ]
+      }
+    }
+  ],
+  "coverage_map": [
+    {
+      "requirement": "continuation-1-causes",
+      "section": "causal_analysis",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-07"
+      ]
+    },
+    {
+      "requirement": "continuation-2-markers-and-table",
+      "section": "marker_critique",
+      "question_refs": [
+        "Q-L-03",
+        "Q-L-04",
+        "Q-L-05",
+        "Q-L-06",
+        "Q-L-07",
+        "Q-L-08",
+        "Q-L-11",
+        "Q-L-12",
+        "Q-L-13"
+      ]
+    },
+    {
+      "requirement": "continuation-3-F",
+      "section": "F_reuse",
+      "question_refs": [
+        "Q-L-06",
+        "Q-L-14"
+      ]
+    },
+    {
+      "requirement": "continuation-4-graph-and-context",
+      "section": "graph_security",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-09",
+        "Q-L-10"
+      ]
+    },
+    {
+      "requirement": "continuation-5-exact-RS003",
+      "section": "questions_for_RS003",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-03",
+        "Q-L-04",
+        "Q-L-05",
+        "Q-L-06",
+        "Q-L-07",
+        "Q-L-08",
+        "Q-L-09",
+        "Q-L-10",
+        "Q-L-11",
+        "Q-L-12",
+        "Q-L-13",
+        "Q-L-14"
+      ]
+    },
+    {
+      "requirement": "continuation-6-plan",
+      "section": "plan_impact",
+      "question_refs": [
+        "Q-L-01",
+        "Q-L-04",
+        "Q-L-09",
+        "Q-L-11"
+      ]
+    },
+    {
+      "requirement": "continuation-7-files-validation",
+      "section": "validation",
+      "question_refs": [
+        "Q-L-13"
+      ]
+    }
+  ]
+}

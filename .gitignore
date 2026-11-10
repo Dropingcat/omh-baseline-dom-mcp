@@ -1,0 +1,11 @@
+﻿# Runtime test data (heavy sqlite fixtures) — kept locally, not versioned
+runtime/
+
+# Python caches
+.pytest_cache/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
+Thumbs.db

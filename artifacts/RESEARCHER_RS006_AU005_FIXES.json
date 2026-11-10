@@ -1,0 +1,46 @@
+{
+  "schema": "researcher_synthesis_rs006/v1",
+  "role": "RESEARCHER",
+  "task": "RS006",
+  "status": "COMPLETED",
+  "completion": "completed",
+  "first_artifact": "runtime/RS006/first_artifact.json (PARTIAL, honest)",
+  "product_acceptance": false,
+  "is_approval": false,
+  "code_digest_scope": "read-only: продукт не менялся; прототип — синтетика в runtime/RS006 без импорта продукта и без сети",
+  "observed": "Прочитаны полностью: карта RS006, 8 вопросов AN006 (дословно), findings_map.json, PL003_reconciliation.json, artifacts AUDITOR_AB004_AU004F01 (F-01..F-04, O2_field_classification, minimal_complete_remedy), AUDITOR_AU006_TASK_BASELINE, ANALYST_AN006_AU005_FINDINGS, docs/F02_IMPLEMENTATION_OPTIONS, REQUIREMENTS.md §9-11, все mockup-модули (admission/delivery/public_dto/storage/projections/ports/dom_contract/server), RESEARCHER_RS005_CURATION, runtime/RS003/contracts.schema.json. Прототип F-02 (L1+L2 финальная форма) и F-01 (view-aware identity): 8+ сценариев F-02 (s1..s8) и 7+1 сценариев F-01 (m1..m7, d1), ALL_ASSERTS_PASSED, receipt sha256 954105cb... Валидатор PASS: 8 вопросов дословно, у каждого verification/options>=2/contract/do_not/sources/uncertainties; негативные контроли прототипа присутствуют; applied=true отсутствует.",
+  "answers_count": 8,
+  "answers_refs": [
+    "runtime/RS006/answers_f02.json (Q-F02-01, Q-F02-02)",
+    "runtime/RS006/answers_f01.json (Q-F01-01, Q-F01-02)",
+    "runtime/RS006/answers_other.json (Q-F03-01, Q-F04-01, Q-PL003-01, Q-ORCH-01)"
+  ],
+  "key_deliverables": [
+    "F-02: финальная форма L1+L2: порядок проверок (candidate-scope -> L1 digest кандидата ДО кеша -> L2 binding -> review checks), расширенный PK idempotency (work,operation,key,scope_digest), binding (candidate_id, review_id, branch, scope_digest, result_scope), replay только при result_scope ⊆ grant; исправлены две дыры исходного предложения оркестратора: (1) старый PK не позволял повторное remember() после legacy-отказа; (2) строгое равенство scope_digest ломает законное восстановление при безопасном сужении",
+    "F-01: модель identity доставки (intent, receiver, view_scope_digest, source_revision, delivered_byte_hash); UNIQUE(intent, receiver, view_scope_digest, fingerprint); legacy ack инертны и не переписываются; view_scope публикуется digest'ом (exists-oracle guard); skip в sync только при точном совпадении identity+bytes",
+    "F-01 негативный E2E: NEG-01..NEG-09 с физическими фактами (SQL-строки, sha256 файлов, счётчик физических attach)",
+    "F-02 негативный набор: N-F02-1..11 с ожидаемым и физическим evidence",
+    "Порядок worker-срезов: WS-F04 (1) -> WS-F02 (2) -> WS-F01 (3) -> WS-F03 (4), WS-RV003-AU003 параллельно; F-02 и F-01 раздельно принимаются",
+    "Q-PL003-01: подтверждено отсутствие RV003/AU003 (bounded search, повторно проверено в этом срезе) + точный контракт ролей; RV004/AU004/AU005 не эквивалент",
+    "Q-ORCH-01: все три утверждения оркестратора проверены первоисточниками: O3 — CONFIRMED-дефект (не наблюдение); O2 provenance легален (решение заказчика); AU005 — не приёмка продукта; UNVERIFIED-остаток = известные границы среза (live OMH, граф/K1-K3, тайминг)"
+  ],
+  "external_sources": [
+    {"ref": "https://stripe.com/docs/api/idempotent_requests", "snapshot": "runtime/RS006/sources/stripe_idempotent.html", "sha256": "5331a33764acb56c75d2a7c99b2d8b4e2ad9c6977deca05e9c729ff8ea831260", "date": "2026-11-08", "note": "единственный источник (AWS: TLS reset); паттерн: повтор с тем же key возвращает сохранённый ответ первой операции"},
+    {"ref": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/", "snapshot": null, "sha256": null, "date": "2026-11-08", "note": "NOT_SNAPSHOTTED: curl exit 35 (Connection reset); не использован как подтверждение"}
+  ],
+  "publication_limits": "Ничего не применено к продукту/tests/tech_debt/OMH; applied=false; решения заказчика O1/O2/O3/поиск/K не переоткрыты; AU005 остаётся REQUEST_CHANGES; RV003/AU003 не выдуманы; TD-ID не присвоены.",
+  "validation": {
+    "validator": "runtime/RS006/validate_rs006.py",
+    "receipt": "runtime/RS006/validation_receipt.json",
+    "status": "PASS",
+    "checks": "exact_question байт-в-байт x8; слои answers (verification/options>=2/contract/do_not/sources/uncertainties); прототип с негативным контролем (s1..s8, m1..m7, d1); applied=false"
+  },
+  "prototype": {
+    "script": "runtime/RS006/prototypes/rs006_f02_f01_prototype.py",
+    "receipt": "runtime/RS006/prototypes/receipt/rs006_prototype_receipt.json",
+    "sha256": "954105cb6826576b7e3736a5575f97aae6c4734fcd2184e15aa4d1bf6eba1cd3",
+    "network": false,
+    "product_import": false
+  },
+  "written_at": "2026-11-08T14:40:00+03:00"
+}

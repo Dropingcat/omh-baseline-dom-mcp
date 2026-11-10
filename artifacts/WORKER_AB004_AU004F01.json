@@ -1,0 +1,516 @@
+{
+ "role": "WORKER",
+ "block": "AB004",
+ "task": "AU004-F-01 dependencies maps without scope filter",
+ "continuation": "AB004_CONTINUE_01",
+ "status": "DONE_PENDING_INDEPENDENT_REVIEW",
+ "verdict": "F-01 closed on own E2E (6 variants, 5 distinct seeds + corrupt variants): foreign branch keys removed from Claim.dependencies, Provenance.dependencies, ReadSnapshot.revisions and YAML export bytes; internal data unchanged; TD19 gate regression green. Not an acceptance and not an approval; debt NOT closed.",
+ "product_acceptance": false,
+ "is_approval": false,
+ "debt_closed": false,
+ "code_digest_before": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+ "code_digest_after": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+ "file_count": 16,
+ "changed_files": [
+  "mockup/admission.py",
+  "mockup/public_dto.py",
+  "mockup/server.py"
+ ],
+ "public_dto_changes": [
+  "('bmap', V) spec: branch-keyed map filtered by caller launch grant; scope=None fails closed (SCOPE_REQUIRED)",
+  "Claim.dependencies, Provenance.dependencies, ReadSnapshot.revisions -> bmap",
+  "project()/project_tool()/_project() take scope; admission passes context.branches; server passes service.context.branches",
+  "Service._export builds YAML bytes from the scope-filtered public Snapshot"
+ ],
+ "map_fields_inventory": {
+  "branch_keyed_filtered": [
+   "Claim.dependencies",
+   "Provenance.dependencies",
+   "ReadSnapshot.revisions"
+  ],
+  "not_branch_keyed_unchanged": [
+   "Claim.properties",
+   "Trace.origins",
+   "Admitted.claim_ids",
+   "Admitted.event_ids"
+  ]
+ },
+ "pre_evidence": {
+  "dir": "runtime/AB004/pre_v2 (+ pre = harness v1, pre_first_a_only = first probe; none rewritten)",
+  "method": "pre_v2 executed by the same ab004_e2e.py on a byte-identical private copy of the ORIGINAL mockup (runtime/AB004/precopy, digest 08aa9a9b...), real MCP stdio; product tree untouched at that time of copy",
+  "harness_note": "harness v1 (runtime/AB004/pre, post_harness_v1) shared one exports/ dir between readers, which only mislabelled the \"union\" reader as leaking in post; harness v2 gives every reader its own dir copy. v1 and v2 agree on AA-only/AB-only verdicts."
+ },
+ "post_evidence": "runtime/AB004/post_v2",
+ "scenarios": {
+  "a": {
+   "seed": 5521,
+   "initial_conditions": {
+    "AA_head": 2,
+    "AB_head": 2,
+    "canaries_ab": [
+     "AB004-5521-AB-hidden-0",
+     "AB004-5521-AB-hidden-1"
+    ]
+   },
+   "deps_injected": {
+    "AA": 2,
+    "AB": 2
+   },
+   "pre_leak": true,
+   "post_leak": false,
+   "verdict": "LEAK_REPRODUCED_THEN_CLOSED",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 4,
+   "post_all_exit_zero": true,
+   "readers": {
+    "AA-only:AA": {
+     "grant": "AA",
+     "pre_query_deps": [
+      {
+       "AA": 2,
+       "AB": 2
+      },
+      {
+       "AA": 2,
+       "AB": 2
+      }
+     ],
+     "post_query_deps": [
+      {
+       "AA": 2
+      },
+      {
+       "AA": 2
+      }
+     ],
+     "pre_yaml_dep_lines": [
+      [
+       "AA: 2",
+       "AB: 2",
+       "AA: 2",
+       "AB: 2"
+      ]
+     ],
+     "post_yaml_dep_lines": [
+      [
+       "AA: 2",
+       "AA: 2"
+      ]
+     ]
+    }
+   }
+  },
+  "b": {
+   "seed": 6643,
+   "initial_conditions": {
+    "AA_head": 1,
+    "AB_head": 2,
+    "canaries_ab": [
+     "AB004-6643-AB-hidden-0",
+     "AB004-6643-AB-hidden-1"
+    ]
+   },
+   "deps_injected": {
+    "AB": 2
+   },
+   "pre_leak": true,
+   "post_leak": false,
+   "verdict": "LEAK_REPRODUCED_THEN_CLOSED",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 4,
+   "post_all_exit_zero": true,
+   "readers": {
+    "AA-only:AA": {
+     "grant": "AA",
+     "pre_query_deps": [
+      {
+       "AB": 2
+      },
+      {
+       "AB": 2
+      }
+     ],
+     "post_query_deps": [],
+     "pre_yaml_dep_lines": [
+      [
+       "AB: 2",
+       "AB: 2"
+      ]
+     ],
+     "post_yaml_dep_lines": []
+    }
+   }
+  },
+  "c": {
+   "seed": 8817,
+   "initial_conditions": {
+    "AA_head": 1,
+    "AB_head": 2,
+    "canaries_ab": [
+     "AB004-8817-AB-hidden-0",
+     "AB004-8817-AB-hidden-1"
+    ]
+   },
+   "deps_injected": {
+    "AA": 1,
+    "AB": 2
+   },
+   "pre_leak": false,
+   "post_leak": false,
+   "verdict": "NO_LEAK_AS_EXPECTED_BOTH_PHASES",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 4,
+   "post_all_exit_zero": true,
+   "readers": {
+    "union:AA": {
+     "grant": "AA,AB",
+     "pre_query_deps": [
+      {
+       "AA": 1,
+       "AB": 2
+      },
+      {
+       "AA": 1,
+       "AB": 2
+      }
+     ],
+     "post_query_deps": [
+      {
+       "AA": 1,
+       "AB": 2
+      },
+      {
+       "AA": 1,
+       "AB": 2
+      }
+     ],
+     "pre_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 2",
+       "AA: 1",
+       "AB: 2"
+      ]
+     ],
+     "post_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 2",
+       "AA: 1",
+       "AB: 2"
+      ]
+     ]
+    },
+    "union-on-AB:AB": {
+     "grant": "AA,AB",
+     "pre_query_deps": [],
+     "post_query_deps": [],
+     "pre_yaml_dep_lines": null,
+     "post_yaml_dep_lines": null
+    }
+   }
+  },
+  "d": {
+   "seed": 4409,
+   "initial_conditions": {
+    "AA_head": 1,
+    "AB_head": 3,
+    "canaries_ab": [
+     "AB004-4409-AB-hidden-0",
+     "AB004-4409-AB-hidden-1",
+     "AB004-4409-AB-hidden-2"
+    ]
+   },
+   "deps_injected": {
+    "AA": 1,
+    "AB": 3
+   },
+   "pre_leak": true,
+   "post_leak": false,
+   "verdict": "LEAK_REPRODUCED_THEN_CLOSED",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 4,
+   "post_all_exit_zero": true,
+   "readers": {
+    "AB-only:AB": {
+     "grant": "AB",
+     "pre_query_deps": [
+      {
+       "AA": 1,
+       "AB": 3
+      },
+      {
+       "AA": 1,
+       "AB": 3
+      }
+     ],
+     "post_query_deps": [
+      {
+       "AB": 3
+      },
+      {
+       "AB": 3
+      }
+     ],
+     "pre_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 3",
+       "AA: 1",
+       "AB: 3"
+      ]
+     ],
+     "post_yaml_dep_lines": [
+      [
+       "AB: 3",
+       "AB: 3"
+      ]
+     ]
+    },
+    "union:AB": {
+     "grant": "AA,AB",
+     "pre_query_deps": [
+      {
+       "AA": 1,
+       "AB": 3
+      },
+      {
+       "AA": 1,
+       "AB": 3
+      }
+     ],
+     "post_query_deps": [
+      {
+       "AA": 1,
+       "AB": 3
+      },
+      {
+       "AA": 1,
+       "AB": 3
+      }
+     ],
+     "pre_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 3",
+       "AA: 1",
+       "AB: 3"
+      ]
+     ],
+     "post_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 3",
+       "AA: 1",
+       "AB: 3"
+      ]
+     ]
+    }
+   }
+  },
+  "e": {
+   "seed": 7931,
+   "initial_conditions": {
+    "AA_head": 1,
+    "AB_head": 3,
+    "canaries_ab": [
+     "AB004-7931-AB-hidden-0",
+     "AB004-7931-AB-hidden-1",
+     "AB004-7931-AB-hidden-2"
+    ]
+   },
+   "deps_injected": {
+    "AA": 1,
+    "AB": 3
+   },
+   "pre_leak": true,
+   "post_leak": false,
+   "verdict": "LEAK_REPRODUCED_THEN_CLOSED",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 4,
+   "post_all_exit_zero": true,
+   "readers": {
+    "AA-only:AA": {
+     "grant": "AA",
+     "pre_query_deps": [
+      {
+       "AA": 1,
+       "AB": 3,
+       "ZZ": 4
+      },
+      {
+       "AA": 1,
+       "AB": 3
+      }
+     ],
+     "post_query_deps": [
+      {
+       "AA": 1
+      },
+      {
+       "AA": 1
+      }
+     ],
+     "pre_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AB: 3",
+       "ZZ: 4",
+       "AA: 1",
+       "AB: 3"
+      ]
+     ],
+     "post_yaml_dep_lines": [
+      [
+       "AA: 1",
+       "AA: 1"
+      ]
+     ]
+    }
+   }
+  },
+  "g": {
+   "seed": 3377,
+   "initial_conditions": {
+    "AA_head": 2,
+    "AB_head": 3,
+    "canaries_ab": [
+     "AB004-3377-AB-hidden-0",
+     "AB004-3377-AB-hidden-1",
+     "AB004-3377-AB-hidden-2"
+    ]
+   },
+   "deps_injected": {
+    "AA": 2,
+    "AB": 3
+   },
+   "pre_leak": false,
+   "post_leak": false,
+   "verdict": "NO_LEAK_AS_EXPECTED_BOTH_PHASES",
+   "internal_claim_snapshots_unchanged": true,
+   "internal_event_deps_unchanged": true,
+   "post_processes": 6,
+   "post_all_exit_zero": true,
+   "readers": {}
+  }
+ },
+ "comparison_file": "runtime/AB004/pre_post_comparison.json",
+ "staleness_observation": {
+  "summary": "STALE_CHECK does not name a branch; but for a claim whose only dependency was AB (visible dependencies={} after fix) AA-only trace shows STALE_CHECK and claim_refs 2->1 after AB advances: the existence of a moved dependency is inferable, its branch is not. Not widened; owner decision needed.",
+  "scenario_b_post": {
+   "before_ab_advance": {
+    "residual_reasons": [
+     [],
+     []
+    ],
+    "claim_refs_count": [
+     2,
+     2
+    ],
+    "blockers": [
+     "BRANCH_NOT_CONVERGED",
+     "SYNC_PENDING"
+    ]
+   },
+   "after_ab_advance": {
+    "aa_only_trace_residual_reasons": [
+     [
+      "STALE_CHECK"
+     ],
+     [
+      "STALE_CHECK"
+     ]
+    ],
+    "aa_only_trace_claim_refs_count": [
+     1,
+     1
+    ],
+    "aa_only_trace_blockers": [
+     "BRANCH_NOT_CONVERGED",
+     "CRITERIA_NOT_CURRENT"
+    ],
+    "text_has_AB_word": false,
+    "union_trace_residual_reasons": [
+     [
+      "STALE_CHECK"
+     ],
+     [
+      "STALE_CHECK"
+     ]
+    ]
+   }
+  }
+ },
+ "regression": {
+  "pytest": {
+   "cmd": "pytest -q -p no:cacheprovider tests",
+   "failed": 1,
+   "passed": 63,
+   "failed_tests": [
+    "tests/test_integrity_contracts.py::test_event_chain_is_verified_and_forgery_is_detected"
+   ],
+   "only_documented_failure": true,
+   "log": "runtime/AB004/regress/pytest-q.txt",
+   "note": "first attempt \"pytest -q\" from project root collected runtime/** copies (import file mismatch, rc=2) -> kept as pytest-q-rootcollect-ERROR.txt; rerun with tests dir"
+  },
+  "ab003_smoke": {
+   "rc": 0,
+   "status": "SMOKE_OK",
+   "receipt": "runtime/AB004/regress/ab003-smoke/smoke-receipt.json"
+  },
+  "ab003_e2e_post_seed3101": {
+   "CHK-A2-01": "LEAK_CLOSED",
+   "CHK-A2-02": "LEAK_CLOSED",
+   "CHK-A2-03": "GATE_UNIFORM_SAFE",
+   "CHK-DEL-01": "PASS"
+  },
+  "rv004_post_seed7107": [
+   {
+    "CHK-A2-01": "LEAK_CLOSED",
+    "CHK-A2-02": "LEAK_CLOSED",
+    "CHK-A2-03": "GATE_UNIFORM_SAFE",
+    "CHK-DEL-01": "PASS",
+    "RV004-B-SIDE": "PASS"
+   }
+  ],
+  "au004_probe_rerun": {
+   "X1_foreign_deps_leaked": [],
+   "X1_status": "LEAK_CLOSED",
+   "X2_origin_branch_leaked_count": 0,
+   "X3_uniform_broken": true,
+   "X3_foreign_locator_visible": false,
+   "X3_db_unchanged": true,
+   "X4_internal_stamp_full": true,
+   "X4_no_duplicate_writes": true,
+   "X5_ab_b64_canary_in_yaml": false,
+   "note": "copy of au004_probe.py with OUT redirected to runtime/AB004/regress (original AU004 artifacts not touched)"
+  },
+  "au004_x2_rerun_keys": [
+   "X2b_foreign_claim_leaked",
+   "X2b_origin_branch_leaked",
+   "aa_only_surfaces",
+   "ab_claim_id_found"
+  ]
+ },
+ "known_out_of_scope": [
+  "AU004 X2 origin_branch=AB visible on a claim shared into AA by applicability (value, not a map) — unchanged, previously known",
+  "applicable_branches/excluded_branches values",
+  "TD20/TD21/UD"
+ ],
+ "boundaries": "no Git/install/network/subagents/OMH delta; tests/tech_debt/oracle/foreign artifacts read-only; suite writes its own runtime/tmp as before",
+ "files_written": [
+  "mockup/public_dto.py",
+  "mockup/admission.py",
+  "mockup/server.py",
+  "docs/SCHEMA_CHANGE_AU004F01.md",
+  "artifacts/WORKER_AB004_AU004F01.json",
+  "reports/WORKER_AB004_AU004F01.md",
+  "runtime/AB004/**"
+ ],
+ "manifest": "runtime/AB004/manifest.json"
+}

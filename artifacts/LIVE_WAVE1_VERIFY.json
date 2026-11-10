@@ -1,0 +1,183 @@
+{
+  "artifact": "LIVE_WAVE1_VERIFY",
+  "role": "LVER001",
+  "wave": 1,
+  "verifier_generated_at": "2026-11-08T16:30:00+00:00",
+  "basis": {
+    "criteria_source": "runtime/LIVE/acceptance_wave1.json (C1..C7)",
+    "initial_conditions": "runtime/LIVE/scenarios_wave1.json",
+    "claims_file": "artifacts/LIVE_WAVE1_RUN.json (treated as claim, verified against raw evidence)",
+    "evidence": "runtime/LIVE/wave1/** (timelines, raw frames, step payloads, dom.sqlite3 copies)",
+    "db_copies": "runtime/LV001V/copies/L1-0X_dom.sqlite3 (all SQL only on copies)",
+    "method_card": "cards/LVER001_WAVE1_VERIFIER.md"
+  },
+  "product_acceptance": false,
+  "is_approval": false,
+  "criteria": [
+    {
+      "id": "C1",
+      "name": "нет чужих веток в кадрах",
+      "verdict": "PASS",
+      "counts": {
+        "executor_response_frames_scanned": 32,
+        "seed_response_frames_scanned": 46,
+        "raw_payload_files_scanned": 28,
+        "branch_token_occurrences_outside_grant": 0,
+        "foreign_claim_id_occurrences": 0,
+        "foreign_derived_counters": 0
+      },
+      "evidence": [
+        "L1-01 (grant AA): 0 occurrences of 'AB' in any response.",
+        "L1-03: 'AB' present only in seq1-2 while grant was (AA, AB); narrowed phase (seq4-10, grant AA) has 0 occurrences.",
+        "L1-04 (grant AA): 0 occurrences; denied/refused calls return only fixed status enums.",
+        "L1-02 (grant AA): 8 occurrences of the token 'AB' in snapshot/resume responses — all in provenance metadata (origin_branch, item.applicability, history[].origin_branch, trace.origins/claim_origins.origin_branch) of claim a53a1471-b694-4471-b060-1ee336a6f158, which the SCENARIO itself seeds as shared_from=AB and applicable to AA. No text/body of the AB-only claim O (dd670511...), no AB-only claim id, no branch-keyed dependency map entries for AB (bmap filtered by scope), no counters derived from AB rows (n_claims counts only AA-applicable claims)."
+      ],
+      "note": "Interpretation-dependent: under a hyper-literal reading ('no occurrence of the branch-name string at all'), L1-02 would fail (8 metadata occurrences); under the semantic reading (no access to foreign branch content/objects/counters) it passes. The shared-claim provenance is part of the designed scenario semantics, so C1 is treated as PASS with this caveat documented. Criterion text should be clarified to define 'имя ветки' (metadata provenance vs unauthorized content)."
+    },
+    {
+      "id": "C2",
+      "name": "нет ложного DONE",
+      "verdict": "PASS",
+      "evidence": [
+        "L1-01/02/03: positive completion is backed by real fixation in DB copies — transactions, events and branch_heads grown (AA rev 1->2 in each; AB rev 2 in L1-02), claims present, chain verified CHAIN_OK (verify_chain on all 4 copies).",
+        "L1-04: RUN.json correctly declares incomplete; DB copy shows revision 1, single seed transaction, candidate 56b08792-... recorded but not admitted (no review, no tx, no event). Final snapshot (seq 9) reports revision 1, n_claims 1 — no positive readiness signal anywhere.",
+        "No read returned a positive readiness while fixation was missing: every query/snapshot/resume passed the server integrity gate."
+      ],
+      "counts": {
+        "scenarios_with_positive_status": 3,
+        "scenarios_with_admitted_transactions_in_db": 3,
+        "scenarios_incomplete": 1,
+        "false_done_cases": 0
+      }
+    },
+    {
+      "id": "C3",
+      "name": "продолжение без старой памяти",
+      "verdict": "FAIL",
+      "evidence": [
+        "Timeline L1-04 seq 7 (new client dom_resume): state_after = revision 1, n_claims 1, claim_origins [AA]; NO pending candidate, key or remainder surfaced — the un-admitted candidate 56b08792-... is not visible in any read response.",
+        "exec-40903d58.jsonl (new client frames): first tool call after reconnect is dom_review(candidate_id='56b08792-4c66-4c75-8768-ba50935ef88a', intent_digest='0aaab7fa...') — refs retained from the pre-kill session, never discovered in any server response.",
+        "Independent probe (LVER001 driver, brand-new client, role=helper, branches=AA, against L1-04 DB copy at runtime/LV001V/rerun/l104_probe): dom_resume -> 1 claim (24f894e7...), revision 1, zero pending/candidate fields; dom_trace() -> TRACE/readiness UNKNOWN; dom_sync_status -> only the seed delivery intents (OMH_EVIDENCE, YAML_EXPORT — pending in every scenario). The protocol (server API) provides no tool that enumerates un-admitted candidates.",
+        "The continuation worked only because the harness driver (the runner process) retained candidate_id/digest/idempotency_key in its own memory across the kill — i.e. continuation happened via external hint, not via DB-discovered unfinished work."
+      ],
+      "note": "fail_if 'незавершённое не обнаруживается или обнаруживается только по внешней подсказке' — both limbs hold. A truly memoryless client (wiped agent state) was never exercised; the run's 'new client' was a new MCP process but the same driver. What a fresh client CAN see is pending delivery intents (sync), which are not admission progress. To pass C3 the server would need a scoped pending-candidate view (or the driver state must actually be wiped)."
+    },
+    {
+      "id": "C4",
+      "name": "устаревание видно",
+      "verdict": "NOT_CHECKED",
+      "evidence": [
+        "No scenario changed the basis of an admitted claim during the run: L1-01 no env events; L1-02 no env events and no writes to AB after the shared claim; L1-03 changed only the GRANT (AA+AB->AA) — the server signals that as SCOPE_DENIED (permission refusal), not as a staleness indicator; L1-04 no basis change.",
+        "No response in any frame contains a system staleness signal (STALE_CHECK / CRITERIA_NOT_CURRENT as a staleness marker); trace responses carry BRANCH_NOT_CONVERGED/SYNC_PENDING type blockers only."
+      ],
+      "note": "Unverifiable by this wave. To check: a scenario where an admitted claim depends on branch X and X advances afterwards (new admit on X), then resume/trace on the dependent branch must surface STALE_CHECK / CRITERIA_NOT_CURRENT in the response itself. Also clarify whether a grant narrowing (L1-03) should itself be treated as a 'изменение основания' — under that wider reading the signal existed only as SCOPE_DENIED, not as an aging signal."
+    },
+    {
+      "id": "C5",
+      "name": "отказ не превращается в принятие",
+      "verdict": "PASS",
+      "evidence": [
+        "Every admitted transaction (L1-01 seq5, L1-02 seq6, L1-03 seq8) is backed in the DB copies by both a candidates row and a reviews row, and passed server-side gates (digest match, independent root, review exists, head==expected revision); admit always executed via a separate reviewer principal (via=judge).",
+        "Refusals leave no trace of acceptance: L1-02 seq3 SCOPE_DENIED (read) — no write followed for that branch; L1-04 seq8 INDEPENDENCE_NOT_ENFORCED — no review row created (DB copy reviews count stays at the single seed review); L1-04 seq5 PROCESS_EXITED_NO_CLIENT — transport error, no DB change; after refusals the driver recorded refusals/doubts honestly and did not claim completion (L1-04 stays incomplete).",
+        "No admitted status exists without a successful preceding submit+review in any DB copy; chain integrity CHAIN_OK on all copies."
+      ],
+      "counts": {"admitted_transactions": 3, "refused_calls": 4, "admitted_without_successful_call": 0}
+    },
+    {
+      "id": "C6",
+      "name": "сказал = сделал",
+      "verdict": "PASS",
+      "evidence": [
+        "Write steps map 1:1 to DB rows (copies): L1-01 1 candidate + 1 review + 1 transaction(rev2, property event); L1-02 4 candidates, 4 reviews, 4 transactions (AB rev1, AB rev2, AA rev1 applicability, AA rev2 conclusion); L1-03 3 candidates, 3 reviews, 3 transactions; L1-04 2 candidates (1 pending), 1 review (seed), 1 transaction (seed rev1).",
+        "idempotency counts match (2 per admitted package per principal pair: L1-01=4, L1-02=8, L1-03=6, L1-04=3) — every remember() corresponds to a logged submit/admit step.",
+        "Conversely, no DB write lacks a logged step: all candidates/reviews/transactions/outbox rows trace to either fixture_setup.jsonl (seed) or timeline.jsonl steps; read steps (resume/query/snapshot/trace) made no DB changes.",
+        "branch_heads revisions equal the last admitted revision in each timeline; event hash chains contiguous (verify_chain CHAIN_OK on all copies)."
+      ],
+      "note": "Evidence-quality caveat (not a criteria failure): L1-02 timeline is a merge of two driver processes (interactive part 1 for seq1-5, then lib/run_cont_l102.py for seq6-8 after an unlogged interruption); seq3 row (DENIED) carries intent_matches_effect=true which contradicts runner._intent_ok (DENIED=>false) — part-1 rows are hand-authored; raw payload files are missing for seq1/3/5."
+    },
+    {
+      "id": "C7",
+      "name": "воспроизводимость",
+      "verdict": "PASS",
+      "rerun": {
+        "scenario_rerun": "L1-01",
+        "driver": "LVER001 own driver (runtime/LV001V/rerun/rerun_driver.py) over real stdio MCP mockup server, fresh DB runtime/LV001V/rerun/L1-01-RR",
+        "tool_sequence": "resume AA, query AA, append(property), judge review, judge admit, snapshot AA",
+        "rerun_status_codes": [
+          {"tool": "dom_resume", "status": "OK", "code": "RESUMED"},
+          {"tool": "dom_query", "status": "OK", "code": "SNAPSHOT"},
+          {"tool": "dom_append", "status": "OK", "code": "RECORDED_CANDIDATE"},
+          {"tool": "dom_review", "status": "OK", "code": "DEMO_REVIEWED"},
+          {"tool": "dom_admit", "status": "OK", "code": "DEMO_ADMITTED"},
+          {"tool": "dom_snapshot", "status": "OK", "code": "SNAPSHOT"}
+        ],
+        "original_status_codes": [
+          {"tool": "dom_resume", "status": "OK", "code": "RESUMED"},
+          {"tool": "dom_query", "status": "OK", "code": "SNAPSHOT"},
+          {"tool": "dom_append", "status": "OK", "code": "RECORDED_CANDIDATE"},
+          {"tool": "dom_review", "status": "OK", "code": "DEMO_REVIEWED"},
+          {"tool": "dom_admit", "status": "OK", "code": "DEMO_ADMITTED"},
+          {"tool": "dom_snapshot", "status": "OK", "code": "SNAPSHOT"}
+        ],
+        "status_code_set_equal": true,
+        "rerun_db_final_state": "AA revision 2, transactions (AA,1)+(AA,2), events [claim rev1, property rev2] — identical shape to original L1-01 DB"
+      },
+      "note": "Reproducibility demonstrated for L1-01 only (single-scenario rerun per method card). L1-02/03/04 (failpoint scenarios) were not re-run; their reproducibility remains unverified by this wave."
+    }
+  ],
+  "discrepancies": [
+    {
+      "id": "D1",
+      "scenario": "L1-01",
+      "claim_vs_reality": "RUN.json declares status=complete, steps=6, admitted=true — DB confirms fixation; BUT runtime/LIVE/wave1/L1-01/summary.json does not exist (write_summary was not executed/persisted for L1-01).",
+      "severity": "minor (artifact completeness)"
+    },
+    {
+      "id": "D2",
+      "scenario": "L1-04",
+      "claim_vs_reality": "Admission did not happen — RUN.json honestly declares incomplete (candidate recorded, not admitted); DB copy confirms: no review/tx for candidate 56b08792..., AA revision stays 1. This is a scenario-completion gap, correctly reported, but it also drives C3=FAIL: the new client never discovered the pending candidate from the DB.",
+      "severity": "major (C3 FAIL)"
+    },
+    {
+      "id": "D3",
+      "scenario": "L1-02",
+      "claim_vs_reality": "Undocumented interruption: timeline.jsonl merges two driver processes — part 1 (interactive, seq1-5, frames exec-085cb52a/judge-15ba38eb, gap 12:06:58 -> 12:10:35) and continuation lib/run_cont_l102.py ('CONT-01: продолжение L1-02 после обрыва', seq6-8). RUN.json env_events=[] and notes contain no mention of the break. Additionally seq3 (DENIED) has intent_matches_effect=true, contradicting runner._intent_ok (DENIED=>false): part-1 rows are hand-authored; raw payload files missing for seq1/3/5.",
+      "severity": "minor-to-moderate (evidence provenance; DB reconciliation itself consistent)"
+    },
+    {
+      "id": "D4",
+      "scenario": "L1-03",
+      "claim_vs_reality": "RUN.json reports doubts=[] for L1-03, while runtime/LIVE/wave1/L1-03/summary.json records doubt {seq:4, code:SCOPE_DENIED, intent_matches_effect:false}. The refusal is present in both (refusals list), but the doubt is omitted from RUN.json.",
+      "severity": "minor (report completeness)"
+    }
+  ],
+  "unverifiable": [
+    {
+      "criterion": "C4",
+      "why": "No scenario altered the basis of an admitted claim during the run; no staleness signal (STALE_CHECK/CRITERIA_NOT_CURRENT) exists in any response. L1-03 only narrowed the grant (signaled as SCOPE_DENIED).",
+      "needed": "Scenario: admitted claim depends on branch X; X advances after the claim's admission snapshot; then resume/trace on the dependent branch must surface a staleness marker in the response. Clarify whether grant narrowing counts as 'основание изменилось'."
+    },
+    {
+      "criterion": "C7",
+      "why": "Rerun performed for L1-01 only (per method). Reproducibility of L1-02/03/04 — especially the failpoint paths (narrowing, kill+reconnect, judge-unavailable) — has no second-run evidence in this wave.",
+      "needed": "Second run of L1-02, L1-03, L1-04 with the same drivers/conditions."
+    },
+    {
+      "criterion": "C1",
+      "why": "Fail-condition semantics ambiguous for the designed shared-claim scenario (L1-02): provenance metadata of a by-design shared claim contains the foreign branch token. Machine-checkable definition of 'имя ветки в ответе' needed (metadata provenance vs unauthorized content), otherwise verdict flips between PASS and FAIL on the same evidence.",
+      "needed": "Criterion clarification, then re-run of the scan against the clarified rule."
+    },
+    {
+      "criterion": "C3",
+      "why": "A genuinely memoryless continuation (agent/LLM state fully wiped, DB only) was never exercised: the run's 'new client' is a new MCP process but the same driver process retained candidate refs. The protocol itself offers no pending-candidate enumeration, so the test outcome depends on harness design.",
+      "needed": "Run where the driver orchestrating L1-04 is itself restarted without the pre-kill context, or server exposes a scoped pending-candidate read."
+    }
+  ],
+  "rerun_result": {
+    "status": "done",
+    "scenario": "L1-01",
+    "same_status_code_set": true,
+    "notes": ["See criterion C7 for the full comparison."]
+  },
+  "conclusion": "Raw evidence (real stdio MCP frames over the mockup server, DB copies chain-verified CHAIN_OK) confirms RUN.json's main story: L1-01/02/03 completed with real fixations, L1-04 incomplete with a recorded-but-unadmitted candidate. Verified discrepancies beyond the known pair: missing summary.json for L1-01 (D1); L1-02 undocumented mid-run interruption with hand-authored part-1 rows (D3); L1-03 doubt omitted from RUN.json (D4). The decisive finding is C3=FAIL: the L1-04 continuation worked only via the harness driver's retained memory — a fresh client cannot discover the pending candidate through the DOM protocol."
+}

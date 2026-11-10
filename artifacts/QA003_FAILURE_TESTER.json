@@ -1,0 +1,567 @@
+{
+ "schema": "QA003-failure-tester/v1",
+ "role": "QA003",
+ "task": "E2E failure/recovery negative testing across PL003 checks (negative, seek failure, no green-report bias)",
+ "status": "COMPLETED",
+ "verdict": "REQUEST_CHANGES",
+ "completion_state": "completed",
+ "product_acceptance": false,
+ "is_approval": false,
+ "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+ "env_fingerprint": {
+  "python": "3.11.15",
+  "executable": "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+  "platform": "Windows-10-10.0.19042-SP0",
+  "sqlite": "3.53.1"
+ },
+ "source_map": {
+  "path": "runtime/PL003/failure_map.json",
+  "sha256": "bf3b538881185e612fe8e38ba15b5370effae05a16cf0e40fbea7acdd6cd3692"
+ },
+ "scenario_manifest_ref": {
+  "path": "runtime/QA003/scenario_manifest.json",
+  "sha256": "426938f0380ab6c8571c4c8ed1c5b61e92641640587522455d5bf0c3da0b0729",
+  "entries": 26,
+  "status_by_check_count": 26,
+  "counts": {
+   "EXECUTED_NEGATIVE": 18,
+   "NOT_TESTED": 4,
+   "GAP": 4
+  }
+ },
+ "evidence_refs": [
+  {
+   "path": "runtime/QA003/analysis/b_control_analysis.json",
+   "sha256": "a4bd4bd4996923d146bb2ce0611b6c8603fdbc6078fc07b250472765e19dc342"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/qa-nov-01.json",
+   "sha256": "25fad045d2fb7c730efd11061d3218c532df01b9b516be93d37c4a568a8df4d0"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/qa-td19-recheck.json",
+   "sha256": "3c8fb6b6c33985d210786408a78ddc72905e0e6ee49f10af798eef77e2f47479"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-controls.json",
+   "sha256": "8b3d25635f7fc1fb5495ffe105c0b9dbeea81327db461b59dc41bac483a85b4c"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-hp-pl-05.json",
+   "sha256": "58b939384980d4e59321cc6d3755a4bb11c45a65dbf6163b91b8502e63f058a9"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-hp-pl-06.json",
+   "sha256": "2f2a03a2f93fbfcdc3cebe634ac1db1fedf48c3cb2900ee7ed9acea86f182df2"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-hp-pl-08-concurrent.json",
+   "sha256": "be74ab8150f3869e9bc6b864d407bda8ff68bc27783cccf2c33dca7afe6d5e5c"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-hp-pl-09-supp.json",
+   "sha256": "e9bcf0ebfda94fa30a60fdba41c027bb3318f83923597944ee0c4433c36f4855"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-hp-pl-10.json",
+   "sha256": "aec0707d7abe26165d96620e78b03a24a3ea5403407e1f4cbc42fda3fded276b"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-lp-a2-05.json",
+   "sha256": "6ffe2fbda5250ac76b721c7badc36dd46542ad1fcb2c8e9490986c706f839082"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-lp-a2-06.json",
+   "sha256": "4f2a3d8f6935542e79677df03e955a4d2f28b3bde79fbbe46b5bc85bee65a945"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-lp-a2-07.json",
+   "sha256": "62fe5f7f65e8d614ea04a78a2afc6100412d07bcb6f8c2fbbebdee05ae60c57b"
+  },
+  {
+   "path": "runtime/QA003/current-run-4211/sc-misc.json",
+   "sha256": "95e806f5b5b9c83b3960a76612c63976449a954545149bb5b21ac7a8f846a8c3"
+  },
+  {
+   "path": "runtime/QA003/current-run/qa-nov-01.json",
+   "sha256": "9048bd73df9569a91daa51f5a23f4317e156be174aa61a3061f407e76519f07d"
+  },
+  {
+   "path": "runtime/QA003/current-run/qa-td19-recheck.json",
+   "sha256": "8012572dacbe7a9ab16e7befc8ce5fe508253fdb4f8618e42e32cd3a76618911"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-controls.json",
+   "sha256": "f64a58bba13ceb83a035f8bfaa0708a2edabb49d81b7cdf21a61d2d2d1235a04"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-h-link.json",
+   "sha256": "ec76b50eab753ce544caf6a5ff71e89de152eda3712abda2279780fbbb636560"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-05.json",
+   "sha256": "3ad04bd56acb9164a2265c77cec59060a891cb40ab2fe4ebd0f0f6fc4dc62cbd"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-06.json",
+   "sha256": "985cc0d773be22853ec3614b2d84c0d869933a2375821dbe4e7a97b321858aeb"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-08-concurrent.json",
+   "sha256": "74d4b6b8d2f4d91d6c3125fe961fd43d65b98b143902624b1682ef53fbd82b31"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-08.json",
+   "sha256": "7b04f4fdc09ea73f66cbf2736b982371f13d1a4e9f8f76f7e7012d9c08185a0f"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-09-supp.json",
+   "sha256": "1a55119ec7effa9d41ccfff6791bd1e7b196c516a7f5ba32d9d239dbb1cad4c4"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-hp-pl-10.json",
+   "sha256": "a4ade66b10584fedefaa2f124c4f78032bfedd0cb117bd38befbac5a2113f1d4"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-lp-a2-05.json",
+   "sha256": "fcb2241d5a56d59ed8c7ce839eaeaab531a157b86a9a4b4c0b5ca762aa096247"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-lp-a2-06.json",
+   "sha256": "abd639c9391b6341f2a94168b1236cc7f83915d1ced1c4b1f4db51241f22d7f7"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-lp-a2-07.json",
+   "sha256": "3e8c3eda83b06e82552f2effdea639a1393d414f55edbc641ac4a39c5eaafab4"
+  },
+  {
+   "path": "runtime/QA003/current-run/sc-misc.json",
+   "sha256": "0a085336db705e9d23cd8c46fce225fb636828cf28fe786db3ccf61134fb799a"
+  },
+  {
+   "path": "runtime/QA003/env_fingerprint.json",
+   "sha256": "e494ac2d15ee4bf3cb0a8e13998da70cf68907e4be75eb262a276c3a9ea2763c"
+  },
+  {
+   "path": "runtime/QA003/failure_map.json",
+   "sha256": "8bc234c9a275a3df2e382bc9faada49e0ecedca5fb7562ce8c42f41af1e39f53"
+  },
+  {
+   "path": "runtime/QA003/manifests_index.json",
+   "sha256": "c8a4981057941e4a8c4e36915a5e46030854208facdb2ca5dd7cd5ab1b10fd99"
+  },
+  {
+   "path": "runtime/QA003/scenario_manifest.json",
+   "sha256": "426938f0380ab6c8571c4c8ed1c5b61e92641640587522455d5bf0c3da0b0729"
+  }
+ ],
+ "checked_suspicions": [
+  {
+   "suspicion": "sentinel_leaked_to_target (product leaks foreign sentinel into the target)",
+   "result": "REFUTED",
+   "checked": "QA-NOV-01 own run: sentinel_leaked_to_target=true is written as the oracle fixture key by setup_target into omh-target.json (fixture digest 32a4ec1e320b80ef), not by the product delivery path; no foreign receipt, the single ack binds to an own matched observation. See raw-qan scenarios setup_target + report section 0."
+  },
+  {
+   "suspicion": "b_control_preserved=false (B control broken / AB leaked into AA)",
+   "result": "PROBE_FIXTURE_BUG_NOT_LEAK",
+   "checked": "analyze_b_control.py recomputed from receipts + read-only fixture DB: all AB claim IDs and the AB body canary visible to B-only before/after negatives; no AB body canary or AB claim ID in any AA surface. b_control_actually_preserved=true. root cause is generator.claim_item() never forwarding idx to raw_bytes() (every branch claim carries same canary idx=0); probe_controls expected 3 distinct tokens."
+  },
+  {
+   "suspicion": "TD19/20/21 recheck reproduces the prior leaks (large leak re-checked)",
+   "result": "REPRODUCED_PRIOR",
+   "checked": "CHK-A2-01/02/04 recheck re-observes hidden AB revision metadata (TD-DOM-19, prior SEC003-F-01 not re-registered); CHK-A2-05/06 hit the raw AttributeError of TD-DOM-20; CHK-A2-07 re-exercises tamper rejection (TD-DOM-21). All referenced, none closed."
+  },
+  {
+   "suspicion": "h-link / selective-search backlink surfaces could leak branch existence",
+   "result": "GAP (not implemented, not a leak)",
+   "checked": "CP-PL-11/12/13/17: no selective-search / branch-search / refinement / backlink-link-dashboard surface on the wire (12 tools) or in the AST. GAP recorded; no link metadata substituted for the check."
+  }
+ ],
+ "findings": [
+  {
+   "id": "QA003-F-12-REOBSERVED",
+   "debt_ref": "TD-DOM-12",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CP-PL-05",
+   "observation": "UPDATE claims / DELETE event / INSERT OR IGNORE / upsert snapshot all refused with IMMUTABLE (SQLITE_CONSTRAINT_TRIGGER 1811) and rows stay byte-identical. UPDATE branch_heads SET revision=0 is ACCEPTED (rowcount=1) - TD-DOM-12 prior ref, not closed. The REPLACE probe failed with \"no such column: x\" (probe SQL error) and is NOT counted.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-hp-pl-05.json",
+    "runtime/QA003/current-run-4211/sc-hp-pl-05.json"
+   ]
+  },
+  {
+   "id": "QA003-F-15-REOBSERVED",
+   "debt_ref": "TD-DOM-15",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CP-PL-06",
+   "observation": "Stale/archive/convergence behaviour recorded on both seeds; known TD-DOM-15/18 retained, not re-registered.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-hp-pl-06.json",
+    "runtime/QA003/current-run-4211/sc-hp-pl-06.json"
+   ]
+  },
+  {
+   "id": "QA003-F-18-REOBSERVED",
+   "debt_ref": "TD-DOM-18",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CP-PL-06",
+   "observation": "Stale/archive/convergence behaviour recorded on both seeds; known TD-DOM-15/18 retained, not re-registered.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-hp-pl-06.json",
+    "runtime/QA003/current-run-4211/sc-hp-pl-06.json"
+   ]
+  },
+  {
+   "id": "QA003-F-19-REOBSERVED",
+   "debt_ref": "TD-DOM-19",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CHK-A2-01",
+   "observation": "AA-only read surfaces re-observed with changed order (export->resume->sync_status->trace->snapshot->query): hidden AB revisions still visible. Prior finding SEC003-F-01, not re-registered, not closed.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/qa-td19-recheck.json",
+    "runtime/QA003/current-run-4211/qa-td19-recheck.json"
+   ]
+  },
+  {
+   "id": "QA003-F-20-REOBSERVED",
+   "debt_ref": "TD-DOM-20",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CHK-A2-05",
+   "observation": "absent != invalid: missing file is a valid empty target; whole-file list/null/scalar/bool shapes give domain-safe TARGET_UNAVAILABLE with no ack; own-key TASK list/scalar/null hit the raw AttributeError of TD-DOM-20 (prior, not re-registered). Foreign retained key survives every shape.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-lp-a2-05.json",
+    "runtime/QA003/current-run-4211/sc-lp-a2-05.json"
+   ]
+  },
+  {
+   "id": "QA003-F-21-REOBSERVED",
+   "debt_ref": "TD-DOM-21",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CHK-A2-07",
+   "observation": "Two-run lineage: first manifest stays resolvable, tampered copy hash mismatches and is rejected, run-specific create-only manifests used. TD-DOM-21 (shared mutable pointer) prior ref, not closed.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-lp-a2-07.json",
+    "runtime/QA003/current-run-4211/sc-lp-a2-07.json"
+   ]
+  },
+  {
+   "id": "QA003-F-07-REOBSERVED",
+   "debt_ref": "TD-DOM-07",
+   "severity": "EXECUTED_NEGATIVE",
+   "check_id": "CP-PL-14",
+   "observation": "PARTIAL: AA->AB read is SCOPE_DENIED, foreign-work init is SCOPE_DENIED, B-only control reads its own branch. Third branch ZZ is a GAP (branch allocator absent, TD-DOM-07 prior); no OS isolation / live auth (TD-DOM-06/08) - logical harness boundary only.",
+   "registered_as_new": false,
+   "closed": false,
+   "evidence_refs": [
+    "runtime/QA003/current-run/sc-misc.json",
+    "runtime/QA003/current-run-4211/sc-misc.json",
+    "runtime/QA003/current-run/sc-controls.json",
+    "runtime/QA003/current-run-4211/sc-controls.json"
+   ]
+  }
+ ],
+ "new_debt_ids": [],
+ "per_check": {
+  "CHK-A2-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-01",
+   "scenario_ids": [
+    "SC-LP-A2-01"
+   ],
+   "n_receipts": 2,
+   "note": "AA-only read surfaces re-observed with changed order (export->resume->sync_status->trace->snapshot->query): hidden AB revisions still visible. Prior finding SEC003-F-01, not re-registered, not closed."
+  },
+  "CHK-A2-02": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-02",
+   "scenario_ids": [
+    "SC-LP-A2-02"
+   ],
+   "n_receipts": 2,
+   "note": "trace/resume surfaces in the same recheck carry the same out-of-scope AB revision metadata. Prior SEC003-F-01."
+  },
+  "CHK-A2-03": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-03",
+   "scenario_ids": [
+    "SC-LP-A2-03"
+   ],
+   "n_receipts": 2,
+   "note": "Corrupted AB row on a disposable copy: global refusal observed (refusal_seen=true) and the healthy control still succeeds. The refusal still carries the foreign broken_event_id UUID - that is the prior SEC003-F-01 scope, not a new finding."
+  },
+  "CHK-A2-04": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-04",
+   "scenario_ids": [
+    "SC-LP-A2-04"
+   ],
+   "n_receipts": 2,
+   "note": "Omitted-branch/master-trace path exercised inside the recheck; outer integrity gate behaviour recorded. Prior SEC003-F-01 for the metadata part."
+  },
+  "CHK-A2-05": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-05",
+   "scenario_ids": [
+    "SC-LP-A2-05"
+   ],
+   "n_receipts": 2,
+   "note": "absent != invalid: missing file is a valid empty target; whole-file list/null/scalar/bool shapes give domain-safe TARGET_UNAVAILABLE with no ack; own-key TASK list/scalar/null hit the raw AttributeError of TD-DOM-20 (prior, not re-registered). Foreign retained key survives every shape."
+  },
+  "CHK-A2-06": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-06",
+   "scenario_ids": [
+    "SC-LP-A2-06"
+   ],
+   "n_receipts": 2,
+   "note": "TASK:[] fail-stop reproduced by two fresh retry processes (TD-DOM-20 prior). Crash after after_external_send: exit71, attempts=1, observations=0, acks=0, no ack before recovery; after recovery the ack is bound to an exact observation."
+  },
+  "CHK-A2-07": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "LP-A2-07",
+   "scenario_ids": [
+    "SC-LP-A2-07"
+   ],
+   "n_receipts": 2,
+   "note": "Two-run lineage: first manifest stays resolvable, tampered copy hash mismatches and is rejected, run-specific create-only manifests used. TD-DOM-21 (shared mutable pointer) prior ref, not closed."
+  },
+  "CP-PL-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-01",
+   "scenario_ids": [
+    "SC-HP-PL-01"
+   ],
+   "n_receipts": 4,
+   "note": "PARTIAL: unknown tool -> UNKNOWN_TOOL, extra args -> INVALID_ARGUMENTS, scalar revision -> INVALID_ARGUMENTS, unknown launcher role -> launcher refusal (rc=1). The MCP unknown-principal path (no positive grants) was not exercised as its own case - launcher refusal is not the same test."
+  },
+  "CP-PL-02": {
+   "status": "NOT_TESTED",
+   "hypothesis_id": "HP-PL-02",
+   "scenario_ids": [
+    "SC-HP-PL-02"
+   ],
+   "n_receipts": 0,
+   "note": "Foreign candidate/review/idempotency joins were not re-run by QA with changed order; prior SEC003 evidence stands. Not a PASS."
+  },
+  "CP-PL-03": {
+   "status": "NOT_TESTED",
+   "hypothesis_id": "HP-PL-03",
+   "scenario_ids": [
+    "SC-HP-PL-03"
+   ],
+   "n_receipts": 0,
+   "note": "Append references / graph expansion not re-run by QA; prior SEC003 evidence stands."
+  },
+  "CP-PL-04": {
+   "status": "NOT_TESTED",
+   "hypothesis_id": "HP-PL-04",
+   "scenario_ids": [
+    "SC-HP-PL-04"
+   ],
+   "n_receipts": 0,
+   "note": "Materialization/history/applicability policy boundary not re-run by QA; prior SEC003 evidence stands."
+  },
+  "CP-PL-05": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-05",
+   "scenario_ids": [
+    "SC-HP-PL-05"
+   ],
+   "n_receipts": 2,
+   "note": "UPDATE claims / DELETE event / INSERT OR IGNORE / upsert snapshot all refused with IMMUTABLE (SQLITE_CONSTRAINT_TRIGGER 1811) and rows stay byte-identical. UPDATE branch_heads SET revision=0 is ACCEPTED (rowcount=1) - TD-DOM-12 prior ref, not closed. The REPLACE probe failed with \"no such column: x\" (probe SQL error) and is NOT counted."
+  },
+  "CP-PL-06": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-06",
+   "scenario_ids": [
+    "SC-HP-PL-06"
+   ],
+   "n_receipts": 2,
+   "note": "Stale/archive/convergence behaviour recorded on both seeds; known TD-DOM-15/18 retained, not re-registered."
+  },
+  "CP-PL-07": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-07",
+   "scenario_ids": [
+    "SC-HP-PL-07"
+   ],
+   "n_receipts": 2,
+   "note": "AA export with a populated AB branch: no AB body canary in the YAML (sha256+size recorded) and none in the raw MCP log."
+  },
+  "CP-PL-08": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-08",
+   "scenario_ids": [
+    "SC-HP-PL-08"
+   ],
+   "n_receipts": 3,
+   "note": "Real overlap proven by barrier marker + writer alive + journal present + read timestamps; reads during the open writer txn return a consistent committed snapshot (revision 1) with no AB canary; the admit completes after release. The first 4201 attempt hit BARRIER_TIMEOUT (reads after writer death) and is kept as evidence, not deleted."
+  },
+  "CP-PL-09": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-09",
+   "scenario_ids": [
+    "SC-HP-PL-09"
+   ],
+   "n_receipts": 2,
+   "note": "Eight crash stages (before_commit, after_commit, before_rename, after_rename, after_facts, after_attempt, after_external_send, after_observation) each exit 71 with a crash marker; before-commit rolls back, after-commit keeps the whole tx, no duplicate facts on same-key recovery, no ack without observation, after_observation keeps the committed ack with a lost reply (ambiguous, no duplicate)."
+  },
+  "CP-PL-10": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-10",
+   "scenario_ids": [
+    "SC-HP-PL-10"
+   ],
+   "n_receipts": 2,
+   "note": "PARTIAL: invalid header -> STORAGE_CORRUPT (SQLITE_NOTADB 26), directory at db path -> STORAGE_UNAVAILABLE (SQLITE_CANTOPEN_ISDIR 526), legacy layout -> MIGRATION_REQUIRED with bytes preserved (sha256 recorded). The busy sub-case did NOT reproduce a lock (WAL allows concurrent readers, read returned SNAPSHOT) and the read-only sub-case was not established (the probe only set store.read_only, which is not an enforced filesystem state) - both are NOT_TESTED, not passes."
+  },
+  "CP-PL-11": {
+   "status": "GAP",
+   "hypothesis_id": "HP-PL-11",
+   "scenario_ids": [
+    "SC-HP-PL-11"
+   ],
+   "n_receipts": 2,
+   "note": "GAP-SEARCH: no selective-search tool on the wire (12 tools listed) and no search surface in the AST. Not PASS, not NOT_APPLICABLE."
+  },
+  "CP-PL-12": {
+   "status": "GAP",
+   "hypothesis_id": "HP-PL-12",
+   "scenario_ids": [
+    "SC-HP-PL-12"
+   ],
+   "n_receipts": 2,
+   "note": "GAP-BRANCH-SEARCH: no branch-scoped search surface on the wire or in the AST."
+  },
+  "CP-PL-13": {
+   "status": "GAP",
+   "hypothesis_id": "HP-PL-13",
+   "scenario_ids": [
+    "SC-HP-PL-13"
+   ],
+   "n_receipts": 2,
+   "note": "GAP-REFINEMENT: no nested refinement/ancestry surface on the wire or in the AST."
+  },
+  "CP-PL-14": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-14",
+   "scenario_ids": [
+    "SC-HP-PL-14"
+   ],
+   "n_receipts": 4,
+   "note": "PARTIAL: AA->AB read is SCOPE_DENIED, foreign-work init is SCOPE_DENIED, B-only control reads its own branch. Third branch ZZ is a GAP (branch allocator absent, TD-DOM-07 prior); no OS isolation / live auth (TD-DOM-06/08) - logical harness boundary only."
+  },
+  "CP-PL-15": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-15",
+   "scenario_ids": [
+    "SC-HP-PL-15"
+   ],
+   "n_receipts": 4,
+   "note": "PARTIAL: ack->observation->attempt binding checked (ack only after an exact matched observation; no ack before recovery; ack_requires_observed_holds=true under a liar port). Full internal proof / YAML stamp byte comparison was not re-derived by QA."
+  },
+  "CP-PL-16": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "HP-PL-16",
+   "scenario_ids": [
+    "SC-HP-PL-16"
+   ],
+   "n_receipts": 2,
+   "note": "Bounded exploratory timing only: 12 randomized paired AA queries per seed after warmup, fixed-AA vs hidden-AB fixtures, threshold triggers investigation only. Noninterference is NOT_CHECKED - no timing claim is made."
+  },
+  "CP-PL-17": {
+   "status": "GAP",
+   "hypothesis_id": "H-LINK",
+   "scenario_ids": [
+    "SC-H-LINK"
+   ],
+   "n_receipts": 3,
+   "note": "GAP-LINKS: no backlink/neighbour/link-dashboard surface on the wire (12 tools) or in the AST. Snapshot link metadata is not a substitute. Not PASS, not NOT_APPLICABLE."
+  },
+  "QA-NOV-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "hypothesis_id": "QA-NOV-01",
+   "scenario_ids": [
+    "QA-NOV-01"
+   ],
+   "n_receipts": 2,
+   "note": "Own risk-derived combination (malformed own tx + foreign sentinel + restart between send and observation, liar then ambiguous port): no foreign receipt, the single ack binds to an own matched observation, the effect stays ambiguous. sentinel_leaked_to_target=true is the oracle-written fixture key (setup_target), not a product leak - see report section 0."
+  },
+  "SEC-NOV-01": {
+   "status": "NOT_TESTED",
+   "hypothesis_id": "SEC-NOV-01",
+   "scenario_ids": [
+    "SEC-NOV-01"
+   ],
+   "n_receipts": 0,
+   "note": "Prior SEC003 execution (SEC003-F-01 / SEC-NOV-01). QA did not re-execute it as its own check; the TD19 recheck re-observed the same leak. Not a QA PASS."
+  }
+ },
+ "controls": {
+  "b_control": {
+   "verdict": "PROBE_FIXTURE_BUG_NOT_LEAK",
+   "b_control_actually_preserved": true,
+   "analysis_ref": "runtime/QA003/analysis/b_control_analysis.json",
+   "seeds": [
+    4201,
+    4211
+   ]
+  },
+  "positive_control": {
+   "result": "completed on own AA: dom_submit -> dom_review -> dom_admit; B-only reads its own branch; AA export contains no AB body canary"
+  },
+  "timing_control": {
+   "result": "bounded exploratory only (12 randomized paired AA queries/seed after warmup); noninterference NOT_CHECKED, no timing claim"
+  }
+ },
+ "coverage": {
+  "checks_total": 26,
+  "per_status": {
+   "EXECUTED_NEGATIVE": 18,
+   "NOT_TESTED": 4,
+   "GAP": 4
+  },
+  "scenarios_covered": 26
+ },
+ "omissions": [
+  "CP-PL-10 busy sub-case NOT_TESTED: WAL allows concurrent readers, a read returned SNAPSHOT, no lock was reproduced (not a PASS).",
+  "CP-PL-10 read-only sub-case NOT_TESTED: probe set only store.read_only which is not an enforced filesystem read-only state; not established (honest NOT_TESTED).",
+  "CP-PL-02/03/04 NOT_TESTED by QA (prior SEC003 evidence stands); CP-PL-01/15/14/16 PARTIAL (MCP unknown-principal, full internal proof/YAML stamp, third branch ZZ, noninterference).",
+  "CP-PL-12 REPLACE-probe not counted: probe SQL error \"no such column: x\"; not a passed negative.",
+  "SEC-NOV-01 NOT_TESTED as its own QA check (prior SEC003-F-01 / TD-DOM-19, re-observed in recheck instead)."
+ ],
+ "limitations": [
+  "No claim of full Cartesian coverage / full-system acceptance / all-channel noninterference.",
+  "Strong OS sandbox / external checkpoint / live auth / Git / OMH do not follow from the simulation harness.",
+  "Timing tests are bounded exploratory; no timing side-channel claim is made.",
+  "Logical harness boundary (not strong OS isolation) between oracle and actor-A."
+ ],
+ "not_checked": [
+  "noninterference timing",
+  "full internal proof/YAML stamp byte comparison (CP-PL-15)",
+  "busy-lock and enforced read-only storage states (CP-PL-10)",
+  "branch-scoped search/backlink surfaces (CP-PL-11/12/13/17, GAP)",
+  "MCP unknown-principal as its own case (CP-PL-01)"
+ ],
+ "remaining": [],
+ "continuation_required": false,
+ "debt_status_changes": [],
+ "verified_by_commands": [
+  "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/QA003/build_final.py (digest match 715b1ca8...ba3, failure_map/scenario_manifest/manifests_index/env regenerated)",
+  "E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/QA003/verify_final.py (separate read-only verifier -> validation.json)",
+  "failure_map counts recomputed in Python: 18 EXECUTED_NEGATIVE / 4 GAP / 4 NOT_TESTED"
+ ],
+ "written_at": "2026-11-08T01:27:10"
+}

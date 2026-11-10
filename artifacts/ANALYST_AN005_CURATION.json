@@ -1,0 +1,2813 @@
+{
+ "schema": "analyst-an005-curation/1.0",
+ "role": "ANALYST",
+ "task": "AN005",
+ "status": "DONE_WITH_LIMITS",
+ "completion_state": "complete_within_budget",
+ "first_artifact": false,
+ "first_artifact_note": "Первый PARTIAL записан раньше; этот файл — финальная версия.",
+ "product_acceptance": false,
+ "is_product_approval": false,
+ "product_verdict": null,
+ "written_at": "2026-11-08T11:36:44+0300",
+ "customer_decisions_respected": [
+  "K1/K2/K3 не выбраны (выбор по симуляции)",
+  "глубина графа min=1/max=3 — только TEST_PARAMETER",
+  "LLM даёт гипотезы, код/независимый допуск принимает",
+  "видимость веток — класс TD19/AU004-F-01"
+ ],
+ "section0_suspected_checked_found": [
+  {
+   "suspected": "Хуки хоста — надёжный триггер?",
+   "checked": "Хуки OMH fail-open, per-turn, часть опциональна; DOM-события не видны",
+   "found": "Подтверждено и усилено (C-01): триггер = водяной знак + догоняющий проход; хук — ускоритель. Прецеденты: memory_dreaming (счётчик, хост работает), DOM outbox (attempt-first + сверка)."
+  },
+  {
+   "suspected": "Трибунал в harness один и без контракта",
+   "checked": "Нашёл три контура и типизированный R4",
+   "found": "Частично неверно (C-02): контракта для пары версий нет, но ArgumentArtifact/DialecticPolicy/envelope есть; tribunal-judge.md играет 5 ролей одной моделью (T-03)."
+  },
+  {
+   "suspected": "Монитор как сервис",
+   "checked": "health_monitor.py — библиотека, in-memory, два агрегатора",
+   "found": "Уточнено (C-05); сервисный прецедент — meta_daemon+lease."
+  },
+  {
+   "suspected": "Хеш context pack есть в delivery_attempts",
+   "checked": "Таблицы пака в DDL нет",
+   "found": "Не подтверждено (C-04)."
+  },
+  {
+   "suspected": "Журнал куратора можно писать в events",
+   "checked": "Одна глобальная цепочка, fold проекции, один писатель",
+   "found": "Возможно, но не бесплатно (C-06)."
+  },
+  {
+   "suspected": "Видимость: фильтр на выходе куратора достаточен",
+   "checked": "Нашёл 14 поверхностей; правило A2 само oracle",
+   "found": "Недостаточно (C-08, V-01..V-14)."
+  },
+  {
+   "suspected": "Отдельная роль curator уже есть",
+   "checked": "В фикстуре её нет; helper может всё",
+   "found": "Нужен principal submit-only (C-07)."
+  }
+ ],
+ "requirements_trace": [
+  {
+   "id": "R-01",
+   "msg_id": "4752",
+   "statement": "A1",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 8,
+   "quote_verbatim": "Keywords (Q-L-11): на клайме / на связи / на обоих — \"да\" на \"или\" не выбор.",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Выбор К1/К2/К3 сначала требовался как «конкретный ответ»; позднее заказчик (A4, msg 6661) заменил его решением «выбор по симуляции» — статус R-01 = ГИПОТЕЗА (варианты), решение R-19."
+  },
+  {
+   "id": "R-02",
+   "msg_id": "4752",
+   "statement": "A1",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 8,
+   "quote_verbatim": "Кто разрешает FORKED без слияния.",
+   "status": "ОТКРЫТО",
+   "analyst_note": "Частично адресован A4 (производитель внутри DOM + куратор LLM), но механизм разрешения не выбран."
+  },
+  {
+   "id": "R-03",
+   "msg_id": "4752",
+   "statement": "A1",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 8,
+   "quote_verbatim": "UD-02 (baseline/dependencies), UD-06 (условия convergence) — всё ещё открыты.",
+   "status": "ОТКРЫТО",
+   "analyst_note": "UD-02, UD-06 — в реестре открыты (UNRESOLVED_DUALITIES_REGISTRY NU-03/NU-04)."
+  },
+  {
+   "id": "R-04",
+   "msg_id": "4752",
+   "statement": "A1",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 8,
+   "quote_verbatim": "Нужна ли политика хранения внешних источников.",
+   "status": "ОТКРЫТО",
+   "analyst_note": "NU-05 реестра."
+  },
+  {
+   "id": "R-05",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "просимулируем некоторое количество вариантов его использования и попробуем определить какие К1-2-3 или иные лучше подойдут?",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Процесс: симуляция вариантов К1/К2/К3 на использовании агентом и OMH (подтверждено A4)."
+  },
+  {
+   "id": "R-06",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "мы хотим его уточнить - передаем на вход что мы уточняем - DOM принимает по установленной форме и формирует подветку (как договорились ранее) с указанием причины изменения и новых атрибутов версии и кто прислал- предварительно передавая старый клайм на вход чтобы желающий обновить его понимал что в нем уже есть и может его и обновлять не нужно?",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Уточнение: вход содержит старый клайм; DOM формирует подветку с причиной/атрибутами/автором (реализации нет — REFINEMENT NOT_IMPLEMENTED, DECISION_BRIEF §GAP)."
+  },
+  {
+   "id": "R-07",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "если с блоком работают несколько из одной ветки- то есть очередь клайм занят - жди пока его не обновят - после прочти обновление - если оно все ещё не устраивает создай версию новую, возможно так ?",
+   "status": "ПРИНЯТО",
+   "analyst_note": "BRIEF §2: «для ОДНОЙ ветки — ЗАКАЗЧИК: очередь + прочти обновление и реши»."
+  },
+  {
+   "id": "R-08",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "если другая ветка то будет тоже самое но указано что клайм скорректирован по другой ветке. и мы получим два три 5 клаймов актуальных версий но для разных веток. и это трабл.",
+   "status": "ОТКРЫТО",
+   "analyst_note": "Заказчик назвал 2–5 актуальных версий разных веток траблом; механизм сведения не выбран (BRIEF §2)."
+  },
+  {
+   "id": "R-09",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "баз лайн это наш план - OMP PLAN разбивается на клаймы и добавляется в самом начале - формирую первые клаймы- так? это материнские базовые ветки.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Структура baseline = OMH PLAN → клаймы (BRIEF §3); пустой baseline — ОТКРЫТО."
+  },
+  {
+   "id": "R-10",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "Convergence когда последние 2-4 уровня ветвей внутри клайма говорят об одном и том же и могут считаться дублирующими.? Reopen тут вопрос обоснованности.",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Заказчик формулирует с «?»; AN004/ESC-02: число уровней — триггер ревью, не критерий."
+  },
+  {
+   "id": "R-11",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "если DOM получает запрос на клайм который совпадает с существующим - должно поступить возврат с требованием обосновать отличия от существующего с клаймом который он дублирует. тут вероятно агент не читал что есть в простосует чтобы сунуть а ему будет возврат чтобы сначала прочел а потом совал.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Политика дубля принята (BRIEF §4). Внимание: для дубля из ЧУЖОЙ ветки правило само создаёт oracle существования (см. visibility V-10)."
+  },
+  {
+   "id": "R-12",
+   "msg_id": "4758",
+   "statement": "A2",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 11,
+   "quote_verbatim": "5 -SourceRecord хороший вариант? если мы прописываем блок ссылок- то у нас два пути- локальные ссылки и ссылки веб (есть ещё цитаты но это всё-таки коммент??) оба вида гиперссылок предполагают правила с ними обращения. и с точки зрения безопасности и с точки зрения использования- иначе они или не будут работать или будут создавать баги?",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Требование правил для локальных и веб-ссылок — принято; политика получения (порт/вручную) — ОТКРЫТО (NU-05)."
+  },
+  {
+   "id": "R-13",
+   "msg_id": "4768",
+   "statement": "A3",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 14,
+   "quote_verbatim": "получается что мы не можем избежать двойственности- значит будем порождать ветвление клайма на деревья. т.е будет существовать два равнозначных клайма на одном уровне но как бы разные подветви - одна с акцентом на одном другая на другом аспекте проблемы такое естественное расщепление и почкование - ветви не только могут сливаться но и расщепляться должен быть естественный механизм.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Заказчик: ветвление клайма на деревья, расщепление и слияние — естественный механизм."
+  },
+  {
+   "id": "R-14",
+   "msg_id": "4768",
+   "statement": "A3",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 14,
+   "quote_verbatim": "ключевые слова их собирают в граф похожести или по близости веток дерева выросшего из единого корня?",
+   "status": "ОТКРЫТО",
+   "analyst_note": "Вопрос заказчика; RS004 Q-L2-02: граф похожести scope-first; per-family vs cross-family — NU."
+  },
+  {
+   "id": "R-15",
+   "msg_id": "4768",
+   "statement": "A3",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 14,
+   "quote_verbatim": "конечно должны быть явные ссылки на пункты плана (его версию время тут нужно уточнить как хранятся они в плане OMH а то выйдет что план обновили пункты вроде как изменились а клайм ссылается по номеру или айди не уточняя текст или ссылке аа она не индивидуальная- тут надо сшивку проверить эту.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Требование явной сшивки с пунктами плана (версия/время/текст); RS004: pin = дословный текст + sha256."
+  },
+  {
+   "id": "R-16",
+   "msg_id": "4768",
+   "statement": "A3",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 14,
+   "quote_verbatim": "по поводу сходимости с ветками согласен но как реализовать?",
+   "status": "ОТКРЫТО",
+   "analyst_note": "Прямой вопрос заказчика без ответа до AN005."
+  },
+  {
+   "id": "R-17",
+   "msg_id": "6661",
+   "statement": "A4",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 18,
+   "quote_verbatim": "минимальная глубина 1 и потолок 3 - оставляем с пометкой рабочие параметры для тестирования",
+   "status": "ПРИНЯТО",
+   "analyst_note": "TEST_PARAMETER; не фиксировать как контракт."
+  },
+  {
+   "id": "R-18",
+   "msg_id": "6661",
+   "statement": "A4",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 18,
+   "quote_verbatim": "не можем с уверенностью принять какой либо вариант и принять тех реализацию без симуляции использования каждого варианта на прогоне с жестким тестированием",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Решение заказчика: K1/K2/K3 НЕ выбирать; выбор по симуляции с жёстким тестированием."
+  },
+  {
+   "id": "R-19",
+   "msg_id": "6661",
+   "statement": "A4",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 18,
+   "quote_verbatim": "Кто сводит версии клайма из разных веток?- я думаю производитель внутри DOM - накопление и курация LLM - по аналогии с внутренними процессами в OMH",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Направление принято (производитель внутри DOM: накопление + курация LLM); исполнение/границы доверия открыты. «Аналогия с OMH» — см. O-07 (memory_dreaming: триггер детерминированный, работу делает хост)."
+  },
+  {
+   "id": "R-20",
+   "msg_id": "6661",
+   "statement": "A4",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 18,
+   "quote_verbatim": "два три уровня ветвей сошлись по смыслу или тексту- но ты заметил что это несет определенные трудности исполнения",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Трудности разложены в convergence_difficulties[]."
+  },
+  {
+   "id": "R-21",
+   "msg_id": "6680",
+   "statement": "A5",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 21,
+   "quote_verbatim": "Видимость веток- тут нужны внутренние циклы работающие по хукам и накоплению счётчика- коды собирают новые поступления клаймов. (обновления)",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Архитектурная гипотеза D. Заголовок «Видимость веток» заказчика трактую как класс TD19/AU004-F-01 (analyst interpretation)."
+  },
+  {
+   "id": "R-22",
+   "msg_id": "6680",
+   "statement": "A5",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 21,
+   "quote_verbatim": "дальше поступают куратору и коду, где происходит несколько ступеней фильтрации и сопоставления.",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Многоступенчатая фильтрация — гипотеза; число ступеней не задано."
+  },
+  {
+   "id": "R-23",
+   "msg_id": "6680",
+   "statement": "A5",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 21,
+   "quote_verbatim": "в фабрике есть агент трибунал его профиль но нет контракта тут это можно использовать в полной мере.",
+   "status": "ГИПОТЕЗА",
+   "analyst_note": "Профиль есть (подтверждено); «нет контракта» — частично неверно: типизированный контур R4 существует (см. corrections C-02), нет контракта именно для схождения версий."
+  },
+  {
+   "id": "R-24",
+   "msg_id": "6680",
+   "statement": "A5",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 21,
+   "quote_verbatim": "ну и логирование и прослеживаемость всех действий внутри DOM обязательно- + сервис монитор как в фабрике харнесс",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Обязательность логирования/прослеживаемости — принята; форма монитора — ОТКРЫТО (health_monitor — библиотека, см. inventory)."
+  },
+  {
+   "id": "R-25",
+   "msg_id": "6680",
+   "statement": "A5",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 21,
+   "quote_verbatim": "я думаю собери все утверждения и обсуждения по этим вопросам- и нужно сформулировать карты и задиспатчить аналитика ресерчера для поиска наиболее качественных и отказоустойчивых способов работы этих блоков",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Процесс: карты → аналитик → ресерчер (RS005); не выбирать молча."
+  },
+  {
+   "id": "R-26",
+   "msg_id": "4768/6680",
+   "statement": "A6",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 24,
+   "quote_verbatim": "EVENTS — только добавление … добавить колонку связей где ключевые слова живут … каждое обновление будет идти добавлением в дерево клайма новой строки для прослеживаемости",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Принято в REQUIREMENTS (шестое уточнение); реализовано в storage.py (IMMUTABLE)."
+  },
+  {
+   "id": "R-27",
+   "msg_id": "4768/6680",
+   "statement": "A6",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 25,
+   "quote_verbatim": "Ключевые слова: это свойство клайма, по которому его ищут, или свойство самой связи? … — да.",
+   "status": "ОТКРЫТО",
+   "analyst_note": "Ответ «да» на «или» — не выбор (см. R-01/R-18)."
+  },
+  {
+   "id": "R-28",
+   "msg_id": "6680",
+   "statement": "A6",
+   "source": "P:docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md",
+   "line": 26,
+   "quote_verbatim": "граф связей, размер регулируется глубиной; базово минимальная». Тестовые параметры: min=1, max=3.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Граф связей в продукте НЕ реализован (BRIEF §0)."
+  },
+  {
+   "id": "R-29",
+   "msg_id": "project",
+   "statement": "rule",
+   "source": "H:shared/research-orchestration-process.md",
+   "line": 7,
+   "quote_verbatim": "LLM производит свидетельства. КОД принимает решения.",
+   "status": "ПРИНЯТО",
+   "analyst_note": "Принцип №0 harness; в карточке AN005 и BRIEF:86 сформулирован как «LLM даёт гипотезы, код/независимый допуск принимает»."
+  }
+ ],
+ "inventory": [
+  {
+   "id": "H-01",
+   "area": "hooks",
+   "fact": "В репо harness git-хуки подключены через core.hooksPath=hooks (хуки коммита, не события DOM).",
+   "file": "G:.git/config",
+   "line": 7,
+   "line_end": 7,
+   "anchor": "hooksPath = hooks"
+  },
+  {
+   "id": "H-02",
+   "area": "hooks",
+   "fact": "pre-commit warning-only, exit 0: не блокирует.",
+   "file": "H:hooks/pre-commit",
+   "line": 3,
+   "line_end": 4,
+   "anchor": "НЕ блокирует коммит"
+  },
+  {
+   "id": "H-03",
+   "area": "hooks",
+   "fact": "pre-push — единственный блокирующий хук (compile_agents --check, coder-dom-verify).",
+   "file": "H:hooks/pre-push",
+   "line": 3,
+   "line_end": 3,
+   "anchor": "Единственный блокирующий хук"
+  },
+  {
+   "id": "H-04",
+   "area": "hooks",
+   "fact": "Таймаут хука не блокирует; W1_SKIP_HOOKS отключает все хуки (пропуск возможен молча).",
+   "file": "H:hooks/hook_utils.sh",
+   "line": 22,
+   "line_end": 22,
+   "anchor": "W1_SKIP_HOOKS"
+  },
+  {
+   "id": "H-05",
+   "area": "journal",
+   "fact": "Единственный файл .harness_journal — JSONL {ts,part,what,error}; пишет observe-hook.js; запись: «optional hook disabled» — хук деградирует в лог.",
+   "file": "H:.harness_journal/rails_errors.log",
+   "line": 1,
+   "line_end": 1,
+   "anchor": "optional hook disabled"
+  },
+  {
+   "id": "H-06",
+   "area": "state",
+   "fact": "Состояние оркестратора в JSON (health, cycle, damage_log, sleep_state, saved_at); saved_at последний 2026-10-17 → состояние давно не обновлялось.",
+   "file": "H:.meta_state/code-orchestrator_meta_state.json",
+   "line": 25,
+   "line_end": 25,
+   "anchor": "saved_at"
+  },
+  {
+   "id": "H-07",
+   "area": "queue/loop",
+   "fact": "Прецедент фонового цикла: meta_daemon.run_daemon — интервал-опрос (default 10 c), DaemonLease+heartbeat, run_once за такт.",
+   "file": "H:scripts/meta/meta_daemon.py",
+   "line": 146,
+   "line_end": 159,
+   "anchor": "lease.heartbeat(token)"
+  },
+  {
+   "id": "H-08",
+   "area": "counter",
+   "fact": "Ближайший аналог «накопление → счётчик → порог → действие»: DamageBasket(threshold=100); should_trigger_sleep запускает цикл; acknowledge по snapshot_hash.",
+   "file": "H:scripts/meta/meta_daemon.py",
+   "line": 54,
+   "line_end": 54,
+   "anchor": "DamageBasket(basket_dir, threshold=threshold)"
+  },
+  {
+   "id": "H-09",
+   "area": "counter",
+   "fact": "DamageBasket: порог по умолчанию 100, состояние в basket.json через durable_json (acknowledged + snapshot_hash).",
+   "file": "H:scripts/meta/damage_basket.py",
+   "line": 139,
+   "line_end": 139,
+   "anchor": "threshold: int = 100"
+  },
+  {
+   "id": "H-10",
+   "area": "queue",
+   "fact": "durable_json.bounded_lease: файловая блокировка с дедлайном 5 c для JSON read-modify-replace.",
+   "file": "H:scripts/meta/durable_json.py",
+   "line": 22,
+   "line_end": 22,
+   "anchor": "def bounded_lease(path, timeout=5.0)"
+  },
+  {
+   "id": "H-11",
+   "area": "safety",
+   "fact": "execute_verified: fail-closed, исполнитель ≠ верификатор — прецедент «автор себя не принимает».",
+   "file": "H:scripts/meta/daemon_safety.py",
+   "line": 8,
+   "line_end": 8,
+   "anchor": "def execute_verified"
+  },
+  {
+   "id": "H-12",
+   "area": "journal",
+   "fact": "TraceStore: append/ query_by_branch / verify_transition / reconstruct_state — трассировка состояний фабрики (JSON-хранилище).",
+   "file": "H:scripts/meta/trace_store.py",
+   "line": 158,
+   "line_end": 158,
+   "anchor": "def query_by_branch"
+  },
+  {
+   "id": "H-13",
+   "area": "monitor",
+   "fact": "health_monitor — 5 каналов (golden, trend, physics, history, observer); это КЛАССЫ-библиотека без демона, без персистентности (весь файл прочитан: нет записи состояния), метрики — стиль текста (StyleMetrics).",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 36,
+   "line_end": 41,
+   "anchor": "class StyleMetrics"
+  },
+  {
+   "id": "H-14",
+   "area": "monitor",
+   "fact": "Агрегатор HealthStatus: ≥3 CRITICAL → EMERGENCY, ≥2 → BLOCK, 1 CRITICAL или ≥2 WARNING → WARNING.",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 186,
+   "line_end": 196,
+   "anchor": "self.severity = \"EMERGENCY\""
+  },
+  {
+   "id": "H-15",
+   "area": "monitor",
+   "fact": "Второй, НЕСОГЛАСОВАННЫЙ агрегатор в том же файле: HealthReport — can_generate=False при ≥2 CRITICAL / DEAD / lives<=0.",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 141,
+   "line_end": 150,
+   "anchor": "critical >= 2"
+  },
+  {
+   "id": "H-16",
+   "area": "monitor",
+   "fact": "Право вето: apply_veto при BLOCK/EMERGENCY вызывает ReanimationProtocol или возвращает {veto:True}.",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 452,
+   "line_end": 457,
+   "anchor": "def apply_veto"
+  },
+  {
+   "id": "H-17",
+   "area": "monitor",
+   "fact": "Пороги: golden 0.75; окно тренда 20, наклон 0.001; историческое падение 0.10; observer fail_threshold 2.",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 205,
+   "line_end": 205,
+   "anchor": "threshold: float = 0.75"
+  },
+  {
+   "id": "H-18",
+   "area": "monitor",
+   "fact": "СТАТИЧЕСКОЕ наблюдение (не запускалось): record_metrics вызывает .get() у объекта HistoricalComparator, у которого метода get нет → вероятный AttributeError.",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 447,
+   "line_end": 447,
+   "anchor": "self.channels[\"history\"].get"
+  },
+  {
+   "id": "H-19",
+   "area": "monitor",
+   "fact": "Метрик очередей/лага/отказов провайдера в health_monitor НЕТ (полное чтение файла).",
+   "file": "H:scripts/meta/health_monitor.py",
+   "line": 428,
+   "line_end": 435,
+   "anchor": "def pre_generation_check"
+  },
+  {
+   "id": "T-01",
+   "area": "tribunal",
+   "fact": "tribunal-judge: 5 ролей (физик, методолог, скептик, адвокат, агрегатор).",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 21,
+   "line_end": 27,
+   "anchor": "агрегатор"
+  },
+  {
+   "id": "T-02",
+   "area": "tribunal",
+   "fact": "Асимметрия информации: каждый судья получает РАЗНОЕ подмножество источников + include_verdict.",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 31,
+   "line_end": 31,
+   "anchor": "РАЗНОЕ подмножество источников"
+  },
+  {
+   "id": "T-03",
+   "area": "tribunal",
+   "fact": "НО все роли играет ОДНА модель последовательно в одной сессии — независимость номинальная.",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 50,
+   "line_end": 50,
+   "anchor": "ты последовательно играешь каждую роль"
+  },
+  {
+   "id": "T-04",
+   "area": "tribunal",
+   "fact": "Выход: TribunalReport (vote SUPPORTED|CONTRADICTED|AMBIGUOUS; aggregate_verdict; consensus_type; escalation_seed).",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 89,
+   "line_end": 102,
+   "anchor": "escalation_seed"
+  },
+  {
+   "id": "T-05",
+   "area": "tribunal",
+   "fact": "Правила: justification обязателен; ложная сходимость = понижение; suspicious_unanimity; эскалация.",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 106,
+   "line_end": 114,
+   "anchor": "Suspicious unanimity"
+  },
+  {
+   "id": "T-06",
+   "area": "tribunal",
+   "fact": "Рассинхрон документов: TribunalReport в process.md §6 не содержит consensus_type/escalation_seed/attacks/preliminary_seen.",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 134,
+   "line_end": 145,
+   "anchor": "### 6. TribunalReport"
+  },
+  {
+   "id": "T-07",
+   "area": "tribunal",
+   "fact": "Триггер трибунала: critical_caveat≥1, AMBIGUOUS, CONTRADICTED; не запускать при no_caveats и conf≥0.8.",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 184,
+   "line_end": 189,
+   "anchor": "## Триггер трибунала"
+  },
+  {
+   "id": "T-08",
+   "area": "tribunal",
+   "fact": "Агент: mode subagent, steps 50, edit deny, bash allow; runner — только транспорт.",
+   "file": "H:agents/tribunal-judge.md",
+   "line": 4,
+   "line_end": 8,
+   "anchor": "edit: deny"
+  },
+  {
+   "id": "T-09",
+   "area": "tribunal-R4",
+   "fact": "Конфиг R4: постоянные роли critic, skeptic, methodologist, evidence_auditor; выход всех ролей ArgumentArtifact/1.0; advocate условный.",
+   "file": "H:config/tribunal_composition.yaml",
+   "line": 12,
+   "line_end": 16,
+   "anchor": "permanent_roles"
+  },
+  {
+   "id": "T-10",
+   "area": "tribunal-R4",
+   "fact": "token_budget_per_role: 6000, inquiry_depth: 2.",
+   "file": "H:config/tribunal_composition.yaml",
+   "line": 5,
+   "line_end": 7,
+   "anchor": "token_budget_per_role: 6000"
+  },
+  {
+   "id": "T-11",
+   "area": "tribunal-R4",
+   "fact": "Handbook: запрещено «treat role output as authoritative claim truth», «silently collapse unresolved uncertainty into a verdict».",
+   "file": "H:config/tribunal_role_handbook.yaml",
+   "line": 5,
+   "line_end": 10,
+   "anchor": "treat role output as authoritative claim truth"
+  },
+  {
+   "id": "T-12",
+   "area": "tribunal-R4",
+   "fact": "Provider binding: capability tribunal.role.execute, 1 исполнитель на контракт, пространства контрактов IQC/DQC/ADC.",
+   "file": "H:config/tribunal_provider_binding.yaml",
+   "line": 8,
+   "line_end": 8,
+   "anchor": "IQC, DQC, ADC"
+  },
+  {
+   "id": "T-13",
+   "area": "tribunal-R4",
+   "fact": "Правило роли: MODEL_PRIOR никогда не evidence; envelope-only; не расширять evidence view.",
+   "file": "H:config/tribunal_role_provider_contract.md",
+   "line": 10,
+   "line_end": 10,
+   "anchor": "НИКОГДА не считается evidence"
+  },
+  {
+   "id": "T-14",
+   "area": "tribunal-R4",
+   "fact": "ArgumentPosition = SUPPORT|CHALLENGE|QUALIFY|OPEN (позиция в споре о ЦЕЛИ), не вердикт «same/differs».",
+   "file": "H:scripts/researcher/researcher_core/tribunal_inquiry.py",
+   "line": 53,
+   "line_end": 57,
+   "anchor": "class ArgumentPosition"
+  },
+  {
+   "id": "T-15",
+   "area": "tribunal-R4",
+   "fact": "InquiryContract требует ArgumentArtifact/1.0 как единственный выход.",
+   "file": "H:scripts/researcher/researcher_core/tribunal_inquiry.py",
+   "line": 169,
+   "line_end": 170,
+   "anchor": "ArgumentArtifact/1.0"
+  },
+  {
+   "id": "T-16",
+   "area": "tribunal-R4",
+   "fact": "DialecticPolicy: max_turns 6, max_question_answer_pairs 2, max_no_progress_streak 1; действия STOP_CONVERGED/STOP_BUDGET_LIMIT/STOP_OPEN.",
+   "file": "H:scripts/researcher/researcher_core/tribunal_dialectic.py",
+   "line": 96,
+   "line_end": 101,
+   "anchor": "max_turns: int = 6"
+  },
+  {
+   "id": "T-17",
+   "area": "tribunal-R4",
+   "fact": "Проектируемые цели R4-evidence — только CLM/QTY/EDG/EVD/SRC (claim, quantity, edge, evidence, source); пары версий клайма не предусмотрены.",
+   "file": "H:scripts/researcher/researcher_core/tribunal_evidence.py",
+   "line": 475,
+   "line_end": 475,
+   "anchor": "_PROJECTABLE_TARGET_NAMESPACES"
+  },
+  {
+   "id": "T-18",
+   "area": "tribunal-R4",
+   "fact": "Словарь отказов провайдера: COMPLETED/FAILED/TIMED_OUT/REJECTED; NO_HEALTHY_PROVIDER; транспорты LogicalTool/SubprocessJson/PluginBridge. Нет retry/429/dead-letter.",
+   "file": "H:scripts/researcher/researcher_core/tribunal_live_dialogue.py",
+   "line": 85,
+   "line_end": 89,
+   "anchor": "TIMED_OUT"
+  },
+  {
+   "id": "T-19",
+   "area": "tribunal-R4",
+   "fact": "Статусы привязки провайдера: READY/ROLE_MISMATCH/WRONG_PROVIDER/NO_HEALTHY_PROVIDER/EXECUTOR_CARDINALITY_EXCEEDED.",
+   "file": "H:scripts/researcher/researcher_core/tribunal_provider_binding.py",
+   "line": 43,
+   "line_end": 48,
+   "anchor": "NO_HEALTHY_PROVIDER"
+  },
+  {
+   "id": "T-20",
+   "area": "tribunal-factory",
+   "fact": "Третий «трибунал»: code-factory — tribunal_trigger.py (2+ раундов REWORK → tribunal_required) и guard finalize exit 5 TRIBUNAL_REQUIRED.",
+   "file": "H:docs/CODERS/00_INDEX.md",
+   "line": 67,
+   "line_end": 67,
+   "anchor": "tribunal_trigger.py"
+  },
+  {
+   "id": "T-21",
+   "area": "tribunal-factory",
+   "fact": "tribunal_trigger — обёртка над _convergence_view (в фабрике «convergence» уже означает схождение раундов ревью).",
+   "file": "H:docs/CODERS/03_ACCEPTANCE.md",
+   "line": 21,
+   "line_end": 21,
+   "anchor": "_convergence_view"
+  },
+  {
+   "id": "P-01",
+   "area": "process",
+   "fact": "Принцип №0: LLM производит свидетельства, КОД принимает решения.",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 7,
+   "line_end": 9,
+   "anchor": "КОД принимает решения"
+  },
+  {
+   "id": "P-02",
+   "area": "process",
+   "fact": "Бюджет: max_cost_rub на задачу (1.5₽/claim, 20₽/документ), runner трекает расход, превышение → STOP.",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 191,
+   "line_end": 195,
+   "anchor": "max_cost_rub"
+  },
+  {
+   "id": "P-03",
+   "area": "process",
+   "fact": "Stop criteria кодом: max_hops 3, max_nodes 15, max_tokens 40000; convergence min_verdicts 2, min_confidence 0.8, max_dispersion 0.2.",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 197,
+   "line_end": 202,
+   "anchor": "max_hops"
+  },
+  {
+   "id": "P-04",
+   "area": "process",
+   "fact": "Аудит каждого BRICK: input_hash → decision → output → ts (_audit.json, summary.json).",
+   "file": "H:shared/research-orchestration-process.md",
+   "line": 276,
+   "line_end": 276,
+   "anchor": "input_hash → decision → output → ts"
+  },
+  {
+   "id": "O-01",
+   "area": "OMH-hooks",
+   "fact": "Обязательные хуки: on_session_end, pre_llm_call, pre_tool_call.",
+   "file": "O:metadata.py",
+   "line": 27,
+   "line_end": 27,
+   "anchor": "REQUIRED_HOOKS = (\"on_session_end\", \"pre_llm_call\", \"pre_tool_call\")"
+  },
+  {
+   "id": "O-02",
+   "area": "OMH-hooks",
+   "fact": "Опциональные: on_session_start, post_tool_call, pre_verify, subagent_start/stop, transform_llm_output, transform_tool_result — хост может их не предоставлять.",
+   "file": "O:metadata.py",
+   "line": 31,
+   "line_end": 39,
+   "anchor": "\"post_tool_call\","
+  },
+  {
+   "id": "O-03",
+   "area": "OMH-hooks",
+   "fact": "Регистрация обязательных хуков; опциональные — через _register_optional_hook, ValueError глотается (хука нет → плагин работает дальше).",
+   "file": "O:__init__.py",
+   "line": 131,
+   "line_end": 133,
+   "anchor": "except ValueError"
+  },
+  {
+   "id": "O-04",
+   "area": "OMH-hooks",
+   "fact": "on_session_end — НЕ граница сессии, срабатывает на финализации КАЖДОГО хода разговора.",
+   "file": "O:hooks/session_hooks.py",
+   "line": 119,
+   "line_end": 121,
+   "anchor": "this is not a session boundary"
+  },
+  {
+   "id": "O-05",
+   "area": "OMH-hooks",
+   "fact": "Хост отбрасывает возвращаемое значение хука; хуки «bounded and fail-open».",
+   "file": "O:hooks/session_hooks.py",
+   "line": 93,
+   "line_end": 101,
+   "anchor": "fail-open"
+  },
+  {
+   "id": "O-06",
+   "area": "OMH-hooks",
+   "fact": "Хост без callback = «unknown, not successful» (отсутствие доказательства ≠ успех).",
+   "file": "O:hooks/session_hooks.py",
+   "line": 37,
+   "line_end": 38,
+   "anchor": "A host that omits the"
+  },
+  {
+   "id": "O-07",
+   "area": "OMH-hooks",
+   "fact": "Хост глотает исключения seam; единственный след — WARNING/DEBUG и счётчик omh doctor; рассчитывать на доставку нельзя.",
+   "file": "O:remote_wait_nudge.py",
+   "line": 350,
+   "line_end": 350,
+   "anchor": "host swallows exceptions"
+  },
+  {
+   "id": "O-08",
+   "area": "OMH-hooks",
+   "fact": "pre_tool_call-правила fail-open: неожиданная ошибка → allow + запись типа ошибки (не текста).",
+   "file": "O:hooks/tool_hooks.py",
+   "line": 70,
+   "line_end": 70,
+   "anchor": "ALLOW, deliberately"
+  },
+  {
+   "id": "O-09",
+   "area": "OMH-analogy",
+   "fact": "memory_dreaming: ТРИГГЕР детерминированный (счётчик ходов, компакция), работа модели — у хоста; OMH сам модель не вызывает.",
+   "file": "O:memory_dreaming.py",
+   "line": 5,
+   "line_end": 5,
+   "anchor": "The *trigger* is not"
+  },
+  {
+   "id": "O-10",
+   "area": "OMH-analogy",
+   "fact": "OMH не делает вызовов модели → не «мечтает»; решает только КОГДА пора, готовит handoff (omh_memory_consolidation_handoff/v1).",
+   "file": "O:memory_dreaming.py",
+   "line": 9,
+   "line_end": 10,
+   "anchor": "OMH makes no model call"
+  },
+  {
+   "id": "O-11",
+   "area": "OMH-analogy",
+   "fact": "Счётчики персистентны, чтение «never raises», порча файла стоит максимум одного пропущенного прохода (fail-open триггер).",
+   "file": "O:memory_dreaming.py",
+   "line": 80,
+   "line_end": 81,
+   "anchor": "Never raises"
+  },
+  {
+   "id": "O-12",
+   "area": "OMH-analogy",
+   "fact": "Режимы dreaming только off|reminder: автозапуска нет.",
+   "file": "O:memory_dreaming.py",
+   "line": 43,
+   "line_end": 45,
+   "anchor": "There is no auto-launch"
+  },
+  {
+   "id": "D-01",
+   "area": "DOM-tools",
+   "fact": "DOM MCP — пассивный stdio-сервер с инструментами dom_*; хук хоста не видит внутренних событий DOM.",
+   "file": "P:mockup/server.py",
+   "line": 51,
+   "line_end": 52,
+   "anchor": "name='dom_submit'"
+  },
+  {
+   "id": "D-02",
+   "area": "DOM-admission",
+   "fact": "Допуск: submit → review (чужой root) → admit в одной транзакции BEGIN IMMEDIATE; idempotency по (work,operation,key,digest).",
+   "file": "P:mockup/admission.py",
+   "line": 175,
+   "line_end": 181,
+   "anchor": "def admit"
+  },
+  {
+   "id": "D-03",
+   "area": "DOM-admission",
+   "fact": "Независимость проверяется ТОЛЬКО по строке root: reviewer.root != candidate.root.",
+   "file": "P:mockup/admission.py",
+   "line": 168,
+   "line_end": 168,
+   "anchor": "INDEPENDENCE_NOT_ENFORCED"
+  },
+  {
+   "id": "D-04",
+   "area": "DOM-capabilities",
+   "fact": "Фикстура ролей: author={submit}; helper={submit,review,admit}; reviewer={review,admit}; роли curator НЕТ. «Not production authentication».",
+   "file": "P:mockup/ports.py",
+   "line": 22,
+   "line_end": 22,
+   "anchor": "'helper':('demo-helper','root-A',{'submit','review','admit'})"
+  },
+  {
+   "id": "D-05",
+   "area": "DOM-events",
+   "fact": "События на допуске: provenance с server_time (серверное время), actor, root, origin_version; цепочка previous_hash→event_hash.",
+   "file": "P:mockup/admission.py",
+   "line": 207,
+   "line_end": 210,
+   "anchor": "server_time=datetime.now(timezone.utc).isoformat()"
+  },
+  {
+   "id": "D-06",
+   "area": "DOM-events",
+   "fact": "Допустимые event kinds: comment, link, property, applicability, archive, replacement, conflict, resolve, converge, exclude.",
+   "file": "P:mockup/dom_contract.py",
+   "line": 16,
+   "line_end": 16,
+   "anchor": "EVENTS={'comment','link','property'"
+  },
+  {
+   "id": "D-07",
+   "area": "DOM-events",
+   "fact": "exclude требует capability owner.",
+   "file": "P:mockup/admission.py",
+   "line": 132,
+   "line_end": 132,
+   "anchor": "OWNER_AUTHORITY_REQUIRED"
+  },
+  {
+   "id": "D-08",
+   "area": "DOM-projection",
+   "fact": "converge — булев latch ветки; blockers BRANCH_NOT_CONVERGED.",
+   "file": "P:mockup/projections.py",
+   "line": 46,
+   "line_end": 46,
+   "anchor": "elif kind=='converge': converged=True"
+  },
+  {
+   "id": "D-09",
+   "area": "DOM-projection",
+   "fact": "Проекция — fold по ВСЕМ events ветки по seq: любые новые event-строки в branch попадают в проекцию.",
+   "file": "P:mockup/projections.py",
+   "line": 30,
+   "line_end": 30,
+   "anchor": "ORDER BY seq"
+  },
+  {
+   "id": "D-10",
+   "area": "DOM-storage",
+   "fact": "Список иммутабельных таблиц задан кортежем IMMUTABLE; новая таблица append-only ТОЛЬКО если добавлена сюда и в IMMUTABLE_KEYS.",
+   "file": "P:mockup/storage.py",
+   "line": 10,
+   "line_end": 10,
+   "anchor": "IMMUTABLE=('binding'"
+  },
+  {
+   "id": "D-11",
+   "area": "DOM-storage",
+   "fact": "Глобальная хеш-цепочка events: триггер chain_previous_hash берёт хвост по всем веткам (одна цепочка на БД).",
+   "file": "P:mockup/storage.py",
+   "line": 88,
+   "line_end": 90,
+   "anchor": "chain_previous_hash"
+  },
+  {
+   "id": "D-12",
+   "area": "DOM-storage",
+   "fact": "Запись — BEGIN IMMEDIATE (один писатель), busy_timeout 2000 мс → конкуренция процессов-писателей упирается в таймаут.",
+   "file": "P:mockup/storage.py",
+   "line": 49,
+   "line_end": 49,
+   "anchor": "busy_timeout=2000"
+  },
+  {
+   "id": "D-13",
+   "area": "DOM-storage",
+   "fact": "Старые схемы без нужных колонок → MigrationRequired: новые таблицы/колонки = миграция.",
+   "file": "P:mockup/storage.py",
+   "line": 59,
+   "line_end": 64,
+   "anchor": "MigrationRequired"
+  },
+  {
+   "id": "D-14",
+   "area": "DOM-storage",
+   "fact": "Полный перечень DDL: binding, branch_heads, candidates, reviews, transactions, claims, events, claim_snapshots, idempotency, outbox, delivery_events (+delivery_*). Таблицы context-pack / очереди куратора / журнала куратора НЕТ.",
+   "file": "P:mockup/storage.py",
+   "line": 38,
+   "line_end": 39,
+   "anchor": "CREATE TABLE IF NOT EXISTS outbox"
+  },
+  {
+   "id": "D-15",
+   "area": "DOM-outbox",
+   "fact": "Готовый шаблон «транзакционный outbox + догоняющая сверка»: admit пишет outbox (OMH_EVIDENCE, YAML_EXPORT) в той же транзакции; sync повторяет, confirmed() пропускает уже подтверждённое.",
+   "file": "P:mockup/admission.py",
+   "line": 215,
+   "line_end": 217,
+   "anchor": "OMH_EVIDENCE"
+  },
+  {
+   "id": "D-16",
+   "area": "DOM-outbox",
+   "fact": "delivery_attempts → delivery_observations → delivery_acks: «ambiguous» остаётся неподтверждённым до новой сверки (шаблон для LLM-вызова с потерянным ответом).",
+   "file": "P:mockup/admission.py",
+   "line": 368,
+   "line_end": 376,
+   "anchor": "delivery_acks"
+  },
+  {
+   "id": "D-17",
+   "area": "DOM-visibility",
+   "fact": "Публичный вывод — закрытая allowlist-схема. В процессе анализа файл ИЗМЕНИЛСЯ (параллельный воркер AB004): ключи-ветки теперь тип ('bmap',…) с фильтром по scope и fail-closed SCOPE_REQUIRED (AU004-F-01). Функционально мной НЕ проверено.",
+   "file": "P:mockup/public_dto.py",
+   "line": 13,
+   "line_end": 15,
+   "anchor": "AU004-F-01"
+  },
+  {
+   "id": "D-18",
+   "area": "DOM-visibility",
+   "fact": "read_snapshot фильтрует ревизии по гранту вызывающего: chain_head и чужие ревизии не копируются.",
+   "file": "P:mockup/public_dto.py",
+   "line": 311,
+   "line_end": 314,
+   "anchor": "chain_head and all out-of-scope revisions are never copied"
+  },
+  {
+   "id": "D-19",
+   "area": "DOM-integrity",
+   "fact": "integrity_gate: любой публичный read проверяет глобальную цепочку; CHAIN_BROKEN → Broken DTO.",
+   "file": "P:mockup/admission.py",
+   "line": 91,
+   "line_end": 95,
+   "anchor": "def integrity_gate"
+  },
+  {
+   "id": "D-20",
+   "area": "DOM-hash",
+   "fact": "Единственный «семантический» инструмент DOM — sha256 по canonical JSON / байтам.",
+   "file": "P:mockup/dom_contract.py",
+   "line": 44,
+   "line_end": 45,
+   "anchor": "def digest(v)"
+  }
+ ],
+ "pipeline_map": {
+  "principle": "Единственный источник истины — допущенные события в DOM SQLite. Всё остальное (очередь, кандидаты, индексы, счётчики) — пересчитываемый производный кэш; журнал куратора — аудит, не истина. Сведение не существует, пока нет допущенного события (link/conflict/converge/…), прошедшего dom_submit → dom_review (другой root) → dom_admit.",
+  "stages": [
+   {
+    "id": "S-1",
+    "name": "Хост-хук (ускоритель, опционально)",
+    "input": "post_tool_call/on_session_end OMH на вызове dom_submit/dom_admit",
+    "output": "необязательный hint «есть новое» (НЕ данные)",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "никто — только будит проход",
+    "relation_to_admission": "после dom_admit",
+    "events": "нет (hint не журналировать как факт; журналировать как 'hook_seen' для метрики пропусков)",
+    "single_truth": "hint теряется без ущерба: S0 всё равно догонит по водяному знаку",
+    "evidence": [
+     "O-02",
+     "O-04",
+     "O-05",
+     "O-07",
+     "D-01"
+    ]
+   },
+   {
+    "id": "S0",
+    "name": "Накопитель + водяной знак + догоняющий проход",
+    "input": "events/claims с seq > watermark (SQLite, read-only снимок)",
+    "output": "curation_batch = (диапазон seq, scope, config_digest) → идемпотентный batch_id = sha256 канонического ввода",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "код (когда запускать: hint ИЛИ таймер ИЛИ старт процесса ИЛИ порог счётчика)",
+    "relation_to_admission": "читает только допущенное; НЕ участвует в транзакции admit",
+    "events": "curation_tick (watermark_from/to, count, trigger_kind) в журнал куратора",
+    "single_truth": "счётчик — кэш: пересчитывается из events; расхождение = сигнал монитора",
+    "evidence": [
+     "H-08",
+     "H-09",
+     "O-11",
+     "D-15",
+     "D-16"
+    ]
+   },
+   {
+    "id": "S1",
+    "name": "Детерминированный пре-фильтр",
+    "input": "batch",
+    "output": "отсев: архивные, не допущенные, точные дубли (raw_sha256), разбиение по партициям видимости (scope-first)",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "код",
+    "relation_to_admission": "-",
+    "events": "stage_outcome (counts, не содержимое)",
+    "single_truth": "точный дубль по sha256 — единственное «схождение», решаемое кодом (D-20)",
+    "evidence": [
+     "D-20",
+     "D-17"
+    ]
+   },
+   {
+    "id": "S2",
+    "name": "Генерация кандидатов сопоставления (здесь подключаются K1/K2/K3 и граф)",
+    "input": "партиция видимости + индексы (keywords/граф/лексика)",
+    "output": "ограниченный набор пар/групп кандидатов со score, потолок по бюджету",
+    "deterministic": "код (без LLM)",
+    "llm": false,
+    "decides": "код: отсекает по порогам; пороги — TEST_PARAMETER",
+    "relation_to_admission": "-",
+    "events": "candidate_set (ids, score, algorithm_version)",
+    "single_truth": "индексы производные; keywords-индекс НЕ добавлять в схему до итога симуляции (R-18)",
+    "evidence": [
+     "R-18",
+     "R-28"
+    ]
+   },
+   {
+    "id": "S3",
+    "name": "Структурные проверки",
+    "input": "кандидаты",
+    "output": "флаги: пин на пункт плана (текст+sha256), requirement_refs, устаревшие dependencies, family/branch-отношение",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "код",
+    "relation_to_admission": "использует claim_snapshots/branch_heads",
+    "events": "stage_outcome",
+    "single_truth": "-",
+    "evidence": [
+     "D-08",
+     "D-17"
+    ]
+   },
+   {
+    "id": "S4",
+    "name": "Куратор (LLM) — ГИПОТЕЗА",
+    "input": "case pack: версии (тексты), record_id, sha256, критерии схождения (criteria_digest), только в одном партиции видимости",
+    "output": "структурированное предложение {relation: same|differs|complementary|insufficient, cited_record_ids, rationale}",
+    "deterministic": "промпт, парсер и валидатор — код; ответ — недетерминированный",
+    "llm": true,
+    "decides": "не решает: код проверяет, что все record_id ∈ pack, sha256 совпадают, схема валидна, нет ссылок вне партиции",
+    "relation_to_admission": "выступает АВТОРОМ (submit) под отдельным principal; себя не допускает",
+    "events": "case_created, llm_call (model, prompt_sha256, attempt, outcome), proposal_recorded",
+    "single_truth": "proposal — кандидат, не факт",
+    "evidence": [
+     "R-19",
+     "R-29",
+     "D-03",
+     "D-04"
+    ]
+   },
+   {
+    "id": "S5",
+    "name": "Трибунал (условный) — НОВЫЙ контракт",
+    "input": "case + proposal + триггер (низкая уверенность, расхождение детерминированных сигналов, relation=same при высокой цене ошибки)",
+    "output": "ArgumentArtifact по ролям + агрегат (код): same|differs|complementary|insufficient + диссенты + escalation_seed",
+    "deterministic": "агрегация, кворум, стоп-условия — код (аналог DialecticPolicy)",
+    "llm": true,
+    "decides": "не решает: агрегат — свидетельство для S6",
+    "relation_to_admission": "не участвует",
+    "events": "tribunal_convened (trigger_reason), role_turn, aggregate",
+    "single_truth": "-",
+    "evidence": [
+     "T-09",
+     "T-14",
+     "T-16",
+     "T-17",
+     "T-03"
+    ]
+   },
+   {
+    "id": "S6",
+    "name": "Код-ворота",
+    "input": "proposal (+tribunal)",
+    "output": "пакет-кандидат для dom_submit ИЛИ отказ с кодом",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "код: схема, ссылки, видимость, бюджет, анти-ложная-сходимость (согласие без атаки/без проверки → insufficient)",
+    "relation_to_admission": "формирует dom_submit от principal=curator (capability submit only)",
+    "events": "gate_decision (accept/reject, reason_codes)",
+    "single_truth": "-",
+    "evidence": [
+     "H-11",
+     "D-03",
+     "D-04"
+    ]
+   },
+   {
+    "id": "S7",
+    "name": "Независимый допуск",
+    "input": "candidate digest",
+    "output": "admitted event(s): link/conflict/resolve/converge/replacement (kind — открытый вопрос схемы)",
+    "deterministic": "код + независимый ревьюер (другой root)",
+    "llm": false,
+    "decides": "независимый ревьюер/человек/owner (кто — needs_user)",
+    "relation_to_admission": "это и есть dom_review → dom_admit",
+    "events": "существующие events/transactions/reviews/idempotency",
+    "single_truth": "ЕДИНСТВЕННАЯ точка, где сведение становится фактом",
+    "evidence": [
+     "D-02",
+     "D-05",
+     "D-06"
+    ]
+   },
+   {
+    "id": "S8",
+    "name": "Публикация",
+    "input": "admitted events",
+    "output": "проекция AA-only через allowlist-фильтр + outbox в OMH",
+    "deterministic": "код",
+    "llm": false,
+    "decides": "код",
+    "relation_to_admission": "существующий outbox/sync",
+    "events": "outbox/delivery_*",
+    "single_truth": "-",
+    "evidence": [
+     "D-15",
+     "D-17",
+     "D-18"
+    ]
+   }
+  ],
+  "sync_vs_async": "Два режима, которые заказчик не разделил: (1) синхронная проверка дубля при dom_submit (A2: возврат с требованием обосновать отличия) — должна быть ДЕТЕРМИНИРОВАННОЙ и видимость-безопасной (sha256/лексика по видимому); (2) асинхронная курация LLM — вне транзакции. Смешивание = либо LLM в горячем пути записи, либо утечка через ответ submit.",
+  "cross_cutting": [
+   "журнал куратора (append-only, своя хеш-цепочка или якорь в основной)",
+   "монитор (оператор; не читает содержимое клаймов)",
+   "выключатель/пауза конвейера (не блокирует dom_submit/dom_admit)"
+  ],
+  "where_llm_runs_is_open": "OMH сам модель не вызывает (O-10), DOM MCP — пассивный stdio (D-01). Где запускается LLM куратора (внутри DOM-процесса с ключами провайдера / подагент хоста по handoff-карте / внешний воркер) — не решено и влияет на границу доверия: RS005 Q-C-04, NU-C-04."
+ },
+ "failure_map": [
+  {
+   "id": "F-01",
+   "where": "S-1/S0",
+   "failure": "Пропущенный хук (хост без post_tool_call, исключение проглочено, W1_SKIP_HOOKS-аналог)",
+   "effect": "Новые клаймы не попадают в проход; конвейер молча «здоров»",
+   "detection_by_code": "lag = max(events.seq) − watermark растёт; доля проходов, запущенных таймером, а не хуком",
+   "candidate_mitigations_not_decisions": "хук = ускоритель; догоняющий проход по таймеру/старту; водяной знак в SQLite",
+   "negative_control": "E2E: убить хуки целиком → все admitted-клаймы всё равно обработаны за ≤ T; lag вернулся к 0"
+  },
+  {
+   "id": "F-02",
+   "where": "S-1/S0",
+   "failure": "Дублированный хук (on_session_end на каждый ход; повторная доставка)",
+   "effect": "Двойной запуск прохода, двойные кейсы",
+   "detection_by_code": "batch_id = sha256(диапазон seq + config_digest) уникален → INSERT отклонён",
+   "candidate_mitigations_not_decisions": "идемпотентный batch_id; UNIQUE",
+   "negative_control": "повторить тот же hint 100× → ровно 1 batch и 1 LLM-вызов"
+  },
+  {
+   "id": "F-03",
+   "where": "S0↔S7",
+   "failure": "Гонка накопителя и допуска: клайм допущен во время прохода; ревизия ветки сдвинулась",
+   "effect": "Кейс по устаревшим версиям; предложение о схождении с уже не-head версией",
+   "detection_by_code": "сравнение heads/vector ревизий при S6 (как STALE_REVIEW в admit)",
+   "candidate_mitigations_not_decisions": "вектор ревизий в кейсе; повторная проверка при submit; STALE → пересчёт",
+   "negative_control": "admit во время LLM-вызова → предложение отклонено кодом как STALE, не допущено"
+  },
+  {
+   "id": "F-04",
+   "where": "все",
+   "failure": "Повтор доставки/повторный запуск после сбоя",
+   "effect": "Дубликаты предложений, двойной расход бюджета",
+   "detection_by_code": "idempotency key = case_id; ключ уже есть → вернуть сохранённый результат",
+   "candidate_mitigations_not_decisions": "случай уже существует в журнале → без нового LLM-вызова",
+   "negative_control": "kill -9 между llm_call и записью результата → при рестарте ровно 1 итоговая запись"
+  },
+  {
+   "id": "F-05",
+   "where": "S4→S6",
+   "failure": "Падение процесса между ступенями (ответ LLM получен, запись не сделана)",
+   "effect": "Потерянный дорогой ответ; «ambiguous»-состояние",
+   "detection_by_code": "запись attempt ДО вызова (как delivery_attempts, D-16); состояние без observation = in_doubt",
+   "candidate_mitigations_not_decisions": "attempt → observation → ack по образцу delivery_*",
+   "negative_control": "fault_hook-аналог после llm_call: на рестарте attempt без observation виден как in_doubt и переигран с тем же case_id"
+  },
+  {
+   "id": "F-06",
+   "where": "S4/S5",
+   "failure": "Лимит/429/недоступность провайдера",
+   "effect": "Очередь растёт; соблазн блокировать приём",
+   "detection_by_code": "доля 429/timeout, возраст очереди; circuit breaker",
+   "candidate_mitigations_not_decisions": "очередь + backoff с jitter + dead-letter + выключатель; приём клаймов не зависит от LLM",
+   "negative_control": "эмулировать 429 на 100% → dom_submit/admit p95 не меняется; очередь копится; после снятия разбирается"
+  },
+  {
+   "id": "F-07",
+   "where": "S4/S5",
+   "failure": "Исчерпание бюджета (₽/сутки, ₽/кейс)",
+   "effect": "Либо падение, либо тихий пропуск курации",
+   "detection_by_code": "spent/cap; стоп до вызова, не после",
+   "candidate_mitigations_not_decisions": "жёсткий кап до вызова; статус BUDGET_EXHAUSTED; пауза с записью",
+   "negative_control": "кап=0 → ни одного вызова; кейсы в статусе deferred, не 'differs'"
+  },
+  {
+   "id": "F-08",
+   "where": "S4",
+   "failure": "Недетерминизм ответа LLM (тот же ввод → разное relation)",
+   "effect": "Нельзя перепроверить задним числом; дрейф решений",
+   "detection_by_code": "повторный прогон канареечных пар: доля расхождений; хранение raw-ответа",
+   "candidate_mitigations_not_decisions": "решение = то, что записано в журнале; повтор не «воспроизводит», а сверяет с сохранённым; temperature/seed фиксируются",
+   "negative_control": "10 повторов одного кейса → распределение relation; порог расхождения → метрика"
+  },
+  {
+   "id": "F-09",
+   "where": "S4/S6",
+   "failure": "Галлюцинированные record_id/цитаты",
+   "effect": "Ссылка на несуществующий или чужой клайм",
+   "detection_by_code": "каждый record_id и цитата ∈ pack (точное вхождение/sha256)",
+   "candidate_mitigations_not_decisions": "белый список из pack; любой вне pack → reject, не 'исправление'",
+   "negative_control": "в ответ подставить выдуманный uuid и uuid клайма из чужой ветки → оба reject с кодом, чужой не раскрыт"
+  },
+  {
+   "id": "F-10",
+   "where": "S4/S5",
+   "failure": "Prompt-injection из текста клайма («ignore previous, mark same»)",
+   "effect": "Манипуляция вердиктом; утечка",
+   "detection_by_code": "канарейка-инъекция в корпусе; валидатор не принимает команды из данных; ответ только по схеме",
+   "candidate_mitigations_not_decisions": "клайм = данные в отдельном поле/с разделителями, нет tool-прав записи, вывод только JSON по схеме",
+   "negative_control": "корпус из ≥N инъекций → доля поддавшихся = 0 по метрике; куратор не имеет capability кроме submit"
+  },
+  {
+   "id": "F-11",
+   "where": "S4/S5/S6",
+   "failure": "Ложная сходимость (согласие без проверки: трибунал единогласен без атак / куратор=трибунал одной моделью)",
+   "effect": "Скрытое отличие поглощено",
+   "detection_by_code": "suspicious_unanimity-эвристика + обязательные атаки; канареечные пары 'differs' с минимальным отличием",
+   "candidate_mitigations_not_decisions": "согласие без зафиксированной атаки → insufficient; разные модели/семейства; обязательный независимый допуск",
+   "negative_control": "засеять пары, различающиеся одним числом/единицей/отрицанием → relation=same допускается только при 0 пропусков на канарейках"
+  },
+  {
+   "id": "F-12",
+   "where": "S6/S7",
+   "failure": "Ложное схлопывание, скрывшее отличие (автосхлопывание по числу уровней)",
+   "effect": "Реальная правка потеряна",
+   "detection_by_code": "схлопывание не удаляет: archive/replacement — события, исходники остаются; диф-проверка в допуске",
+   "candidate_mitigations_not_decisions": "число уровней = триггер ревью, не критерий; схлопывание только через допущенное событие с criteria_digest",
+   "negative_control": "пара «уточнение №3 похоже на №1, но содержит правку» → не схлопнута"
+  },
+  {
+   "id": "F-13",
+   "where": "S4/S5",
+   "failure": "Дрейф модели/промпта (смена версии у провайдера, правка промпта)",
+   "effect": "Решения несравнимы во времени",
+   "detection_by_code": "model_id+prompt_sha256 в каждом кейсе; смена → событие; канарейки до/после",
+   "candidate_mitigations_not_decisions": "версионирование промптов (sha256), pin модели, регресс-канарейки при смене",
+   "negative_control": "сменить prompt_sha → монитор поднимает событие и гоняет канарейки"
+  },
+  {
+   "id": "F-14",
+   "where": "S0..S4",
+   "failure": "Зависшая очередь (воркер умер, lease не освобождён; кейс 'в работе' навсегда)",
+   "effect": "Курация встала молча",
+   "detection_by_code": "возраст кейса > visibility_timeout; heartbeat воркера",
+   "candidate_mitigations_not_decisions": "lease с дедлайном (как FileLease/DaemonLease, H-07/H-10) и возвратом в очередь",
+   "negative_control": "убить воркер посреди кейса → кейс возвращён и обработан другим воркером"
+  },
+  {
+   "id": "F-15",
+   "where": "журнал",
+   "failure": "Рост журнала (полные промпты/ответы по каждому кейсу)",
+   "effect": "Раздувание SQLite, медленные write под BEGIN IMMEDIATE",
+   "detection_by_code": "байты/сутки, время chain-verify",
+   "candidate_mitigations_not_decisions": "raw-ответы по ссылке/внешним blob + sha256 в БД; политика хранения — решение заказчика",
+   "negative_control": "нагрузка N кейсов → рост и latency admit в пределах бюджета"
+  },
+  {
+   "id": "F-16",
+   "where": "S4",
+   "failure": "Злонамеренный/залипший куратор (всегда 'same'; всегда 'differs'; повторяет шаблон)",
+   "effect": "Систематическая ошибка, выглядящая как согласие",
+   "detection_by_code": "доля same в окне, согласие с независимым ревьюером, энтропия ответов, канарейки",
+   "candidate_mitigations_not_decisions": "куратор не имеет права admit; ревьюер сэмплирует; автоматический BLOCK при дрейфе acceptance-rate",
+   "negative_control": "подменить куратор заглушкой 'same всегда' → канарейки и acceptance-rate срабатывают за ≤ W кейсов"
+  },
+  {
+   "id": "F-17",
+   "where": "S5↔S7",
+   "failure": "Расхождение трибунала и ревьюера",
+   "effect": "Двойной источник суждения, не ясно что главное",
+   "detection_by_code": "доля расхождений; кейс эскалируется, не усредняется",
+   "candidate_mitigations_not_decisions": "ревьюер/допуск главнее; расхождение — свидетельство, пополняет метрику и gold",
+   "negative_control": "принудительно: трибунал same, ревьюер differs → допуск отклонён, расхождение в журнале"
+  },
+  {
+   "id": "F-18",
+   "where": "S0↔журнал",
+   "failure": "Дрейф счётчика/водяного знака (счётчик ≠ пересчёт из events)",
+   "effect": "Пропущенные или повторно обработанные клаймы",
+   "detection_by_code": "reconciliation: пересчёт count из events vs хранимый",
+   "candidate_mitigations_not_decisions": "счётчик — кэш; сверка по таймеру; расхождение → полный пересчёт",
+   "negative_control": "испортить счётчик → сверка обнаруживает и исправляет без потери"
+  },
+  {
+   "id": "F-19",
+   "where": "журнал",
+   "failure": "Подмена/порча журнала куратора",
+   "effect": "Нельзя доверять аудиту",
+   "detection_by_code": "verify-chain журнала + якорь в основную цепочку",
+   "candidate_mitigations_not_decisions": "хеш-цепочка журнала; периодический якорь (хеш хвоста) в события DOM",
+   "negative_control": "изменить байт в старой записи → verify падает с указанием позиции"
+  },
+  {
+   "id": "F-20",
+   "where": "S0/S4",
+   "failure": "Конкуренция писателей SQLite (воркер куратора + MCP-процессы) при BEGIN IMMEDIATE и busy_timeout=2000",
+   "effect": "SQLITE_BUSY у agent-вызовов",
+   "detection_by_code": "доля BUSY/латентность dom_submit",
+   "candidate_mitigations_not_decisions": "куратор пишет короткими транзакциями; отдельный writer-lane; чтение — отдельным read-only соединением",
+   "negative_control": "N процессов submit + воркер → 0 отказов dom_submit сверх базовой линии"
+  },
+  {
+   "id": "F-21",
+   "where": "S4/S8",
+   "failure": "Дубль-проверка как oracle существования (A2: возврат с требованием обосновать отличия от дублируемого)",
+   "effect": "Агент AA узнаёт, что в AB есть такой же клайм",
+   "detection_by_code": "ответ submit при совпадении с невидимым клаймом идентичен ответу при отсутствии совпадения (код, размер, время)",
+   "candidate_mitigations_not_decisions": "сравнивать только с видимым AA; невидимое совпадение уходит во внутреннюю очередь без сигнала",
+   "negative_control": "AA подаёт точную копию AB-only клайма → ответ байт-в-байт равен ответу на уникальный клайм"
+  },
+  {
+   "id": "F-22",
+   "where": "S4",
+   "failure": "Утечка текста между ветками через общий контекст LLM (кэш/память/логи провайдера)",
+   "effect": "AB-текст попал в вывод для AA",
+   "detection_by_code": "канареечный токен только в AB; поиск в любом AA-доступном выводе",
+   "candidate_mitigations_not_decisions": "партиции видимости; один кейс — одна партиция; запрет общего state между кейсами",
+   "negative_control": "токен-канарейка из AB не встречается ни в одном AA-only выводе (все поверхности V-*)"
+  },
+  {
+   "id": "F-23",
+   "where": "S0..S8",
+   "failure": "Сбой записи самого журнала (диск, lock)",
+   "effect": "Действие произошло без следа",
+   "detection_by_code": "fail-closed: нет записи в журнал → нет действия",
+   "candidate_mitigations_not_decisions": "журнал пишется ДО побочного эффекта (attempt-first)",
+   "negative_control": "заблокировать журнал → ни LLM-вызова, ни submit"
+  },
+  {
+   "id": "F-24",
+   "where": "S1/S2",
+   "failure": "Взрыв кандидатов O(n²) на росте корпуса",
+   "effect": "Стоимость и очередь",
+   "detection_by_code": "число пар/проход vs кап",
+   "candidate_mitigations_not_decisions": "блокирование по индексу/партиции, потолок пар на проход",
+   "negative_control": "корпус ×10 → пары ≤ кап, остаток в backlog с видимой метрикой"
+  }
+ ],
+ "visibility_map": [
+  {
+   "id": "V-01",
+   "surface": "куратор: вход (case pack)",
+   "what_can_leak": "Тексты/ID чужой ветки в промпте, затем в выводе для AA",
+   "via_fields": "pack.members[], rationale",
+   "e2e_check": "кейс из партиции {AA}; в БД есть AB-only клайм с канарейкой",
+   "expected": "pack не содержит ни одного AB-id/текста; канарейка не в промпте",
+   "physical_evidence": "сохранённый prompt (хеш + содержимое) и grep канарейки"
+  },
+  {
+   "id": "V-02",
+   "surface": "куратор: вывод (proposal/rationale)",
+   "what_can_leak": "Цитата или пересказ AB-текста; факт существования предложения «слить с AB»",
+   "via_fields": "rationale, cited_record_ids, relation",
+   "e2e_check": "кросс-веточный кейс (привилегированный контур) → публикация в AA-only",
+   "expected": "в AA-only виден только кандидат, построенный из AA-видимых данных; AB-ссылок нет",
+   "physical_evidence": "сырой MCP text+structured ответ AA; grep канарейки/AB-uuid"
+  },
+  {
+   "id": "V-03",
+   "surface": "трибунал: ArgumentArtifacts, агрегат, диссенты",
+   "what_can_leak": "Роль скептика/адвоката цитирует скрытые источники; escalation_seed раскрывает тему",
+   "via_fields": "argument text, cited_evidence_refs, escalation_seed",
+   "e2e_check": "трибунал на кросс-веточном кейсе; вывод в AA-канал",
+   "expected": "в AA-канал попадает только отфильтрованный итог без seed/цитат вне гранта",
+   "physical_evidence": "артефакты ролей на диске + AA-ответ; diff"
+  },
+  {
+   "id": "V-04",
+   "surface": "журнал куратора",
+   "what_can_leak": "Записи с чужими ID/хешами/счётчиками читаются любым вызывающим",
+   "via_fields": "entries.*, case_id, members",
+   "e2e_check": "чтение журнала без union-гранта",
+   "expected": "журнал не доступен через публичные dom_* для агентов; для оператора — отдельный канал",
+   "physical_evidence": "список публичных инструментов (tools/list) и попытка чтения"
+  },
+  {
+   "id": "V-05",
+   "surface": "монитор",
+   "what_can_leak": "Метрики по веткам (очередь AB=5) раскрывают существование/активность скрытой ветки",
+   "via_fields": "per-branch counters, queue_by_branch",
+   "e2e_check": "запрос статуса монитора вызывающим AA-only",
+   "expected": "AA видит только свой scope-агрегат (или ничего); оператор — отдельным каналом",
+   "physical_evidence": "ответ монитора под грантом {AA} при ненулевой активности AB"
+  },
+  {
+   "id": "V-06",
+   "surface": "счётчики очередей/водяные знаки",
+   "what_can_leak": "«N скрытых», глобальный seq, курсор, размер очереди",
+   "via_fields": "pending_count, watermark, next_cursor",
+   "e2e_check": "до/после засева AB-клайма читать AA-статус",
+   "expected": "все числа AA идентичны до и после засева (не зависят от AB)",
+   "physical_evidence": "два снимка ответа, побайтное сравнение"
+  },
+  {
+   "id": "V-07",
+   "surface": "граф похожести",
+   "what_can_leak": "Соседи, score, количество рёбер, пагинация, глубина 1..3 через общий узел",
+   "via_fields": "neighbors[], score, degree, cursor",
+   "e2e_check": "depth=1..3 с общим узлом в AB; AA-only",
+   "expected": "каждый хоп авторизуется заново; общий узел не транзитивный грант; счётчики не глобальные (RS003 proto_scope_graph)",
+   "physical_evidence": "ответы для depth=1,2,3; сравнение с эталоном «AB отсутствует»"
+  },
+  {
+   "id": "V-08",
+   "surface": "keywords-индекс (K1/K2/K3)",
+   "what_can_leak": "Автодополнение/частоты/idf/«0 результатов» против «скрыт»; keyword на связи, ведущей в AB",
+   "via_fields": "hit_count, suggestions, df/idf, edge.keywords",
+   "e2e_check": "искать ключевое слово, существующее только в AB",
+   "expected": "результат идентичен ситуации «слова нет»; словарь/статистика построены по видимому",
+   "physical_evidence": "ответы поиска с AB-токеном и без него"
+  },
+  {
+   "id": "V-09",
+   "surface": "сообщения об отказах",
+   "what_can_leak": "Коды вида DUPLICATE_OF/STALE_REVIEW/CONFLICT с id или именем ветки; различие кодов/размера/времени",
+   "via_fields": "error.code, message, errors[].path",
+   "e2e_check": "вызывать submit/админ-пути на объекты AB и несуществующие",
+   "expected": "одинаковый домен-отказ SCOPE_DENIED/REJECTED для «нет» и «чужое»",
+   "physical_evidence": "сравнение байт и времени ответа"
+  },
+  {
+   "id": "V-10",
+   "surface": "дубль-проверка при dom_submit",
+   "what_can_leak": "Правило A2 «обоснуй отличие от существующего» на чужом клайме = oracle",
+   "via_fields": "errors, distinguishes_from, duplicate_of",
+   "e2e_check": "AA подаёт копию AB-only клайма",
+   "expected": "ответ идентичен ответу на уникальный клайм; сопоставление с невидимым — только во внутренней очереди",
+   "physical_evidence": "байт-в-байт сравнение ответов"
+  },
+  {
+   "id": "V-11",
+   "surface": "YAML export / OMH outbox",
+   "what_can_leak": "Результаты курации и dependencies уходят в экспорт/OMH-evidence с чужими ключами (класс AU004-F-01)",
+   "via_fields": "exports/*.yaml, outbox payload",
+   "e2e_check": "grep экспорта AA на AB-ключи после появления кросс-веточных событий",
+   "expected": "нет AB-ключей/ID в байтах экспорта и payload",
+   "physical_evidence": "runtime-экспорт + grep"
+  },
+  {
+   "id": "V-12",
+   "surface": "read_snapshot/revisions после курации",
+   "what_can_leak": "Кураторская запись в AB сдвигает ревизию; AA видит смену head",
+   "via_fields": "revisions, chain_head",
+   "e2e_check": "курация в AB между двумя чтениями AA",
+   "expected": "AA-снимок не меняется от действий в AB",
+   "physical_evidence": "два чтения AA до/после"
+  },
+  {
+   "id": "V-13",
+   "surface": "метрики стоимости/использования",
+   "what_can_leak": "Расход токенов по веткам = сигнал активности AB",
+   "via_fields": "cost_by_branch, tokens",
+   "e2e_check": "публичный/агентный доступ к cost-метрикам",
+   "expected": "только агрегат оператора",
+   "physical_evidence": "список инструментов"
+  },
+  {
+   "id": "V-14",
+   "surface": "провайдерские логи/кэш промптов LLM",
+   "what_can_leak": "Кросс-веточный pack оказывается у внешнего провайдера",
+   "via_fields": "(вне DOM)",
+   "e2e_check": "анализ маршрута данных",
+   "expected": "политика egress (NU-C-04); кросс-веточный контур — только допустимый провайдер",
+   "physical_evidence": "конфигурация + сетевая трасса (не снималась)"
+  }
+ ],
+ "visibility_privileged_contour": {
+  "question": "Могут ли ступени кросс-веточного сопоставления работать в привилегированном контуре и публиковать только кандидат?",
+  "answer_analysis": "Возможно при выполнении ВСЕХ условий (иначе класс TD19 повторится): (1) отдельный principal/процесс с union-грантом, у которого нет канала вывода агентам; (2) выход — внутренний кандидат с видимостью union; в AA-only публикуется ТОЛЬКО после допуска и фильтра, построенный из AA-видимых данных — rationale, написанный по тексту AB, публиковать нельзя; (3) допуск кросс-веточного кандидата требует ревьюера с union-обзором (кто — NU-C-02) либо раздельного допуска каждой стороны; (4) сам факт кандидата — тоже утечка, поэтому статусы/счётчики кандидатов не публичны; (5) внешний провайдер LLM получает union-текст — вопрос egress (NU-C-04). Оставшееся неопределённым: безопасная форма кросс-веточного результата для AA без раскрытия AB (например, «есть уточнение в неназванной ветке») — формально это утечка существования, т.е. не допустимо по правилу scope-first AU004-F-01 («ключи чужих веток УБИРАЮТСЯ, не маскируются»).",
+  "status": "ГИПОТЕЗА заказчика/оркестратора E2 — подтверждена как возможная при условиях; требует RS005 Q-C-07."
+ },
+ "keywords_simulation_input": {
+  "decision_of_customer": "К1/К2/К3 НЕ выбирать; выбор по симуляции с жёстким тестированием (msg 6661; R-18). Этот раздел — ВХОД для плана симуляции, не план реализации и не выбор.",
+  "arms": [
+   {
+    "id": "K1",
+    "def": "keywords — свойство клайма",
+    "needs": "индекс по клайму; дубль-проверка и поиск по теме естественны",
+    "product_state": "поле НЕ реализовано (SEARCH/keywords NOT_IMPLEMENTED)"
+   },
+   {
+    "id": "K2",
+    "def": "keywords — свойство связи",
+    "needs": "граф/API связей; без графа нет носителя",
+    "product_state": "граф/линк-инструментов нет (12 инструментов, DECISION_BRIEF §0)"
+   },
+   {
+    "id": "K3",
+    "def": "оба",
+    "needs": "два индекса; риск расхождения словарей",
+    "product_state": "нет"
+   },
+   {
+    "id": "K0_control",
+    "def": "контрольная рука БЕЗ keywords (лексика/sha256/граф без keywords) — предложение аналитика, не решение заказчика",
+    "needs": "измерить, сколько keywords вообще добавляют",
+    "product_state": "-"
+   }
+  ],
+  "note_arms_not_simulable_on_product": "Ни одна рука не реализована в продукте; симуляция идёт на отдельном стенде (кодовые индексы поверх экспорта допущенных клаймов), иначе измеряется не вариант, а отсутствие фичи.",
+  "scenarios": [
+   {
+    "id": "SC-01",
+    "name": "подача нового клайма агентом",
+    "from_real_flow": "dom_submit (admission.submit) → review → admit",
+    "checks": "дубль-кандидаты на подаче; ответ без утечки"
+   },
+   {
+    "id": "SC-02",
+    "name": "уточнение существующего (A2: вход = старый клайм)",
+    "from_real_flow": "refinement (NOT_IMPLEMENTED) — на стенде",
+    "checks": "находит ли рука предка и текущие tips"
+   },
+   {
+    "id": "SC-03",
+    "name": "дубль-проверка перед подачей",
+    "from_real_flow": "A2 правило возврата",
+    "checks": "полнота/точность дублей; ответ не oracle"
+   },
+   {
+    "id": "SC-04",
+    "name": "поиск клайма по теме",
+    "from_real_flow": "GAP SEARCH",
+    "checks": "recall@k/precision@k; различия К1/К2"
+   },
+   {
+    "id": "SC-05",
+    "name": "поиск связи по смыслу",
+    "from_real_flow": "GAP LINKS",
+    "checks": "К2/К3 преимущество на связях"
+   },
+   {
+    "id": "SC-06",
+    "name": "скрытый keyword из другой ветки",
+    "from_real_flow": "TD19/AU004-F-01 класс",
+    "checks": "0 утечек в подсказках/счётчиках/результатах"
+   },
+   {
+    "id": "SC-07",
+    "name": "отзыв keyword append-only",
+    "from_real_flow": "events property/archive",
+    "checks": "поведение отзыва, исторический поиск до/после"
+   },
+   {
+    "id": "SC-08",
+    "name": "исторический поиск на ревизии",
+    "from_real_flow": "dom_query(revision)",
+    "checks": "индекс as-of revision; стоимость"
+   },
+   {
+    "id": "SC-09",
+    "name": "схождение 2–4 уровней (триггер ревью)",
+    "from_real_flow": "converge (projections.py:46)",
+    "checks": "сколько кандидатов-схождений находит каждая рука"
+   },
+   {
+    "id": "SC-10",
+    "name": "OMH-поток: пункт плана → клайм → обновление плана",
+    "from_real_flow": "RS004 pin_behind",
+    "checks": "поиск по пину; устаревание"
+   }
+  ],
+  "metrics": {
+   "retrieval": [
+    "recall@k и precision@k дублей/связей на gold",
+    "MRR",
+    "доля 'insufficient' кейсов, где рука не дала кандидатов"
+   ],
+   "safety": [
+    "утечки: число AB-канареек в AA-only выводах (цель 0) по каждой поверхности V-*",
+    "oracle-тест: различимость ответов 'совпадение есть/нет' (побайтно, по времени)"
+   ],
+   "cost": [
+    "размер индекса",
+    "время построения/запроса",
+    "число LLM-кейсов на 1000 клаймов",
+    "₽ на 1000 клаймов"
+   ],
+   "consistency": [
+    "расхождение словарей (К3): доля keyword, различающихся на клайме и на связи",
+    "стабильность при отзыве (append-only)"
+   ],
+   "downstream": [
+    "доля ложных 'same' и ложных 'differs' после куратора при данной руке",
+    "доля кейсов, ушедших в трибунал"
+   ]
+  },
+  "criteria_fixed_before_run": "Метрики, веса, пороги успеха и порядок сценариев фиксируются и хешируются ДО прогона (BRIEF §следствия 2); сравнение парное на одном корпусе; одинаковая модель куратора и параметры во всех руках; результат К-выбора принимает заказчик по отчёту (needs_user NU-C-01).",
+  "gold_corpus": {
+   "labels": [
+    "same",
+    "differs",
+    "complementary",
+    "insufficient",
+    "related-by-topic (для поиска)",
+    "unrelated"
+   ],
+   "candidate_sources": [
+    {
+     "id": "G-1",
+     "name": "F:\\AnalisysDataSet (read-only)",
+     "use": "реальные статьи: tags/keywords как свойство заметки, related-блок как типизированные связи — независимый от DOM корпус",
+     "caveats": "Я F:\\ НЕ читал (доступ потребовал разрешения, не получено). Известные дефекты по AN003/RS003 (синтетические пробы proto_f_probe.js): parseNumeric теряет знак, 0→null, 540 K = 540 °C, '1e3'→1, '500-600'→500, дубли тегов считаются дважды (4.6 vs 4.4). Использовать как ДАННЫЕ, не как скорер."
+    },
+    {
+     "id": "G-2",
+     "name": "Синтетика с истиной по построению",
+     "use": "базовые клаймы + детерминированные мутации: перестановка слов/регистр/пробелы (same); смена числа, знака, единицы (K↔°C), отрицания, области применимости (differs); расщепление на два аспекта (complementary); обрезка контекста (insufficient)",
+     "caveats": "Истина — из оператора мутации, не из LLM; нужно проверить реалистичность (риск «слишком чистых» пар)"
+    },
+    {
+     "id": "G-3",
+     "name": "Размеченная вручную выборка заказчиком/экспертом",
+     "use": "малый адъюдицированный набор для калибровки G-2 и проверки G-1",
+     "caveats": "Стоимость труда; фиксировать инструкцию разметки"
+    },
+    {
+     "id": "G-4",
+     "name": "Разметка другой моделью/семейством + разрешение разногласий человеком",
+     "use": "расширение G-3",
+     "caveats": "Исключить семейство оцениваемого куратора"
+    }
+   ],
+   "avoid_same_llm_labeling": [
+    "истина по построению (G-2) и ручная (G-3) — первичны",
+    "G-4 только модель ДРУГОГО семейства, чем куратор/трибунал, и человек на расхождениях",
+    "выдержанный (frozen) тест-сет, хеш до прогона; dev/test разделены; куратор не видит gold",
+    "сообщать доверительные интервалы по согласию разметчиков"
+   ]
+  },
+  "confounders": [
+   "одинаковая модель/температура/промпт между руками",
+   "K2 требует граф (стенд-заглушка) — разница может быть артефактом заглушки",
+   "порядок кейсов",
+   "рост корпуса во времени"
+  ]
+ },
+ "convergence_difficulties": [
+  {
+   "id": "CD-01",
+   "difficulty": "Совпадение смысла — суждение, не вычисление; код DOM умеет только sha256-равенство",
+   "source": "D-20; BRIEF:78",
+   "check": "Проверка: любой 'same' кроме байт-равенства имеет запись суждения (кто/модель/ревьюер)"
+  },
+  {
+   "id": "CD-02",
+   "difficulty": "Автосхлопывание «последние 2–4 уровня похожи» может скрыть реальное отличие: число уровней = ТРИГГЕР ревью, не критерий",
+   "source": "BRIEF:79; STM:B",
+   "check": "Проверка: пара с минимальным значимым отличием не схлопывается (F-12)"
+  },
+  {
+   "id": "CD-03",
+   "difficulty": "converge — булев latch ветки, без вектора ревизий/критерия/supersedes; отзыв невозможен",
+   "source": "D-08; BRIEF:80; ESC-02",
+   "check": "Проверка: схема converge содержит vector, criteria_digest, supersedes; повторное сведение не перетирает"
+  },
+  {
+   "id": "CD-04",
+   "difficulty": "merges ≠ converge: merges = relation между tips одного клайма (n-ary); converge = событие уровня ветки (вектор ревизий + criteria_digest + supersedes)",
+   "source": "AN004 ESC-02; REGISTRY Q-L2-04",
+   "check": "Проверка: какое событие создаёт куратор для какого случая — таблица соответствия"
+  },
+  {
+   "id": "CD-05",
+   "difficulty": "Правдивость distinguishes_from код не проверяет; форму принудить можно, правду — только независимый ревьюер",
+   "source": "BRIEF:81",
+   "check": "Проверка: допуск без ревьюера невозможен"
+  },
+  {
+   "id": "CD-06",
+   "difficulty": "«Агент не читал» = расхождение доставленного context pack (хеш) и написанного. ПРОВЕРЕНО: таблицы context-pack в DDL НЕТ; delivery_attempts относится к outbox-интентам, а не к чтению (D-14, D-16)",
+   "source": "BRIEF:81 — неточно",
+   "check": "Проверка: без новой таблицы/события доставки пака сигнал не вычислим"
+  },
+  {
+   "id": "CD-07",
+   "difficulty": "Что такое «одно и то же»: текст, смысл, основания, область применимости, числовой допуск, единицы",
+   "source": "NU-C-03",
+   "check": "Проверка: criteria_digest однозначно задаёт критерий; изменение критерия ≠ тот же случай"
+  },
+  {
+   "id": "CD-08",
+   "difficulty": "Транзитивность/кластеры: A~B, B~C, но A≁C",
+   "source": "-",
+   "check": "Проверка: кластер = множество пар с явными рёбрами, не транзитивное замыкание"
+  },
+  {
+   "id": "CD-09",
+   "difficulty": "Устаревание сведения при появлении новой версии члена (stale convergence)",
+   "source": "D-02 (STALE_REVIEW аналог)",
+   "check": "Проверка: новая версия члена делает сведение 'stale', не молча 'valid'"
+  },
+  {
+   "id": "CD-10",
+   "difficulty": "Причинный порядок: сравнение server_time достаточно и детерминировано (Q-L2-06), но тики совпадают",
+   "source": "REGISTRY Q-L2-06",
+   "check": "Проверка: равенство времени обнаруживается явно"
+  },
+  {
+   "id": "CD-11",
+   "difficulty": "Видимость: кросс-веточное сведение неизбежно трогает 2 ветки",
+   "source": "V-02, V-10",
+   "check": "Проверка: привилегированный контур + публикация кандидата (см. visibility_privileged_contour)"
+  },
+  {
+   "id": "CD-12",
+   "difficulty": "Кто «производитель» и под каким principal (submit-only), и кто допускает",
+   "source": "D-04",
+   "check": "Проверка: curator не может admit"
+  },
+  {
+   "id": "CD-13",
+   "difficulty": "Стоимость O(n²) пар и кворум трибунала",
+   "source": "F-24",
+   "check": "Проверка: кап пар"
+  },
+  {
+   "id": "CD-14",
+   "difficulty": "Воспроизводимость LLM-суждения задним числом",
+   "source": "F-08",
+   "check": "Проверка: хранение входа/промпта/модели/ответа"
+  },
+  {
+   "id": "CD-15",
+   "difficulty": "Как «два-три уровня ветвей» мапятся на дерево: уровни глубины внутри клайма (family) vs между ветками AA/AB",
+   "source": "STM:A2,A4",
+   "check": "Проверка: определение 'уровень' зафиксировано до реализации"
+  }
+ ],
+ "convergence_fields": {
+  "merges (tips одного клайма)": [
+   "family_id",
+   "members[] = (record_id, sha256, revision)",
+   "relation = merges",
+   "reason_code",
+   "distinguishes_from? (если не merge)",
+   "actor/principal",
+   "server_time"
+  ],
+  "converge (событие ветки)": [
+   "branch",
+   "revision_vector{branch:rev}",
+   "criteria_digest",
+   "supersedes (предыдущее converge)",
+   "relation ∈ same|differs|complementary|insufficient (для кейса) / итог схождения",
+   "members[]",
+   "basis_case_id (ссылка в журнал курации)",
+   "expected_branch_revision",
+   "actor + reviewer (другой root)",
+   "server_time",
+   "visibility/applicability"
+  ],
+  "trigger_vs_criterion": {
+   "trigger_of_review (достаточно для постановки в очередь)": [
+    "число уровней ≥ N",
+    "близость score в полосе",
+    "пересечение keywords",
+    "метка графа"
+   ],
+   "criterion (необходимо для допуска)": [
+    "все record_id/sha256 валидны и head-актуальны",
+    "нет ссылок вне партиции видимости",
+    "есть зафиксированная атака и ответ (не ложная сходимость)",
+    "независимый допуск другим root",
+    "criteria_digest совпадает с действующим"
+   ]
+  },
+  "store_per_case": [
+   "case_id = sha256(canonical(input_pack))",
+   "input_pack (или sha256 + ссылка) и members{record_id, sha256, revision}",
+   "prompt_template_sha256, system+user render sha256",
+   "model_id, provider, параметры (temperature, seed, max_tokens)",
+   "raw_response (blob) + sha256, parse_result, validator_result+reason_codes",
+   "attempt_no, latency, tokens, cost",
+   "tribunal: roles, per-role prompt/model/response sha, aggregate",
+   "server_time, worker_id, lease_id"
+  ]
+ },
+ "logging_requirements": {
+  "actions": [
+   {
+    "id": "LG-01",
+    "action": "хук увиден (hook_seen) — для метрики пропусков",
+    "fields": "hook_name, session/task id (метаданные), server_time"
+   },
+   {
+    "id": "LG-02",
+    "action": "тик накопителя / сдвиг водяного знака",
+    "fields": "watermark_from/to, count, trigger_kind (hook|timer|startup|threshold), batch_id"
+   },
+   {
+    "id": "LG-03",
+    "action": "результат каждой ступени фильтрации",
+    "fields": "stage, counts in/out, algorithm_version, config_digest (БЕЗ содержимого клаймов)"
+   },
+   {
+    "id": "LG-04",
+    "action": "создание кейса",
+    "fields": "case_id, members{id,sha256,revision}, партиция видимости, criteria_digest"
+   },
+   {
+    "id": "LG-05",
+    "action": "каждый LLM-вызов: attempt → observation",
+    "fields": "model, provider, prompt_sha, params, attempt_no, outcome (ok|429|timeout|5xx|parse_fail|ref_invalid), tokens, cost, latency"
+   },
+   {
+    "id": "LG-06",
+    "action": "решение валидатора/код-ворот",
+    "fields": "reason_codes, accept|reject"
+   },
+   {
+    "id": "LG-07",
+    "action": "созыв трибунала и каждый ход",
+    "fields": "trigger_reason, role, model, response_sha, aggregate, dissent flags"
+   },
+   {
+    "id": "LG-08",
+    "action": "submit/review/admit от курации",
+    "fields": "candidate_id, intent_digest, principal, root — уже пишется (transactions/reviews/idempotency/events)"
+   },
+   {
+    "id": "LG-09",
+    "action": "dead-letter / повтор / breaker open-close",
+    "fields": "причина, число попыток, время"
+   },
+   {
+    "id": "LG-10",
+    "action": "ручное управление (пауза/возобновление/override)",
+    "fields": "кто, когда, причина — append-only события"
+   },
+   {
+    "id": "LG-11",
+    "action": "смена версии промпта/модели/конфига",
+    "fields": "старый→новый sha"
+   },
+   {
+    "id": "LG-12",
+    "action": "алерты монитора и их подтверждение",
+    "fields": "metric, level, value, threshold"
+   },
+   {
+    "id": "LG-13",
+    "action": "проверки цепочки журнала (verify_chain)",
+    "fields": "результат, позиция разрыва"
+   },
+   {
+    "id": "LG-14",
+    "action": "отказы доступа (Denied) к поверхностям курации",
+    "fields": "код, principal (без чужих ID)"
+   },
+   {
+    "id": "LG-15",
+    "action": "retention/архивация (если разрешена)",
+    "fields": "tombstone с хешем удалённого — удаление без следа запрещено"
+   }
+  ],
+  "design": {
+   "where_options_not_decided": [
+    "A) та же SQLite: отдельное семейство таблиц curation_* со СВОЕЙ хеш-цепочкой + периодический якорь хвоста в основную цепочку (events)",
+    "B) строки журнала в events (kind=curation_*): единая цепочка, но попадают в fold проекции ветки (D-09), делят BEGIN IMMEDIATE (D-12), ломают список kinds (D-06)",
+    "C) отдельный файл SQLite/JSONL + якоря в основной БД (меньше конкуренции, но два хранилища — риск второго источника правды)"
+   ],
+   "constraints_from_code": [
+    "Новая таблица append-only только при внесении в IMMUTABLE и IMMUTABLE_KEYS (D-10)",
+    "Схема меняется → MigrationRequired (D-13)",
+    "Цепочка events глобальна для всех веток (D-11) — журнал со скрытыми ветками должен быть НЕ читаем агентом (V-04)",
+    "Время — server_time (D-05), не клиентское"
+   ],
+   "link_to_omh_and_factory": "Ключи связки: external_work_ref/external_task_ref из ENVELOPE (dom_contract.py:6), card/todo id в метаданных кейса; зеркальная строка в JSONL по образцу .harness_journal (H-05) и audit-формат фабрики input_hash→decision→output→ts (P-04).",
+   "independent_verification_of_curator_log": [
+    "пересчёт детерминированных ступеней из сохранённых (watermark, config_digest) и сравнение с записанным",
+    "повторный прогон валидатора по сохранённому raw_response (детерминированный код)",
+    "verify chain журнала и якорей",
+    "сверка двунаправленная: каждое допущенное curator-событие ссылается на существующий case_id и наоборот (orphan-детектор)",
+    "сэмпл-перепроверка кейсов ДРУГОЙ моделью/человеком (это измерение качества, не воспроизведение)",
+    "канарейки (засеянные пары с известной истиной) прогоняются периодически вне основного потока"
+   ]
+  }
+ },
+ "monitor_requirements": {
+  "metrics": [
+   {
+    "id": "MR-01",
+    "metric": "возраст самой старой записи очереди по ступеням (p50/p95/max)",
+    "reaction_candidate": "WARNING > T1, BLOCK > T2 (TEST_PARAMETER)"
+   },
+   {
+    "id": "MR-02",
+    "metric": "лаг водяного знака: max(events.seq) − watermark",
+    "reaction_candidate": "WARNING/BLOCK по размеру и возрасту"
+   },
+   {
+    "id": "MR-03",
+    "metric": "дрейф счётчика: хранимый vs пересчёт из events",
+    "reaction_candidate": "любое ненулевое → WARNING; рост → BLOCK"
+   },
+   {
+    "id": "MR-04",
+    "metric": "доля пропущенных хуков: проходов, запущенных таймером при наличии нового, / всех",
+    "reaction_candidate": "информативно; резкий рост → WARNING (хост сломан)"
+   },
+   {
+    "id": "MR-05",
+    "metric": "исходы LLM-вызовов: ok / 429 / timeout / 5xx / parse_fail / ref_invalid (скользящее окно)",
+    "reaction_candidate": "429/timeout > X% → WARNING; breaker open → BLOCK LLM-ступеней"
+   },
+   {
+    "id": "MR-06",
+    "metric": "размер и возраст dead-letter",
+    "reaction_candidate": "WARNING > N; BLOCK при росте"
+   },
+   {
+    "id": "MR-07",
+    "metric": "бюджет: израсходовано / кап (сутки, кейс)",
+    "reaction_candidate": "WARNING 80%, BLOCK 100% (пауза LLM-ступеней)"
+   },
+   {
+    "id": "MR-08",
+    "metric": "расхождение трибунал↔ревьюер и куратор↔ревьюер (acceptance-rate)",
+    "reaction_candidate": "дрейф acceptance-rate за окно → WARNING; резкий → BLOCK + канарейки"
+   },
+   {
+    "id": "MR-09",
+    "metric": "канареечные пары 'differs' (минимальное отличие): доля ложного 'same'",
+    "reaction_candidate": "любой пропуск → WARNING; >порог → EMERGENCY (остановить публикацию curator-результатов)"
+   },
+   {
+    "id": "MR-10",
+    "metric": "канарейка видимости: AB-токен в любом AA-only выводе",
+    "reaction_candidate": "ЛЮБОЕ появление → EMERGENCY (остановить кросс-веточные ступени)"
+   },
+   {
+    "id": "MR-11",
+    "metric": "смены model_id/prompt_sha",
+    "reaction_candidate": "событие + обязательный регресс на канарейках"
+   },
+   {
+    "id": "MR-12",
+    "metric": "рост журнала (байт/сутки) и время verify chain",
+    "reaction_candidate": "WARNING по ёмкости/латентности"
+   },
+   {
+    "id": "MR-13",
+    "metric": "латентность и отказы dom_submit/dom_admit (влияние курации на приём)",
+    "reaction_candidate": "рост относительно базовой → BLOCK куратора, но не приёма"
+   },
+   {
+    "id": "MR-14",
+    "metric": "целостность журнала: результат verify chain и якорей",
+    "reaction_candidate": "разрыв → EMERGENCY"
+   },
+   {
+    "id": "MR-15",
+    "metric": "доля same/differs/complementary/insufficient в окне (энтропия; залипание)",
+    "reaction_candidate": "константный ответ → WARNING"
+   }
+  ],
+  "design": {
+   "mapping_to_health_monitor": "Сохранить идею трёх уровней WARNING→BLOCK→EMERGENCY и права вето (H-14, H-16), НО: не копировать два несогласованных агрегатора (H-15); метрики — очередей/лага/отказов (в health_monitor их нет, H-19); состояние персистентно (в health_monitor его нет); вето действует на ступени КУРАЦИИ и публикацию, а приём клаймов (dom_submit/admit) не блокирует.",
+   "reactions": {
+    "WARNING": "алерт оператору + запись, конвейер работает",
+    "BLOCK": "остановить LLM-ступени (очередь копится), приём и допуск работают",
+    "EMERGENCY": "остановить все curator-originated записи и публикации, сохранить состояние, алерт; возобновление только оператором"
+   },
+   "who_may_stop": "Остановить/возобновить конвейер вправе только оператор/owner через append-only событие паузы (кто/когда/причина) вне MCP-инструментов агентов; автоматический монитор — только BLOCK/EMERGENCY по метрикам. Пауза не требует и не меняет доступ к dom_*. (Кто именно — NU-C-07.)",
+   "operator_vs_AA_only": "Оператор: полные метрики по веткам в отдельном канале (не tools/list агентов). AA-only агент: максимум scope-агрегат по своим клаймам, построенный тем же фильтром, что остальные публичные DTO (V-05, V-06); никаких per-branch очередей и глобальных счётчиков.",
+   "form_options_not_decided": [
+    "отдельный процесс-демон по образцу meta_daemon с lease+heartbeat (H-07)",
+    "раз в такт внутри воркера курации (самонаблюдение — слабее: монитор должен быть независим от наблюдаемого)",
+    "внешний проверяющий скрипт по расписанию (OS task)"
+   ],
+   "thresholds_note": "Все числа — TEST_PARAMETER; значения определяются на симуляции, не выдумываются аналитиком."
+  }
+ },
+ "questions_for_RS005": [
+  {
+   "id": "Q-C-01",
+   "priority": "P1",
+   "topic": "надёжный триггер",
+   "exact_question": "Какая минимальная схема триггера «хук хоста как ускоритель + догоняющий проход + персистентный водяной знак/счётчик в SQLite DOM» гарантирует, что каждый допущенный клайм/событие обработан куратором ровно один раз по эффекту (at-least-once доставка + идемпотентность) при условиях: хук хоста может не сработать, сработать дважды или на каждый ход (on_session_end — per-turn), процесс DOM может быть убит между чтением и записью водяного знака, а допуск идёт параллельно? Какие варианты (таймер/старт/порог счётчика/LISTEN-подобный опрос), с какими параметрами проверки лага, и как доказать отсутствие потерь и дублей?",
+   "why": "Заказчик (A5) предлагает циклы «по хукам и накоплению счётчика». Хуки OMH fail-open, не гарантируют доставку, возвращаемое значение отбрасывается; DOM MCP — пассивный stdio-процесс и его внутренние события хуку не видны.",
+   "sources": [
+    "O-02",
+    "O-04",
+    "O-05",
+    "O-07",
+    "O-09",
+    "O-11",
+    "H-07",
+    "H-08",
+    "D-15",
+    "D-16",
+    "D-12"
+   ],
+   "expected_answer_type": "Таблица вариантов (триггер, гарантия, режимы отказа, стоимость, сложность) + схема таблиц состояния (watermark, batch, lease) + алгоритм догоняющего прохода и идемпотентного batch_id; рекомендация с условиями применимости, без выбора за заказчика.",
+   "uncertainty_type": "engineering",
+   "needs_user": [],
+   "verification": {
+    "action": "Стенд: N клаймов допускаются при (а) полном отключении хуков, (б) дублировании хука ×100, (в) kill -9 воркера на каждой границе ступени, (г) параллельном admit.",
+    "expected": "Все допущенные клаймы обработаны ровно 1 раз по эффекту; lag возвращается к 0 за заданное время; отчёт содержит счётчики 'processed', 'duplicate_suppressed', 'caught_up_by_timer'.",
+    "negative_control": "Намеренно испортить водяной знак (сдвинуть вперёд) → сверка счётчика с пересчётом из events должна обнаружить пропуск; без сверки — тест красный.",
+    "physical_evidence": [
+     "SQL-дамп таблиц состояния до/после",
+     "лог процессов с PID/exit",
+     "журнал hook_seen vs timer_catchup"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-02",
+   "priority": "P1",
+   "topic": "многоступенчатая фильтрация",
+   "exact_question": "Какая многоступенчатая цепочка детерминированной генерации и фильтрации кандидатов на дубль/схождение (точный sha256 → нормализованный текст → лексика/n-gram/MinHash → эмбеддинги → граф/keywords К1/К2/К3 → LLM-куратор) обеспечивает наилучший баланс полноты, точности, стоимости и отказоустойчивости на корпусе клаймов с ветвлением, и где ступень должна ОСТАНОВИТЬСЯ с 'insufficient', а не передавать дальше? Каковы известные режимы ложных пропусков для научного текста (числа, единицы K/°C, знак, отрицание, диапазоны)?",
+   "why": "Заказчик: «несколько ступеней фильтрации и сопоставления». DOM умеет только sha256 (D-20). Ранее найденные дефекты в F-скорере (parseNumeric и др.) показывают, что числовая нормализация — источник ложных 'same'.",
+   "sources": [
+    "D-20",
+    "R-22",
+    "KEYWORDS_SIM",
+    "F-12",
+    "F-24"
+   ],
+   "expected_answer_type": "Сравнительная таблица ступеней с метриками на открытых бенчмарках дубликатов/near-duplicate/paraphrase и на синтетике с мутациями; схема каскада с порогами как TEST_PARAMETER; список обязательных пре-чеков числовых/единичных различий.",
+   "uncertainty_type": "engineering+empirical",
+   "needs_user": [
+    "NU-C-03"
+   ],
+   "verification": {
+    "action": "Прогон каскада на gold-корпусе G-2 (мутации) и G-3: измерить recall/precision каждой ступени и каскада; стоимость.",
+    "expected": "Ни одна пара с мутацией (число/знак/единица/отрицание) не помечена 'same' на ступенях без LLM; отчёт по ступеням.",
+    "negative_control": "Подать пару, различающуюся только единицей (540 K vs 540 °C): ступень, не различающая единицы, должна быть найдена как дефектная.",
+    "physical_evidence": [
+     "таблица пар с метками и решениями ступеней",
+     "стоимость/время по ступеням"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-03",
+   "priority": "P1",
+   "topic": "контракт трибунала",
+   "exact_question": "Каков минимальный типизированный контракт трибунала для задачи «версии A и B (в рамках criteria_digest) — same | differs | complementary | insufficient»: состав и роли (какие из critic/skeptic/methodologist/evidence_auditor/advocate переиспользуются, какие нужны новые), асимметрия информации (что видит каждая роль и как обеспечить, что роли НЕ играет одна модель в одном контексте), антисикофантия, правило кворума/диссента, стоп-условия и эскалация (insufficient → что дальше), и можно ли построить агрегатный вердикт над ArgumentArtifact/1.0 (позиции SUPPORT/CHALLENGE/QUALIFY/OPEN) без нарушения запретов handbook («treat role output as authoritative claim truth»)?",
+   "why": "Существующий tribunal-judge — про истинность клайма и играется одной моделью последовательно; R4-контур работает с целями CLM/QTY/EDG/EVD/SRC и позицией по цели; контракта для пары версий нет.",
+   "sources": [
+    "T-01",
+    "T-03",
+    "T-04",
+    "T-09",
+    "T-11",
+    "T-12",
+    "T-13",
+    "T-14",
+    "T-15",
+    "T-16",
+    "T-17",
+    "T-20",
+    "T-21"
+   ],
+   "expected_answer_type": "Спецификация ConvergenceCase/ConvergenceReport (поля, enum, обязательность) + таблица ролей и вида доказательств + алгоритм агрегации кодом + описание, что переиспользуется из R4 и что нет; варианты, не неявное утверждение API.",
+   "uncertainty_type": "engineering+design",
+   "needs_user": [
+    "NU-C-09"
+   ],
+   "verification": {
+    "action": "Прогнать контракт на синтетическом наборе: пары same/differs/complementary/insufficient + пары с внедрённой инъекцией + пары с единодушным согласием БЕЗ атак.",
+    "expected": "Единогласие без зафиксированной атаки → insufficient/suspicious_unanimity; пары differs с минимальным отличием не получают same.",
+    "negative_control": "Включить режим, где все роли — одна модель с одним контекстом: измеряемая корреляция ошибок должна быть выше, чем при разных семействах; иначе гипотеза о независимости не подтверждена.",
+    "physical_evidence": [
+     "raw ArgumentArtifact по ролям",
+     "агрегат с причинами",
+     "таблица корреляции ошибок ролей"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-04",
+   "priority": "P1",
+   "topic": "LLM-куратор вне транзакции",
+   "exact_question": "Как наиболее отказоустойчиво запускать LLM-куратор вне транзакции записи DOM (очередь с lease/visibility timeout, идемпотентный case_id, backoff c jitter при 429/5xx, dead-letter, circuit breaker, жёсткий бюджет ₽/сутки и ₽/кейс, attempt-first запись как delivery_attempts), чтобы падение, лимит или недоступность провайдера не влияли на dom_submit/dom_review/dom_admit? Где физически исполняется модель (внутри процесса DOM, подагент хоста по handoff-карте как в memory_dreaming, внешний воркер) и как это меняет границу доверия и хранение ключей?",
+   "why": "Заказчик: «внутренние циклы», «по аналогии с внутренними процессами в OMH». OMH сам модель не вызывает (O-10); DOM пассивен (D-01). Недавно пережиты 429 у провайдеров.",
+   "sources": [
+    "O-09",
+    "O-10",
+    "O-12",
+    "D-01",
+    "D-15",
+    "D-16",
+    "T-18",
+    "P-02",
+    "H-07",
+    "H-10",
+    "F-06",
+    "F-07",
+    "F-14"
+   ],
+   "expected_answer_type": "Сравнение 3 моделей исполнения (in-process / host-dispatched / external worker): гарантии, отказы, безопасность, стоимость; параметры очереди и backoff; схема таблиц очереди и dead-letter.",
+   "uncertainty_type": "engineering+security",
+   "needs_user": [
+    "NU-C-04"
+   ],
+   "verification": {
+    "action": "Эмуляция 429 на 100%, таймаутов, kill воркера, нулевого бюджета; измерить влияние на dom_submit/admit.",
+    "expected": "dom_submit/admit p95 не растёт сверх базовой линии; очередь копится и разбирается после восстановления; ни один кейс не потерян и не обработан дважды.",
+    "negative_control": "Если куратор вызывается внутри транзакции admit — тест 429 должен показать зависание/падение приёма (отрицательный контроль красный).",
+    "physical_evidence": [
+     "лог процессов",
+     "измерения latency до/во время/после",
+     "SQL очереди и dead-letter"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-05",
+   "priority": "P1",
+   "topic": "воспроизводимость решений",
+   "exact_question": "Что именно нужно хранить и какие процедуры независимой проверки применимы, чтобы решение LLM-куратора/трибунала о схождении можно было проверить и оспорить задним числом, учитывая принципиальную недетерминированность (temperature, смена версии модели, недоступность модели)? Различие между «воспроизвести» и «проверить»: какой набор (ввод, промпт-версия, модель, параметры, сырой ответ, валидатор) достаточен и когда допустима переоценка другой моделью?",
+   "why": "Заказчик требует логирование и прослеживаемость всех действий. Повторный вызов LLM не восстанавливает прежний ответ.",
+   "sources": [
+    "F-08",
+    "F-13",
+    "LG-05",
+    "P-04",
+    "CONVERGENCE_FIELDS.store_per_case"
+   ],
+   "expected_answer_type": "Минимальная схема записи кейса + процедуры: replay валидатора, сверка двунаправленная, сэмпл-перепроверка; список того, что НЕЛЬЗЯ утверждать о воспроизводимости.",
+   "uncertainty_type": "engineering",
+   "needs_user": [
+    "NU-C-10"
+   ],
+   "verification": {
+    "action": "Взять 20 записанных кейсов; воспроизвести валидацию кодом; повторно вызвать модель 5 раз и измерить расхождение; изменить модель — сравнить.",
+    "expected": "Код-валидатор воспроизводим 100%; расхождение LLM измерено и не скрыто; решение определяется записью, а не повтором.",
+    "negative_control": "Подменить сохранённый ответ в журнале — verify/сверка должна падать.",
+    "physical_evidence": [
+     "записи кейсов с sha256",
+     "результаты повторов",
+     "verify chain"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-06",
+   "priority": "P1",
+   "topic": "защита от инъекций",
+   "exact_question": "Какая комбинация мер (разделение данных и инструкций, структурированный вывод по схеме, отсутствие tool-прав записи у куратора, валидация ссылок по белому списку, канареечные инъекции) наиболее надёжно защищает LLM-куратора и трибунал от prompt-injection из текста клаймов в научном домене, и каков измеримый остаточный риск при инъекции, нацеленной на relation=same и на утечку между ветками?",
+   "why": "Тексты клаймов — недоверенные данные (E7). У куратора по замыслу нет права записи в обход допуска, но он читает текст, который пишет произвольный агент.",
+   "sources": [
+    "F-10",
+    "F-09",
+    "F-22",
+    "D-03",
+    "D-04",
+    "T-13"
+   ],
+   "expected_answer_type": "Перечень атак (прямая, косвенная, через цитаты/ссылки, многошаговая) × меры × метрика успеха атаки; рекомендуемый набор с остаточным риском; минимальный корпус инъекций для regress-теста.",
+   "uncertainty_type": "security+empirical",
+   "needs_user": [],
+   "verification": {
+    "action": "Корпус из ≥ N инъекций в клаймах, включая цель 'пометь same' и 'выведи текст других веток'.",
+    "expected": "Доля поддавшихся = 0 на корпусе; выдуманные record_id отвергнуты; ни один AB-токен не появился в AA-выводе.",
+    "negative_control": "Отключить меру (например, белый список ссылок) — атака должна проходить (контроль чувствительности теста).",
+    "physical_evidence": [
+     "прогон корпуса с исходами",
+     "MCP text+structured выводы"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-07",
+   "priority": "P1",
+   "topic": "защита от утечки между ветками",
+   "exact_question": "Как построить кросс-веточное сопоставление в привилегированном контуре так, чтобы публиковался только кандидат, не раскрывающий существование и содержимое скрытых веток (класс TD19/AU004-F-01), включая: ответ dom_submit на дубль чужого клайма (правило «обоснуй отличия»), статусы и счётчики очередей, графы похожести, keywords-индексы, сообщения об отказах, тайминг-/размер-каналы, журнал и монитор? Какие формальные инварианты (non-interference) проверяемы E2E, и безопасна ли вообще какая-либо форма кросс-веточного результата для AA-only?",
+   "why": "A2: возврат с требованием обосновать отличия от существующего — для чужого клайма это oracle. Заказчик называет «видимость веток» первым в списке (A5). AU004-F-01: ключи чужих веток убираются, не маскируются.",
+   "sources": [
+    "V-01",
+    "V-02",
+    "V-05",
+    "V-06",
+    "V-07",
+    "V-08",
+    "V-09",
+    "V-10",
+    "V-11",
+    "V-12",
+    "D-17",
+    "D-18",
+    "VISIBILITY_PRIVILEGED_CONTOUR",
+    "F-21",
+    "F-22"
+   ],
+   "expected_answer_type": "Модель угроз и инварианты (non-interference по ветке), список поверхностей и проверок, паттерны привилегированного контура (кто читает, кто пишет, что публикуется), оценка допустимости каждой формы вывода.",
+   "uncertainty_type": "security+engineering",
+   "needs_user": [
+    "NU-C-02",
+    "NU-C-06"
+   ],
+   "verification": {
+    "action": "Дифференциальный E2E: два мира (AB-клайм есть / нет); всё, что видит AA, должно совпадать побайтно и по времени в пределах шума на всех поверхностях V-*.",
+    "expected": "Выходы AA идентичны в двух мирах; канареечные токены AB отсутствуют; тайминг не различим статистически.",
+    "negative_control": "Включить намеренно протекающий вариант (например, 'N скрытых связей') — дифференциальный тест должен его поймать.",
+    "physical_evidence": [
+     "парные снимки выходов",
+     "grep канарейки",
+     "замеры времени"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-08",
+   "priority": "P2",
+   "topic": "монитор и алертинг",
+   "exact_question": "Какой минимальный набор метрик, пороги и схема независимого монитора конвейера накопление→куратор→трибунал→допуск (возраст очереди, лаг водяного знака, дрейф счётчика, доля отказов ступеней и 429, dead-letter, расхождение трибунал↔ревьюер, канареечные пары, канарейка видимости, рост журнала) лучше всего подходят для DOM, как избегать ложных тревог и самонаблюдения, и как реализовать право остановки, не блокируя приём клаймов — с учётом того, что health_monitor.py в harness является библиотекой без персистентности и демона?",
+   "why": "A5 «сервис монитор как в фабрике харнесс». health_monitor: 5 каналов качества текста, два несогласованных агрегатора, нет метрик очередей. Демон-прецедент — meta_daemon (lease+heartbeat).",
+   "sources": [
+    "H-07",
+    "H-13",
+    "H-14",
+    "H-15",
+    "H-16",
+    "H-17",
+    "H-18",
+    "H-19",
+    "MONITOR"
+   ],
+   "expected_answer_type": "Таблица метрик (определение, способ измерения, порог-кандидат, реакция, ложноположительные риски), схема процесса (демон vs внешний скрипт), протокол паузы/возобновления, отличие оператор vs AA-only.",
+   "uncertainty_type": "engineering",
+   "needs_user": [
+    "NU-C-07"
+   ],
+   "verification": {
+    "action": "Инъекция сбоев: остановить воркер, 429, рост очереди, порча счётчика, дрейф acceptance-rate, появление канарейки в AA-выводе.",
+    "expected": "Каждая инъекция вызывает ожидаемый уровень за ≤ T; нормальная работа без ложных WARNING на N часов.",
+    "negative_control": "Отключить канал метрики — соответствующая инъекция не должна быть замечена (проверка покрытия).",
+    "physical_evidence": [
+     "журнал алертов с таймстампами",
+     "метрики до/после"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-09",
+   "priority": "P1",
+   "topic": "схема журнала",
+   "exact_question": "Какая схема журнала действий куратора/трибунала/монитора (та же SQLite с отдельным семейством таблиц и собственной хеш-цепочкой + якорь в основной, строки в events, либо отдельное хранилище) лучше всего обеспечивает append-only, независимую проверку, отсутствие второго источника истины, отсутствие утечек между ветками и приемлемую конкуренцию при глобальной хеш-цепочке и BEGIN IMMEDIATE? Какова политика роста/хранения raw-ответов?",
+   "why": "A5 требует логирование и прослеживаемость ВСЕХ действий внутри DOM. Ограничения кода: IMMUTABLE-кортеж, глобальная цепочка events, MigrationRequired, fold проекции по events.",
+   "sources": [
+    "D-09",
+    "D-10",
+    "D-11",
+    "D-12",
+    "D-13",
+    "D-14",
+    "LOGGING_DESIGN",
+    "F-15",
+    "F-19",
+    "F-20",
+    "F-23"
+   ],
+   "expected_answer_type": "Сравнение A/B/C по критериям (целостность, конкуренция, миграция, видимость, стоимость), DDL-эскиз, процедура verify, политика retention (tombstone), влияние на latency admit.",
+   "uncertainty_type": "engineering",
+   "needs_user": [
+    "NU-C-08"
+   ],
+   "verification": {
+    "action": "Нагрузка: N кейсов + параллельные dom_submit; verify chain; ручная порча записи; запрос журнала агентом с грантом {AA}.",
+    "expected": "Порча обнаружена с позицией; admit-latency в пределах бюджета; агент не может читать журнал; UPDATE/DELETE журнала отклоняются триггером.",
+    "negative_control": "Записать журнал вне IMMUTABLE — UPDATE должен проходить (контроль: тест ловит забытую регистрацию таблицы).",
+    "physical_evidence": [
+     "DDL",
+     "результаты verify",
+     "замеры latency"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-10",
+   "priority": "P1",
+   "topic": "тест-план симуляции keywords",
+   "exact_question": "Каков строгий тест-план симуляции K1/K2/K3 (+ контрольная рука K0): сценарии использования агентом и OMH (SC-01..SC-10), метрики (recall/precision дублей и связей, утечки, стоимость, расхождение словарей), размер и состав gold-корпуса, способ разметки без того же LLM (истина по построению, ручная, другая модель + человек), статистика сравнения, меры против смещений (одна модель куратора, заглушка графа для K2), и критерий выбора, фиксируемый ДО прогона?",
+   "why": "A4/R-18: решение заказчика — выбор по симуляции с жёстким тестированием; ни одна рука не реализована в продукте.",
+   "sources": [
+    "KEYWORDS_SIM",
+    "D-17",
+    "R-18",
+    "R-27"
+   ],
+   "expected_answer_type": "Протокол эксперимента: гипотезы, размеры выборок/мощность, схема корпуса и разметки, формула итога, порядок и заморозка, список угроз валидности.",
+   "uncertainty_type": "empirical",
+   "needs_user": [
+    "NU-C-01"
+   ],
+   "verification": {
+    "action": "Пилотный прогон на малом корпусе (G-2) для проверки инструментов теста до полного прогона.",
+    "expected": "Пилот воспроизводим; метрики вычисляются кодом; арка K0 показывает базовую линию.",
+    "negative_control": "Подать намеренно сломанную руку (случайный выбор) — тест обязан показать её худшей по recall/precision.",
+    "physical_evidence": [
+     "frozen gold с sha256",
+     "результаты по рукам",
+     "код метрик"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-11",
+   "priority": "P1",
+   "topic": "ложная сходимость и ложное схлопывание",
+   "exact_question": "Какие детерминированные и статистические детекторы наиболее надёжно ловят (а) ложную сходимость (согласие LLM/ролей без проверки, единогласие без атак), (б) ложное схлопывание, скрывающее реальную правку (в том числе «уточнение №3 похоже на №1, но содержит правку»), и (в) сигнал «агент не читал существующее» (расхождение доставленного пака и написанного)? Какие канареечные пары и пороговые метрики использовать, и какая минимальная новая сущность (доставка context pack с хешем) нужна для сигнала (в) — таблицы такого пака сейчас нет?",
+   "why": "BRIEF:79-81 и ESC-02. Проверка аналитика: context-pack таблицы в DDL нет (D-14), delivery_attempts — про outbox.",
+   "sources": [
+    "CD-02",
+    "CD-06",
+    "F-11",
+    "F-12",
+    "T-05",
+    "D-14",
+    "D-16"
+   ],
+   "expected_answer_type": "Каталог детекторов (вход, ложные срабатывания, стоимость), схема доставки пака и вычисления сигнала, набор канареек.",
+   "uncertainty_type": "engineering+empirical",
+   "needs_user": [
+    "NU-C-03"
+   ],
+   "verification": {
+    "action": "Засеять пары: минимальное отличие (число/единица/отрицание); единогласие без атак; клайм, написанный без чтения пака.",
+    "expected": "Детекторы ловят все засеянные; допустимая доля ложных тревог измерена.",
+    "negative_control": "Убрать детектор — соответствующая засеянная пара должна пройти (контроль покрытия).",
+    "physical_evidence": [
+     "таблица засеянных случаев и исходов"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-12",
+   "priority": "P2",
+   "topic": "независимость ролей и корреляция ошибок",
+   "exact_question": "Насколько независимы ошибки ролей трибунала и куратора при разных схемах (одна модель — разные промпты; разные модели одного семейства; разные семейства; модель + детерминированный код) на задаче «same/differs/complementary/insufficient», и какой минимальный состав даёт реальное снижение ложной сходимости при приемлемой цене? Как это согласуется с фактом, что tribunal-judge.md играет все роли одной моделью последовательно?",
+   "why": "T-03: независимость номинальная. Anti-sycophancy заявлена, но не измерена.",
+   "sources": [
+    "T-02",
+    "T-03",
+    "T-05",
+    "F-11",
+    "F-17"
+   ],
+   "expected_answer_type": "Эмпирическая таблица корреляции ошибок по составам + рекомендация состава по цене/точности.",
+   "uncertainty_type": "empirical",
+   "needs_user": [],
+   "verification": {
+    "action": "Одни и те же 200 размеченных пар на всех составах; измерить попарную корреляцию ошибок и частоту единогласных ошибок.",
+    "expected": "Количественная оценка корреляции; единогласные ошибки отдельно подсчитаны.",
+    "negative_control": "Одинаковые копии модели (идентичные промпты) — корреляция должна быть максимальной (контроль чувствительности).",
+    "physical_evidence": [
+     "таблица пар с ответами ролей"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-13",
+   "priority": "P2",
+   "topic": "конкуренция записи SQLite и схема миграции",
+   "exact_question": "Какая схема записи (отдельный writer-lane, короткие транзакции, отдельный файл для журнала, WAL vs DELETE journal) безопасно допускает фонового воркера куратора рядом с несколькими MCP-процессами DOM при BEGIN IMMEDIATE, busy_timeout=2000 и режиме journal_mode=DELETE, и как добавлять новые append-only таблицы к существующей БД с иммутабельными триггерами и проверкой MigrationRequired без ломки прежних данных?",
+   "why": "D-12/D-13; storage.py требует journal_mode=DELETE и synchronous=FULL.",
+   "sources": [
+    "D-10",
+    "D-12",
+    "D-13",
+    "F-20"
+   ],
+   "expected_answer_type": "Сравнительная таблица режимов (с доказательствами по SQLite), процедура миграции, влияние на гарантии durability.",
+   "uncertainty_type": "engineering",
+   "needs_user": [],
+   "verification": {
+    "action": "N процессов dom_submit + воркер на одном файле; измерить SQLITE_BUSY и latency; миграция на копии БД с данными.",
+    "expected": "0 потерянных записей; доля BUSY в рамках SLO; старые данные читаются.",
+    "negative_control": "Принудительно удерживать писательскую транзакцию дольше busy_timeout — тест должен показать BUSY (контроль).",
+    "physical_evidence": [
+     "лог процессов",
+     "SQL-схемы до/после"
+    ]
+   }
+  },
+  {
+   "id": "Q-C-14",
+   "priority": "P2",
+   "topic": "стоимость и бюджет",
+   "exact_question": "Какая модель стоимости (₽ на 1000 клаймов по ступеням, доля кейсов, уходящих в LLM и в трибунал при заданных порогах) и какие механизмы бюджета (жёсткий кап до вызова, token_budget_per_role, приоритизация очереди, деградация до детерминированных ступеней) нужны, чтобы конвейер оставался управляемым при росте корпуса и 429/ценовых изменениях провайдеров?",
+   "why": "P-02 (1.5₽/claim, 20₽/документ), T-10 (6000 токенов на роль), F-07, F-24.",
+   "sources": [
+    "P-02",
+    "T-10",
+    "F-07",
+    "F-24",
+    "MR-07"
+   ],
+   "expected_answer_type": "Модель стоимости с параметрами и сценариями роста; политика деградации; формулы для кап/приоритета.",
+   "uncertainty_type": "engineering",
+   "needs_user": [
+    "NU-C-04"
+   ],
+   "verification": {
+    "action": "Прогнать каскад на корпусе ×1, ×10; посчитать вызовы и стоимость по ступеням.",
+    "expected": "Стоимость растёт не хуже согласованной оценки; при капе=0 остаются детерминированные ступени.",
+    "negative_control": "Убрать пре-фильтры — число LLM-вызовов должно взорваться (контроль эффекта фильтрации).",
+    "physical_evidence": [
+     "таблица вызовов/стоимости по ступеням"
+    ]
+   }
+  }
+ ],
+ "needs_user": [
+  {
+   "id": "NU-C-01",
+   "question": "Утвердить ДО прогона метрики, веса и критерий выбора K1/K2/K3 (и допустимость контрольной руки K0).",
+   "options": [
+    "A) аналитик/ресерчер предлагают критерий, заказчик утверждает",
+    "B) заказчик задаёт приоритеты (утечки > точность > стоимость)"
+   ],
+   "consequence": "Без заранее зафиксированного критерия результат прогона можно подогнать (смысл решения заказчика пропадёт).",
+   "blocks": "выбор keywords после прогона"
+  },
+  {
+   "id": "NU-C-02",
+   "question": "Кто вправе допускать результат кросс-веточного сведения (видит обе стороны)?",
+   "options": [
+    "A) только owner/оператор с union-обзором",
+    "B) раздельный допуск каждой стороной своей части",
+    "C) авто-допуск после трибунала (небезопасно)"
+   ],
+   "consequence": "A: узкое горло, но проще изоляция; B: меньше риск утечки, сложнее модель; C нарушает 'LLM даёт гипотезы, код/независимый допуск принимает'.",
+   "blocks": "привилегированный контур, R-08"
+  },
+  {
+   "id": "NU-C-03",
+   "question": "Что значит «same»: байт/текст, смысл, смысл+основания, смысл+основания+область применимости; допуски для чисел и единиц?",
+   "options": [
+    "A) строгий (текст+числа+единицы)",
+    "B) смысловой с проверкой чисел кодом",
+    "C) смысл+основания+применимость (дорого)"
+   ],
+   "consequence": "Определяет criteria_digest, цену и долю ложных 'differs'.",
+   "blocks": "CD-07, Q-C-02/11"
+  },
+  {
+   "id": "NU-C-04",
+   "question": "Где допускается исполнять LLM куратора и какой провайдер вправе получать кросс-веточный текст; суточный/кейсовый бюджет (₽)?",
+   "options": [
+    "A) внутри DOM-процесса с ключами",
+    "B) подагент хоста по handoff-карте (как memory_dreaming)",
+    "C) внешний воркер",
+    "D) локальная модель без egress"
+   ],
+   "consequence": "Меняет границу доверия, стоимость, утечки к внешнему провайдеру (V-14).",
+   "blocks": "Q-C-04, Q-C-14"
+  },
+  {
+   "id": "NU-C-05",
+   "question": "Разрешено ли автоприменять низкорисковые результаты (точные дубли по sha256) без независимого ревьюера?",
+   "options": [
+    "A) нет, всегда допуск",
+    "B) да для sha256-равенства внутри одной партиции видимости"
+   ],
+   "consequence": "B снижает нагрузку; риск — ошибки реализации хеш-равенства (нормализация).",
+   "blocks": "S1 пре-фильтр, S7"
+  },
+  {
+   "id": "NU-C-06",
+   "question": "Что отвечать агенту AA, если его новый клайм дублирует клайм невидимой ветки (правило A2 «обоснуй отличия»)?",
+   "options": [
+    "A) ничего не раскрывать: обработать как уникальный и сравнить внутри",
+    "B) общее требование обосновать (раскрывает наличие дубля)",
+    "C) отказ без пояснений (тоже сигнал)"
+   ],
+   "consequence": "B и C — утечка существования (AU004-F-01); A теряет немедленную дубль-блокировку для кросс-веточных случаев.",
+   "blocks": "V-10, F-21"
+  },
+  {
+   "id": "NU-C-07",
+   "question": "Кто оператор монитора, у кого право паузы/возобновления конвейера, куда уходят алерты?",
+   "options": [
+    "A) только заказчик",
+    "B) оператор + автоматический BLOCK/EMERGENCY",
+    "C) любой владелец ветки"
+   ],
+   "consequence": "Определяет аварийную управляемость и риск злоупотребления паузой.",
+   "blocks": "MONITOR_DESIGN.who_may_stop"
+  },
+  {
+   "id": "NU-C-08",
+   "question": "Можно ли архивировать/удалять старые записи журнала куратора и сырые ответы LLM?",
+   "options": [
+    "A) никогда (рост)",
+    "B) архивировать с tombstone-хешем",
+    "C) хранить только sha256 ответа"
+   ],
+   "consequence": "Баланс прослеживаемости и роста БД; C ослабляет независимую проверку.",
+   "blocks": "F-15, Q-C-09"
+  },
+  {
+   "id": "NU-C-09",
+   "question": "Трибунал обязателен для каждого схождения или только по триггеру (низкая уверенность, расхождение сигналов, высокая цена ошибки)?",
+   "options": [
+    "A) всегда",
+    "B) по триггеру",
+    "C) только по запросу ревьюера"
+   ],
+   "consequence": "Стоимость vs риск ложной сходимости.",
+   "blocks": "S5"
+  },
+  {
+   "id": "NU-C-10",
+   "question": "Допустимо ли, что решение куратора невоспроизводимо повторным вызовом (проверка = сверка с записью и перепроверка другой моделью)?",
+   "options": [
+    "A) да",
+    "B) требовать детерминированный режим (ограничивает модели)"
+   ],
+   "consequence": "Определяет требования к провайдеру и хранению.",
+   "blocks": "Q-C-05"
+  },
+  {
+   "id": "NU-C-11",
+   "question": "Подтвердить, что направление «производитель внутри DOM: накопление + курация LLM» — решение, а не гипотеза, и что остальные предложения оркестратора (раздел E) принимаются только после RS005.",
+   "options": [
+    "A) да",
+    "B) прежние варианты (ручное сведение)"
+   ],
+   "consequence": "Меняет объём работ RS005.",
+   "blocks": "R-19"
+  }
+ ],
+ "corrections_to_orchestrator": [
+  {
+   "id": "C-01",
+   "targets": "E1 (хуки)",
+   "verdict": "ПОДТВЕРЖДЕНО И УСИЛЕНО",
+   "detail": "Хуки OMH: 3 обязательных + 7 опциональных; fail-open; хост глотает исключения и отбрасывает возвращаемое значение; on_session_end срабатывает на КАЖДЫЙ ход, а не конец сессии; post_tool_call опционален. DOM-внутренние события хуку не видны (DOM — отдельный stdio-процесс). Не проверено исполнением: срабатывает ли post_tool_call на MCP-инструменты.",
+   "evidence": [
+    "O-01",
+    "O-02",
+    "O-04",
+    "O-05",
+    "O-07",
+    "D-01"
+   ]
+  },
+  {
+   "id": "C-02",
+   "targets": "C (трибунал) и A5 «нет контракта»",
+   "verdict": "НЕПОЛНО/ЧАСТИЧНО НЕВЕРНО",
+   "detail": "В harness не один, а ТРИ контура «трибунала»: (1) agents/tribunal-judge.md (научная верификация; одна модель играет 5 ролей последовательно, T-03); (2) типизированный Python-контур R4 в scripts/researcher/researcher_core (composition/evidence/disclosure/inquiry/dialectic/advocate/argument_graph/provider_binding/live_dialogue; ArgumentArtifact/1.0; DialecticPolicy; EXECUTION_ENVELOPE; привязка провайдеров); (3) code-factory tribunal_trigger (2+ REWORK-раунда). Контракт для ПАР ВЕРСИЙ действительно отсутствует, но контракт трибунала вообще — есть (R4). В C указан только контур (1)+yaml.",
+   "evidence": [
+    "T-01",
+    "T-09",
+    "T-14",
+    "T-15",
+    "T-16",
+    "T-17",
+    "T-18",
+    "T-20",
+    "T-21"
+   ]
+  },
+  {
+   "id": "C-03",
+   "targets": "E3 (ArgumentArtifact)",
+   "verdict": "ОТВЕТ НА ВОПРОС ОРКЕСТРАТОРА",
+   "detail": "ArgumentArtifact — аргумент роли с позицией SUPPORT|CHALLENGE|QUALIFY|OPEN по ЦЕЛИ (CLM/QTY/EDG/EVD/SRC). Для same/differs/complementary/insufficient его можно использовать как слой аргументов ролей, но агрегатный вердикт и сущность 'пара версий' (ConvergenceCase) — новые; цели R4 не включают пару версий. Решение — RS005 Q-C-03.",
+   "evidence": [
+    "T-14",
+    "T-15",
+    "T-17"
+   ]
+  },
+  {
+   "id": "C-04",
+   "targets": "B / DECISION_BRIEF:81 (хеш context pack в delivery_attempts)",
+   "verdict": "НЕ ПОДТВЕРЖДЕНО",
+   "detail": "В DDL нет таблицы доставки context pack; delivery_attempts/observations/acks относятся к outbox-интентам (OMH_EVIDENCE, YAML_EXPORT). Сигнал «агент не читал» без новой сущности не вычислим.",
+   "evidence": [
+    "D-14",
+    "D-15",
+    "D-16"
+   ]
+  },
+  {
+   "id": "C-05",
+   "targets": "C (монитор «как в харнесс» / сервис)",
+   "verdict": "УТОЧНЕНО",
+   "detail": "health_monitor.py — библиотека без демона и персистентности; метрики — стиль текста; два несогласованных агрегатора (H-14 vs H-15); статически вероятный AttributeError на строке 447 (не запускалось). Демон-прецедент — meta_daemon (интервал 10 c, lease+heartbeat); состояние .meta_state давно не обновлялось (saved_at 2026-10-17).",
+   "evidence": [
+    "H-06",
+    "H-07",
+    "H-13",
+    "H-14",
+    "H-15",
+    "H-18",
+    "H-19"
+   ]
+  },
+  {
+   "id": "C-06",
+   "targets": "E4 (журнал в той же БД)",
+   "verdict": "ВОЗМОЖНО, НО С ОГРАНИЧЕНИЯМИ",
+   "detail": "Одна глобальная хеш-цепочка events; fold проекции ветки берёт все events ветки; BEGIN IMMEDIATE — один писатель; новые таблицы append-only только после регистрации в IMMUTABLE/IMMUTABLE_KEYS; схема меняется через MigrationRequired. Журнал в events загрязнит проекцию и поднимет конкуренцию. Варианты A/B/C — RS005 Q-C-09.",
+   "evidence": [
+    "D-09",
+    "D-10",
+    "D-11",
+    "D-12",
+    "D-13"
+   ]
+  },
+  {
+   "id": "C-07",
+   "targets": "E7 (нет прав записи в обход допуска)",
+   "verdict": "ПОДТВЕРЖДЕНО, НО ТРЕБУЕТ ДОБАВЛЕНИЯ",
+   "detail": "В фикстуре ролей нет 'curator'; роль helper имеет submit+review+admit; независимость определяется только строкой root (не аутентификацией, 'Not production authentication'). Нужен отдельный principal с capability только submit и отдельный root, а эта проверка пока не имеет криптографической основы.",
+   "evidence": [
+    "D-03",
+    "D-04"
+   ]
+  },
+  {
+   "id": "C-08",
+   "targets": "E2 (видимость; привилегированный контур)",
+   "verdict": "ВЕРНО, НО НЕ ВСЁ ВИДНО ОРКЕСТРАТОРУ",
+   "detail": "Дополнительно: (а) правило заказчика A2 «вернуть с требованием обосновать отличия» на чужом клайме — само oracle существования (V-10, F-21); (б) статусы очередей, счётчики, тайминг, журнал, монитор, cost-метрики, провайдерские логи — самостоятельные каналы (V-04..V-14); (в) публикация даже 'безымянного' кандидата — утечка по правилу scope-first; (г) AU004-F-01: при первом чтении public_dto.py карты dependencies были ('map','int') без фильтра; к моменту сборки файл изменён параллельным воркером AB004 (тип 'bmap' с фильтром по scope, fail-closed) — изменение зафиксировано (D-17), функционально не проверялось; admission.py/server.py тоже изменились (sha в ledger).",
+   "evidence": [
+    "D-17",
+    "D-18",
+    "V-10",
+    "F-21"
+   ]
+  },
+  {
+   "id": "C-09",
+   "targets": "E5 (лимиты, бюджет)",
+   "verdict": "ПОДТВЕРЖДЕНО",
+   "detail": "В harness есть словарь отказов провайдера (TIMED_OUT/REJECTED/NO_HEALTHY_PROVIDER) и бюджет ₽ с остановкой в runner, но нет retry/backoff/dead-letter/circuit breaker; шаблон 'attempt-first + сверка' есть только в DOM-outbox. Место исполнения LLM не определено (OMH не вызывает модель, DOM пассивен).",
+   "evidence": [
+    "T-18",
+    "T-19",
+    "P-02",
+    "D-15",
+    "D-16",
+    "O-10"
+   ]
+  },
+  {
+   "id": "C-10",
+   "targets": "E6 (keywords как вход ступени; gold)",
+   "verdict": "ПОДТВЕРЖДЕНО С ДОПОЛНЕНИЯМИ",
+   "detail": "(а) нужна контрольная рука K0 без keywords; (б) ни одна рука не реализована (ни поле, ни граф) — симуляция на отдельном стенде; (в) K2 без графа неосуществима — заглушка графа вносит смещение; (г) F:\\AnalisysDataSet мной НЕ читался (доступ в этой среде потребовал разрешения), дефекты скорера взяты из AN003/RS003 (вторичные данные).",
+   "evidence": [
+    "KEYWORDS_SIM",
+    "R-18"
+   ]
+  },
+  {
+   "id": "C-11",
+   "targets": "D (цепочка заказчика)",
+   "verdict": "НЕПОЛНО",
+   "detail": "Не выделены: (1) синхронная детерминированная дубль-проверка при dom_submit vs асинхронная курация; (2) «аналогия с OMH» = memory_dreaming: детерминированный счётчик-триггер + работа модели у хоста, auto-launch отсутствует (O-09..O-12); (3) куда относится монитор (независимый процесс); (4) вопрос, где физически исполняется LLM.",
+   "evidence": [
+    "O-09",
+    "O-10",
+    "O-11",
+    "O-12",
+    "PIPELINE.sync_vs_async"
+   ]
+  },
+  {
+   "id": "C-12",
+   "targets": "B (converge — булев флаг; projections.py:46)",
+   "verdict": "ПОДТВЕРЖДЕНО",
+   "detail": "elif kind=='converge': converged=True; blockers BRANCH_NOT_CONVERGED. Отзыва, вектора и критерия нет.",
+   "evidence": [
+    "D-08"
+   ]
+  },
+  {
+   "id": "C-13",
+   "targets": "C (хуки по памяти core.hooksPath=hooks)",
+   "verdict": "ПОДТВЕРЖДЕНО, НО НЕ ПРИМЕНИМО",
+   "detail": "core.hooksPath=hooks есть (git-хуки коммита/пуша). Они не связаны с поступлением клаймов в DOM и не годятся как триггер накопителя.",
+   "evidence": [
+    "H-01",
+    "H-02",
+    "H-03"
+   ]
+  }
+ ],
+ "not_checked": [
+  "F:\\AnalisysDataSet — не читался: доступ потребовал одобрения, не получено; дефекты скорера взяты из AN003/RS003 (вторичные источники).",
+  "Исходные сообщения сессии (msg 4752/4758/4768/6661/6680) не пересверялись с сессией: цитаты взяты из docs/CURATION_PIPELINE_STATEMENTS_2026-11-08.md (в нём исправлены явные опечатки набора).",
+  "Фактическое срабатывание хуков OMH на MCP-инструменты dom_* не проверялось исполнением (только чтение кода).",
+  "scripts/code-factory/tribunal_trigger.py, observe-hook.js, полное содержимое damage_basket.py/orchestrator_integration.py/merge_protocol.py — не читались построчно.",
+  "Не запускались: трибунал, монитор, health_monitor (статическое наблюдение H-18 не подтверждено запуском).",
+  "Живость демонов фабрики (.meta_state/*daemon*) не проверялась.",
+  "Исправление AU004-F-01 (AB004) в коде появилось во время анализа (public_dto/admission/server изменены) — функционально не проверялось; номера строк admission.py/public_dto.py/server.py привязаны к sha в ledger на момент сборки и могут сместиться.",
+  "runtime/RS003 answers_*.json и RS004 answers_*.json не перечитывались целиком; использованы выводы из DECISION_BRIEF/REGISTRY/AN004 и точечные чтения.",
+  "Живые сеть/провайдеры/стоимости — не использовались (запрещено)."
+ ],
+ "limits": [
+  "Только чтение; продукт/конфиги/Git/сеть/субагенты/OMH delta не затрагивались.",
+  "Пороги монитора и параметры каскада — кандидаты (TEST_PARAMETER), не решения.",
+  "Варианты в карте — не выбор вместо заказчика; K1/K2/K3 не выбраны.",
+  "Вердикты по продукту не выносятся (product_acceptance=false)."
+ ],
+ "remaining": [
+  "Не блокирует RS005: сверка цитат с сессией через session_search, чтение F:\\AnalisysDataSet (при одобрении), исполнительная проверка хуков OMH на dom_* вызовах, чтение tribunal_trigger.py/observe-hook.js."
+ ],
+ "continuation_required": false,
+ "ledger_ref": "runtime/AN005/source_ledger.json",
+ "validation_ref": "runtime/AN005/validation_receipt.json"
+}

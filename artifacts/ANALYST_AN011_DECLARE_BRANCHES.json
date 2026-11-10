@@ -1,0 +1,832 @@
+{
+  "analysis_id": "AN011",
+  "topic": "DECLARE_BRANCHES",
+  "status": "DONE_WITH_LIMITS",
+  "product_acceptance": false,
+  "is_approval": false,
+  "code_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+  "h_items": [
+    {
+      "id": "H7",
+      "reproduced": true,
+      "raw": "runtime/AN011/reproduction_raw.json",
+      "finding": "No custom branch creation; unknown requirements can be admitted but coverage silently ignores them."
+    }
+  ],
+  "root_causes": [
+    {
+      "id": "RC1",
+      "file_line": "mockup/fixtures/__init__.py:4-9",
+      "function": "WORK/TASK/POLICY/package",
+      "why": "One synthetic work/task and a fixed digest encode R1/R2 and AA/AB; not a mutable project registry."
+    },
+    {
+      "id": "RC2",
+      "file_line": "mockup/admission.py:74-86,103-110,155-160,218-224,251-253",
+      "function": "Service.__init__/scope/init/submit/admit",
+      "why": "Grant comes from launch context; all material claims compare against module POLICY/TASK, and outbox targets TASK globally. Declaration authority and branch/task mapping do not exist."
+    },
+    {
+      "id": "RC3",
+      "file_line": "mockup/dom_contract.py:77-79,97,119-120",
+      "function": "validate",
+      "why": "Operations only claims/append; dependencies, applicability and exclude branches explicitly enumerate AA/AB."
+    },
+    {
+      "id": "RC4",
+      "file_line": "mockup/storage.py:49-59,126-133",
+      "function": "Store.initialize",
+      "why": "Binding immutable; only AA/AB heads seeded, no declaration/version tables. Final user_version=2 stamp needs explicit evolution for production policy migration."
+    },
+    {
+      "id": "RC5",
+      "file_line": "mockup/projections.py:55-77",
+      "function": "trace_branch",
+      "why": "Coverage iterates literal R1/R2 and checks only branch-head dependencies, not current criteria policy digest."
+    },
+    {
+      "id": "RC6",
+      "file_line": "mockup/dom_contract.py:7,99-120; mockup/admission.py:157-165",
+      "function": "validate/submit",
+      "why": "requirement_refs only checked as list field; declared membership not checked. CLIENT-ACCEPT claim is admitted in AA but never appears in residual: silent coverage blind spot."
+    },
+    {
+      "id": "RC7",
+      "file_line": "mockup/server.py:36-137,247-275; mockup/ports.py:12-24",
+      "function": "TOOLS/SIGNATURE/main/fixture_context",
+      "why": "No declaration tool or CLI --branches; programmatic Service branches argument is not a model-facing branch creation authority."
+    },
+    {
+      "id": "RC8",
+      "file_line": "mockup/admission.py:291-320; mockup/public_dto.py:100-122,135-179",
+      "function": "Service._trace/public DTO allowlists",
+      "why": "Master convergence assumes AA/AB; new schema/receipt fields must be explicitly added to closed public projection, not merged as arbitrary metadata."
+    }
+  ],
+  "options": [
+    {
+      "id": "A0",
+      "name": "Не делать: оставить демонстрационный набор",
+      "price": {
+        "product_loc": 0,
+        "test_loc": 0,
+        "risk": "low change risk; critical usability blocker remains"
+      },
+      "exact_changes": [],
+      "new_surface": [],
+      "migration": "none",
+      "cold_start": "No steps removed; end-to-end custom branch remains impossible.",
+      "security": "Existing fixed grants remain; unknown requirement coverage blind spot remains.",
+      "decisions": "Does not relax accepted protections; fails real-project usefulness.",
+      "other_h": [
+        "H1/H2/H8 unchanged"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "A1",
+      "name": "Reviewed owner baseline manifest at trusted launch/restart",
+      "price": {
+        "product_loc_estimate": [
+          180,
+          320
+        ],
+        "test_loc_estimate": [
+          120,
+          220
+        ],
+        "risk": "medium; manual redeploy/version drift"
+      },
+      "exact_changes": [
+        "new mockup/policy_registry.py load_manifest/validate_manifest",
+        "mockup/server.py:main adds trusted --baseline-manifest, not caller grant args",
+        "mockup/storage.py:Store.initialize import append-only v0/v1 records, no binding UPDATE",
+        "mockup/admission.py:init/submit/admit/_trace read pinned manifests",
+        "mockup/dom_contract.py:validate and mockup/projections.py:trace_branch replace literals"
+      ],
+      "new_surface": [
+        "baseline_manifest/v1",
+        "parent_policy_digest",
+        "branch_task_map",
+        "policy_version",
+        "POLICY_MISMATCH",
+        "NO_BASELINE"
+      ],
+      "migration": "Preserve legacy digest as v0; add tables; explicit schema marker; existing accepted rows are not rewritten. Launcher verifies independent baseline approval before activation.",
+      "cold_start": "Removes fixture/hash reading if AN009 provisions manifest; author cannot dynamically add branch; two trusted deployments needed per lifecycle.",
+      "security": "Manifest contains only caller-authorized scoped view; trusted launch retains grant ownership; never hand out global manifest with hidden branch IDs/digest.",
+      "decisions": "O1 requires explicit old-policy staleness; O2 provenance preserved; O3 new manifest delivery not auto-acked.",
+      "other_h": [
+        "H1/H2 partially delegated to AN009",
+        "H8 template still needed",
+        "H9 stale review must be explicit"
+      ],
+      "depends_on": [
+        "AN009 baseline provision"
+      ]
+    },
+    {
+      "id": "A2",
+      "name": "Atomic reviewed baseline delta: one branch + one requirement",
+      "price": {
+        "product_loc_estimate": [
+          500,
+          850
+        ],
+        "test_loc_estimate": [
+          250,
+          450
+        ],
+        "measured_experiment": {
+          "added_lines": 168,
+          "removed_lines": 13,
+          "changes": [
+            {
+              "file": "runtime/AN011/prototype/mockup/admission.py",
+              "added_lines": 9,
+              "removed_lines": 6,
+              "total_lines": 572
+            },
+            {
+              "file": "runtime/AN011/prototype/mockup/declarations.py",
+              "added_lines": 152,
+              "removed_lines": 0,
+              "total_lines": 152
+            },
+            {
+              "file": "runtime/AN011/prototype/mockup/dom_contract.py",
+              "added_lines": 4,
+              "removed_lines": 4,
+              "total_lines": 121
+            },
+            {
+              "file": "runtime/AN011/prototype/mockup/projections.py",
+              "added_lines": 3,
+              "removed_lines": 3,
+              "total_lines": 77
+            }
+          ]
+        },
+        "risk": "medium-high: authority, schema, replay and stale-policy surface"
+      },
+      "exact_changes": [
+        "new mockup/policy_registry.py:declare/read/review/admit plus immutable version chain",
+        "mockup/server.py:TOOLS/SIGNATURE/dispatch add dom_declare_baseline and typed declaration routing",
+        "mockup/admission.py:policy/task/requirements, submit/admit/check_references/_trace and outbox task target",
+        "mockup/dom_contract.py:validate parameterized by admitted registry intersect grant",
+        "mockup/projections.py:trace_branch parameterized requirements and candidate policy comparison",
+        "mockup/storage.py:versioned additive migration and immutable keys/triggers",
+        "mockup/public_dto.py:closed declaration DTO, scoped policy snapshot/export"
+      ],
+      "new_surface": [
+        "dom_declare_baseline",
+        "dom_read_declaration",
+        "dom_review_declaration",
+        "dom_admit_declaration",
+        "dom_describe (AN009 interface)",
+        "dom_claim_text (AN009 template interface)",
+        "policy_versions",
+        "branch_task_bindings",
+        "parent_policy_digest",
+        "policy_version",
+        "DECLARATION_FORK",
+        "UNKNOWN_REQUIREMENT",
+        "POLICY_MISMATCH",
+        "STALE_REVIEW"
+      ],
+      "migration": "Legacy binding remains immutable genesis. Backfill registry v0 mapping AA/AB to original digest and task; separate policy-schema marker or version3 with monotone stamp and fail-closed old reader. Preserve candidates.created_at, v2 indexes and scope-bound idempotency. Unknown legacy requirement_refs become explicit LEGACY_UNMAPPED_REQUIREMENT, not deleted facts.",
+      "cold_start": "Measured conditional simulation: 10 public calls, zero actor hashes and envelope assembly; current branch path impossible. At least fixture read, digest computation, envelope/base64 construction and operator source editing are removed from the actor path; trusted launch still needed.",
+      "security": "Declare is not grant issuance. Exact reserved branch/task grants are verified before registry lookup, hashing and collision checks. Per-branch public token, global chain root internal; unauthorized existing/absent paths return same SCOPE_DENIED. Hidden change does not rotate visible scoped token. No L3 query oracle. Timing not proven.",
+      "decisions": "Preserves O1 conservative invalidation, O2 origins, F-02 L1+L2 and independent baseline acceptance. O3 delivery integration not implemented in experiment; no ack is asserted. Does not grant curator admission or OMH closure.",
+      "other_h": [
+        "H1/H2/H8 require AN009 provision/templates",
+        "H5/H6/H10 remain independent reviewer/AN010 trust work",
+        "H9 requires AN012 current/stale presentation",
+        "H11 registry outbox export/pending delivery remains"
+      ],
+      "depends_on": [
+        "AN009 scoped baseline/schema provision",
+        "AN010 candidate reading/identity integration",
+        "AN012 stale-review refresh contract"
+      ]
+    },
+    {
+      "id": "A3",
+      "name": "Typed branch_decl/requirement_decl claims in a scoped control branch",
+      "price": {
+        "product_loc_estimate": [
+          650,
+          1000
+        ],
+        "test_loc_estimate": [
+          350,
+          550
+        ],
+        "risk": "high; bootstrap recursion and accidental universal control visibility"
+      },
+      "exact_changes": [
+        "mockup/dom_contract.py:TYPE_FIELDS/validate add branch_decl and requirement_decl",
+        "mockup/admission.py:submit/admit apply declaration side effects atomically",
+        "mockup/projections.py:snapshot/trace_branch fold control declarations",
+        "mockup/storage.py:control scope and policy history schema",
+        "mockup/server.py and mockup/public_dto.py add typed templates and per-target filtered DTO"
+      ],
+      "new_surface": [
+        "content_type=branch_decl|requirement_decl",
+        "target_branch",
+        "expected_policy_digest",
+        "DECLARATION_FORK",
+        "control-scope grant"
+      ],
+      "migration": "Owner-reviewed control genesis required; no universal service-branch grant. Keep legacy claims unchanged; pinned policy versions required.",
+      "cold_start": "Potentially reuses one submit/review/admit vocabulary, but adds control-branch discovery/bootstrap and H8 typed metadata; no measured improvement yet.",
+      "security": "Grant checked both on control container and each target. Exposing one global control branch leaks registry; must shard control views or use target-scoped records. Global control digest must not act as existence oracle.",
+      "decisions": "No implicit curator acceptance; O1 versioned criteria; no O2 redaction or O3 acknowledgement shortcut.",
+      "other_h": [
+        "More H1/H8 bootstrap steps",
+        "Same H5/H6/H10 boundaries",
+        "AN012 stale criteria needed"
+      ],
+      "depends_on": [
+        "AN009 control bootstrap",
+        "AN010 typed read",
+        "AN012 policy staleness"
+      ]
+    }
+  ],
+  "recommendation": {
+    "option_id": "A2",
+    "scope": "Experimental reviewed one-branch+one-requirement baseline delta; not production implementation authorization.",
+    "source_of_truth": {
+      "OMH": "owner of plan, tasks, acceptance and closure; caller supplies owner-reserved exact codes and external task refs",
+      "DOM": "authority for admitted baseline records and immutable policy lineage, not authority to create OMH tasks",
+      "reviewer": "independent trusted identity accepts baseline change; LLM curator only proposes",
+      "customer": "decides unresolved policy cards; no model auto-closure"
+    },
+    "mvs": [
+      "Reserve exact branch+task grants using trusted launcher",
+      "Propose one branch/requirement delta with expected scoped policy digest",
+      "Independent reviewer reads exact candidate and admits atomically",
+      "Create claim with declared requirement; review/admit with pinned policy",
+      "dom_resume derives dynamic coverage and exposes old-criteria noncurrent state; provenance preserved"
+    ],
+    "depends_on": [
+      "AN009: scoped baseline descriptor and schema/templates, with no public global digest",
+      "AN010: scoped exact candidate content and genuine independent identity",
+      "AN012: old policy/dependency stale reasons and refresh/review lifecycle"
+    ],
+    "interfaces": {
+      "AN009": "ScopedRegistryView{branch,branch_task_ref,policy_version,policy_digest,requirements}; bootstrap receipt must pin this view",
+      "AN010": "TypedCandidateView{candidate_id,intent_digest,payload} scoped before projection; declaration prototype only",
+      "AN012": "CriteriaContext{branch,policy_digest,expected_branch_revision}; policy change marks support noncurrent; refresh requires new review"
+    }
+  },
+  "prototype": {
+    "implemented": true,
+    "path": "runtime/AN011/prototype/",
+    "kind": "stdlib plus existing project venv, copied service and local SQLite; JSON bridge, not MCP",
+    "changed_copy_files": {
+      "added_lines": 168,
+      "removed_lines": 13,
+      "changes": [
+        {
+          "file": "runtime/AN011/prototype/mockup/admission.py",
+          "added_lines": 9,
+          "removed_lines": 6,
+          "total_lines": 572
+        },
+        {
+          "file": "runtime/AN011/prototype/mockup/declarations.py",
+          "added_lines": 152,
+          "removed_lines": 0,
+          "total_lines": 152
+        },
+        {
+          "file": "runtime/AN011/prototype/mockup/dom_contract.py",
+          "added_lines": 4,
+          "removed_lines": 4,
+          "total_lines": 121
+        },
+        {
+          "file": "runtime/AN011/prototype/mockup/projections.py",
+          "added_lines": 3,
+          "removed_lines": 3,
+          "total_lines": 77
+        }
+      ]
+    },
+    "positive": "runtime/AN011/cold_start_raw.json",
+    "negative_controls": "runtime/AN011/negative_controls_raw.json",
+    "checks_passed": 38,
+    "checks_total": 38,
+    "v2_marker_retained": true,
+    "current_source_unchanged": true,
+    "not_implemented": [
+      "Real grant issuer/hot reload and real OMH task creation",
+      "Production v2-to-policy migration and old-reader fail-closed",
+      "Closed MCP declaration DTO transport/output schemas",
+      "Policy-bearing historical YAML export/delivery verification: never claim O3 complete",
+      "General claim H6 content viewer (AN010)",
+      "Policy candidate terminal-rejection/pending history integration with RS009",
+      "AN012 stale pending classification and refresh guidance",
+      "Cross-branch master/convergence vector and semantic fork curator",
+      "Timing noninterference, concurrency/process-kill testing",
+      "Atomic read-snapshot binding across nested policy reads"
+    ]
+  },
+  "cold_start": {
+    "criteria": {
+      "actor": "scripted simulator, not an LLM; only tool descriptions and returned values, no mockup/fixtures/file/hash access",
+      "pass": [
+        "declare exactly one custom branch and requirement",
+        "review through independent launcher-assigned principal/root",
+        "admit declaration before claim",
+        "claim own requirement and admit it",
+        "dom_resume shows that requirement covered with origin and review",
+        "no actor-side hashing or base64/envelope assembly",
+        "at most 12 public calls including reviewer handoff"
+      ],
+      "caveat": "trusted launch grants and initial baseline provision are preconditions, not solved by H7",
+      "baseline": "current custom branch path must fail, no finite end-to-end call count"
+    },
+    "result": {
+      "result": "PASS_CONDITIONAL_SIMULATION",
+      "public_calls": 10,
+      "manual_hashes": 0,
+      "manual_envelope_fields": 0,
+      "covered_requirement": "CLIENT-ACCEPT",
+      "branch": "ZX",
+      "ready_for_owner_review": false
+    },
+    "steps": [
+      {
+        "step": 1,
+        "tool": "dom_describe",
+        "role": "author",
+        "returned_status": "DESCRIBED"
+      },
+      {
+        "step": 2,
+        "tool": "dom_declare_baseline",
+        "role": "author",
+        "returned_status": "RECORDED_DECLARATION"
+      },
+      {
+        "step": 3,
+        "tool": "dom_read_declaration",
+        "role": "reviewer",
+        "returned_status": "DECLARATION"
+      },
+      {
+        "step": 4,
+        "tool": "dom_review_declaration",
+        "role": "reviewer",
+        "returned_status": "DEMO_REVIEWED"
+      },
+      {
+        "step": 5,
+        "tool": "dom_admit_declaration",
+        "role": "reviewer",
+        "returned_status": "DECLARATION_ADMITTED"
+      },
+      {
+        "step": 6,
+        "tool": "dom_describe",
+        "role": "author",
+        "returned_status": "DESCRIBED"
+      },
+      {
+        "step": 7,
+        "tool": "dom_claim_text",
+        "role": "author",
+        "returned_status": "RECORDED_CANDIDATE"
+      },
+      {
+        "step": 8,
+        "tool": "dom_review",
+        "role": "reviewer",
+        "returned_status": "DEMO_REVIEWED"
+      },
+      {
+        "step": 9,
+        "tool": "dom_admit",
+        "role": "reviewer",
+        "returned_status": "DEMO_ADMITTED"
+      },
+      {
+        "step": 10,
+        "tool": "dom_resume",
+        "role": "author",
+        "returned_status": "RESUMED"
+      }
+    ],
+    "raw": "runtime/AN011/cold_start_raw.json",
+    "removed_steps": [
+      "Read fixture/work/policy constants",
+      "Calculate policy hash by hand",
+      "Construct base64 and full restricted claim envelope",
+      "Edit product literals/redeploy code to support assigned custom branch"
+    ],
+    "cost": "10 public calls; independent reviewer handoff and trusted pregrant remain; before no finite complete path, not a numeric N-step speedup."
+  },
+  "negative_controls": [
+    {
+      "name": "no-review-no-new-head",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "unadmitted-no-branch",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "same-root-review",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "positive-declaration-admitted",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "fork-on-admit-no-silent-winner",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "fork-on-resubmit",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "digest-substitution-before-replay",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "exact-replay-no-rows",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "foreign-absent-declare",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "hidden-positive",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "foreign-present-declare",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "hidden-update-scoped-token-stable",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "foreign-response-equivalence",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "grant-not-created",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "reviewer-foreign-payload",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "foreign-task-binding",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "unknown-requirement-no-candidate",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "positive-claim-covered",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "policy-version-monotone",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "O1-retained-but-noncurrent",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "old-policy-reviewed-claim",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "stale-declaration-parent",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "atomic-rollback",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_candidates-UPDATE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_candidates-DELETE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_candidates-REPLACE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_candidates-IGNORE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_reviews-UPDATE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_reviews-DELETE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_reviews-REPLACE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_reviews-IGNORE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_versions-UPDATE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_versions-DELETE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_versions-REPLACE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "immutable-policy_versions-IGNORE",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "v2-and-original-chain",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "O3-no-invented-ack",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    },
+    {
+      "name": "restart-policy-and-provenance",
+      "pass": true,
+      "raw": "runtime/AN011/negative_controls_raw.json"
+    }
+  ],
+  "needs_user": [
+    {
+      "id": "NU-AN011-01",
+      "title": "Authority: reviewed DOM baseline delta from OMH-owned plan",
+      "what_changes": "OMH initiates branch/task references; DOM records independently admitted baseline projection, not a second plan owner.",
+      "why": "A model-facing declaration must not create planning authority or grants.",
+      "affected": [
+        "OMH plan/branch task map",
+        "DOM declaration review",
+        "curator independence"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "OMH-owned intent + independent baseline reviewer admits; recommended."
+        },
+        {
+          "id": "B",
+          "effect": "Owner preapproves manifest per launch; no dynamic declaration, lower cost."
+        },
+        {
+          "id": "C",
+          "effect": "Author self-admits declarations: changes accepted independent-review decision; not implemented."
+        }
+      ],
+      "on_refusal": "Keep read-only static registry; H7 remains.",
+      "changes_accepted_decision": true,
+      "change_only_for_choices": [
+        "C"
+      ]
+    },
+    {
+      "id": "NU-AN011-02",
+      "title": "Exact reserved branch grant or namespace creation grant",
+      "what_changes": "Who reserves the customer branch code and how server gains its grant.",
+      "why": "Declaring ZX cannot authorize access to another work or branch.",
+      "affected": [
+        "trusted launcher",
+        "grant issuer",
+        "restart/hot reload"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Exact code and task ref reserved by OMH/owner at launch; one restart for future grants; prototype."
+        },
+        {
+          "id": "B",
+          "effect": "Signed create-within-namespace capability with explicit issuer, expiry and revision; less redeploy, more security code."
+        }
+      ],
+      "on_refusal": "No automatic grant expansion; branch can be admitted but inaccessible to non-granted agents.",
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "NU-AN011-03",
+      "title": "Public scoped policy token vs global policy root",
+      "what_changes": "policy_digest identifies pinned branch criteria version; internal global registry root is not sent to narrow grants.",
+      "why": "Rotating one public global hash on hidden declaration is a repeat-query existence signal, even without hidden names.",
+      "affected": [
+        "dom_init compatibility",
+        "baseline packets",
+        "candidate review pins",
+        "O1 and anti-oracle"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Per-branch public version/digest plus internal global append chain; old digest retained as v0. Recommended/prototype."
+        },
+        {
+          "id": "B",
+          "effect": "Entire project registry public to every principal; requires separate explicit authorization/declassification decision, not a harmless implementation simplification."
+        }
+      ],
+      "on_refusal": "Keep global digest internal and expose opaque scoped receipt via AN009; API adaptation needed.",
+      "changes_accepted_decision": true,
+      "change_only_for_choices": [
+        "B"
+      ]
+    },
+    {
+      "id": "NU-AN011-04",
+      "title": "UD-02: empty baseline and first declaration",
+      "what_changes": "Whether reserved empty project permits proposing baseline delta without accepted requirements.",
+      "why": "Bootstrap cannot require the criterion it is itself creating.",
+      "affected": [
+        "AN009 start",
+        "coverage readiness",
+        "outage reconciliation"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Explicit NO_BASELINE/nonready; allow only reviewed bootstrap declaration, ordinary claim materialization blocked until admission. Prototype conditional behavior."
+        },
+        {
+          "id": "B",
+          "effect": "Reject all material paths until owner imports initial plan manifest; one more provisioning step."
+        }
+      ],
+      "on_refusal": "Report NO_BASELINE; do not infer coverage or allow self-bootstrap.",
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "NU-AN011-05",
+      "title": "Policy addition: conservative branch recheck or granular impact",
+      "what_changes": "Which existing reviews become noncurrent after a new requirement.",
+      "why": "Old facts must remain readable, but coverage cannot silently use outdated criteria.",
+      "affected": [
+        "O1",
+        "AN012 stale reasons",
+        "revalidation workload"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Every claim reviewed under earlier branch policy becomes visibly noncurrent; easiest safe default, prototype."
+        },
+        {
+          "id": "B",
+          "effect": "Separate per-requirement criteria digests and independently reviewed no-impact mapping retain unaffected support; more complexity."
+        }
+      ],
+      "on_refusal": "Conservative noncurrent, preserve all immutable claim bytes and policy lineage.",
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "NU-AN011-06",
+      "title": "UD-06: convergence under divergent AA/AB policies",
+      "what_changes": "No automatic common-policy winner; decide admissible vector of branch policy digests and who reviews convergence.",
+      "why": "Meaning/text convergence is curator judgement, not equal hashes or a boolean. Direction LLM curator already accepted; execution remains open.",
+      "affected": [
+        "master readiness",
+        "criteria_digest",
+        "curator union visibility",
+        "AN012"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Retain independent branch versions; curator proposes vector+criteria+evidence, independent reviewer admits; master UNKNOWN until agreed contract."
+        },
+        {
+          "id": "B",
+          "effect": "Require coordinated reviewed migration to one shared policy before convergence; more blocking but easier criteria."
+        }
+      ],
+      "on_refusal": "Keep branches nonconverged/UNKNOWN, never close master.",
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "NU-AN011-07",
+      "title": "Fork detection scope and resolution",
+      "what_changes": "Same branch+requirement ID with different content is a structural declaration fork; semantic/cross-branch forks remain curator proposals.",
+      "why": "A collision must not choose the last writer. Unrelated hidden versions cannot be revealed to a narrow grant.",
+      "affected": [
+        "DECLARATION_FORK",
+        "curator evidence",
+        "L1/L2 policy"
+      ],
+      "choices": [
+        {
+          "id": "A",
+          "effect": "Exact target-scope identifier/content collision only, retain both proposals; independent resolution required. Prototype."
+        },
+        {
+          "id": "B",
+          "effect": "Add asynchronous semantic fork candidates from curator union view; input/model/prompt provenance and independent review required, never L3 query signals."
+        }
+      ],
+      "on_refusal": "Reject conflicting material update; keep original accepted version and both candidate evidences, no silent winner.",
+      "changes_accepted_decision": false
+    }
+  ],
+  "conflicts_with_decisions": [
+    {
+      "proposal": "A2 recommended prototype",
+      "changes_accepted_decision": false,
+      "explanation": "No grant expansion, self-acceptance, hidden global digest, silent old-policy acceptance, provenance deletion, forged ack, or automatic OMH closure."
+    },
+    {
+      "proposal": "NU-AN011-01:C",
+      "changes_accepted_decision": true,
+      "decision": "independent baseline acceptance",
+      "needs_user": "NU-AN011-01",
+      "implemented": false
+    },
+    {
+      "proposal": "NU-AN011-03:B",
+      "changes_accepted_decision": true,
+      "decision": "scope isolation and L3 prohibition",
+      "needs_user": "NU-AN011-03",
+      "implemented": false
+    }
+  ],
+  "issues": [
+    {
+      "id": "TEST-EXPECTATION-01",
+      "what": "First harness expected IMMUTABLE for registry REPLACE, but earlier chain trigger correctly refused CHAIN_INTEGRITY. Preserved failed result; accepted either refusal, no product change.",
+      "raw": "runtime/AN011/negative_controls_attempt1.json"
+    },
+    {
+      "id": "LSP",
+      "what": "Workspace static resolver does not follow explicit runtime sys.path injection; dynamic import warnings. Real isolated project interpreter executions succeeded. No product LSP configuration edited."
+    }
+  ],
+  "source_ledger": "runtime/AN011/source_ledger.json"
+}

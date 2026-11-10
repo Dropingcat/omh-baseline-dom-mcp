@@ -1,0 +1,608 @@
+{
+  "role": "worker-developer",
+  "task": "AB002-A",
+  "block": "AB002-A",
+  "branch": "AB",
+  "continuation": "C2",
+  "status": "PASS",
+  "completion_state": "completed",
+  "is_approval": false,
+  "scope": {
+    "product": "A1-A9 only, local SQLite/files and real stdio MCP; OMH target SIMULATION",
+    "write_allowlist": [
+      "mockup/**",
+      "tests/**",
+      "runtime/**",
+      "artifacts/WORKER_AB002_A.json",
+      "reports/WORKER_AB002_A.md"
+    ],
+    "exclusions": [
+      "No live OMH or user databases",
+      "No Git mutations, network/listeners, installs, paid models or secrets",
+      "No independent acceptance or global task closure"
+    ]
+  },
+  "acceptance_state": "READY_FOR_INDEPENDENT_REVIEW; not accepted by this worker",
+  "handoff_validation": {
+    "verdict": "PASS",
+    "evidence_ref": "runtime/AB002_A/handoff-validation-C2.json",
+    "command_receipt_ref": "runtime/AB002_A/command-C2-520523f1/command.json",
+    "exit_code": 0,
+    "referenced_paths_checked": 326,
+    "independent_acceptance": false
+  },
+  "continuation_required": false,
+  "baseline_ref": "runtime/AB002_A/baseline-a668de14/baseline_result.json",
+  "protocol_ref": "runtime/AB002_A/protocol.md",
+  "fingerprints_ref": "runtime/AB002_A/fingerprints-C2.json",
+  "artifact_revision": {
+    "algorithm": "sha256",
+    "source": {
+      "mockup/__init__.py": "8050575cce60b1c07e4e743ba79d94fd675bad796400f54229da481cd9f36524",
+      "mockup/ab002_binding.py": "e4f827c81fab7157b4b95b76f17d18d215e365979b740d18ce6eb7fcdb7fa669",
+      "mockup/ab002_e2e.py": "7058d10664de87b53d96c57fad1658233ee74c49618d7644b811914ad02f9061",
+      "mockup/ab002_launcher.py": "2fb7ea34e411c43af7ab60baa63a813ac77911da836695ab1f7cd018501ca0a2",
+      "mockup/ab002_lock.py": "098e8ba1e223ffddc39e015267c91f4bed234ad558f58c019a26aaa7c032e96f",
+      "mockup/ab002_matrix.py": "d2cb8b342fb593326a1e926e59bc854c86b7095d06357034a4654064bd7b3ee5",
+      "mockup/admission.py": "1f35db09af7ed738dcb8a5665e10ae23782961267bbf9370e922b69e28eea42e",
+      "mockup/delivery.py": "0973b9b6d757a05bcae337a7642ac5d779dd9226167243f7339cc3ec08f5d6a9",
+      "mockup/demo.py": "6569f4210dc8410f3867f86a79e3f3e0b20a3fd1a79f46f82970828579b5caa4",
+      "mockup/dom_contract.py": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+      "mockup/fixtures/__init__.py": "a1939f0a68b0740c8dc90e57bd8c081ccba2067a57bebd53a9f2f6cc183542f9",
+      "mockup/ports.py": "c4a48ad22ff7ba24f008b56f05a97acca5351cd518a3f1c64fc4ec07e40d84bc",
+      "mockup/projections.py": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+      "mockup/README.md": "f5fc4b0d599d5f7cd2c44454c4019f68bc2860a45b22200a08e3db7e02ef0f1f",
+      "mockup/server.py": "10e0223ccc5a97a6fdb885c07053f97efd29afbad4ab193290e34cd07204cd76",
+      "mockup/storage.py": "df09acf9406d8113d266a04779be753b1eb4c4c0d81bdd267e717a92271752e0",
+      "tests/conftest.py": "c8c88cb78cf302017e8aab8c48ef743f9a31bace9ddd38d8c7b48c929b5a8733",
+      "tests/test_ab002_delivery.py": "14995ea3d84e9751b3c299704b41c0e53936fde9ed1617c87030e0afb3bf4224",
+      "tests/test_ab002_runner_resources.py": "02e5bd20a8c671badb4543505d679d338dc110734bcb35843a48689ff79434c3",
+      "tests/test_admission.py": "49b014ca972f68687448e2b037d77b4980f368eb03976a9075b945f4f9136eeb",
+      "tests/test_branch_marker.py": "675ee009e8a69d1713c5858c49509036c524946c47330775093b8eb9b35a496b",
+      "tests/test_bytes_types.py": "744335b3aca983675e313e7255366e069307b0f37745845e9ad1cb1f27e9a188",
+      "tests/test_claim_snapshot.py": "f335b1515ee9caf277e99c90cc578d575041581d021d4e43835b6bcc9b7ae23d",
+      "tests/test_demo.py": "3b705dea8c7428d0bb21498bec089141543e30c7360c9a23867440785743562f",
+      "tests/test_dom_contract.py": "d80febcd2b19499c417876c2fbb72db9e74ec5e0e1a6a317683838d235b55632",
+      "tests/test_git_fixture.py": "c73de090ffe43153744c7247c52dd2d01d8902b66a46c5c95782083f20b53dd4",
+      "tests/test_immutable_replace.py": "6ae4ae7c06330ebbcc0f05a8e4aff959d4dc920a7a0b28ccfc4b807d0346d2f9",
+      "tests/test_integrity_contracts.py": "0609b7c8fcb1a55a136ba283ab018f87d6683e8cf3d0ef2951f16a52a80c936f",
+      "tests/test_mcp_stdio.py": "70c372f6a416da693a85bb6da3f3a487a447655e95ff7c522a54557fb98ceb09",
+      "tests/test_projection_state.py": "f5f0fa7850575b421dc5cbcc6a18a4c281edad86c2b948d96cdd0a62d9efece2",
+      "tests/test_scope_trace.py": "bcddbca73e4a36421f2bf73d5a39246a7aefa8a9c13da688247a61c7e807b8e5",
+      "tests/test_storage_faults.py": "fef802d34cf1832b90a0ad102cf2f5a84feaa08b3b7d6316a3321549234742d7",
+      "tests/test_supersedes.py": "c575d3ccdd5bb85fd2724726b14f6337a2225d8b7e9f61d03100d7415e615fbf",
+      "tests/test_work_identity.py": "8b679571a88ba0fb71c0072c1b6922eb9ab900006e3b82c62fb3c3a98ada9903"
+    },
+    "requirements_sha256": "2be43b2f8370e7e27df012831496af2d3bb000f66915975d8f24aff3e17310b8",
+    "full_E2E_source_input_unchanged": true,
+    "note": "README was updated after E2E; Python source/tests and baseline inputs still match run receipt."
+  },
+  "changes": [
+    {
+      "phase": "inherited implementation, verified C2",
+      "files": [
+        "mockup/admission.py",
+        "mockup/storage.py",
+        "mockup/ports.py",
+        "mockup/delivery.py"
+      ],
+      "summary": "Observed delivery facts and guards, capability denial, consistent integrity gates, typed SQLite errors, additive legacy installation; no rewrite from scratch."
+    },
+    {
+      "phase": "inherited runner/binding, verified C2",
+      "files": [
+        "mockup/ab002_launcher.py",
+        "mockup/ab002_e2e.py",
+        "mockup/ab002_matrix.py",
+        "mockup/ab002_lock.py",
+        "mockup/ab002_binding.py",
+        "tests/test_ab002_delivery.py"
+      ],
+      "summary": "Real stdio failure/recovery matrix, strict E10 diagnostic with exact read-back, binding negatives."
+    },
+    {
+      "phase": "C2 delta",
+      "files": [
+        "mockup/ab002_e2e.py",
+        "tests/test_ab002_runner_resources.py"
+      ],
+      "summary": "Close real readback SQLite connection deterministically; retained-connection RED/GREEN regression catches Windows rename handle leak."
+    },
+    {
+      "phase": "C2 delta",
+      "files": [
+        "mockup/ab002_matrix.py"
+      ],
+      "summary": "Unavailable-directory oracle requires exact SQLITE_CANTOPEN or SQLITE_CANTOPEN_ISDIR code/name, with unchanged restoration and recovery. Product errors/guards not weakened."
+    },
+    {
+      "phase": "C2 delivery",
+      "files": [
+        "mockup/README.md",
+        "runtime/AB002_A/run_command_c2.py",
+        "runtime/AB002_A/verify_c2.py",
+        "runtime/AB002_A/C2_lessons.md"
+      ],
+      "summary": "Commands, limits, provenance, terminal command receipts, fresh physical target validation and scoped workflow lessons."
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "from pathlib import Path; import uuid,json; from mockup.ab002_e2e import OUT,save; from mockup.ab002_matrix import immutable; from mockup.ab002_binding import binding_negatives; [((d:=OUT/(label+'-C2-'+uuid.uuid4().hex[:8])).mkdir(),save(d/'result.json',fn(d)),print(label,str(d))) for label,fn in [('E10-tight',immutable),('binding-tight',binding_negatives)]]"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 3668,
+      "started_at": "2026-11-07T07:58:33.823318+00:00",
+      "finished_at": "2026-11-07T07:58:50.031284+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-aa9d258c\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-aa9d258c\\stderr.log",
+      "pid": 4260,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-aa9d258c/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.ab002_e2e"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 2404,
+      "started_at": "2026-11-07T07:58:55.464562+00:00",
+      "finished_at": "2026-11-07T08:02:07.053157+00:00",
+      "exit_code": 1,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-b2c866f7\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-b2c866f7\\stderr.log",
+      "pid": 10576,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-b2c866f7/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_ab002_runner_resources.py",
+        "-q",
+        "--basetemp=runtime/AB002_A/pytest-C2-resource-red"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 10820,
+      "started_at": "2026-11-07T08:02:54.594829+00:00",
+      "finished_at": "2026-11-07T08:02:55.749166+00:00",
+      "exit_code": 1,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-33bf9b4a\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-33bf9b4a\\stderr.log",
+      "pid": 10056,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-33bf9b4a/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests/test_ab002_runner_resources.py",
+        "-q",
+        "--basetemp=runtime/AB002_A/pytest-C2-resource-green"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 2428,
+      "started_at": "2026-11-07T08:03:17.759207+00:00",
+      "finished_at": "2026-11-07T08:03:18.610281+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-24ea6487\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-24ea6487\\stderr.log",
+      "pid": 5996,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-24ea6487/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import uuid; from mockup.ab002_e2e import OUT,save; from mockup.ab002_matrix import errors; d=OUT/('A7-unavailable-tight-C2-'+uuid.uuid4().hex[:8]); d.mkdir(); save(d/'result.json',errors(d,'unavailable')); print(d)"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 7052,
+      "started_at": "2026-11-07T08:03:18.743773+00:00",
+      "finished_at": "2026-11-07T08:03:23.883789+00:00",
+      "exit_code": 1,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-52764e14\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-52764e14\\stderr.log",
+      "pid": 11100,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-52764e14/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-c",
+        "import uuid; from mockup.ab002_e2e import OUT,save; from mockup.ab002_matrix import errors; d=OUT/('A7-unavailable-tight-C2-'+uuid.uuid4().hex[:8]); d.mkdir(); save(d/'result.json',errors(d,'unavailable')); print(d)"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 13096,
+      "started_at": "2026-11-07T08:03:46.117794+00:00",
+      "finished_at": "2026-11-07T08:03:52.739335+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-9697d1d3\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-9697d1d3\\stderr.log",
+      "pid": 2180,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-9697d1d3/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.ab002_e2e"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 5156,
+      "started_at": "2026-11-07T08:03:52.873960+00:00",
+      "finished_at": "2026-11-07T08:07:05.203027+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-2ce0fd8d\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-2ce0fd8d\\stderr.log",
+      "pid": 1884,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-2ce0fd8d/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "pytest",
+        "-p",
+        "no:cacheprovider",
+        "tests",
+        "-q",
+        "--basetemp=runtime/AB002_A/pytest-final-C2"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 11664,
+      "started_at": "2026-11-07T08:07:13.704880+00:00",
+      "finished_at": "2026-11-07T08:08:26.578231+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-35aa41c4\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-35aa41c4\\stderr.log",
+      "pid": 12252,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-35aa41c4/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "-m",
+        "mockup.demo"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 6180,
+      "started_at": "2026-11-07T08:08:26.759664+00:00",
+      "finished_at": "2026-11-07T08:08:29.391098+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-74f515cd\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-74f515cd\\stderr.log",
+      "pid": 11816,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-74f515cd/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "runtime/AB002_A/verify_c2.py"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 11664,
+      "started_at": "2026-11-07T08:11:32.045029+00:00",
+      "finished_at": "2026-11-07T08:11:36.172299+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-f9d44729\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-f9d44729\\stderr.log",
+      "pid": 11604,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-f9d44729/command.json"
+    },
+    {
+      "command": [
+        "E:\\opencode_harness_portable\\.venv\\Scripts\\python.exe",
+        "-B",
+        "runtime/AB002_A/verify_c2.py"
+      ],
+      "cwd": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp",
+      "wrapper_pid": 7584,
+      "started_at": "2026-11-07T08:12:41.082891+00:00",
+      "finished_at": "2026-11-07T08:12:42.145368+00:00",
+      "exit_code": 0,
+      "state": "FINISHED",
+      "stdout": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-72b28e12\\stdout.log",
+      "stderr": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AB002_A\\command-C2-72b28e12\\stderr.log",
+      "pid": 11608,
+      "source_input_unchanged": true,
+      "receipt_ref": "runtime/AB002_A/command-C2-72b28e12/command.json"
+    }
+  ],
+  "e2e_manifest_ref": "runtime/AB002_A/e2e_manifest.json",
+  "e2e": {
+    "mode": "SIMULATION",
+    "LIVE": "NOT_TESTED",
+    "case_count": 26,
+    "coverage": {
+      "PASS": 26,
+      "FAIL": 0,
+      "NOT_TESTED": 0
+    },
+    "run_directory": "runtime/AB002_A/matrix-61c246ab",
+    "command_receipt_ref": "runtime/AB002_A/command-C2-2ce0fd8d/command.json",
+    "E10_SQL_probes": 88,
+    "binding_SQL_probes": 23,
+    "MCP_process_receipts": 118,
+    "MCP_exit_counts": {
+      "0": 112,
+      "71": 6
+    },
+    "lock_process_receipt_ref": "runtime/AB002_A/matrix-61c246ab/E5-S1-S2-writer-lock/lock-process.json",
+    "omissions": [
+      "E11/S4 and new stale/revalidation policy (UD-02/06)",
+      "LIVE OMH/Git/identity/OS sandbox",
+      "Full Cartesian S0-S6 x E0-E12 not run; exactly enumerated variants only",
+      "Repair/recovery of corrupted database not attempted (UD-03)"
+    ]
+  },
+  "per_invariant": {
+    "A1": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Liar/unavailable/lost-reply leaves unconfirmed and NOT_READY; recovery reads exact intent/tx/digest/target then records linked observation.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E6-S1-liar/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E6-S1-unavailable/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E6-S6-lost-reply/case.json"
+      ]
+    },
+    "A2": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Durable attempts precede immutable observations and matched ack; ack-first and foreign predecessors refused; protocol retained from initial implementation.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/A1-A2-A5-S1-S6-binding-negatives/case.json",
+        "runtime/AB002_A/protocol.md"
+      ]
+    },
+    "A3": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Real exit71 before/after commit/rename/send; distinct PID restart, read-before-send and one local target write per tx; pending/ambiguous parallel reconcile.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E1-S0-before-commit/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E1-S1-before-commit/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E2-S1-after-commit/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E3-S1-S6-before-rename/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E4-S1-S6-after-rename/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E6-S6-death-after-send/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E12-S2-S3-pending-parallel/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E12-S2-S3-S6-ambiguous-parallel/case.json"
+      ]
+    },
+    "A4": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Public Service.delivery refuses author/reviewer state assignment; delivery absent from MCP tools; role/branch/tool spoof refused. Fixture identity is not production auth.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E8-S3-S5-spoof-incomplete/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E10-S1-immutable-all-tables/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A1-A2-A5-S1-S6-binding-negatives/case.json"
+      ]
+    },
+    "A5": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "88 exact immutable/refusal SQL probes plus 23 binding probes; update/delete/replace/ignore/upsert/secondary conflicts; rollback leaves exact rows/files/database hash.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E10-S1-immutable-all-tables/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A1-A2-A5-S1-S6-binding-negatives/case.json"
+      ]
+    },
+    "A6": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Hash and missing-value envelope, AA and AA+AB, rejected by all query/trace/resume/export/sync/sync_status paths with locator and NOT_READY; no side effects. Verified snapshot read_at/head/revisions retained.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E9-S1-envelope/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E9-S1-hash/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E9-S1-S3-envelope/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E9-S1-S3-hash/case.json"
+      ]
+    },
+    "A7": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Real writer lock, NOTADB corruption, mode=ro, inaccessible directory pathname are distinct. CANTOPEN_ISDIR=526 accepted only as exact code/name pair; restored unavailable database is byte-exact.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E5-S1-S2-writer-lock/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A7-S1-corrupt-database/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A7-S1-read-only-database/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A7-S1-unavailable-database/case.json"
+      ]
+    },
+    "A8": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "AA/AB admitted history and exact claim body/origin preserved; spoof/mismatch and immutable mutations leave bytes unchanged; demo owner_close_called=false.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/E0-S0-S1-S3-AA-AB/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E7-S1-S2-changed-payload/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E8-S3-S5-spoof-incomplete/case.json",
+        "runtime/AB002_A/matrix-61c246ab/E10-S1-immutable-all-tables/case.json",
+        "runtime/runs/run-20261107T080826Z-e0d6b908/demo.json"
+      ]
+    },
+    "A9": {
+      "verdict": "PASS",
+      "scope": "SIMULATION A only; developer evidence, not independent acceptance",
+      "observed": "Compatible existing schema reopens; explicit additive legacy init preserves all previous facts and distrusts legacy ack; incompatible layout refuses MIGRATION_REQUIRED without reset.",
+      "evidence_paths": [
+        "runtime/AB002_A/matrix-61c246ab/A9-S1-legacy-additive/case.json",
+        "runtime/AB002_A/matrix-61c246ab/A9-incompatible-layout/case.json"
+      ]
+    }
+  },
+  "final_regressions": {
+    "pytest": {
+      "passed": 64,
+      "failed": 0,
+      "exit_code": 0,
+      "receipt_ref": "runtime/AB002_A/command-C2-35aa41c4/command.json"
+    },
+    "demo": {
+      "exit_code": 0,
+      "receipt_ref": "runtime/AB002_A/command-C2-74f515cd/command.json",
+      "run_directory": "runtime/runs/run-20261107T080826Z-e0d6b908",
+      "target_sha256": "534522c6904a04cc91131e37691ebad3f588e607a68a60de6bf4688a098f79a0",
+      "admitted_transactions": 7,
+      "omh_intents": 7,
+      "validated_acks": 14,
+      "revisions": {
+        "AA": 4,
+        "AB": 3
+      },
+      "yaml_count": 7,
+      "readiness": "READY",
+      "owner_close_called": false,
+      "readback_ref": "runtime/runs/run-20261107T080826Z-e0d6b908/C2-target-readback.json"
+    }
+  },
+  "final_target_readback": {
+    "verdict": "PASS",
+    "verified_at": "2026-11-07T08:12:41.228022+00:00",
+    "all_26_case_final_states_match_exact_rows_files_database_hash": true,
+    "every_existing_ack_validated_against_observation_and_current_physical_bytes": true,
+    "target_count_and_one_write_per_intent_checked": true,
+    "evidence_ref": "runtime/AB002_A/C2-target-verification.json",
+    "command_receipt_ref": "runtime/AB002_A/command-C2-72b28e12/command.json"
+  },
+  "known_failures": [
+    {
+      "state": "historical interruption retained",
+      "evidence": "runtime/AB002_A/command-C1-2cc42bf0/command.json",
+      "actual_exit": 1073807364,
+      "cause": "UNKNOWN; no timeout/defect attribution",
+      "disposition": "Fresh final 26-case run completed; C1 not counted as PASS."
+    },
+    {
+      "state": "historical E10 oracle failure retained",
+      "evidence": "runtime/AB002_A/diagnose-E10-1f5f2df5/diagnosis.json",
+      "cause": "Old event replay correctly refused CHAIN_INTEGRITY before duplicate guard; exact bytes unchanged. No trigger order promised.",
+      "disposition": "Strict final E10 88 probes passes; only justified diagnostics, code1811 and exact read-back accepted."
+    },
+    {
+      "state": "C2 first full matrix FAIL retained",
+      "evidence": "runtime/AB002_A/matrix-310f7c19/manifest.json",
+      "actual": "25 PASS, 1 FAIL; Windows WinError32 before unavailable-path injection",
+      "cause": "readback context did not close SQLite handle",
+      "disposition": "Resource regression RED command-C2-33bf9b4a, GREEN 24ea6487; final full matrix rerun on corrected source."
+    },
+    {
+      "state": "C2 focused oracle FAIL retained",
+      "evidence": "runtime/AB002_A/command-C2-52764e14/command.json",
+      "actual": "Correct STORAGE_UNAVAILABLE, precise SQLITE_CANTOPEN_ISDIR=526 instead of base14",
+      "disposition": "Exact allowed code/name pair, real injection/restoration/recovery passed; no catch-all."
+    },
+    {
+      "state": "deferred existing product issues, not closed by A",
+      "refs": [
+        "TD-DOM-12",
+        "TD-DOM-14",
+        "TD-DOM-15",
+        "TD-DOM-17 offline export component",
+        "TD-DOM-18"
+      ],
+      "actual": "Mutable/derivable head, branch/master readiness semantics, baseline/stale/revalidation, offline export provenance and convergence remain B/C scope."
+    }
+  ],
+  "known_failures_current_A": [],
+  "not_implemented": [
+    "AB002-B/C/D remaining functionality",
+    "Live OMH/Git/issuer adapters, production authentication, OS isolation, external checkpoint",
+    "Claim refinement tree: deferred_to_researcher per updated REQUIREMENTS; not implemented in A",
+    "Repair/rewind or universal exactly-once"
+  ],
+  "not_checked": [
+    "Independent reviewer/auditor acceptance",
+    "LIVE OMH, real Git mutations, production identity and isolation",
+    "All Sx/Ex combinations, performance at production scale, alternate SDK/OS",
+    "Lying read-back source, malicious in-process/file-owner, self-consistent DB replacement"
+  ],
+  "remaining_UD": {
+    "UD-01": "OPEN; not selected in C2",
+    "UD-02": "OPEN; not selected in C2",
+    "UD-03": "OPEN; not selected in C2",
+    "UD-04": "OPEN; not selected in C2",
+    "UD-05": "OPEN; not selected in C2",
+    "UD-06": "OPEN; not selected in C2"
+  },
+  "security_limits": [
+    "Fixture launch-time identities are not production auth; API guards do not isolate filesystem or in-process adversaries.",
+    "Read-back source and local target are trusted SIMULATION; malicious observation source not defeated.",
+    "Ack is historical at read_at, not continual target availability.",
+    "Read snapshot spans external operation, not write transaction; concurrent writers may receive bounded busy.",
+    "Hash chain lacks independent external checkpoint; file-owner can replace self-consistent history.",
+    "No user task is closed; no secret paths/payload in storage errors."
+  ],
+  "proposed_debts": [
+    {
+      "proposed_id": "TD-CAND-AB002-C2-RESOURCE",
+      "level": 1,
+      "severity": "minor",
+      "summary": "Review deterministic connection ownership in other raw-SQL runner helpers and Store.initialize; readback leak fixed, broader audit not claimed."
+    },
+    {
+      "proposed_id": "TD-CAND-AB002-C2-RUNNER",
+      "level": 1,
+      "severity": "minor",
+      "summary": "Consider first-class runner-native exact expectations/provenance and crash-resilient per-case finalization; C2 adds reproducible runtime verifier and enriched handoff manifest without claiming full D slice."
+    }
+  ],
+  "findings_escape_hatch": {
+    "level_1": [
+      "Windows evidence-reader resource bug and platform-specific exact unavailable error oracle corrected with preserved failure evidence."
+    ],
+    "level_2": [
+      "Deferred B/C product issues and production integration/security gaps retained, not repaired outside A."
+    ],
+    "level_3": []
+  },
+  "remaining": [
+    "Independent reviewer then auditor, analyst and researcher per factory order",
+    "Author decisions UD-01..06 and claim-refinement research; no worker continuation needed for this A handoff"
+  ],
+  "lessons_ref": "runtime/AB002_A/C2_lessons.md"
+}

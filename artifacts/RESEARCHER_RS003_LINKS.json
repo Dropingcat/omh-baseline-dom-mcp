@@ -1,0 +1,1002 @@
+{
+  "schema": "RS003-material/v1",
+  "role": "researcher",
+  "task": "RS003",
+  "continuation": "RS003_CONTINUE_01",
+  "status": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "product_acceptance": false,
+  "product_verdict": "REQUEST_CHANGES",
+  "is_product_approval": false,
+  "written_at": "2026-11-07T21:36:25.530543+03:00",
+  "material_scope": "Исследовательский материал по 14 точным вопросам AN003; НЕ приёмка продукта. TD19/20/21 и P0 не закрыты. COMPLETE_MATERIAL относится только к исследованию.",
+  "input": {
+    "analyst_artifact": "artifacts/ANALYST_AN003_LINKS.json",
+    "analyst_artifact_sha256": "39cc9953bcb1db7acc80334f7549b4d85ab8bc092071afac3016571e2e1c612d",
+    "exact_questions_ref": "runtime/RS003/exact_questions.json",
+    "exact_questions_sha256": "61cdd488d1c9cb9e59f8d7d03679bebeba83593349d0d6cddcce66573fd5e7fa"
+  },
+  "questions": [
+    {
+      "id": "Q-L-01",
+      "priority": "P1",
+      "exact_question": "Каков минимальный версионированный контракт accepted_context/context pack для продолжения A.1, который доставляет сам факт A, точное основание, принявшего и доказательство допуска, ревизию/условия применимости, текущий статус проверки и правило переоткрытия, не выдавая чужой контекст?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_01_03.json#/answers[id=Q-L-01]",
+      "fragment_sha256": "b7c0bc71ae305544c86c9d02d140cebad082477da6fd4e198b954c52464ed29f",
+      "needs_user": [],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-02",
+      "priority": "P1",
+      "exact_question": "Какая проверяемая цепочка отличит persisted/selected/delivered/read-or-acknowledged/used для принятого контекста и потребует от исполнителя ссылки на этот базлайн либо обоснованного отклонения, не обещая доказать внутреннее мышление агента?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_01_03.json#/answers[id=Q-L-02]",
+      "fragment_sha256": "b7c0bc71ae305544c86c9d02d140cebad082477da6fd4e198b954c52464ed29f",
+      "needs_user": [],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-03",
+      "priority": "P1",
+      "exact_question": "Как отделить неизменяемые основания при создании от поздних append-only подтверждений/опровержений и представить корневой ввод без basis, legacy без записанного основания и criterion-клайм без baseline, не вынуждая агента выдумывать ссылки?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_01_03.json#/answers[id=Q-L-03]",
+      "fragment_sha256": "b7c0bc71ae305544c86c9d02d140cebad082477da6fd4e198b954c52464ed29f",
+      "needs_user": [
+        "UD-02"
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-04",
+      "priority": "P1",
+      "exact_question": "Сравни схемы идентичности для уже подтверждённого дерева: общий logical claim ID + уникальный record/version ID (в том числе составной ключ) против уникальных immutable node IDs + общий logical/root ID; как адресовать цитату/версию и parent без изменения прежних IDs и исходника?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_04_08.json#/answers[id=Q-L-04]",
+      "fragment_sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "needs_user": [],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-05",
+      "priority": "P1",
+      "exact_question": "Как определяется последнее актуальное принятое вложенное уточнение в ветке при двух concurrent siblings, reject, archive, переносе применимости и semantic merge, если время кандидата и глубина не дают права молча выбрать победителя?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_04_08.json#/answers[id=Q-L-05]",
+      "fragment_sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "needs_user": [
+        "Кто (какой субъект/полномочие) выбирает между двумя независимо допущенными смыслово конкурирующими siblings, если merge-запись не создана: предложенный default — ветка остаётся FORKED, зависимые задачи получают оба tips и не получают current, пока уполномоченный независимый reviewer не допустит merge/selection. Субъект полномочий выбирается заказчиком (связано с UD-06), не аналитиком/ресерчером."
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-06",
+      "priority": "P1",
+      "exact_question": "Какой минимальный версионированный словарь typed relations нужен DOM для basis/refinement/support/contradiction/use и каковы direction, endpoint kinds, inverse derivation, supersession и строгая валидация без автоматического превращения similarity в доказательство?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_04_08.json#/answers[id=Q-L-06]",
+      "fragment_sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "needs_user": [],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-07",
+      "priority": "P1",
+      "exact_question": "Как раздельно вывести admitted/accepted/current/stale/converged/delivered/owner-closed и кто может переоткрыть принятое при новом противоречии, исправлении источника или изменении условий, не переписывая прежнее решение и не превращая отсутствие воспоминания в reopen?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_04_08.json#/answers[id=Q-L-07]",
+      "fragment_sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "needs_user": [
+        "UD-06: субъект/критерии сходимости и область revalidation; кто решает reopen (reaffirm/supersede) — поддерживаемый default: независимый reviewer c authority по политике ветки"
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-08",
+      "priority": "P1",
+      "exact_question": "Как различить pin точной record/version, pin ревизии ветки и ссылку на актуальную линию; когда связь или проверка становится stale и как scoped revalidate добавляет новое основание, не переключая старое доказательство на новый смысл и не раскрывая ревизию запрещённой цели?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_04_08.json#/answers[id=Q-L-08]",
+      "fragment_sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "needs_user": [
+        "UD-02/UD-06 остаются OPEN (строгость revalidation, политика CHECK_AGED); без решения реализуется только strict default"
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-09",
+      "priority": "P0_before_graph_introduction",
+      "exact_question": "Как реализовать и независимо проверить scope-first non-disclosure для graph/backlinks/neighbors/counts/ranking/dashboard/pins и n-hop traversal через явно shared node, сохранив глобальный integrity gate и closed public DTO?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_09_10.json#/answers[id=Q-L-09]",
+      "fragment_sha256": "a88bd63f72308dbdc583d3c21035fe130f3853cd13d426fdf7a9dfef06093853",
+      "needs_user": [],
+      "execution_state": "ALGORITHM_PROTOTYPE_SYNTHETIC_ONLY_PRODUCT_NOT_TESTED"
+    },
+    {
+      "id": "Q-L-10",
+      "priority": "P0_before_graph_introduction",
+      "exact_question": "Как ограничить cache keys, invalidation, cursor reuse, top-k и вычисление stale видимым подграфом/политикой/grants/revision, чтобы warm union cache или изменение скрытой ветки не меняли ответ AA-only и не утекали через диагностику/логи?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_09_10.json#/answers[id=Q-L-10]",
+      "fragment_sha256": "a88bd63f72308dbdc583d3c21035fe130f3853cd13d426fdf7a9dfef06093853",
+      "needs_user": [],
+      "execution_state": "ALGORITHM_PROTOTYPE_SYNTHETIC_ONLY_PRODUCT_NOT_TESTED"
+    },
+    {
+      "id": "Q-L-11",
+      "priority": "P2_needs_user",
+      "exact_question": "Сравни ключевые слова на логическом клайме/его версии, на ребре и в обоих местах: какие поисковые/смысловые задачи решает каждый вариант, как append-only исправления и scope влияют на индекс; затем сформулируй заказчику один точный выбор, не трактуя ответ да на или как утверждение обоих?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_11_14.json#/answers[id=Q-L-11]",
+      "fragment_sha256": "02f9caca52504ba75c0a3b9e4c71ecc57d77776e1e112fdb8c300063442ade36",
+      "needs_user": [
+        "keyword location/ownership not confirmed: К1 (клайм), К2 (связь) или К3 (оба независимых набора) — один выбор буквой; «да» не принимается как ответ"
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-12",
+      "priority": "P1",
+      "exact_question": "Каков общий append-only source subblock для local/external источников: что неизменно записывается (URL/path, locator, bytes/hash/version, capture time, provenance), что делать без разрешённого снимка и как добавлять новую редакцию, не считая locality меткой доверия и не инициируя произвольный fetch?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_11_14.json#/answers[id=Q-L-12]",
+      "fragment_sha256": "02f9caca52504ba75c0a3b9e4c71ecc57d77776e1e112fdb8c300063442ade36",
+      "needs_user": [
+        "Если нужна политика retention/retrieval за пределами существующих разрешений (хранить ли копии внешних источников, кто может разрешить fetch) — эскалировать заказчику; автоматического fetch нет"
+      ],
+      "execution_state": "NOT_TESTED"
+    },
+    {
+      "id": "Q-L-13",
+      "priority": "P1",
+      "exact_question": "Как единый производный tree view различает строки-события и вложенные immutable версии одного logical claim, детерминированно упорядочивает их, пагинирует глубокую цепь без предметного лимита глубины и мигрирует closed schemas/DTO/YAML без свободных будущих dict?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_11_14.json#/answers[id=Q-L-13]",
+      "fragment_sha256": "02f9caca52504ba75c0a3b9e4c71ecc57d77776e1e112fdb8c300063442ade36",
+      "needs_user": [],
+      "execution_state": "ALGORITHM_PROTOTYPE_SYNTHETIC_ONLY_PRODUCT_NOT_TESTED"
+    },
+    {
+      "id": "Q-L-14",
+      "priority": "P2",
+      "exact_question": "Какие минимальные механизмы F переносимы после отделения от Dataview: related+anchor, weighted visible-neighbor scoring, derived backlink count и UI; какие проверки нужны против расхождения словарей, JS в similarity-weights.yaml, strength/confidence drift и запрещённых float в dom-c14n/v1?",
+      "state": "answered_research_material",
+      "answer_ref": "runtime/RS003/answers_11_14.json#/answers[id=Q-L-14]",
+      "fragment_sha256": "02f9caca52504ba75c0a3b9e4c71ecc57d77776e1e112fdb8c300063442ade36",
+      "needs_user": [],
+      "execution_state": "ALGORITHM_PROTOTYPE_SYNTHETIC_ONLY_PRODUCT_NOT_TESTED"
+    }
+  ],
+  "answer_fragments": [
+    {
+      "path": "runtime/RS003/answers_01_03.json",
+      "sha256": "b7c0bc71ae305544c86c9d02d140cebad082477da6fd4e198b954c52464ed29f",
+      "question_ids": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-03"
+      ]
+    },
+    {
+      "path": "runtime/RS003/answers_04_08.json",
+      "sha256": "33a01fadcf17e4cc7c2280d5f2869a2632337208ea201018aea773b00737cd5a",
+      "question_ids": [
+        "Q-L-04",
+        "Q-L-05",
+        "Q-L-06",
+        "Q-L-07",
+        "Q-L-08"
+      ]
+    },
+    {
+      "path": "runtime/RS003/answers_09_10.json",
+      "sha256": "a88bd63f72308dbdc583d3c21035fe130f3853cd13d426fdf7a9dfef06093853",
+      "question_ids": [
+        "Q-L-09",
+        "Q-L-10"
+      ]
+    },
+    {
+      "path": "runtime/RS003/answers_11_14.json",
+      "sha256": "02f9caca52504ba75c0a3b9e4c71ecc57d77776e1e112fdb8c300063442ade36",
+      "question_ids": [
+        "Q-L-11",
+        "Q-L-12",
+        "Q-L-13",
+        "Q-L-14"
+      ]
+    }
+  ],
+  "continuation_review": {
+    "answers_01_03": "Проверен против exact_questions и AN003: id/порядок совпадают, формат карты соблюдён (механизм, Sxx, схема-refs, action→expected→evidence, uncertainty, scope_limit); принят как основа без изменений; файл не перезаписывался."
+  },
+  "decision_ledger": [
+    {
+      "id": "DL-01",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-01",
+        "Q-L-02"
+      ],
+      "statement": "accepted_context = ссылка на неизменяемый task-scoped ContextPack + отдельный AcceptedBasis; не mutable bool на клайме. Цепочка persisted/selected/delivered/acknowledged/used_reported/use_checked — независимые оси; ack ≠ понимание.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-02",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-03"
+      ],
+      "statement": "Origin, CreationGrounds и поздние EvidenceAttachment разделены; grounds_state обязателен, grounds[] может быть пуст; фабрикация basis запрещена.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-03",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-04"
+      ],
+      "statement": "claims.id остаётся record/node ID; sidecar lineage добавляет отдельный opaque family_id и parent_record_id; общий logical ID не нарушает неизменяемость. Это инженерный выбор, НЕ новый needs_user по дереву.",
+      "status": "proposed_not_implemented",
+      "tree_confirmation_needs_user": false
+    },
+    {
+      "id": "DL-04",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-05"
+      ],
+      "statement": "current leaf — производная tips(family,branch,R); при |tips|>1 состояние FORKED без молчаливого победителя; intent+expected_tips_digest+branch CAS; archive листа не повышает родителя автоматически.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-05",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-06"
+      ],
+      "statement": "Закрытый словарь dom-relations/1 из 8 типов; хранится только авторитетное направление; similarity — не ребро и не доказательство; F-токены через adapter table.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-06",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-07"
+      ],
+      "statement": "Семь независимых осей (admitted, accepted, current, stale, converged, delivered, owner_closed); reopen — новая запись с закрытым перечнем причин и evidence; no_recall не причина.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-07",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-08"
+      ],
+      "statement": "Pin: version/revision/line раздельно; evidence хранит только version/revision pin; stale остаётся строгим default; для pin вне grants — UNVERIFIABLE_IN_SCOPE без ревизии; revalidate = новая запись проверки.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-08",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-09",
+        "Q-L-10"
+      ],
+      "statement": "Scope-first: ScopedView до count/score/top-k/cursor/cache; cache/cursor ключуются scope_digest; глобальный курсор по autoincrement id запрещён; единственный публичный global bit — generic NOT_READY/CHAIN_BROKEN. Устранение TD19 обязательно и не зависит от graph-фич. Timing не обещается.",
+      "status": "proposed_not_implemented; algorithm checked on synthetic prototype only"
+    },
+    {
+      "id": "DL-09",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-12"
+      ],
+      "statement": "Общий SourceRecord/SourceEvent; locality — описание, не доверие; bytes+hash определяют воспроизводимость; DOM не делает fetch.",
+      "status": "proposed_not_implemented"
+    },
+    {
+      "id": "DL-10",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-13"
+      ],
+      "statement": "Единый TreeRow (claim_version|event), порядок (revision, id)/(revision, seq), итеративный successor + keyset cursor, dom/v2 с согласованием версии, без free dict.",
+      "status": "proposed_not_implemented; algorithm checked on synthetic prototype only"
+    },
+    {
+      "id": "DL-11",
+      "kind": "engineering_recommended",
+      "questions": [
+        "Q-L-14"
+      ],
+      "statement": "Из F переносятся идеи (related+anchor, visible-neighbor scoring, derived count); JS-код и конфиг-файлы F не переносятся; веса — целые milli-единицы; dom-c14n не менять.",
+      "status": "proposed_not_implemented; measured F defects recorded"
+    },
+    {
+      "id": "DL-12",
+      "kind": "product_open",
+      "questions": [
+        "Q-L-11"
+      ],
+      "statement": "Место keywords (К1 клайм / К2 связь / К3 оба) НЕ выбрано; «да» на «или» не выбор. Блокирует только зависимый keyword-scope.",
+      "status": "OPEN",
+      "needs_user_ref": "NU-01"
+    },
+    {
+      "id": "DL-13",
+      "kind": "product_open",
+      "questions": [
+        "Q-L-05"
+      ],
+      "statement": "Субъект выбора между двумя независимо допущенными смыслово конкурирующими siblings, если merge-запись не создана.",
+      "status": "OPEN",
+      "needs_user_ref": "NU-02"
+    },
+    {
+      "id": "DL-14",
+      "kind": "inherited_open",
+      "questions": [
+        "Q-L-03",
+        "Q-L-08"
+      ],
+      "statement": "UD-02 (обязательность dependencies/baseline; strict revalidation) OPEN; не выбирается.",
+      "status": "OPEN",
+      "needs_user_ref": "NU-03"
+    },
+    {
+      "id": "DL-15",
+      "kind": "inherited_open",
+      "questions": [
+        "Q-L-07",
+        "Q-L-08"
+      ],
+      "statement": "UD-06 (субъект/критерии сходимости, область revalidation, субъект закрытия reopen) OPEN.",
+      "status": "OPEN",
+      "needs_user_ref": "NU-04"
+    },
+    {
+      "id": "DL-16",
+      "kind": "product_open",
+      "questions": [
+        "Q-L-12"
+      ],
+      "statement": "Retention/retrieval политика для внешних источников (хранить копии, кто разрешает fetch).",
+      "status": "OPEN",
+      "needs_user_ref": "NU-05"
+    }
+  ],
+  "needs_user": [
+    {
+      "id": "NU-01",
+      "questions": [
+        "Q-L-11"
+      ],
+      "ask": "Ключевое слово — метка для поиска САМОГО КЛАЙМА (К1), метка КОНКРЕТНОЙ СВЯЗИ между двумя клаймами (К2) или нужны ОБА независимых набора (К3)? Ответ — одна из К1/К2/К3; слово «да» не принимается.",
+      "blocks": "только поле/индекс/search keywords",
+      "does_not_block": "identity, tree, isolation, graph, остальные вопросы"
+    },
+    {
+      "id": "NU-02",
+      "questions": [
+        "Q-L-05"
+      ],
+      "ask": "Кто (какое полномочие) выбирает между двумя независимо допущенными, смыслово конкурирующими уточнениями, если merge-запись не создана? Default RS003: ветка остаётся FORKED, зависимые задачи получают оба tips.",
+      "blocks": "только автоматическое разрешение fork",
+      "does_not_block": "FORKED-поведение по умолчанию"
+    },
+    {
+      "id": "NU-03",
+      "questions": [
+        "Q-L-03",
+        "Q-L-08"
+      ],
+      "ask": "UD-02 остаётся OPEN: reject vs informational NO_BASELINE; migration и строгость revalidation.",
+      "blocks": "политика пустых dependencies",
+      "does_not_block": "strict default"
+    },
+    {
+      "id": "NU-04",
+      "questions": [
+        "Q-L-07",
+        "Q-L-08"
+      ],
+      "ask": "UD-06 остаётся OPEN: субъект/критерии convergence и revalidation; кто закрывает reopen.",
+      "blocks": "converge-политика",
+      "does_not_block": "остальные оси"
+    },
+    {
+      "id": "NU-05",
+      "questions": [
+        "Q-L-12"
+      ],
+      "ask": "Нужна ли retention/retrieval политика для внешних источников за пределами текущих разрешений.",
+      "blocks": "acquisition-порт для external",
+      "does_not_block": "inline bytes"
+    }
+  ],
+  "tree_confirmation": {
+    "new_needs_user": false,
+    "note": "Смысл дерева подтверждён заказчиком; выбор ключа — инженерный (DL-03)."
+  },
+  "unresolved_product_decisions": {
+    "UD-02": "OPEN",
+    "UD-06": "OPEN",
+    "keywords_location": "OPEN",
+    "external_source_retention": "OPEN",
+    "fork_selection_authority": "OPEN"
+  },
+  "schemas": {
+    "path": "runtime/RS003/contracts.schema.json",
+    "sha256": "954870f699ba2bff246a7912e6cec978df3086aa45996f3167fecd407c001924",
+    "examples": "runtime/RS003/schema_examples.json",
+    "examples_sha256": "34e7690a266cdb64314e5cc0ae22603bacc28aa87f398a9a7b54273d6809a325",
+    "status": "PROPOSED; NOT_IMPLEMENTED; names not approved API",
+    "defs": [
+      "AcceptedBasis",
+      "AcceptedItem",
+      "Binding",
+      "CacheKeyDescriptor",
+      "CheckState",
+      "ContextPack",
+      "CursorToken",
+      "EvidenceAttachment",
+      "GraphEdgeDTO",
+      "Grounds",
+      "HandoffReceipt",
+      "LeafProjection",
+      "LineRef",
+      "LineageRecord",
+      "Pin",
+      "QuotePin",
+      "ReadView",
+      "RefinementIntent",
+      "RelationEvent",
+      "RelationVocab",
+      "ReopenRequest",
+      "RevalidationRecord",
+      "SafeGateFailure",
+      "ScopedGraphPage",
+      "ScoreExplanation",
+      "ScoringConfig",
+      "SourceEvent",
+      "SourceRecord",
+      "StateVector",
+      "TreePage",
+      "TreeRow",
+      "UseReport",
+      "VersionRef"
+    ]
+  },
+  "sources": {
+    "ledger": "runtime/RS003/source_ledger.json",
+    "ledger_sha256": "da41bdbadba17b029a96302befb89425b402d2032708da8eb3366c2bc09b5be2",
+    "count": 40,
+    "items": [
+      {
+        "source_id": "S01",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\REQUIREMENTS.md",
+        "sha256": "09e890b6df8efd47fd7d5045d4e4391600d3587f159b81d4e8c2786bb9874b70",
+        "line_count": 135
+      },
+      {
+        "source_id": "S02",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\docs\\CLAIM_ANATOMY_AND_LINK_MARKERS.md",
+        "sha256": "ceb2acc74c67b3cd042799626f7ce02740aae6039582ca74cfa355c9a55bf0cc",
+        "line_count": 80
+      },
+      {
+        "source_id": "S03",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\mockup\\dom_contract.py",
+        "sha256": "eeb48733fa2d252f522b609db3b8173a8969ec2ec368f21276b9e0c7af4a5243",
+        "line_count": 121
+      },
+      {
+        "source_id": "S04",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\mockup\\storage.py",
+        "sha256": "df09acf9406d8113d266a04779be753b1eb4c4c0d81bdd267e717a92271752e0",
+        "line_count": 113
+      },
+      {
+        "source_id": "S05",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\mockup\\projections.py",
+        "sha256": "2de60ed0e2897cb2220f803503a16f8f194a3b8949f4eaad8983e482dfc6b06e",
+        "line_count": 77
+      },
+      {
+        "source_id": "S06",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\mockup\\admission.py",
+        "sha256": "1f35db09af7ed738dcb8a5665e10ae23782961267bbf9370e922b69e28eea42e",
+        "line_count": 371
+      },
+      {
+        "source_id": "S07",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\docs\\RESEARCH_NOTE_CLAIM_REFINEMENT.md",
+        "sha256": "19c5b5766e50b8a43dac7c8e9afda44236f28088cc20749cd284376f63059e0e",
+        "line_count": 39
+      },
+      {
+        "source_id": "S08",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS001_RESEARCH.json",
+        "sha256": "15d1d74f535b3e5579e2e11e542efe972862120f884f945f4749183e04974f7d",
+        "line_count": 259
+      },
+      {
+        "source_id": "S09",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\artifacts\\RESEARCHER_AB002_A.json",
+        "sha256": "6de87b4e6f2dd9ac0ef087d80521b1de4115830126da7c1dd5d8ea0303430992",
+        "line_count": 2412
+      },
+      {
+        "source_id": "S10",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\PL003\\failure_map.json",
+        "sha256": "bf3b538881185e612fe8e38ba15b5370effae05a16cf0e40fbea7acdd6cd3692",
+        "line_count": 1763
+      },
+      {
+        "source_id": "S11",
+        "path": "F:\\AnalisysDataSet\\readme.md",
+        "sha256": "318fe16d68076596319b28795bc43d0c669a5ed85e30ea19ef734248d0ee99c9",
+        "line_count": 1924
+      },
+      {
+        "source_id": "S12",
+        "path": "F:\\AnalisysDataSet\\relation_type.yaml",
+        "sha256": "72f4467171742b70bffb9dbab4226aab226b6f7d66f53496fa39b2fb684446d0",
+        "line_count": 39
+      },
+      {
+        "source_id": "S13",
+        "path": "F:\\AnalisysDataSet\\99-System\\relation-types.md",
+        "sha256": "7a77703e6e320875bd9bda21e09e4b86811d7b3d18d4dc11ea347e850222acc2",
+        "line_count": 156
+      },
+      {
+        "source_id": "S14",
+        "path": "F:\\AnalisysDataSet\\99-System\\similarity-analysis.js",
+        "sha256": "1cf858bbe602d20b17ce12c106f2325acfafd15ac9b25e1787287b2cea6fde7d",
+        "line_count": 137
+      },
+      {
+        "source_id": "S15",
+        "path": "F:\\AnalisysDataSet\\99-System\\similarity-weights.yaml",
+        "sha256": "9b71dd2860ecd714f81fa0d435e02bba80a4d4259484e91be8327abaac8253c0",
+        "line_count": 149
+      },
+      {
+        "source_id": "S16",
+        "path": "F:\\AnalisysDataSet\\99-Template\\article-template.md",
+        "sha256": "691c726e1bf2b353617f1d06fa6cf547316757965f9cb4d0829ea04cd0a92a1e",
+        "line_count": 366
+      },
+      {
+        "source_id": "S17",
+        "path": "F:\\AnalisysDataSet\\scripts\\universal-cards-core.js",
+        "sha256": "172bbca2268fb333c8566b886a77580760e6feac8f9084a1e5f3c7a1cb8b14eb",
+        "line_count": 3333
+      },
+      {
+        "source_id": "S18",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\docs\\AB002_PLAN.md",
+        "sha256": "129c526751325f328de4811d2580737f2f73a4cd83ad16bcbd14d0e7d25e0a86",
+        "line_count": 28
+      },
+      {
+        "source_id": "S19",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\docs\\FULL_IMPLEMENTATION_PLAN.md",
+        "sha256": "8a5fad5f56e2398e4faafb748a6acdcddbb208afd40ccebe107a3ee795e24fc2",
+        "line_count": 90
+      },
+      {
+        "source_id": "S20",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\PLAN.md",
+        "sha256": "16ae52bbe4a6ea144f61cdcd2e6875db41f8f22d89b26820bd13850ce38b1a19",
+        "line_count": 108
+      },
+      {
+        "source_id": "S21",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\tech_debt.md",
+        "sha256": "6c32af2751555ae60b19b2604e7e690e6e13a02de38ccd7fc452230c94e8d317",
+        "line_count": 37
+      },
+      {
+        "source_id": "S22",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\cards\\AN003_CONTINUE_01.md",
+        "sha256": "fa6502d82025f7772ec2d10ffaa97ab4cae39fd851cb593d1e7649e0c22f4af8",
+        "line_count": 46
+      },
+      {
+        "source_id": "S23",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\cards\\AN003_LINKS_ANALYST.md",
+        "sha256": "86715a8e51470c10813ed5a6d815136de1526ffff92ab96f3a410f7fa603f54b",
+        "line_count": 37
+      },
+      {
+        "source_id": "S24",
+        "path": "E:\\opencode_harness_portable\\docs\\CODERS\\08_ANALYST_RESEARCHER_CONTRACT.md",
+        "sha256": "a659489e85014b394e96ef947b3a0fc9d7bf6a1c1b0dc26eec1dc65f545d79e1",
+        "line_count": 152
+      },
+      {
+        "source_id": "S25",
+        "path": "E:\\opencode_harness_portable\\docs\\CODERS\\09_FINDINGS_ESCAPE_HATCH.md",
+        "sha256": "4672c5ce1e633305e05465d57b757a1ec09e2bbfad00a2435a63caa14308bcf4",
+        "line_count": 75
+      },
+      {
+        "source_id": "S26",
+        "path": "E:\\opencode_harness_portable\\shared\\code-factory-process.md",
+        "sha256": "10e0fb1ab7af39c5ac948962807021c81fa290590b74e75f9d3e96d223ca9b39",
+        "line_count": 195
+      },
+      {
+        "source_id": "S27",
+        "path": "C:\\Users\\Arhys\\AppData\\Local\\hermes\\cache\\delegation\\live\\deleg_91a2b121\\task-0.log",
+        "sha256": "57479b9bd9bc604eef1640000ac68fae3a1a9db08b0ec3c6cd7794b4a78bb1f9",
+        "line_count": 70
+      },
+      {
+        "source_id": "S28",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\initial_partial.json",
+        "sha256": "40d596450a4d93b2842891737d04aa6e670651a84583d9640cdaad756ca3ebf4",
+        "line_count": 41
+      },
+      {
+        "source_id": "S29",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\cards\\AB003_TD19_WORKER_PREPARED.md",
+        "sha256": "1d4a58c79be29a000db8c0ac13df071b2f24b91cea8c13e8fa3a5dbb994bfc64",
+        "line_count": 43
+      },
+      {
+        "source_id": "R01",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\cards\\RS003_LINKS_RESEARCHER.md",
+        "sha256": "d5803f73d85cb4cd54f1e5585321f33f5ae9dfd3dacaedc9a0e377f5b8392e60",
+        "line_count": 84
+      },
+      {
+        "source_id": "R02",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\artifacts\\ANALYST_AN003_LINKS.json",
+        "sha256": "39cc9953bcb1db7acc80334f7549b4d85ab8bc092071afac3016571e2e1c612d",
+        "line_count": 1618
+      },
+      {
+        "source_id": "R03",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\reports\\ANALYST_AN003_LINKS.md",
+        "sha256": "d68f1f23b28b6b9676edb2a02e43c1d831c3e68230f0865e6faed453aabfca7f",
+        "line_count": 926
+      },
+      {
+        "source_id": "R04",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\questions.json",
+        "sha256": "6597e459b0d9ccdd47324e6af72cc75c0bc5df40cdd60623ac5d1e0f7d3fd8ba",
+        "line_count": 18
+      },
+      {
+        "source_id": "R05",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\source_ledger.json",
+        "sha256": "c44abe6b5b08d822b2720d59d931295a7bb4da0c72a91f8a5fc11d253342c9b1",
+        "line_count": 238
+      },
+      {
+        "source_id": "R06",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\source_excerpts.json",
+        "sha256": "d89fdfb7ebac7bfa7d9df77eb417186ee9d7286868134f147de3b4870448e30e",
+        "line_count": 3186
+      },
+      {
+        "source_id": "R07",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\mechanisms_and_impact.json",
+        "sha256": "afc7bc680db5c514df93f4c5d8b26aaf9efad4cbf469b69791c7adaece0f46fb",
+        "line_count": 47
+      },
+      {
+        "source_id": "R08",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\analysis_core.json",
+        "sha256": "3f2cdca3590f9aa4bd6734d8284dab140ba684bd4e0386aa0829a486d29f3526",
+        "line_count": 25
+      },
+      {
+        "source_id": "R09",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\AN003\\validation_receipt.json",
+        "sha256": "099c0253d3140cd3e4ac0075a273e462a3704655fabc6c40d5c8217de554487c",
+        "line_count": 96
+      },
+      {
+        "source_id": "R10",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\PL003\\scenario_plan.json",
+        "sha256": "1c51281bb145f2142c5d5ce753695f799cfc895ac9f7b802f418c35de714de00",
+        "line_count": 1427
+      },
+      {
+        "source_id": "R11",
+        "path": "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\mockup\\server.py",
+        "sha256": "10e0223ccc5a97a6fdb885c07053f97efd29afbad4ab193290e34cd07204cd76",
+        "line_count": 263
+      }
+    ]
+  },
+  "next_worker_slices": [
+    {
+      "id": "W0",
+      "title": "AB003 TD19 P0 (существующая карта, не RS003)",
+      "questions": [
+        "Q-L-09"
+      ],
+      "depends_on": [],
+      "scope": "cards/AB003_TD19_WORKER_PREPARED.md без graph-полей",
+      "gate": "независимые reviewer + негативный auditor на точной версии",
+      "blocked_by": [],
+      "must_not": [
+        "добавлять graph/basis/refinement/search поля в этот срез"
+      ]
+    },
+    {
+      "id": "W1",
+      "title": "dom/v2 identity foundation: lineage sidecar, VersionRef, согласование версии схем",
+      "questions": [
+        "Q-L-04",
+        "Q-L-13"
+      ],
+      "depends_on": [
+        "W0"
+      ],
+      "scope": "storage.py DDL(+IMMUTABLE), dom_contract.py (dom/v2 envelope), migration manifest",
+      "gate": "E2E: корень+2 уточнения; дубль/чужой parent/перезапись отвергнуты; raw SHA256 тел до/после; MCP historical lookup",
+      "blocked_by": [],
+      "must_not": [
+        "менять claims.id/raw/триггеры",
+        "принимать parent_ref под dom/v1"
+      ]
+    },
+    {
+      "id": "W2",
+      "title": "Branch-local current leaf, FORKED, CAS и state vector, reopen",
+      "questions": [
+        "Q-L-05",
+        "Q-L-07"
+      ],
+      "depends_on": [
+        "W1"
+      ],
+      "scope": "admission.py, projections.py, новые события",
+      "gate": "два процесса на одного родителя; kill до/после commit; FORKED без победителя; reopen по закрытым причинам; owner_closed не меняется",
+      "blocked_by": [
+        "NU-02",
+        "NU-04"
+      ],
+      "must_not": [
+        "выбирать победителя по времени/глубине",
+        "авто-повышать родителя при archive"
+      ]
+    },
+    {
+      "id": "W3",
+      "title": "Relation vocabulary, pins и таблица проверок (checks)",
+      "questions": [
+        "Q-L-06",
+        "Q-L-08"
+      ],
+      "depends_on": [
+        "W1",
+        "W0"
+      ],
+      "scope": "dom_contract.py, storage.py, projections.py trace",
+      "gate": "unknown type/endpoint kinds/foreign endpoint/duplicate reverse; старый snapshot воспроизводим; revalidate добавляет новый check",
+      "blocked_by": [
+        "NU-03",
+        "NU-04"
+      ],
+      "must_not": [
+        "ослаблять stale до CHECK_AGED",
+        "хранить inverse как ребро"
+      ]
+    },
+    {
+      "id": "W4",
+      "title": "Context pack, handoff ledger, use report",
+      "questions": [
+        "Q-L-01",
+        "Q-L-02",
+        "Q-L-03"
+      ],
+      "depends_on": [
+        "W1",
+        "W2"
+      ],
+      "scope": "новый builder + delivery.py/ports (после discovery реального OMH task/card/run адаптера)",
+      "gate": "PID1 вносит A; PID2 продолжает A.1 по карточке; независимый reviewer сравнивает результат с A; недоступный vs несуществующий предок",
+      "blocked_by": [
+        "NU-03"
+      ],
+      "must_not": [
+        "считать bool delivered/read доказательством использования",
+        "выдумывать basis для корня/legacy"
+      ]
+    },
+    {
+      "id": "W5",
+      "title": "Scoped graph read, counts, cache, cursors",
+      "questions": [
+        "Q-L-09",
+        "Q-L-10"
+      ],
+      "depends_on": [
+        "W0",
+        "W3"
+      ],
+      "scope": "новый чистый DTO builder + ScopedView",
+      "gate": "дифференциальный oracle L1-L8 + positive control; warm union cache; cursor reuse; grants revoked; restart; timing измерен как residual risk",
+      "blocked_by": [],
+      "must_not": [
+        "пост-фильтровать глобальные counts/rank",
+        "ставить global autoincrement в cursor"
+      ]
+    },
+    {
+      "id": "W6",
+      "title": "Единый tree view и пагинация",
+      "questions": [
+        "Q-L-13"
+      ],
+      "depends_on": [
+        "W1",
+        "W2"
+      ],
+      "scope": "projections/server DTO под dom/v2",
+      "gate": "длинная цепь + siblings + same-revision events; циклический/чужой parent; страницы при разных grants; старый клиент",
+      "blocked_by": [],
+      "must_not": [
+        "рекурсивный обход",
+        "hidden total"
+      ]
+    },
+    {
+      "id": "W7",
+      "title": "Source subblock (SourceRecord/SourceEvent)",
+      "questions": [
+        "Q-L-12"
+      ],
+      "depends_on": [
+        "W1"
+      ],
+      "scope": "dom_contract.py, storage.py",
+      "gate": "synthetic local/external: смена содержимого при том же locator; отсутствие/повреждение снимка; correction; рестарт; нет доступа вне allowlist",
+      "blocked_by": [
+        "NU-05"
+      ],
+      "must_not": [
+        "авто-fetch",
+        "считать locality доверием"
+      ]
+    },
+    {
+      "id": "W8",
+      "title": "Keywords и необязательный visible-neighbor scorer",
+      "questions": [
+        "Q-L-11",
+        "Q-L-14"
+      ],
+      "depends_on": [
+        "W5"
+      ],
+      "scope": "после ответа заказчика; scorer только по ScopedView",
+      "gate": "поиск AA-only vs union; suggestions не раскрывают скрытое; scorer deterministic с explanation, config rejection, score не влияет на acceptance",
+      "blocked_by": [
+        "NU-01"
+      ],
+      "must_not": [
+        "выбирать место keywords молча",
+        "менять dom-c14n/v1"
+      ]
+    }
+  ],
+  "plan_delta_prepared": {
+    "applied": false,
+    "rule": "Подготовленная дельта; RS003 не редактировал целевые файлы и живой OMH. Применяет родитель/оркестратор.",
+    "FULL_IMPLEMENTATION_PLAN": [
+      "Раздел «Связи»: различать подтверждённый смысл (дерево, родитель сверху, вложенные неизменяемые версии) и предложенную раскладку полей (RS003, не утверждена).",
+      "Исправить категорическое «общий claim_id нарушает неизменяемость»: общий logical ID допустим при уникальном неизменяемом record key (DL-03).",
+      "Добавить критерии приёмки: E2E продолжения A.1 с pack + независимая проверка использования (Q-L-01/02); матрица изоляции L1-L8 до введения graph; миграция схем dom/v2.",
+      "Зафиксировать порядок W0→W1→(W2,W3,W7)→W4→W5→W6→W8 и блокирующие NU-01…05."
+    ],
+    "AB002_PLAN": [
+      "B: scope/DTO foundations + согласование версий схем до graph (W0, W1).",
+      "C: учесть FORKED/leaf, state vector, pins, checks table (W2, W3); без молчаливого UD-02/06.",
+      "D: immutable run manifest + link checker (vocab validation) + L1-L8 manifest."
+    ],
+    "OMH_todo_or_cards": [
+      {
+        "item": "W1",
+        "verification_command": "RS003 gate W1 E2E (команда определяется worker-картой)"
+      },
+      {
+        "item": "accepted_context",
+        "note": "поле техкарты = ссылка pack_id+digest; смысл описан Q-L-01; не заводить второй планировщик"
+      },
+      {
+        "item": "статусы",
+        "note": "RS003 итоги не переводят пункты в done_verified"
+      }
+    ],
+    "tech_debt_register": "Новых TD ID не регистрировать самим RS003. Наблюдения для маршрутизации родителем: (1) converge — булев latch без вектора (S05:46), относится к существующему TD-DOM-18 по RS001; (2) F-дефекты parseNumeric/dup tags/silent fallback — качество источника F, не долг DOM; (3) claim_snapshots PK(claim_id) ограничивает повторные проверки — проектный пробел, закрывается таблицей checks (W3).",
+    "td19": "TD-DOM-19 остаётся OPEN; не закрывается и не переупорядочивается RS003."
+  },
+  "own_execution": {
+    "runs": [
+      {
+        "id": "RUN-SCOPE",
+        "record": "runtime/RS003/proto_scope_graph_run.json",
+        "argv": [
+          "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+          "-I",
+          "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS003\\proto_scope_graph.py"
+        ],
+        "exit_code": 0,
+        "record_sha256": "e042a276cd66b54ffc0d8b17c797f08e6534c0c61c6b6dd46ac5f3e98e5869d2"
+      },
+      {
+        "id": "RUN-F_PROBE",
+        "record": "runtime/RS003/proto_q14_runs.json#/runs/f_probe",
+        "argv": [
+          "C:/Users/Arhys/AppData/Local/hermes/node/node.exe",
+          "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS003\\proto_f_probe.js"
+        ],
+        "exit_code": 0,
+        "record_sha256": "7e7a6186d57976be5a96e5337354a26d49fa398c433406b6bfa694cca3b78763"
+      },
+      {
+        "id": "RUN-INT_SCORER",
+        "record": "runtime/RS003/proto_q14_runs.json#/runs/int_scorer",
+        "argv": [
+          "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+          "-I",
+          "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS003\\proto_int_scorer.py"
+        ],
+        "exit_code": 0,
+        "record_sha256": "7e7a6186d57976be5a96e5337354a26d49fa398c433406b6bfa694cca3b78763"
+      },
+      {
+        "id": "RUN-TREE_PAGER",
+        "record": "runtime/RS003/proto_q14_runs.json#/runs/tree_pager",
+        "argv": [
+          "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+          "-I",
+          "E:\\opencode_harness_portable\\projects\\omh-baseline-dom-mcp\\runtime\\RS003\\proto_tree_pager.py"
+        ],
+        "exit_code": 0,
+        "record_sha256": "7e7a6186d57976be5a96e5337354a26d49fa398c433406b6bfa694cca3b78763"
+      }
+    ],
+    "prototypes": [
+      "runtime/RS003/proto_scope_graph.py",
+      "runtime/RS003/proto_tree_pager.py",
+      "runtime/RS003/proto_int_scorer.py",
+      "runtime/RS003/proto_f_probe.js"
+    ],
+    "honest_note": "Две первые попытки прототипов упали (scope_graph: cursor None; tree_pager: некорректный негативный тест); исправлены и перезапущены; записан финальный прогон. Прототипы проверяют алгоритмы на синтетике, не продукт/MCP/E2E.",
+    "not_run": [
+      "продуктовый код",
+      "реальный MCP",
+      "OMH",
+      "сеть",
+      "Git",
+      "Dataview/vault F"
+    ]
+  },
+  "limits": [
+    "Все имена полей/таблиц/событий — предложение RS003, не утверждённый API",
+    "Все предложенные E2E: NOT_TESTED; прототипы не являются продуктовым PASS",
+    "Timing side-channels не измерялись и не обещаются",
+    "Реальный OMH task/card/run адаптер не исследовался",
+    "F файлы только читались; JS-функции F выполнены read-only на синтетике"
+  ],
+  "validation_ref": {
+    "receipt": "runtime/RS003/validation_receipt.json",
+    "validator": "runtime/RS003/validate_rs003.py"
+  },
+  "remaining": [],
+  "continuation_required": false
+}

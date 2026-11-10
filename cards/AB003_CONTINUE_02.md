@@ -1,0 +1,18 @@
+# AB003 — CONTINUATION 02 (worker TD19; только финальные 3 файла; код верифицирован)
+
+Роль прежняя: WORKER. Полный контракт — cards/AB003_TD19_WORKER_PREPARED.md; статус/остаток — AB003_CONTINUE_01.md. Код-верификация ПОЛНОСТЬЮ выполнена (smoke OK + post e2e зелёный + регрессия 1 падающий задокументированный); осталась только до-написание трёх финальных файлов. Никакой новой правки кода/верификации.
+
+## Состояние (подтверждено; проверить самому перед записью финалов)
+P=E:/opencode_harness_portable/projects/omh-baseline-dom-mcp.
+- Post-fix code digest = 08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f (16 файлов: <=> добавлен mockup/public_dto.py; изменены admission.py/server.py). Baseline pre-fix = 715b1ca8…ba3 (15). Пересчитать тем же методом перед финалом; при дрейфе — остановиться, честный отчёт.
+- Зелёное подтверждено: smoke-run/smoke-receipt.json (SMOKE_OK, 8/8 assert, revisions==['AA'], union {AA,AB}, ZZ/AB SCOPE_DENIED, history 8 append kinds, sync SYNCED); run-post-3101/manifest.json + receipts (CHK-A2-01/02 LEAK_CLOSED, A2-03 GATE_UNIFORM_SAFE с broken DTO {status,readiness,ready_for_owner_review,blockers,simulated} на 7 tools×2 коррупции, foreign_locator_visible=false, CHK-DEL-01 PASS, 19 raw frames, exit 0); regression/pytest-q.txt (1 failed — test_integrity_contracts...test_event_chain_is_verified_and_forgery_is_detected на clean['chain']['events'] — прежняя утечка, НЕ править; 63 passed). Два дополнительных DTO-фикса (AppendValue ordering в public_dto, chain→status-only в admission._trace) — в scope, observation к intended-change, не новый TD.
+- НЕ записаны: artifacts/WORKER_AB003_TD19.json, reports/WORKER_AB003_TD19.md, docs/SCHEMA_CHANGE_TD19.md.
+
+## Точный остаток (только это, в порядке)
+1. artifacts/WORKER_AB003_TD19.json по контракту карты: role/task/status=completed (обоснован: green post + files present)/code_digest before=715b1ca8…ba3, after=08aa9a9b…; product_acceptance=false, is_approval=false, self-report НЕ APPROVE; per-step evidence refs с sha256 (run-pre-3101, run-post-3101, smoke-run, regression, manifest); два дополнительных scope-in-scope фикса зафиксировать как observation (intended confidentiality change), не как новый TD; findings: TD19 закрыт на этом срезе, observation про append/trace internal-полей; debt_status_changes=[TD-DOM-19 closed?] — НЕТ: долг закрывается только после независимых reviewer+auditor на этой версии; здесь status_changes=[] или mark "fix-done-verification" отдельным полем, НЕ статусом долга.
+2. reports/WORKER_AB003_TD19.md — 6 шагов карты (baseline → PARTIAL → pre-fix reproduction → internal/public split → healthy surfaces differential → delivery+reconcile), pre/post raw receipts с PID/exit, digest до/после, schema-change doc, честный «MISMATCH none».
+3. docs/SCHEMA_CHANGE_TD19.md — removed: chain_head, глобальные revisions/events/head_hash, foreign broken_event_id; added: integrity_status, Broken-форма {status,readiness,ready_for_owner_review,blockers,simulated}, публичный read_snapshot {read_at, revisions-scoped(авторизованные ветки), integrity_status}, Chain status-only.
+4. completion_state=completed ТОЛЬКО когда все три файла существуют и читаемы. Ничего другого не трогать.
+
+## Границы
+Запись ТОЛЬКО artifacts/WORKER_AB003_TD19.json, reports/WORKER_AB003_TD19.md, docs/SCHEMA_CHANGE_TD19.md. Продукт/mockup/tests/SEC003/QA003/PL003/tech_debt/runtime/AB003 (разве что при необходимости переманифест) read-only, кроме упомянутого. PY=E:/opencode_harness_portable/.venv/Scripts/python.exe, CWD=P. Без Git/install/network/paid/субагентов/OMH delta. При лимите — continuation.json той же роли с точным остатком; родитель финал не дописывает. Финальный вердикт пишет сам исполнитель.

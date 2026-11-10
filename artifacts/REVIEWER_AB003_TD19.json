@@ -1,0 +1,136 @@
+{
+  "schema": "reviewer_verdict/v1",
+  "role": "independent reviewer RV004 (TD-DOM-19 fix); not worker, not auditor, not accepting authority",
+  "task": "RV004",
+  "debt": "TD-DOM-19",
+  "card_ref": "cards/RV004_TD19_REVIEWER.md",
+  "continuation_ref": "cards/RV004_CONTINUE_02.md",
+  "written_at": "2026-11-07T23:12:43Z",
+  "decision": "APPROVE",
+  "decision_rationale": "All five own checks are green on the reviewer's own fresh fixtures (seed 7107, distinct from worker seed 3101): CHK-A2-01/02 LEAK_CLOSED, CHK-A2-03 GATE_UNIFORM_SAFE, CHK-DEL-01 PASS, RV004-B-SIDE PASS. No chain_head/head_hash/events/broken_event_id/broken_at_seq/foreign revisions leak on any healthy surface; the global integrity gate returns one exact safe Broken shape with no foreign locator; internal proof (chain_head + all revisions + port_reported) and delivery ack/observation/attempt chain are preserved. The reviewed version is exactly code_digest 08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f (16 files), independently recomputed.",
+  "product_acceptance": false,
+  "is_approval": false,
+  "completion_state": "completed",
+  "reviewed_version": {
+    "code_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+    "file_count": 16,
+    "method": "SEC003 digest_check: sha256(json.dumps(sorted map mockup/**/*.py rel-path->sha256, sort_keys=True)) recomputed by reviewer via runtime/AB003/digest_check.py (read-only)",
+    "recomputed_now_match": true,
+    "baseline_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+    "baseline_file_count": 15,
+    "changed_files": ["mockup/admission.py", "mockup/server.py"],
+    "added_files": ["mockup/public_dto.py"],
+    "unchanged_vs_baseline": 13,
+    "note": "Exactly the two declared edits plus one added module; the other 13 mockup .py files are byte-identical to baseline."
+  },
+  "own_review": {
+    "seed": 7107,
+    "run_dir": "runtime/RV004/run-aa-7107b",
+    "run_manifest_ref": "runtime/RV004/run-aa-7107b/manifest.json",
+    "run_manifest_sha256": "5744229493e83bff65ff233c28fa5fdd34d2820ff1df2236615e7c3b75c156ac",
+    "probe_ref": "runtime/RV004/rv004_probe.py",
+    "probe_sha256": "616505ed5e7edb455a5fef432d51cf9f041f1269f33c23c550887766122e770c",
+    "python": "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+    "python_version": "3.11.15",
+    "clean_env": true,
+    "results": {
+      "CHK-A2-01": "LEAK_CLOSED",
+      "CHK-A2-02": "LEAK_CLOSED",
+      "CHK-A2-03": "GATE_UNIFORM_SAFE",
+      "CHK-DEL-01": "PASS",
+      "RV004-B-SIDE": "PASS"
+    }
+  },
+  "per_check": {
+    "CHK-A2-01": {
+      "verdict": "LEAK_CLOSED",
+      "actual": "Healthy AA-fixed / AB-hidden fixture, AA at 2 revisions. query/snapshot/trace/resume/sync_status/export/sync all return status-only chain with revisions {AA:2}; leak_keys=[], foreign_rev_keys=[], ab_canary_visible=false, text_equals_structured=true on every surface. Export YAML has AA claim, no AB claim, branch line present.",
+      "evidence_ref": "runtime/RV004/run-aa-7107b/receipt-rv004-a2-01.json",
+      "evidence_sha256": "e18c94a632ee2969d406f1525aa8b5c0c2ef3f4afae6471d8b16f01b1136bd00"
+    },
+    "CHK-A2-02": {
+      "verdict": "LEAK_CLOSED",
+      "actual": "AA-only caller trace/resume chain is status-only; union caller sees AA+AB revisions {AA:2,AB:2} but no leak keys; sync_status AA shows 4 acked intents (2 OMH_EVIDENCE + 2 YAML_EXPORT) with no foreign branch data. No chain_head/head_hash/events exposed.",
+      "evidence_ref": "runtime/RV004/run-aa-7107b/receipt-rv004-a2-02.json",
+      "evidence_sha256": "b84bf341566608c8aa251ecbba14ef960dcdf801720f140f9851727c3f137324"
+    },
+    "CHK-A2-03": {
+      "verdict": "GATE_UNIFORM_SAFE",
+      "actual": "Two corruptions (invalid-utf8, wrong-hash) on a disposable copy, 7 tools x 2 PIDs each. Every response is the exact safe Broken shape (status CHAIN_BROKEN, reason EVENT_SHAPE_INVALID / EVENT_HASH_MISMATCH, broken_at_seq=4, branch=AB, kind=comment) with NO foreign broken_event_id/head_hash/events. db_unchanged=true, no new/changed files during gate. Oracle independently located the seq-4 AB break in both variants.",
+      "evidence_ref": "runtime/RV004/run-aa-7107b/receipt-rv004-a2-03.json",
+      "evidence_sha256": "ac05101a2377717bfc2aad92fbff2ab1747ccf395cf872088ac9d981b9a8abd1"
+    },
+    "CHK-DEL-01": {
+      "verdict": "PASS",
+      "actual": "8 outbox / 4 attempts / 4 observations / 4 acks; every intent acked; observation after attempt; internal observation snapshots carry full stamp (chain_head + revisions {AA,AB} + port_reported); target demo:existing-task-AA001 written once per tx, writes_unique=true, no duplicate writes.",
+      "evidence_ref": "runtime/RV004/run-aa-7107b/receipt-rv004-delivery.json",
+      "evidence_sha256": "02f01d7a0dd3c5b8646b4156792aa07545ff5e18ea070e2a0d29d8b7fec36e5f"
+    },
+    "RV004-B-SIDE": {
+      "verdict": "PASS",
+      "actual": "Direct AB/ZZ calls on query/trace/sync_status/sync all SCOPE_DENIED; union caller sees AB branch with the AB b64 canary present in body_b64 and no leak keys. B-side isolation holds while union visibility is preserved.",
+      "evidence_ref": "runtime/RV004/run-aa-7107b/receipt-rv004-b-side.json",
+      "evidence_sha256": "a16a5c266bda581074943e68021e1ead38468ca596edbc75e87272475a24b81e"
+    }
+  },
+  "worker_evidence_integrity": {
+    "verifier_ref": "runtime/RV004/verify_worker_receipts.py",
+    "verifier_sha256": "3a3dfd1ba32fbcd0a94bcc35af116d2eb7661e02fc21d26f466d4916c8f42534",
+    "summary_ref": "runtime/RV004/verify-worker-receipts.json",
+    "summary_sha256": "9bb2abd38ced6115e0266b10985a3d7eb214d463a049b0995260c32319a62757",
+    "declared_hash_checks": 11,
+    "match": 11,
+    "mismatch": 0,
+    "missing": 0,
+    "live_code_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+    "source_hash_map_equal_to_post_manifest": true,
+    "note": "All 9 worker receipts + 2 manifests hash-match their declared values; live digest equals the reviewed version."
+  },
+  "coverage": {
+    "in_scope_verified": [
+      "public DTO fail-closed: no chain_head/head_hash/events/broken_event_id/broken_at_seq/foreign revisions on any healthy surface",
+      "global integrity gate returns one exact safe Broken shape across 7 tools x 2 PIDs x 2 corruptions, no foreign locator",
+      "internal proof preserved: chain_head + all revisions + port_reported in internal observation stamp",
+      "delivery ack/observation/attempt chain intact, no duplicate writes",
+      "B-side isolation: direct AB/ZZ SCOPE_DENIED, union sees AB b64 canary without leak keys",
+      "both MCP channels serialize one safe object (text_equals_structured=true)",
+      "scope not expanded: no new endpoints/grants, tests byte-identical to baseline (18 files), tech_debt TD19 untouched"
+    ],
+    "omissions": [
+      "CP-PL-05 REPLACE-probe not counted: SQL error in the probe (QA003), not a product result",
+      "CP-PL-10 busy/read-only subcases NOT_TESTED (WAL mode); does not block TD19 review"
+    ]
+  },
+  "debt_recommendation": {
+    "debt": "TD-DOM-19",
+    "suggested_status": "closed",
+    "basis": "All five own checks green on the exact reviewed version; no leak on healthy surfaces; no foreign locator in the global gate; internal proof/delivery preserved.",
+    "acceptance_performed": false,
+    "note": "This is a reviewer recommendation only. Debt acceptance/closure in tech_debt is the OMH/customer decision, not the reviewer's; tech_debt.md was not modified."
+  },
+  "probe_bugs_found_and_fixed": [
+    {"id": "RV004-PB-01", "suspected": "reason field looked like a leak key", "checked": "RS002 public_schemas", "actual": "reason is a legal RS002 field; removed from LEAK_KEYS scan"},
+    {"id": "RV004-PB-02", "suspected": "A2-03 db changed during gate", "checked": "db_sha capture timing", "actual": "db_sha was taken BEFORE corruption; fixed to capture after corruption -> db_unchanged=true"},
+    {"id": "RV004-PB-03", "suspected": "DELIVERY target not written", "checked": "target key", "actual": "target is const TASK demo:existing-task-AA001; fixed lookup -> target_written=true"},
+    {"id": "RV004-PB-04", "suspected": "AB canary not visible in union", "checked": "canary encoding", "actual": "canaries live in base64 body_b64; fixed scan -> union sees AB b64 canary, no leak keys"},
+    {"id": "RV004-PB-05", "suspected": "oracle could not locate break", "checked": "event_type", "actual": "event_type is 'comment', not 'append'; fixed oracle -> located seq-4 AB break in both corruptions"}
+  ],
+  "preexisting_test": {
+    "test": "test_event_chain_is_verified_and_forgery_is_detected",
+    "status": "pre-existing failure on the old leaky form",
+    "note": "tests/ are byte-identical to baseline (18 files); the failing assertion encodes the pre-fix leaky shape and is documented, not a regression introduced by the fix."
+  },
+  "findings": [],
+  "limitations": [
+    "Delta APPROVE for TD-DOM-19 on the exact version; not whole-system acceptance, not deploy/task-closure authorization.",
+    "Own fixtures are disposable copies; no repair/rewind policy chosen.",
+    "CP-PL-05 REPLACE-probe and CP-PL-10 busy/read-only subcases remain uncovered (see omissions).",
+    "Fixture roles are not production auth."
+  ],
+  "runtime_refs": {
+    "source_ledger": "runtime/RV004/source-ledger.json",
+    "master_manifest": "runtime/RV004/master-manifest.json",
+    "run_dir": "runtime/RV004/run-aa-7107b"
+  },
+  "report_ref": "reports/REVIEWER_AB003_TD19.md"
+}

@@ -1,0 +1,98 @@
+{
+  "role": "independent auditor AU002-A; not reviewer/fixer/analyst",
+  "task": "AB002-A",
+  "module": "AB002-A",
+  "completion_state": "completed",
+  "section0": [
+    {"id":"H1","suspicion":"Partial YAML delivery conceals absent OMH; resumed concurrent two-branch recovery duplicates effects","checked":"Own real MCP delivered AA1/AB1 then new AA2/AB2; AA unavailable; AB actual death after send before readback; two fresh processes concurrently recover branches","observed":"New AA YAML=ack/OMH=ambiguous; SYNC_PENDING/NOT_READY. AB target written but no premature ack. Recovery four tx/four writes/eight bound acks; old claim bytes retained","classification":"OK_IN_EXECUTED_CONDITIONS","evidence":["runtime/AU002_A/run-b944ea96/partial-race/result.json","runtime/AU002_A/verification.json"]},
+    {"id":"H2","suspicion":"New integrity snapshot/diagnostics bypass AA-only read scope","checked":"AA-only author before/after normal hidden AB admission; AB-only positive control; direct forbidden AB calls; six AA output surfaces","observed":"AA claims fixed; read_snapshot.revisions.AB 0->1 on all six surfaces; direct AB SCOPE_DENIED. No caller filesystem/SQL authority required","classification":"FINDING","finding":"F-AU002-01","debt_id":"TD-DOM-19","evidence":["runtime/AU002_A/run-b944ea96/scope/result.json","runtime/AU002_A/run-b944ea96/scope/restricted-before-hidden.json","runtime/AU002_A/run-b944ea96/scope/restricted-after-hidden.json","runtime/AU002_A/run-b944ea96/scope/positive-control.json"]},
+    {"id":"H3","suspicion":"Middle-history invalid UTF8 defeats fail-closed or safe diagnostics","checked":"Own populated disposable copy; middle AB event seq2 invalid UTF8; two AA-only processes/seven tools; physical before-after","observed":"14 CHAIN_BROKEN/EVENT_SHAPE_INVALID, NOT_READY; exact bytes unchanged. All disclose forbidden AB event UUID","classification":"OK_FAIL_CLOSED_WITH_SCOPE_FINDING","finding":"F-AU002-01","debt_id":"TD-DOM-19","evidence":["runtime/AU002_A/run-b944ea96/middle/injection.json","runtime/AU002_A/run-b944ea96/middle/responses.json","runtime/AU002_A/run-b944ea96/middle/injected-before.json","runtime/AU002_A/run-b944ea96/middle/after-refusals.json"]},
+    {"id":"H4","suspicion":"Nested malformed target aborts sync before observation and YAML","checked":"Owned target TASK:list plus unrelated target; two fresh MCP processes; restore only malformed owned key and reconcile","observed":"Twice SDK isError with raw AttributeError; two attempts/zero observations/acks/YAML; safe NOT_READY. Recovery one write/two bound acks and unrelated target preserved","classification":"OUT_OF_SCOPE_FINDING","finding":"F-AU002-02","debt_id":"TD-DOM-20","evidence":["runtime/AU002_A/run-b944ea96/malformed-target/responses.json","runtime/AU002_A/run-b944ea96/malformed-target/after-malformed.json","runtime/AU002_A/run-b944ea96/malformed-target/final-recovered.json"]},
+    {"id":"H5","suspicion":"Mutable global manifest redirects evidence across runs","checked":"Existing RV002-A-DEBT-01/worker refs and runner inspected; own immutable run-specific manifest used","observed":"Known D-tooling proposal registered TD-DOM-21, not a new duplicate finding","classification":"KNOWN_DEBT_REGISTERED","debt_id":"TD-DOM-21","evidence":["artifacts/REVIEWER_AB002_A.json","artifacts/WORKER_AB002_A.json","runtime/AU002_A/run-b944ea96/manifest.json"]}
+  ],
+  "checked_suspicions": [
+    {"id":"H1","classification":"OK_IN_EXECUTED_CONDITIONS","details_ref":"section0[0]"},
+    {"id":"H2","classification":"FINDING","finding":"F-AU002-01","details_ref":"section0[1]"},
+    {"id":"H3","classification":"OK_FAIL_CLOSED_WITH_SCOPE_FINDING","finding":"F-AU002-01","details_ref":"section0[2]"},
+    {"id":"H4","classification":"OUT_OF_SCOPE_FINDING","finding":"F-AU002-02","details_ref":"section0[3]"},
+    {"id":"H5","classification":"KNOWN_DEBT_REGISTERED","details_ref":"section0[4]"}
+  ],
+  "checked_suspicions_ref": "section0",
+  "verdict": "REQUEST_CHANGES",
+  "justification": "A6 new read_snapshot/diagnostics violate preserved branch read scope (TD-DOM-19). Delivery safety in the new partial/crash sequence does not waive forbidden metadata/object identity emission. Malformed target robustness is separately major OUT_OF_SCOPE, not false A1/A2 ack or production auth exploit.",
+  "exact_scope": "Negative integration audit AB002-A A1-A9: attempt/readback/observed/ack boundaries; partial OMH-vs-YAML delivery; populated resumed two-branch recovery; new integrity gate output ACL and middle-history invalid encoding. Real stdio MCP/PIDs/SQLite/files, OMH SIMULATION. Nested external target robustness out-of-scope. Not full-system acceptance or PL003/SEC003/QA003 execution.",
+  "artifact_revision": {
+    "algorithm":"SHA256",
+    "before_ref":"runtime/AU002_A/fingerprints-before.json",
+    "after_ref":"runtime/AU002_A/fingerprints-after.json",
+    "source_input_count":42,
+    "before_after_unchanged":true,
+    "worker_declared_hashes_matched":34,
+    "requirements_sha256":"2be43b2f8370e7e27df012831496af2d3bb000f66915975d8f24aff3e17310b8",
+    "additional_input_hashes_ref":"runtime/AU002_A/verification.json:input_hashes_completion_only",
+    "runtime_script_hashes_ref":"runtime/AU002_A/verification.json:runtime_script_hashes",
+    "limits":"Source/tests/REQUIREMENTS/AB002_A cards before/after frozen. Extra docs/normatives/predecessor artifacts hashed completion-only, not preregistered. Suspicions map written before E2E."
+  },
+  "process_analysis": {
+    "sequence":"Completed reviewer JSON+MD read before audit; no other agents launched",
+    "first_artifact":"Own honest PARTIAL/BLOCK before E2E",
+    "preregistration_ref":"runtime/AU002_A/suspicions.json",
+    "own_manifest_ref":"runtime/AU002_A/run-b944ea96/manifest.json",
+    "new_scenario_groups":4,
+    "raw_server_frames":122,
+    "MCP_children":29,
+    "child_exit_counts":{"0":28,"71":1},
+    "SDK_error_frames":2,
+    "all_children_closed":true,
+    "OS_matching_launchers_after":0,
+    "unit_count_is_not_acceptance":true,
+    "adversarial_checks":{"domain_coverage":"Bounded negatives and explicit gaps, not full Cartesian security","fact_concept_consistency":"Real frames/SQL/files/current fingerprints","concept_diversity":"Partial/crash recovery; metadata differential; middle UTF8; nested malformed target","source_specificity":"Local source:line and immutable evidence","triz_correctness":"Not applicable: no TRIZ solution or IFR authored","estimates_realism":"No synthetic performance/timing/safety estimates"},
+    "auditor_tool_note":"write_file refused final overwrite twice, including after full read; no product effect. Final own JSON updated using exact-content patch after readback."
+  },
+  "own_runs": [
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/AU002_A/audit_probes.py","pid":5752,"exit_code":0,"interpretation":"Completed evidence driver, not product PASS; scope and malformed-target scenarios record FAIL","receipt_ref":"runtime/AU002_A/run-command.json","stdout_ref":"runtime/AU002_A/run-stdout.log","stderr_ref":"runtime/AU002_A/run-stderr.log","child_commands_pids_exits_ref":"runtime/AU002_A/run-b944ea96/child-process-summary.json"},
+    {"command":"E:/opencode_harness_portable/.venv/Scripts/python.exe -B runtime/AU002_A/verify_evidence.py","pid":10928,"exit_code":0,"receipt_ref":"runtime/AU002_A/verify-command.json","evidence":["runtime/AU002_A/verification.json","runtime/AU002_A/process-check.json"],"actual":"Independent wire reparse/current SQL joins and target/files: eight partial-race plus two malformed-target recovery acks valid; 14 middle refusals unchanged; 42 hashes unchanged, 34 worker hashes matched; no own launcher remains"}
+  ],
+  "findings": [
+    {
+      "id":"F-AU002-01",
+      "severity":"major",
+      "scope":"IN_SCOPE A6 new integrity snapshot/diagnostic emission and preserved ACL",
+      "invariant":"Branch read permissions cover metadata/diagnostics. REQUIREMENTS §5.4, existing scope guards; A6 safe diagnostics does not authorize forbidden branch data.",
+      "source:line":["mockup/admission.py:48-51","mockup/admission.py:90-100","mockup/admission.py:220-277","mockup/README.md:300-301"],
+      "initial_conditions":"AA-only author launch grants; AA fixed; allowed independent actor admits hidden AB. No caller-supplied role, SQL or filesystem authority. Corruption variant prepared only by auditor in disposable copy.",
+      "repro":["audit_probes.py scope: six AA outputs before/after AB admission; AB-only positive control and direct forbidden AB denials","middle_probe: corrupt middle AB event bytes in own populated copy; seven tools in two fresh AA-only processes"],
+      "expected":"No forbidden AB revision/count/object UUID emitted; keep integrity fail-closed with scoped diagnostics and separately privileged locator",
+      "actual":"read_snapshot.revisions.AB changes 0->1 on query/snapshot/trace/resume/sync_status/export with AA claims fixed. Middle AB seq2 UUID 28ec01b7-af4d-4fdd-937e-ae440d13713b disclosed in 14 CHAIN_BROKEN responses. Global chain count/head also unscoped. No plaintext body leakage claim.",
+      "impact":"Restricted MCP reader observes hidden branch progress and object identity despite explicit branch denial",
+      "evidence":["runtime/AU002_A/run-b944ea96/scope/result.json","runtime/AU002_A/run-b944ea96/scope/restricted-before-hidden.json","runtime/AU002_A/run-b944ea96/scope/restricted-after-hidden.json","runtime/AU002_A/run-b944ea96/scope/positive-control.json","runtime/AU002_A/run-b944ea96/middle/injection.json","runtime/AU002_A/run-b944ea96/middle/responses.json","runtime/AU002_A/verification.json"],
+      "TD-ID":"TD-DOM-19",
+      "level":3,
+      "escalation":"Parent/analyst/researcher: REQUEST_CHANGES; scoped diagnostics then factory fix/recheck, not deferred disclosure to future security cycle"
+    },
+    {
+      "id":"F-AU002-02",
+      "severity":"major",
+      "scope":"OUT_OF_SCOPE_FINDING: SIMULATION nested external target robustness; not false A1/A2 ack or production auth",
+      "invariant":"Malformed external target should receive safe structured domain diagnosis rather than uncaught AttributeError aborting sync",
+      "source:line":["mockup/ports.py:31-39","mockup/ports.py:64-71","mockup/admission.py:335-345","mockup/server.py:197-215"],
+      "initial_conditions":"One admitted pending AA transaction; owned target JSON TASK:list plus unrelated target. Fixture preparation, not unauthorized MCP mutation exploit.",
+      "repro":["malformed_target writes TASK=[] only in owned runtime","Two fresh processes resume -> raw dom_sync -> sync_status/trace","Restore only malformed own key to {}; new-process reconcile and independent readback"],
+      "expected":"Invalid/unavailable target domain response with honest pending, no raw AttributeError. Independent YAML progress desired robustness, not asserted formal per-intent guarantee.",
+      "actual":"PIDs 11740/7796 twice result.isError=true, text 'list' object has no attribute 'get', no structuredContent/status. Two attempts, zero observations/acks/YAML; target unchanged, NOT_READY safe. Controlled recovery SYNCED, one write/two acks, unrelated target preserved.",
+      "impact":"Restart/retry repeats error until external key correction; malformed OMH target prevents independent YAML progress and loses domain diagnosis. No admitted data loss/false readiness. Missing observation alone is not called an A2 violation.",
+      "evidence":["runtime/AU002_A/run-b944ea96/malformed-target/result.json","runtime/AU002_A/run-b944ea96/malformed-target/responses.json","runtime/AU002_A/run-b944ea96/malformed-target/before-malformed.json","runtime/AU002_A/run-b944ea96/malformed-target/after-malformed.json","runtime/AU002_A/run-b944ea96/malformed-target/final-recovered.json","runtime/AU002_A/verification.json"],
+      "TD-ID":"TD-DOM-20",
+      "level":2
+    }
+  ],
+  "registered_debts":[{"id":"TD-DOM-19","finding":"F-AU002-01","severity":"major","status":"open"},{"id":"TD-DOM-20","finding":"F-AU002-02","severity":"major","status":"open","scope":"out_of_scope"},{"id":"TD-DOM-21","prior_proposal":"RV002-A-DEBT-01","severity":"minor","status":"open","new_duplicate_finding":false}],
+  "debt_registry_ref":"tech_debt.md",
+  "out_of_scope":["F-AU002-02/TD-DOM-20 nested external target robustness","TD-DOM-21 prior reviewer D-tooling proposal registered without duplicate finding"],
+  "not_checked":["Prepared PL003 -> SEC003 -> QA003 strict full scenario search/leak audit remains pending","New legacy migration/malformed legacy observation permutations: predecessor evidence read, not repeated or claimed as own acceptance","AB002-B/C/D, E11/S4/new revalidation, baseline/stale/convergence/offline export provenance and UD-01..06 OPEN","LIVE OMH/Git/issuer/auth/OS sandbox/external checkpoint, malicious readback/file-owner/in-process and refinement OPEN","Full Cartesian SxE/all schema-type-encoding permutations, selective search/log/export/timing channels, production scale/other OS","Own pytest/happy-path full matrix rerun and exhaustive historical code review: not substituted for negative E2E"],
+  "limitations":["Trusted fixture grants exercise Service scope through real MCP, not production auth; restricted caller has no terminal/filesystem authority","Middle corruption only own disposable populated DB copy; external targets not copied. Historical ack-at-read_at does not require perpetual target availability","Raw MCP transport/readback reused; scenarios, scoped launcher and final SQL/frame/file oracle owned by auditor","Concurrent recovery clients launched through threads/distinct PIDs; exact simultaneous critical-section overlap not barrier-enforced or claimed","No newly reproduced critical/false ack/READY; tested delivery safety does not waive ACL finding/known open debts","Only own JSON/MD/runtime and append-only tech_debt additions written; product/tests/docs/cards/plugins read-only; no installs/Git/network/listeners/paid/live/user DB/secrets","Global skill writes disallowed by scope; reusable probe discipline retained in owned runtime scripts"],
+  "findings_escape_hatch":{"level_1":["Own probes/evidence/reports finalized; no product fixes"],"level_2":["TD-DOM-20 external robustness registered","TD-DOM-21 prior proposal registered; known debts not duplicated/closed"],"level_3":["ESCALATED TD-DOM-19 new ACL emission to parent/analyst/researcher, REQUEST_CHANGES despite prior delta reviewer APPROVE"]},
+  "remaining":["Analyst then researcher under parent orchestration; auditor launched no agents","Factory fix and independent recheck before affected A acceptance","Later PL003/SEC003/QA003 and all declared full-system obligations remain open"],
+  "continuation_required":false,
+  "report_ref":"reports/AUDITOR_AB002_A.md"
+}

@@ -1,0 +1,80 @@
+{
+  "schema": "analyst_synthesis/v1",
+  "role": "ANALYST",
+  "task": "AN006",
+  "continuation": "AN006_CONTINUE_01",
+  "status": "COMPLETED",
+  "completion": "completed",
+  "first_artifact": true,
+  "product_acceptance": false,
+  "is_approval": false,
+  "continuation_required": false,
+  "code_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+  "code_digest_recomputed": true,
+  "observed": "AU005 material accepted (COMPLETE_WITH_LIMITS / REQUEST_CHANGES; artifacts/AUDITOR_AB004_AU004F01.json + reports/AUDITOR_AB004_AU004F01.md read in full). Code digest recomputed by SEC003 method: 16 files, 1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf (code untouched). Findings F-01..F-04 traced to code and physical evidence (SQL observations/acks, replay frames, YAML fingerprints). PL003 reconciliation performed read-only: SEC003/QA003 materials COMPLETED and preserved; RV003/AU003 absent by bounded name search (0 hits) and still required on the current digest. OMH delta prepared only (PREPARED_NOT_APPLIED, applied=false). No product, OMH, debt or code writes by AN006.",
+  "findings_summary": [
+    {
+      "id": "AU005-F-01",
+      "severity": "major",
+      "title": "Scoped YAML ack reused as full delivery (O3 view/receiver identity lost)",
+      "key_fact": "outbox intent is created once per (tx,kind) without view scope/receiver (admission.py:215-217); delivery.confirmed() checks only (intent,tx,digest,target) and, for YAML, branch/revision (delivery.py:44-65), never delivered byte hash or scope; sync skips already-confirmed intents (admission.py:335), so union sync after AA-only keeps the old AA ack. Physically reproduced on current digest: ack fingerprints 5fadbab7... (AA-only) vs 113628b8... (virgin union); receipt_unchanged_after_explicit_export=true."
+    },
+    {
+      "id": "AU005-F-02",
+      "severity": "major",
+      "title": "Cross-grant idempotency replay returns cached AB receipt via AA candidate",
+      "key_fact": "admit() order is candidate() -> dedupe() -> binding/scope checks (admission.py:175-181); dedupe key is (work, 'admit:'+principal, idempotency_key) (admission.py:112-117). Old AB key+digest with an accessible AA candidate returns the cached AB receipt (branch AB, revision 1, private claim UUID, AB tx). No new facts written; owning a prior key/digest is knowledge, not capability. Reproduced on two PIDs (frames-84519d44, frames-03617a79); fresh-key control = DIGEST_MISMATCH."
+    },
+    {
+      "id": "AU005-F-03",
+      "severity": "minor",
+      "title": "Non-provenance branch-valued fields expose AB names to AA-only",
+      "key_fact": "ClaimItem.applicability and Snapshot/Trace excluded_branches are plain ('list','str') with no bmap scope filter (public_dto.py:71-75,100-105,113-121); projections.py:25,47,53 copies the item and accumulates excluded branches unscoped; admission.py:277-283 aggregates excluded in trace. Customer O2 decision covers only origin_branch/origin_version of an available claim, not these membership/exclusion names."
+    },
+    {
+      "id": "AU005-F-04",
+      "severity": "minor",
+      "title": "Granted-but-absent branch ZZ yields INTERNAL_ERROR / empty SYNC_STATUS / false SYNCED",
+      "key_fact": "head() does fetchone()[0] with no row -> TypeError (admission.py:111); query/resume propagate it to server.py:212-216 INTERNAL_ERROR; sync_status returns empty intents (admission.py:245-251); sync returns SYNCED with zero intents (admission.py:325-381). No AB token/ID leak observed (AB_token=false, ab_ids=false). Not a confidentiality bypass; related to TD-DOM-07."
+    }
+  ],
+  "reconciliation_key_fact": {
+    "sec003_qa003": "SEC003 and QA003 are COMPLETED materials with verdict REQUEST_CHANGES (product_acceptance=false, debt_status_changes=[]) and were executed on the PREVIOUS code digest 715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3 (15 files); the current digest is 1ead2d45... (16 files). Their per-check results therefore describe pre-AB004 code. They must not be rolled back to pending.",
+    "rv003_au003": "RV003 (independent review) and AU003 (independent negative audit of SEC/QA material on the exact current version) are ABSENT from the whole project (bounded name-pattern rglob = 0 hits). RV004/AU004/AU005 covered the AB004 fix, not the SEC/QA material, so substitution is not valid. No fabricated verdicts; no TD-ID assigned on behalf of the owner.",
+    "pl003": "PL003 material is COMPLETE_MATERIAL, PREPARED_NOT_APPLIED; TD-DOM-19 remains open with its prepared fix card preserved, not dispatched."
+  },
+  "orchestrator_claim_corrections": [
+    {
+      "claim": "O3 was only an 'observation', not reproduced",
+      "correction": "AU005 s4 physically reproduced O3 on the current digest (two PIDs, observations/acks in SQL, differing YAML fingerprints 5fadbab7... / 113628b8...). O3 is a CONFIRMED implementation defect."
+    },
+    {
+      "claim": "Provenance visibility was a leak/unauthorized",
+      "correction": "Customer O2 decision: origin of an available/shared claim is legitimately visible; only non-provenance membership/exclusion fields remain a scope defect (F-03)."
+    },
+    {
+      "claim": "AU005 verdict implied product acceptance or scope approval",
+      "correction": "AU005 is COMPLETE_WITH_LIMITS + REQUEST_CHANGES, product_acceptance=false, is_approval=false. Acceptance of the material is not product acceptance; the AB004 delta is NOT approved."
+    }
+  ],
+  "outputs": {
+    "findings_map": "runtime/AN006/findings_map.json",
+    "questions_for_researcher": "runtime/AN006/questions_for_researcher.json",
+    "pl003_reconciliation": "runtime/AN006/PL003_reconciliation.json",
+    "omh_delta_prepared": {
+      "path": "runtime/AN006/omh_delta_prepared.json",
+      "state": "PREPARED_NOT_APPLIED",
+      "applied": false
+    },
+    "validation_receipt": "runtime/AN006/validation_receipt_AN006.json",
+    "negative_controls": "runtime/AN006/negative_controls_AN006.json",
+    "report": "reports/ANALYST_AN006_AU005_FINDINGS.md",
+    "first_artifact": "runtime/AN006/first_artifact.json",
+    "progress": "runtime/AN006/progress.json",
+    "validator": "runtime/AN006/validator_AN006.py"
+  },
+  "questions_count": 8,
+  "worker_slices": 5,
+  "publication_limits": "F-01..F-04 are confirmed findings against the AB004 delta; nothing here approves the delta, accepts the product, closes debt/gaps, or reopens customer decisions O1/O2/O3. OMH application of the prepared delta remains with the parent orchestrator via official tooling.",
+  "written_at": "2026-11-08T00:00:00+00:00"
+}

@@ -1,0 +1,108 @@
+{
+  "schema": "worker-artifact/v1",
+  "role": "worker",
+  "block_id": "AB003",
+  "debt": "TD-DOM-19",
+  "card_ref": "cards/AB003_TD19_WORKER_PREPARED.md",
+  "continuation_ref": "cards/AB003_CONTINUE_02.md",
+  "written_at": "2026-11-08T00:30:00+00:00",
+  "status": "completed",
+  "status_rationale": "status=completed ONLY on this verification slice: independent code-verification was already green (smoke SMOKE_OK 8/8 asserts; post e2e CHK-A2-01/02 LEAK_CLOSED, CHK-A2-03 GATE_UNIFORM_SAFE, CHK-DEL-01 PASS, exit 0; regression 1 documented pre-existing failing test, 63 passed) AND all three final files (artifacts/WORKER_AB003_TD19.json, reports/WORKER_AB003_TD19.md, docs/SCHEMA_CHANGE_TD19.md) exist and are readable. This is a worker delivery-complete signal, NOT product acceptance and NOT an approval.",
+  "product_acceptance": false,
+  "is_approval": false,
+  "self_report": "WORK-internal-execution-complete (NOT APPROVE); final verdict to be written by reviewer + negative auditor.",
+  "code_digest": {
+    "method": "SEC003 digest_check: sha256(sorted JSON map mockup/**/*.py rel-to-project path->sha256), recomputed via runtime/AB003/digest_check.py",
+    "before": {
+      "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+      "file_count": 15
+    },
+    "after": {
+      "code_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+      "file_count": 16
+    },
+    "recomputed_now_match_after": true
+  },
+  "evidence": {
+    "smoke": {
+      "receipt": "runtime/AB003/smoke-run/smoke-receipt.json",
+      "sha256": "0a25b272864439392583a2e764826a89c236033b4d252fbf8532d1615a99f6ee",
+      "result": "SMOKE_OK, 8/8 asserts: revisions==['AA'], union present, ZZ/AB SCOPE_DENIED, history 8 append kinds, sync SYNCED"
+    },
+    "pre_fix_reproduction": {
+      "report_dir": "runtime/AB003/run-pre-3101",
+      "manifest_sha256": "ff2a2d17fe4c4a976289a45d001d730866c6023d36d42926f3b062af40f6ef0c",
+      "results": {
+        "CHK-A2-01": "LEAK_REPRODUCED",
+        "CHK-A2-02": "LEAK_REPRODUCED",
+        "CHK-A2-03": "GATE_AND_LEAK",
+        "CHK-DEL-01": "PASS"
+      },
+      "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+      "receipts": {
+        "receipt-td19-a2-01.json": "eaf68cd8bddfd34fe650641a6197f65210ef0d175ee6fe8025a8cbc69109e1f1",
+        "receipt-td19-a2-02.json": "04a5e0650ba9894df3bb6c862d7c38cacb01b9ae4e671be1843273dbf7a67983",
+        "receipt-td19-a2-03.json": "d6ca9e096271c96cbe49d19437b2ac91e1544d9c9e3424c1a86daa11a95fa17c"
+      }
+    },
+    "post_fix": {
+      "report_dir": "runtime/AB003/run-post-3101",
+      "manifest_sha256": "026cd93c35089984ddfc5978b7ccb668fe762155efa9c0d4f8a28b64c71c22fe",
+      "results": {
+        "CHK-A2-01": "LEAK_CLOSED",
+        "CHK-A2-02": "LEAK_CLOSED",
+        "CHK-A2-03": "GATE_UNIFORM_SAFE",
+        "CHK-DEL-01": "PASS"
+      },
+      "exit": 0,
+      "pid": 14216,
+      "code_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+      "receipts": {
+        "receipt-td19-a2-01.json": "74a55fedccc01ca0b0e97264eeb83397096ba4efc3dbd88f60ff3135cf7432fb",
+        "receipt-td19-a2-02.json": "dfb2764d111730f4dfc1aa589e96ec5d0f65f5924c45fffbf89e7d2d2fbe598c",
+        "receipt-td19-a2-03.json": "63439c9bfad6cb2102121ca276e404cd1f2f224389803b5a02c2694ad340dd7b",
+        "receipt-td19-delivery.json": "09e63263d808b52006f98f541836798b5e325d035a5415a2baba753824f4c988"
+      },
+      "a2_03_process_pids": [14328, 2304],
+      "delivery_write_pid": 14216
+    },
+    "regression": {
+      "log": "runtime/AB003/regression/pytest-q.txt",
+      "sha256": "b7578dc3eec8686ca8bfb23872249cdbcc5cf4f9a4fea655c7bb6860342dae05",
+      "result": "1 failed, 63 passed",
+      "note": "single failing test test_event_chain_is_verified_and_forgery_is_detected KeyErrors on clean['chain']['events'] — pre-existing leak surface from the old public chain (Chain now status-only by design). Documented, NOT fixed in this slice, not masked."
+    }
+  },
+  "observations": [
+    {
+      "id": "OBS-TD19-APPEND-ORDER",
+      "type": "intended_scope_change",
+      "scope": "in-scope",
+      "description": "public_dto.py: AppendValue closed per-kind value record ordering/coverage tightened (append_event_value_allowlists) so the public value projection is deterministic and scoped. This is the intended confidentiality change, NOT a new TD.",
+      "new_td": false
+    },
+    {
+      "id": "OBS-TD19-CHAIN-STATUSONLY",
+      "type": "intended_scope_change",
+      "scope": "in-scope",
+      "description": "admission.py/_trace: chain projection reduced to status-only (public_dto.chain(verify_chain(c)) -> {'status'}), removing 'events'/'head_hash' from the public surface while the internal gate stamp (chain_head + ALL branch revisions) continues to be verified and stored. This is the intended confidentiality change, NOT a new TD.",
+      "new_td": false
+    }
+  ],
+  "findings": {
+    "td19": "closed on this slice: hidden-branch metadata and diagnostics no longer leak through allowed MCP responses (CHK-A2-01/02 LEAK_CLOSED), global corruption gate is uniform and does not leak a foreign locator (CHK-A2-03 GATE_UNIFORM_SAFE), delivery/reconcile preserved internal stamps without duplicate writes (CHK-DEL-01 PASS).",
+    "observation_internal_fields": "public read_snapshot exposes only {read_at, revisions(scoped), integrity_status}; internal gate keeps chain_head and full revision set inside SQL observation output, never routed to the public DTO."
+  },
+  "debt_status_changes": [],
+  "debt_status_explanation": "debt_status changes are intentionally EMPTY. TD-DOM-19 the debt record is only closed after independent REVIEWER on the exact modified version and a subsequent negative AUDITOR pass. On this slice, status_changes=[] and the fix is reported as fix-done-verification (see findings.td19), NOT by setting the debt status to closed.",
+  "schema_change": {
+    "doc": "docs/SCHEMA_CHANGE_TD19.md",
+    "removed": ["read_snapshot.chain_head", "global revisions", "global events", "global head_hash", "chain.broken_event_id (foreign)"],
+    "added": ["read_snapshot.integrity_status", "Broken {status,readiness,ready_for_owner_review,blockers,simulated}", "public read_snapshot {read_at, revisions-scoped, integrity_status}", "Chain status-only"]
+  },
+  "final_files": [
+    "artifacts/WORKER_AB003_TD19.json",
+    "reports/WORKER_AB003_TD19.md",
+    "docs/SCHEMA_CHANGE_TD19.md"
+  ]
+}

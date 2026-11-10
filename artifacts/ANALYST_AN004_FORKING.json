@@ -1,0 +1,253 @@
+{
+  "schema": "AN004-material/v1",
+  "role": "analyst",
+  "task": "AN004",
+  "continuation_of": {
+    "artifact": "artifacts/RESEARCHER_RS003_LINKS.json",
+    "sha256": "8da35bd446d66c2453e841558dcc92d88c557790cff97ae31e35deca0ee5cb86",
+    "status": "COMPLETE_MATERIAL, PASS_MATERIAL_HANDOFF_ONLY, not re-done here"
+  },
+  "product_acceptance": false,
+  "is_product_approval": false,
+  "product_verdict": "REQUEST_CHANGES",
+  "artifact_stage": "COMPLETE_MATERIAL",
+  "completion_state": "completed",
+  "written_at": "2026-11-07T00:00:00+03:00",
+  "material_scope": "Critical analysis of customer package (natural fork/merge, keyword similarity graph, OMH-plan stitching, convergence form) and of orchestrator findings F1-F6, independently re-verified by the analyst's own code/API reading, not a product acceptance. TD-DOM-18/19/20/21 open; P0 not closed. Nothing implemented or changed in product code.",
+  "customer_quotes_analyzed": [
+    {"id": "CQ-1", "quote": "получается что мы не можем избежать двойственности- значит будем порождать ветвление клайма на деревья... такое естественое расщепление и почкование - ветви не только могут сливаться но и расщипляться должен быть естественный механизм", "topic": "fork_as_natural_mechanism"},
+    {"id": "CQ-2", "quote": "по поводу ветвей АВ и АА это разные ветви... ключевые слова их собирают в граф похожости или по близости веток дерева выросшего из единого корня? задачи в этом смысле или клайма.", "topic": "identity_and_similarity_graph"},
+    {"id": "CQ-3", "quote": "ингестии плана сейчас нет... должно же быть какое то начало и завязано на OMH?? конечно должны быть явные ссылки на пункты плана (его версию время тут нужно уточнить как хранятся они в плане OMH а то выйдет что план обновили пункты вроде как изменились а клайм ссылается по номеру или айди не уточняя текст или ссылку аа она не индивидуальная - тут надо сшивку проверить эту. а если на глаз будет - то считай это работать будет через раз если будет вообще - согласен?", "topic": "omh_plan_stitching"},
+    {"id": "CQ-4", "quote": "по поводу сходимости с ветками согласен но как реализовать?", "topic": "convergence_structured_form"}
+  ],
+  "verification_of_orchestrator_findings": [
+    {
+      "id": "F1",
+      "orchestrator_claim": "record_id — единый глобальный UUID, НЕ партиционирован по AA/AB; AA/AB — scope-ветки допуска/видимости, не копии клайма; уникальность ID механическая, без контентной проверки.",
+      "verdict": "CONFIRMED",
+      "own_evidence": [
+        "mockup/storage.py:34: CREATE TABLE claims(id TEXT PRIMARY KEY, ... origin_branch TEXT NOT NULL, ...) — one PK namespace, branch is a column, not a partition/table-per-branch.",
+        "mockup/admission.py:190: ids={i['local_id']:str(uuid.uuid4()) for i in p['items']} — server-minted uuid4, no reuse/lookup against existing content before minting.",
+        "mockup/admission.py:81-85: Service.scope()/Service.capability() check self.context.branches/self.context.capabilities (a visibility/authority gate), never touch claims.id.",
+        "mockup/dom_contract.py:63-121 validate(): checks structural field shapes (types, required keys, encoding, unknown fields) only; no comparison against stored claim content anywhere.",
+        "mockup/admission.py:143-154 check_references(): checks claim_ref/replacement_ref/supersedes scope-visibility, not content equality."
+      ]
+    },
+    {
+      "id": "F2",
+      "orchestrator_claim": "Ничто в коде мешает появлению двух контент-идентичных клаймов с разными record_id в AA и AB независимо друг от друга.",
+      "verdict": "CONFIRMED",
+      "own_evidence": [
+        "Direct consequence of F1: the only two de-dup paths found by reading admission.py are idempotency (Service.dedupe, admission.py:111-116, keyed on (work_ref, operation, idempotency_key)) and the chain hash (verify_chain, admission.py:39-70, which hashes event history, not claim body content across branches). Neither compares raw bytes/content between two independently-admitted candidates in different branches.",
+        "No unique/content index exists on claims.raw or claims.raw_sha256 in storage.py:34 (raw_sha256 is a plain column, not UNIQUE)."
+      ]
+    },
+    {
+      "id": "F3",
+      "orchestrator_claim": "Граф похожести по keywords мог бы связывать клаймы между разными family_id и тем самым раскрывать существование клайма в невидимой ветке — риск того же класса, что TD-DOM-19, через keyword-канал.",
+      "verdict": "PLAUSIBLE_RISK_NOT_YET_IMPLEMENTED",
+      "own_evidence": [
+        "No keyword/similarity code exists anywhere in mockup/*.py today (search_files for similarity/keyword tokens inside mockup/ returned nothing additional beyond what RS003 already proposed as NOT_IMPLEMENTED); this is a design-time risk about a feature that is proposed, not shipped.",
+        "tech_debt.md:34 TD-DOM-19 independently confirmed open/major: 'AA-only caller видит AB revision (0→1) on query/snapshot/trace/resume/sync_status/export' — a real, already-reproduced leak of the SAME shape (branch-scope violation through a diagnostic/metadata channel) that F3 predicts for a keyword-similarity channel.",
+        "RS003 answers_11_14.json Q-L-11 commits to 'suggestions/counts не раскрывают скрытое' as a general principle but does not state whether similarity edges are allowed to span different family_id trees at all — exactly the gap CQ-2 asks about ('по близости веток дерева выросшего из единого корня')."
+      ]
+    },
+    {
+      "id": "F4",
+      "orchestrator_claim": "У отдельного пункта плана OMH todo нет стабильного ID/дайджеста; адресация — порядковый номер + prefix-match на начало текста; при расхождении отказ; set полностью заменяет список; todo_items_digest считается по всему списку, не по пункту.",
+      "verdict": "CONFIRMED",
+      "own_evidence": [
+        "C:/Users/Arhys/AppData/Local/hermes/plugins/omh/todo_store.py:880-994 advance_todo_item(): item is a 1-based position (_validated_item_reference, line 1120-1135); item_text is checked with _check_item_guard (line 1138-1157) as a PREFIX of the stored text ('stored_text.startswith(guard)'), explicitly documented as 'A compare-and-set, written as a text prefix because the record has no item id' (docstring, lines 1138-1146).",
+        "todo_store.py:522-615 build_todo_record(): every write (set and advance alike) rebuilds the record's whole items list from validate_todo_items(items); advance_todo_item (line 1036-1037) replaces position in a COPY of the full stored list and resubmits it through the same builder — i.e. set and advance share one mechanism and set drops any item not resent.",
+        "todo_store.py:493-519 todo_items_digest(): digest is over the canonicalised WHOLE items array ('canonical = [... for entry in items ...]'), used only for deferred_items_digest (line 608) which lapses a plan-level deferral, never exposed as a per-item handle.",
+        "Live tool_describe(omh_todo) schema (read directly in this session) confirms the same shape from the tool side: 'item' (integer position) + 'item_text' ('the start of that item's current text; a mismatch (stale index) is refused') + 'set writes the whole list: items left out are dropped.'"
+      ]
+    },
+    {
+      "id": "F5",
+      "orchestrator_claim": "Наивная привязка клайма DOM к 'номеру пункта плана OMH' ломается при любой перестройке плана без предупреждения; клайм должен сохранять точный текст/хеш пункта на момент привязки, аналогично SOURCE_BYTES_MISMATCH у цитат.",
+      "verdict": "CONFIRMED_AS_DIRECT_CONSEQUENCE_OF_F4",
+      "own_evidence": [
+        "Given F4, a DOM-side pin by bare index+text-prefix inherits exactly the omh_todo weaknesses: (a) a `set` that reorders/removes/rewords items invalidates any externally-held index silently -- OMH's own advance-path guard (item_text prefix check) protects OMH's OWN advance calls only, it is not consulted by, or exposed to, an external DOM claim; (b) todo_items_digest covers the whole list, so it cannot answer 'has item 2 specifically changed' for a DOM-held reference.",
+        "mockup/dom_contract.py:112 SOURCE_BYTES_MISMATCH (quote.metadata.source_b64 vs body_b64 raw-byte comparison) is a real, already-shipped precedent for exactly this pattern: DOM keeps its OWN immutable copy of what it is pinning to and detects mismatch by re-comparison, rather than trusting the external system's own index to stay stable."
+      ]
+    },
+    {
+      "id": "F6",
+      "orchestrator_claim": "Ингестии плана OMH в клаймы сейчас нет в коде — предложение, не реализация.",
+      "verdict": "CONFIRMED",
+      "own_evidence": [
+        "search_files(pattern='omh_todo|todo_store|plan\\\\.md|ingest.*plan|plan.*ingest', path='mockup', target='files', output_mode='files_only') returned total_count=0."
+      ]
+    }
+  ],
+  "card_inaccuracy_found": {
+    "claim_in_card": "cards/AN004_FORKING_BASELINE_ANALYST.md instructs the analyst to also verify F4/F5 by reading 'todo_reconciliation.py'.",
+    "finding": "No such file exists under C:/Users/Arhys/AppData/Local/hermes/plugins/omh (search_files content-search for the literal token across the whole plugin tree returned total_count=0). todo_store.py and runtime_reader.py (both found by searching for 'todo_items_digest|item_text|stale index') plus a live tool_describe(omh_todo) call were sufficient to confirm F4/F5 independently.",
+    "severity": "minor",
+    "action": "flagged for the orchestrator; not a blocker for this analysis."
+  },
+  "causal_analysis": [
+    {
+      "id": "C-FORK-01",
+      "topic": "fork_as_natural_mechanism (card task 1)",
+      "observation": "RS003 DL-04/Q-L-05 makes FORKED a derived state (|tips|>1) that only arises when a submitter declares intent (extend_leaf | fork_sibling) and the admission transaction's CAS (expected_tips_digest) passes; nothing today can push a branch into FORKED without a DECLARED intent attached to an admitted candidate.",
+      "customer_wording_reading": "CQ-1 says fork/merge 'should have a natural mechanism' ('должен быть естественный механизм') while describing duality as something 'we cannot avoid' -- this reads as a claim about the TREE'S PROPERTY (forking is a normal, expected, recurring shape of the data), not necessarily a claim that the SYSTEM must auto-detect forking without anyone declaring it. RS003's explicit-intent design already satisfies the weaker, more defensible reading: forking is natural in the sense that it is a first-class, repeatedly-occurring, non-exceptional state, not a rare error -- it just still requires an actor to say so.",
+      "distinct_risk_if_misread": "If the customer actually wants the STRONGER reading -- the system itself notices that two independently-admitted, intent-less refinements have drifted into semantic conflict and marks the branch FORKED on its own -- that is a different, substantially riskier mechanism: it needs a conflict-detection CRITERION (textual diff? keyword overlap? an explicit `contradicts` relation some reviewer must have created? LLM judgement?) and an owner for false positives (branch wrongly marked FORKED, blocking downstream consumers) and false negatives (real semantic fork never detected, silently returns one tip as if uncontested).",
+      "position": "Both readings are defensible from the quote alone; RS003 only designed for the weaker one. This is exactly the kind of ambiguity the card's task 1 flags and the correct response is a precise question to the customer via RS004, not a silent choice either way.",
+      "evidence": ["S02#/decision_ledger[id=DL-04]", "S08 Q-L-05 mechanism/state_table", "S01 CQ-1"],
+      "question_refs": ["Q-L2-01"]
+    },
+    {
+      "id": "C-GRAPH-01",
+      "topic": "identity_and_similarity_graph (card task 2)",
+      "observation": "F1/F2 confirmed: record_id is global, AA/AB are visibility scopes. F3's risk requires a scope rule that does not exist yet because the similarity feature itself does not exist yet (RS003 left keyword location as NU-01, OPEN).",
+      "customer_wording_reading": "CQ-2 explicitly asks two DIFFERENT things in one breath: (a) whether branches AA/AB being 'different but possibly similar' changes uniqueness rules (answered by F1/F2: no, uniqueness is mechanical and branch-independent), and (b) whether keywords build a similarity GRAPH scoped to 'the branches of a tree grown from a single root' -- i.e. is similarity meant to stay WITHIN one family_id (one tree) by design, or can it legitimately cross family_id boundaries (different trees, possibly unrelated roots)?",
+      "gap_in_RS003": "RS003 Q-L-11 (answers_11_14.json) commits to 'suggestions/counts do not disclose hidden state' as a GENERAL scope-safety principle (the same Q-L-09/10 ScopedView-first discipline), but never states the family_id boundary question CQ-2 asks literally. A similarity graph that is scope-safe (never reveals existence across grants) can still legitimately be asked to operate either within one family or across many; RS003 did not pick either, because the keyword LOCATION itself (NU-01) was never decided.",
+      "position": "F3 is a correct, not-yet-mitigated risk description, but it conflates two separable concerns that RS004 must keep apart: (1) visibility-scope safety (must never leak existence across GRANTS -- already covered by the existing Q-L-09/10 ScopedView discipline and TD-DOM-19 closure) and (2) tree-scope policy (should similarity be restricted to one family_id as a matter of PRODUCT DESIGN, independent of who can see what). A caller who is independently granted visibility into two different family_id trees should get a well-defined answer either way; today neither axis is decided.",
+      "evidence": ["S09 Q-L-11", "S10 TD-DOM-19", "S01 CQ-2"],
+      "question_refs": ["Q-L2-02"]
+    },
+    {
+      "id": "C-OMH-01",
+      "topic": "omh_plan_stitching (card task 3)",
+      "observation": "F4/F5 independently confirmed. omh_todo gives DOM nothing stable to key against externally: position is mutable across any `set`, and the only guard (item_text prefix) protects omh_todo's OWN advance call, not a third party's stored reference.",
+      "customer_wording_reading": "CQ-3 asks, almost word for word, for exactly this mechanism: 'how is the item stored in the plan, so that if the plan is updated and the item seems to have changed, but the claim references it by number or id without specifying the text or a reference -- that reference is not individual' -- and concludes 'if it is done by eye [without a form], consider that this will work only sometimes, if at all -- agreed?' The customer has already correctly derived F4/F5 from intuition; the analyst's job is to turn this into an exact engineering requirement and a verification plan, not to re-derive what the customer already said.",
+      "dom_side_requirement": {
+        "what_the_claim_must_store_at_creation": [
+          "plan_item_snapshot: {source: 'omh_todo', session_ref_or_home_scope, captured_at (server time), item_text_verbatim (full text, not a prefix), item_text_sha256, phase (if present), position_at_capture (int, informational only, NEVER used alone as identity)}",
+          "No DOM field may be 'the item number' alone: that reproduces exactly the omh_todo advance-path weakness (F4) one layer up, because DOM has no more claim to item-identity stability than omh_todo's own advance call does."
+        ],
+        "when_a_pin_must_be_detected_as_stale": [
+          "On revalidation, DOM must re-read the live omh_todo record (via action=show/recall) and compare item_text_sha256 against the CURRENT text at the position the claim remembers; a mismatch at that position, a `set` that removed/renamed the item (no item at that position still starts with the stored prefix), or inability to read the record at all (session cleared / home not found) are ALL pin_behind, following the existing VersionPin/RevisionPin strict-default pattern (RS003 Q-L-08) rather than silently falling back to 'closest by number'.",
+          "A `set` write is uniquely dangerous because it 'drops items left out' with NO history (F4) -- so DOM's pin must not assume the item still exists at all once it detects any discrepancy; it must surface UNVERIFIABLE_IN_SCOPE-style explicit unresolved state (same vocabulary RS003 already uses for cross-branch pins), not guess."
+        ]
+      },
+      "position": "RS004 should design this as the SAME pin-and-stale-detection pattern RS003 already built for VersionPin/RevisionPin/QuotePin (Q-L-04/08), reusing SOURCE_BYTES_MISMATCH's precedent of 'DOM keeps its own immutable copy and re-compares' rather than inventing a new mechanism, and should not assume OMH will ever grow a stable per-item ID -- today's todo_store.py gives none and nothing in the card or in omh_todo's own tool schema promises one is coming.",
+      "evidence": ["S11:880-1157,493-519,522-615", "S06:112 (SOURCE_BYTES_MISMATCH precedent)", "S08 Q-L-08 pin_matrix", "S01 CQ-3"],
+      "question_refs": ["Q-L2-03"]
+    },
+    {
+      "id": "C-CONV-01",
+      "topic": "convergence_structured_form (card task 4)",
+      "observation": "projections.py:46 confirms today's 'converge' really is a bare boolean latch ('elif kind=='converge': converged=True'), matching TD-DOM-18 (confirmed open/major in tech_debt.md:24: 'одно событие converge снимает BRANCH_NOT_CONVERGED навсегда, включая ревизии, добавленные после решения'). RS003 DL-08/Q-L-07 already designed a replacement: a converge EVENT carrying a revision vector, a criteria_digest, a subject, and supersedes-chaining to the prior converge event.",
+      "orchestrator_minimum_vs_DL-08": "The orchestrator's card (task 4) describes a minimum of 'pairs of record_id, a closed reason code, who decided, basis' for the customer's agreed-but-unspecified convergence form. Read literally, a PAIR of record_id describes a two-endpoint relationship -- which is the shape of RS003's `merges` relation (Q-L-05/Q-L-06: claim_version(merge) -> claim_version(tip), same family) for resolving a SPECIFIC fork between TWO tips -- not the shape of DL-08's branch-level `converged` axis, which is about a WHOLE BRANCH's criteria coverage against a VECTOR of dependency revisions, not a pair.",
+      "position": "These are two legitimately different mechanisms already distinguished in RS003's own model (Q-L-05 vs Q-L-07/DL-08) and the card's 'minimum' risks collapsing them into one weaker form that loses DL-08's vector+criteria_digest+supersedes fields for the branch-level case, while also under-specifying the merges relation for the multi-tip case (a fork can have MORE than two concurrent tips -- RS003 explicitly allows |tips|>1, not just 2 -- so a fixed 'pair of record_id' cannot represent an n-way merge). The task's own instruction ('не предлагать слабее уже спроектированного') is violated if RS004 adopts the two-field minimum as-is for EITHER mechanism without at minimum carrying forward DL-08's fields for the branch axis and allowing >2 endpoints for the tips-merge relation.",
+      "evidence": ["S07:46", "S10:24 (TD-DOM-18)", "S08 Q-L-07 dimension_table[converged]", "S08 Q-L-05 relation_matrix[merges]", "S01 line 30 (orchestrator minimum)"],
+      "question_refs": ["Q-L2-04"]
+    }
+  ],
+  "questions_for_RS004": [
+    {
+      "id": "Q-L2-01",
+      "priority": "P1",
+      "exact_question": "RS003 DL-04/Q-L-05 делает FORKED производным состоянием, возникающим ТОЛЬКО когда подающий кандидат явно декларирует intent (extend_leaf|fork_sibling) и проходит CAS по expected_tips_digest — т.е. сегодня ничто не переводит ветку в FORKED без явной декларации intent. Заказчик говорит о расщеплении как о «естественном механизме», не уточняя, обязательна ли декларация intent. Нужен ли ВТОРОЙ механизм — автоматическое обнаружение смыслового расщепления (два независимо допущенных уточнения семантически конфликтуют) БЕЗ декларации intent, и если да — по какому критерию это обнаруживается (keyword/lexical similarity? явная contradicts-связь, допущенная independent reviewer? иное?), и кто несёт ответственность за ложное срабатывание (ветка ошибочно помечена FORKED) и непойманный случай (реальное расщепление не обнаружено и один из tips молча считается единственным)?",
+      "why": "Различает выполненный RS003-дизайн (explicit-intent fork, DL-04) от более рискованного альтернативного механизма (implicit/auto-detected fork), который требует отдельного критерия обнаружения и отдельного владельца ошибки; формулировка заказчика (CQ-1) допускает обе трактовки.",
+      "evidence": [
+        {"source_id": "S08", "ref": "Q-L-05 mechanism/state_table", "kind": "accepted_research_material"},
+        {"source_id": "S01", "ref": "CQ-1 (card line 9)", "kind": "customer_words"}
+      ],
+      "expected_answer_type": "needs_user (продуктовое решение заказчика) + если да, инженерное требование к RS004 на критерий и владельца ошибки",
+      "verification": {
+        "action": "Построить фикстуру: два процесса подают refinement к одному родителю с intent=extend_leaf (а не fork_sibling) на один и тот же parent без координации; прочитать результат допуска второго кандидата.",
+        "expected": "Текущий дизайн (DL-04) отклоняет второй кандидат с STALE_PARENT_LEAF, а не создаёт FORKED молча — это демонстрирует, что сегодня FORKED недостижим без intent, и что желаемый заказчиком auto-detect (если он нужен) потребует НОВОГО механизма, а не является побочным эффектом существующего.",
+        "physical_evidence": ["raw admission rejection (STALE_PARENT_LEAF)", "candidates/reviews/events SQL rows до/после", "PID/exit двух процессов"]
+      },
+      "needs_user": ["Нужен ли auto-detect fork без декларации intent, и если да — критерий обнаружения и субъект ответственности за false positive/negative (продуктовое решение заказчика, не инженера)."]
+    },
+    {
+      "id": "Q-L2-02",
+      "priority": "P0_before_graph_introduction",
+      "exact_question": "Если граф похожести по keywords (Q-L-11, место ключевых слов пока не выбрано заказчиком — NU-01) всё же реализуется, допустимо ли ему связывать клаймы ИЗ РАЗНЫХ family_id (разных деревьев/корней), или similarity должна быть ограничена ТОЛЬКО внутри одного family_id (одного дерева, выросшего из единого корня, как буквально спрашивает заказчик)? Если шире одного family_id разрешено — достаточно ли существующей ScopedView-дисциплины (Q-L-09/10) для безопасности, или нужно отдельное продуктовое правило scope (per-family vs cross-family), независимое от вопроса видимости по grants?",
+      "why": "F3 описывает риск того же класса, что подтверждённый TD-DOM-19 (branch-scope leak через диагностический канал), но через keyword-similarity-канал; RS003 Q-L-11 обещает scope-safety (не раскрывать скрытое через suggestions/counts), но не отвечает на буквальный вопрос заказчика (CQ-2) о границе ОДНОГО дерева против МНОГИХ деревьев — это два разных вопроса (безопасность видимости vs продуктовая граница похожести), которые RS003 не развёл явно.",
+      "evidence": [
+        {"source_id": "S09", "ref": "Q-L-11 recommended_minimum/mechanism", "kind": "accepted_research_material"},
+        {"source_id": "S10", "ref": "TD-DOM-19 (line 34)", "kind": "debt_register_confirmed_open"},
+        {"source_id": "S01", "ref": "CQ-2 (card line 10)", "kind": "customer_words"}
+      ],
+      "expected_answer_type": "needs_user (продуктовая граница: per-family vs cross-family similarity) + инженерное требование (RS004 обязан предложить закрытое правило scope для обоих случаев)",
+      "verification": {
+        "action": "Дифференциальный oracle по образцу Q-L-09/10 L1-L8, но для similarity-подсказок: фиксированный клайм в AA с 0 vs 1 похожим по keywords siblng в скрытой AB-family; запрос 'похожие на X' от AA-only актора.",
+        "expected": "Ответ идентичен независимо от скрытого AB-sibling (тот же scope-safety бар, что у Q-L-09/10); любая cross-family похожесть — явный opt-in, видимый только когда оба конца уже в видимом scope актора, никогда через постфильтрацию глобального вычисления.",
+        "physical_evidence": ["raw suggestion/search frames для обоих состояний scope", "независимый oracle diff", "schema похожести с явным полем family scope rule"]
+      },
+      "needs_user": ["Разрешена ли похожесть между разными family_id в принципе (продуктовая граница), независимо от вопроса видимости по grants."]
+    },
+    {
+      "id": "Q-L2-03",
+      "priority": "P1",
+      "exact_question": "Подтверждено собственным чтением todo_store.py (advance_todo_item/_check_item_guard, lines 880-1157) и живым tool_describe(omh_todo): пункт плана OMH адресуется позиционным индексом + проверкой ПРЕФИКСА текста при advance; при расхождении — отказ 'stale index'; операция set полностью заменяет список без истории; единственный todo_items_digest считается по ВСЕМУ списку, не по пункту. Если клайм DOM должен ссылаться на пункт плана OMH — какое поле клайм ОБЯЗАН сохранить неизменяемо в момент создания ссылки (дословный текст пункта? его sha256? оба?), и при каком условии привязка должна детектироваться как pin_behind: при любом изменении текста на той же позиции, при любом set() независимо от того, остался ли похожий текст где-то в новом списке, или при обоих случаях одновременно?",
+      "why": "Заказчик (CQ-3) уже сам корректно вывел F4/F5 интуитивно и прямо просит «сшивку проверить»; задача аналитика — превратить это в точное инженерное требование и план проверки для RS004, повторно используя уже спроектированный у RS003 паттерн VersionPin/RevisionPin/QuotePin (Q-L-08) и прецедент SOURCE_BYTES_MISMATCH (dom_contract.py:112) вместо того, чтобы придумывать новый механизм или доверять стабильности OMH-индекса, которой не существует.",
+      "evidence": [
+        {"source_id": "S11", "ref": "todo_store.py:880-1157 advance_todo_item/_check_item_guard; 493-519 todo_items_digest; 522-615 build_todo_record", "kind": "code_static_own_reading"},
+        {"source_id": "API01", "ref": "tool_describe(omh_todo) live schema: 'item_text... a mismatch (stale index) is refused'; 'set writes the whole list: items left out are dropped'", "kind": "live_api_own_reading"},
+        {"source_id": "S06", "ref": "dom_contract.py:112 SOURCE_BYTES_MISMATCH", "kind": "code_static_precedent"},
+        {"source_id": "S08", "ref": "Q-L-08 pin_matrix (VersionPin/RevisionPin/LineRef)", "kind": "accepted_research_material"},
+        {"source_id": "S01", "ref": "CQ-3 (card line 11)", "kind": "customer_words"}
+      ],
+      "expected_answer_type": "engineering_requirement (RS004 обязан спроектировать DOM-сторону пина; не needs_user по механизму, но может породить needs_user по политике совпадения частичного текста)",
+      "verification": {
+        "action": "Объявить OMH todo-план из 3 пунктов; создать DOM-клайм, пинящий 'пункт 2, текст X'; затем вызвать omh_todo(action=set) с переформулированным списком, который переименовывает/удаляет пункт 2 (как показал F4, set полностью заменяет список без истории); прочитать сохранённый в DOM-клайме пин и сравнить с живым состоянием omh_todo.",
+        "expected": "DOM-пин должен самостоятельно обнаружить расхождение (stale/pin_behind) из СВОЕГО сохранённого снимка (текст/хеш), не полагаясь на prefix-guard omh_todo (который защищает только advance-вызовы самого omh_todo и не знает о существовании внешней DOM-ссылки).",
+        "physical_evidence": ["raw omh_todo записи до/после set", "сохранённое поле пина в DOM-клайме", "явный результат детекции stale/pin_behind"]
+      },
+      "needs_user": []
+    },
+    {
+      "id": "Q-L2-04",
+      "priority": "P1",
+      "exact_question": "Собственным чтением подтверждено: сегодняшний 'converge' — булев latch (projections.py:46), это TD-DOM-18 (open/major). RS003 DL-08/Q-L-07 уже спроектировал замену: converge-событие с вектором ревизий зависимых веток, criteria_digest, субъектом и supersedes-цепочкой к прежнему converge. Предложенный в карточке минимум (пара record_id, код причины из закрытого перечня, кто решил, основание) по форме совпадает с Q-L-05/Q-L-06 'merges'-связью (разрешение КОНКРЕТНОГО форка между tips), а не с branch-level 'converged' осью DL-08. Нужно ли RS004 явно развести эти ДВА механизма (merges-связь между tips одной семьи vs converge-событие на уровне ветки) вместо того, чтобы предлагать единую более слабую форму с парой record_id? Если да — остаётся ли при этом открытым именно субъект/критерии (UD-06/NU-04), а не форма записи? Если заказчик имел в виду что-то третье, не покрытое ни merges, ни DL-08 converge — что именно, и как клайм должен различать в ответе, какой из двух (или трёх) механизмов сработал?",
+      "why": "Задача карточки (п.4) прямо требует не предлагать слабее уже спроектированного RS003 (DL-08). Собственное чтение показывает, что предложенный в карточке минимум из двух полей теряет вектор/criteria_digest/supersedes DL-08 для branch-level оси и не может представить fork с >2 конкурирующими tips (RS003 явно допускает |tips|>1, не только 2) для relation-оси.",
+      "evidence": [
+        {"source_id": "S07", "ref": "projections.py:46 (converge boolean)", "kind": "code_static_own_reading"},
+        {"source_id": "S10", "ref": "TD-DOM-18 (line 24)", "kind": "debt_register_confirmed_open"},
+        {"source_id": "S08", "ref": "Q-L-07 dimension_table[converged]; Q-L-05 relation_matrix[merges]", "kind": "accepted_research_material"},
+        {"source_id": "S01", "ref": "orchestrator minimum (card line 30)", "kind": "orchestrator_note_criticized"}
+      ],
+      "expected_answer_type": "engineering_clarification (RS004 должен развести механизмы, не needs_user по форме) + унаследованный needs_user UD-06/NU-04 по субъекту/критериям остаётся открытым независимо от формы записи",
+      "verification": {
+        "action": "Построить два отдельных сценария: (1) FORKED-tips одной семьи сливаются через merges-связь (Q-L-05/Q-L-06) с тремя конкурирующими tips, не двумя; (2) branch-level converged-ось утверждается через событие с вектором ревизий+criteria_digest (Q-L-07/DL-08), независимо от того, есть ли в этой ветке незавершённый fork в другой, несвязанной семье.",
+        "expected": "Ни одна двухполевая схема 'пара record_id + причина' не может представить ни n-way merge (>2 tips), ни вектор/criteria_digest/supersedes branch-level converge без потери информации, которую уже несёт DL-08/Q-L-05 — то есть минимум карточки строго слабее уже спроектированного и не должен заменять его как единственная форма.",
+        "physical_evidence": ["два построенных event-payload рядом", "diff полей между предложением карточки и DL-08/Q-L-05", "демонстрация потери поля (вектор/criteria_digest/supersedes/третий tip) при использовании двухполевой формы"]
+      },
+      "needs_user": ["UD-06/NU-04 (субъект/критерии сходимости, кто закрывает reopen) остаются OPEN независимо от формы записи — унаследовано из RS003, не решается здесь."]
+    }
+  ],
+  "escalations": [
+    {
+      "id": "ESC-01",
+      "severity": "minor",
+      "statement": "Карточка (S01) ссылается на несуществующий файл todo_reconciliation.py для верификации F4/F5.",
+      "evidence": [{"source_id": "SEARCH01", "ref": "search_files total_count=0"}],
+      "action": "Передано оркестратору как находка; не блокирует анализ (todo_store.py + живой tool_describe(omh_todo) достаточны)."
+    },
+    {
+      "id": "ESC-02",
+      "severity": "major",
+      "statement": "Орёкстраторский минимум для convergence (пара record_id+причина, карточка строка 30) по форме копирует Q-L-05/Q-L-06 merges-связь, а не DL-08 branch-level converge-событие, и теряет поля DL-08 (вектор ревизий, criteria_digest, supersedes), если принять его как ЕДИНСТВЕННУЮ форму — прямое нарушение явного требования карточки 'не предлагать слабее уже спроектированного'.",
+      "evidence": [{"source_id": "S08", "ref": "Q-L-07 DL-08; Q-L-05 relation_matrix[merges]"}, {"source_id": "S01", "ref": "card line 30"}],
+      "action": "См. Q-L2-04; требует явного разведения механизмов у RS004, не тихого принятия минимума."
+    }
+  ],
+  "escalations_to_customer_via_RS004": [
+    "NU-01 (Q-L-11 keyword location, уже открыт у RS003) теперь также блокирует Q-L2-02 (per-family vs cross-family similarity scope) — это ВТОРОЙ, отдельный выбор заказчика, не покрытый формулировкой NU-01.",
+    "Q-L2-01 needs_user: нужен ли auto-detect fork без intent — новый needs_user, не существовавший в RS003 (там fork всегда explicit-intent)."
+  ],
+  "not_implemented_unverified": [
+    "Ничего из questions_for_RS004 не реализовано и не протестировано на продукте/MCP/OMH; всё NOT_TESTED.",
+    "F3 — риск описан по отсутствию кода, не по воспроизведённой утечке (в отличие от TD-DOM-19, которая воспроизведена и подтверждена).",
+    "Q-L2-03's verification сценарий не выполнялся физически в этой сессии (запрещено: product/OMH live write); представлен как план проверки для RS004/будущего worker."
+  ],
+  "limits": [
+    "Анализ не трогал продукт/Git/сеть/субагентов; все выводы — чтение кода/API read-only.",
+    "omh_todo был вызван ЖИВЫМ tool_describe (разрешённое read-only чтение схемы инструмента), но ни одна todo-запись не создавалась/не изменялась в этой сессии — Q-L2-03's verification не выполнена физически.",
+    "Все предложенные DOM-поля (plan_item_snapshot и т.п.) — предложение AN004, не утверждённый API."
+  ],
+  "sources": {"ledger": "runtime/AN004/source_ledger.json"},
+  "validation_ref": {
+    "receipt": "runtime/AN004/validation_receipt.json",
+    "validator": "runtime/AN004/validate.py"
+  },
+  "remaining": [],
+  "continuation_required": false
+}

@@ -1,0 +1,101 @@
+{
+  "schema": "auditor_verdict/v1",
+  "role": "AUDITOR",
+  "task": "AB006",
+  "continuation": "AU008-CONT-01",
+  "status": "COMPLETE_WITH_LIMITS",
+  "verdict": "REQUEST_CHANGES",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "audited_version": {
+    "code_digest": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+    "file_count": 16,
+    "digest_method": "sha256(json.dumps({'mockup/<posix>': sha256, ...}, sort_keys=True)) over mockup/**/*.py"
+  },
+  "snapshot_note": "Audit run ENTIRELY against the frozen copy runtime/AU008/snapshot_c26812b3/ (digest recomputed at import time and verified == c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505; all probes import snapshot_c26812b3.*, never live mockup). Live mockup/** drifted in parallel: recomputed at end-of-audit as 3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0 (parallel role AB007 pagination fix). Every result/code citation in reports/AUDITOR_AB006.md refers to the frozen snapshot slice.",
+  "limitations": {
+    "two_client_race": "NOT_CHECKED (true concurrent two-process write race on one DB not reproduced; only serialized BEGIN IMMEDIATE observed)",
+    "in_flight_parallel_edit": "live mockup changed to 3cd21d96... before audit closed; snapshot c26812b3 unaffected and is the audited version",
+    "full_pytest_suite": "not run (tests out of scope)",
+    "live_omh_network_git": "forbidden by card"
+  },
+  "slice_verdicts": [
+    {"id": "A1-false-visibility", "verdict": "PASS"},
+    {"id": "A2-rejected-in-pending", "verdict": "LATENT-DEFECT (reclassified; NOT PASS)"},
+    {"id": "A3-count-oracle", "verdict": "PASS"},
+    {"id": "A4-leaks", "verdict": "PASS"},
+    {"id": "A5-cursor", "verdict": "PASS-with-observation"},
+    {"id": "A6-limits", "verdict": "PASS-boundary-refusal / observation-underfill"},
+    {"id": "A7-migration", "verdict": "PASS"},
+    {"id": "A8-regression-F02/NO_SUCH_BRANCH", "verdict": "PASS"},
+    {"id": "A9-read-only", "verdict": "PASS"},
+    {"id": "A10-100k-scale", "verdict": "PASS"}
+  ],
+  "findings": [
+    {
+      "id": "AU008-L-01",
+      "severity": "medium",
+      "latent": true,
+      "invariant": "pending = unfinished actions only; REJECTED is terminal and must never surface in pending",
+      "repro": "runtime/AU008/results/a2_missed_unfinished.json: refused_visible.visible=true, state=REJECTED (a refusal review row inserted on the copy). Code: frozen snapshot admission.py _pending_page() lines 476-487 exclude only admitted candidates (`if r['admitted_by_claims'] or r['admitted_by_idem']: continue` at 476-477); a candidate whose last review decision != 'approve' is still appended with state='REJECTED' (line 486).",
+      "expected": "REJECTED excluded from pending (visible only in query/history)",
+      "actual": "admission.py:476-487 excludes only completed (admitted); no REJECTED exclusion exists",
+      "evidence": "runtime/AU008/results/a2_missed_unfinished.json (prior run, kept); frozen snapshot admission.py:476-487",
+      "latent_reason": "review() always writes decision='approve' (line 203), so no reject path exists today; REJECTED-in-pending manifests only when a refusal-capable review lands. Forward-looking defect, NOT a failure of the current approve-only build. Previously mis-scored as PASS (A2); reclassified as latent per card correction."
+    },
+    {
+      "id": "AU008-L-02",
+      "severity": "medium",
+      "latent": true,
+      "invariant": "admit must reject a candidate whose last review decision was a refusal",
+      "repro": "frozen snapshot admission.py admit() lines 218-224 read the review row, check STALE_REVIEW/INDEPENDENCE/candidate_digest/policy/snapshot_digest/head-revision, but never verify r['decision']=='approve'.",
+      "expected": "decision must gate admission",
+      "actual": "no decision check in admit() lines 218-224",
+      "evidence": "frozen snapshot admission.py:218-224 (RS009-confirmed code locations)",
+      "latent_reason": "with a reject path absent today, an approve-only decision always passes; a future reject review would still admit. Forward-looking defect."
+    },
+    {
+      "id": "AU008-A-01",
+      "severity": "low",
+      "latent": false,
+      "invariant": "a page with limit L pending items available must not return fewer than L when L <= available",
+      "repro": "runtime/AU008/results/ab/a6_limits.json probes.two: limit=2 -> items=1, count=2; five_hundred -> items=2. Cause: _pending_page applies SQL LIMIT(limit+1) over ALL branch rows then filters admitted/deps in Python; page-leading admitted rows consume the LIMIT before the pending filter, under-filling the page.",
+      "expected": "limit=2 returns 2 pending items when 2 exist",
+      "actual": "items=1 (page underfill)",
+      "evidence": "runtime/AU008/results/ab/a6_limits.json",
+      "note": "Known W1 pagination underfill edge (documented in AB006 work item); it is the exact target of the parallel role AB007's in-flight fix. Recorded for completeness on this frozen slice; do NOT double-charge as a new defect on top of the in-flight change."
+    }
+  ],
+  "observations": [
+    {
+      "id": "AU008-O-01",
+      "subject": "cursor empty components (F1 reviewer items)",
+      "finding": "after='AA:' (empty id) and ':x' (empty branch) are ACCEPTED as keysets but are scope-safe: they return only in-grant rows (2 items), never foreign/runaway rows; foreign_branch cursor returns NO_PENDING/0 items; broken formats return typed REJECTED. No scope bypass / no leak observed. F1 refuted as a security issue; accepted-keyset leniency recorded as robustness note, not a defect."
+    },
+    {
+      "id": "AU008-O-02",
+      "subject": "A4 leak probes",
+      "finding": "pending items expose metadata only (no body text, no claim_id field); payload_length is length-of-canonical-package, identical for equal-length different bodies; deps within grant. The single token 'appended note' appears only inside the snapshot/trace section as an ADMITTED append event value (legitimate committed in-grant content), never in a pending item."
+    }
+  ],
+  "own_runs": [
+    {"attack": "A4-leaks", "evidence": "runtime/AU008/results/ab/a4_leaks.json", "sha256": "63b09e4056901b7e", "result": "pending metadata only; no text/claim_id leak; deps in-grant"},
+    {"attack": "A5-cursor", "evidence": "runtime/AU008/results/ab/a5_cursor.json", "sha256": "00b850dbcbef1afb", "result": "broken formats typed REJECTED; foreign cursor no-leak; empty components scope-safe"},
+    {"attack": "A6-limits", "evidence": "runtime/AU008/results/ab/a6_limits.json", "sha256": "917c1852d94a9326", "result": "0/501/neg/huge/string/float/bool all typed REJECTED; boundary 1/500 ok; limit=2 underfill observed"},
+    {"attack": "A7-migration", "evidence": "runtime/AU008/results/ab/a7_migration.json", "sha256": "e3e8d7aa1b196451", "result": "uv>=2 w/o created_at -> MIGRATION_REQUIRED (no silent rebuild, rerun refuses too); uv=0 legacy -> additive iv2 migration, created_at+indexes, uv=2; immutable UPDATE/DELETE blocked; rerun idempotent"},
+    {"attack": "A8-regression", "evidence": "runtime/AU008/results/ab/a8_regression.json", "sha256": "cadcace728909c1b", "result": "AA-candidate + prior AB key/digest -> DIGEST_MISMATCH (L1-before-cache, no receipt, no side effect); granted-but-absent -> NO_SUCH_BRANCH (query+resume)"},
+    {"attack": "A9-readonly", "evidence": "runtime/AU008/results/ab/a9_readonly.json", "sha256": "6785c9d5dfb816b5", "result": "SQL counts identical before/after 5 resume calls (incl rejected call)"},
+    {"attack": "A10-100k", "evidence": "runtime/AU008/results/ab/a10_scale.json", "sha256": "b519fc9cc483783e", "result": "100000 candidates: count=100000 exact, page=500, has_more=true, ids sorted/unique, keyset next page stable, page in 0.68s"},
+    {"attack": "A2-reclassified", "evidence": "runtime/AU008/results/a2_missed_unfinished.json", "sha256": "868695be02cbe807", "result": "REJECTED candidate visible in pending (latent defect)"},
+    {"attack": "probe", "evidence": "runtime/AU008/probe_abattacks.py", "sha256": "0f1e307224ae73be", "result": "A4-A10 probe (imports frozen snapshot_c26812b3, per-attack isolated fixture subdirs, connections closed)"}
+  ],
+  "snapshot_manifest": {
+    "copy_path": "runtime/AU008/snapshot_c26812b3/",
+    "digest_verified": true,
+    "digest_at_import": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+    "live_mockup_at_close": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0"
+  },
+  "report_ref": "reports/AUDITOR_AB006.md",
+  "written_at": "2026-11-08"
+}

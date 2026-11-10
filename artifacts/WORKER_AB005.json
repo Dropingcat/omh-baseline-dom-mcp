@@ -1,0 +1,107 @@
+{
+  "schema": "worker_artifact/v1",
+  "role": "WORKER",
+  "task": "AB005",
+  "status": "COMPLETED_WITH_SEPARATE_ACCEPTANCE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "baseline": {
+    "code_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+    "files": 16,
+    "digest_method": "sha256(json.dumps(sorted mockup/**/*.py relpath->sha256 map, sort_keys=True)) (posix relpath)"
+  },
+  "inputs_read": [
+    "cards/AB005_F04_F02_WORKER.md",
+    "runtime/RS006/answers_f02.json",
+    "runtime/RS006/answers_other.json",
+    "runtime/RS006/planning_RS006.json",
+    "runtime/RS006/prototypes/rs006_f02_f01_prototype.py",
+    "runtime/RS006/prototypes/receipt/rs006_prototype_receipt.json (sha 954105cb..., ALL_ASSERTS)",
+    "docs/F02_IMPLEMENTATION_OPTIONS_2026-11-08.md",
+    "docs/DECISION_BRIEF_2026-11-08.md",
+    "artifacts/AUDITOR_AB004_AU004F01.json (A-F-02/F-04)",
+    "artifacts/AUDITOR_AU006_TASK_BASELINE.json (context)",
+    "mockup/admission.py, mockup/storage.py, mockup/server.py, mockup/public_dto.py, mockup/delivery.py, mockup/dom_contract.py, mockup/fixtures, mockup/ports.py"
+  ],
+  "slices": [
+    {
+      "id": "WS-F04-TYPED-ABSENCE",
+      "finding": "AU005-F-04",
+      "status": "FIXED_AND_VEERIFIED_PHYSICALLY",
+      "write_scope": "mockup/admission.py (head/absence handling); mockup/server.py не потребовался (типизированный статус идёт через существующий DomainError-путь project_tool для dict {'status': ...})",
+      "changed_files": ["mockup/admission.py"],
+      "evidence": {
+        "before": "runtime/AB005/results/f04_before.json (grant {AA,ZZ}): query/resume/export/trace ZZ=INTERNAL_ERROR, sync_status ZZ=пустой SYNC_STATUS, sync ZZ=SYNCED (ложный успех); AB=SCOPE_DENIED; AA здоров",
+        "after": "runtime/AB005/results/f04_after.json (тот же грант): query/resume/sync_status/sync/trace/export ZZ=NO_SUCH_BRANCH единообразно; AB=SCOPE_DENIED; AA= SNAPSHOT/RESUMED/SYNC_STATUS/SYNCED/EXPORTED без изменений; INTERNAL_ERROR=0; sync ZZ != SYNCED",
+        "raw_frames": "runtime/AB005/fixtures/f04/before|after/frames-*.jsonl (реальные JSON-RPC кадры MCP, отдельные PID на каждый вызов)"
+      },
+      "negative_results": [
+        "granted-but-absent (ZZ): NO_SUCH_BRANCH на query/resume/sync_status/sync (обязательные 4 поверхности) + trace/export (симметрия)",
+        "out-of-grant (AB): SCOPE_DENIED на всех поверхностях (неразличимое существование сохранено)",
+        "in-grant существующая ветка (AA): поведение без изменений (регрессионный контроль e2e admit+query+resume+sync_status+sync+export)",
+        "никаких raw-исключений: INTERNAL_ERROR отсутствует во всём прогоне",
+        "sync не возвращает ложный SYNCED для отсутствующей ветки",
+        "trace(master) при неполном гранте {AA,ZZ} не ломается (TRACE/UNKNOWN-путь без изменений)"
+      ],
+      "digest_before": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+      "digest_after": "7615365ed77930f8fe6807b3dde65ba4f1e9c6ee84a73f3038206bdd482e49d7",
+      "notes": "единая физическая точка — head()/require_branch() по branch_heads ДО любых read-операций; sync/sync_status получили явный require_branch (они не идут через head); Denied('NO_SUCH_BRANCH') -> guarded -> DomainError {status} без деталей"
+    },
+    {
+      "id": "WS-F02-ADMIT-BINDING",
+      "finding": "AU005-F-02 (L1+L2 финальная форма RS006 с двумя обязательными поправками к предложению оркестратора)",
+      "status": "FIXED_AND_VEERIFIED_PHYSICALLY",
+      "write_scope": "mockup/admission.py (admit order L1/L2, dedupe/remember binding, submit binding); mockup/storage.py (только миграция idempotency); mockup/public_dto.py не потребовался (форма receipt не менялась; новые коды=DomainError)",
+      "changed_files": ["mockup/admission.py", "mockup/storage.py"],
+      "ordinator_corrections_applied": [
+        "PK idempotency расширен до (external_work_ref, operation, key, scope_digest) — старый PK делает невозможным законный повтор после legacy-отказа (remember упал бы в UNIQUE/IMMUTABLE)",
+        "арбитр выдачи — result_scope ⊆ текущий grant, НЕ строгое равенство scope_digest — сужение с безопасной областью результата не ломает восстановление после потерянного ответа"
+      ],
+      "evidence": {
+        "defect_before": "runtime/AB005/results/f02_before.json — AA-кандидат + прежние AB admit-key + AB intent_digest при гранте {AA}: DEMO_ADMITTED/branch=AB (кешированная AB-квитанция), 3 отдельных PID (submit 12436, review 11356, attack 4940), 0 новых фактов (transactions=1 — только AB)",
+        "positive_control_N_F02_3": "runtime/AB005/results/f02_after.json:N-F02-3 — повтор (cand/key/digest/review/grant те же) возвращает ту же квитанцию: byte-equality=True (text и parsed), дельты по transactions/events/outbox/delivery_attempts/delivery_observations/delivery_acks/idempotency=0; idempotency остаётся 2 строки (submit+admit), admit-строка 1",
+        "negative_set": "N-F02-1 DIGEST_MISMATCH (до кеша, 3 PID); N-F02-2 SCOPE_DENIED (реальный AB-кандидат); N-F02-4 DIGEST_MISMATCH (тот же ключ, чужой digest) + IDEMPOTENCY_BINDING_MISMATCH (чужой кандидат с РАВНЫМ digest); N-F02-5 IDEMPOTENCY_REVIEW_MISMATCH; N-F02-6 безопасное сужение -> повтор OK (0 фактов), опасное сужение (AB-dep) -> SCOPE_DENIED, восстановление гранта -> повтор OK; N-F02-7 тот же ключ у другого principal -> 2 независимые operation-строки admit:demo-reviewer/admit:readerQ (не переиспользуется); N-F02-8 legacy-строка -> IDEMPOTENCY_BINDING_UNKNOWN, строка не переписана (candidate_id=NULL, scope_digest='', digest сохранён), новый ключ -> DEMO_ADMITTED, immutable-триггер пересоздан (UPDATE -> IMMUTABLE), user_version=1; N-F02-9 race (тот же ключ, 2 кандидата, идентичные digest) -> один ADMITTED, второй BINDING_MISMATCH, 1 строка ключа; N-F02-10 0 побочных эффектов при replay; N-F02-11 отсутствующий кандидат -> SCOPE_DENIED, без выдачи из кеша",
+        "migration_on_copy": "runtime/AB005/fixtures/f02/after/legacy-migrated/dom.sqlite3 — зрелая копия старой схемы (legacy.py, старый DDL дословно), мигрирована через dom_init: columns v2 (candidate_id,review_id,branch,scope_digest,result_scope), user_version=1, legacy-строка инертна; разрушительная операция только на копии",
+        "raw_frames": "runtime/AB005/fixtures/f02/before|after/*/frames-*.jsonl (реальные кадры)"
+      },
+      "negative_results": [
+        "N-F02-1: DIGEST_MISMATCH ДО cache hit; квитанции нет; 3 PID raw frames",
+        "N-F02-2: SCOPE_DENIED (candidate() до кеша)",
+        "N-F02-3: кешированная квитанция байт-равна; 0 новых фактов/строк idempotency",
+        "N-F02-4: DIGEST_MISMATCH (L1) / IDEMPOTENCY_BINDING_MISMATCH (равный digest, чужой кандидат)",
+        "N-F02-5: IDEMPOTENCY_REVIEW_MISMATCH",
+        "N-F02-6: безопасное сужение - повтор разрешён (0 фактов); опасное сужение - SCOPE_DENIED; восстановление - повтор разрешён",
+        "N-F02-7: ключ не переиспользуется между principal (operation-префикс)",
+        "N-F02-8: IDEMPOTENCY_BINDING_UNKNOWN, legacy строка не переписана/не удалена, новый ключ ADMITTED",
+        "N-F02-9: детерминированный исход (1 ADMITTED, 1 отказ, 0 дублей)",
+        "N-F02-10: outbox/attempts/acks/facts не растут при replay",
+        "N-F02-11: отсутствующий кандидат -> честный SCOPE_DENIED, кеш не задет"
+      ],
+      "digest_before": "7615365ed77930f8fe6807b3dde65ba4f1e9c6ee84a73f3038206bdd482e49d7",
+      "digest_after": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+      "notes": "порядок admit: candidate() -> L1 (row['digest']/digest(p) vs intent_digest ДО кеша) -> L2 dedupe с binding (candidate_id,review_id,branch,scope_digest,result_scope) -> review/STALE-проверки -> remember с binding; result_scope={branch}∪dependencies <= grant при выдаче; IDEMPOTENCY_MISMATCH сохранён как defense-in-depth (строка кеша != предъявленный digest; на практике недостижим после L1, как и в прототипе); submit тоже привязан (scope_digest+result_scope+кандидат), legacy submit-строки -> тот же BINDING_UNKNOWN"
+    }
+  ],
+  "regression_check": "mockup/admission.py, mockup/storage.py, mockup/public_dto.py, mockup/delivery.py, mockup/server.py, tests/, tech_debt.md, OMH, configs — F-01/F-03/delivery.py/OMH/tests/tech_debt НЕ тронуты; p_f04.py after повторно выполнен на финальном digest ca227b17 (PASS). tests/ не изменены и не прогонялись (write_scope запрещает)",
+  "write_scope_used": [
+    "artifacts/WORKER_AB005.json",
+    "reports/WORKER_AB005.md",
+    "docs/SCHEMA_CHANGE_AB005.md",
+    "runtime/AB005/**"
+  ],
+  "runtime_probes": {
+    "p_f04.py": "mode before|after; grant fixture AA_ZZ (ZZ granted-but-absent), out-of-grant AB",
+    "p_f02.py": "mode before|after; сценарии N-F02-1..11 на изолированных БД; миграционный фикстур runtime/AB005/legacy.py (старая схема дословно)",
+    "p_lib.py": "raw MCP клиент AB003 (реальные сущности процессов), code_digest, sql_counts",
+    "launch.py": "собственный лаунчер с principal-override (AB005_PRINCIPAL) для N-F02-7"
+  },
+  "not_checked": [
+    "истинно конкурентная гонка двух процессов (моделирована последовательной сериализацией BEGIN IMMEDIATE, как в продукте) — рекомендация RS006 сохраняется",
+    "полный pytest-прогон (тесты вне write_scope)",
+    "live OMH/сеть/Git (запрещены картой)"
+  ],
+  "report_ref": "reports/WORKER_AB005.md",
+  "schema_doc_ref": "docs/SCHEMA_CHANGE_AB005.md",
+  "written_at": "2026-11-08T11:39:37+00:00"
+}

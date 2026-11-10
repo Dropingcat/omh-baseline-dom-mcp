@@ -1,0 +1,116 @@
+{
+  "schema": "reviewer_artifact/v1",
+  "role": "REVIEWER",
+  "task": "RV006",
+  "ticket": "AB006 W1 review on c26812b3",
+  "reviewed_version": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+  "digest_recomputed": {
+    "method": "sha256(json.dumps({'mockup/<posix-relpath>': sha256(file_bytes)}, sort_keys=True)) over 16 mockup/**/*.py (__pycache__ excluded)",
+    "n_files": 16,
+    "computed": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+    "matches_claimed": true,
+    "probe": "runtime/RV006/probes/digest_check.py"
+  },
+  "decision": "CONFORM_WITH_FINDINGS",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "slice_verdicts": [
+    {"slice": "contract_codes_fields", "verdict": "PASS", "detail": "status ∈ {PENDING_PRESENT, NO_PENDING} (страничный признак по items); top-level ровно status/count/items/has_more/page; item-поля ровно 11 + опциональный age_seconds (12 ключей в кадре), лишних/чужих нет (fail-closed проекция UNKNOWN_FIELD); limit 1..500 и after 'branch:id' с типизированным REJECTED; raw-исключений нет ни в одном прогоне"},
+    {"slice": "count_exactness", "verdict": "PASS", "detail": "count независим от страницы (равен при after=null, после последнего item, за концом keyset), admitted исключён (полный грант не показывает допущенного), deps вне гранта исключены (грант AA: count=2 при 5 строках в БД; грант AA,AB: count=4)"},
+    {"slice": "anti_exists_oracle", "verdict": "PASS", "detail": "count = точная перечислимая мощность (limit=500 items == count на 3 усечениях гранта); скрытые строки не дают ни items, ни счётчиков. Наблюдение: has_more (предфильтровый limit+1) сам по себе является слабым exists-сигналом о наличии in-branch скрытых строк — задокументировано в контракте, не противоречит карте (карта требует анти-oracle именно для count)"},
+    {"slice": "leaks", "verdict": "PASS", "detail": "items metadata-only: ни одного payload-текста (5 маркеров тел) и ни одного чужого идентификатора в items на грантах AA/AB/AA,AB и в сыром MCP-кадре; payload/source_ref/body_b64 отсутствуют в pending-секции"},
+    {"slice": "migration", "verdict": "PASS", "detail": "user_version-гейт: uv>=2 без created_at → MIGRATION_REQUIRED без перестройки (проверено физически: колонка не добавлена, uv остался 2); legacy uv<2 мигрируется аддитивно; идемпотентность (повторный init: снапшот схемы идентичен); 39 immutable-триггеров (44 всего) и 2 индекса подтверждены read-only PRAGMA; несовместимый layout (drop outbox) → MIGRATION_REQUIRED; legacy created_at NULL → age_seconds отсутствует (не 0)"},
+    {"slice": "ab005_regression", "verdict": "PASS", "detail": "DIGEST_MISMATCH до кеша (неверный digest на кешированном ключе → DIGEST_MISMATCH, не replay); binding (IDEMPOTENCY_REVIEW_MISMATCH, IDEMPOTENCY_BINDING_MISMATCH); result_scope ⊆ grant (dedupe-гейт Denied на {AA,AB}→{AA}); NO_SUCH_BRANCH на granted-but-absent; SCOPE_DENIED на вне-грант; idempotent replay возвращает тот же tx"},
+    {"slice": "page_underfill_documented", "verdict": "PASS_WITH_FINDING", "detail": "has_more = предфильтровый limit+1 подтверждён кодом и кадрами (limit=2 → 1 item, has_more=true; count=4); документирован в SCHEMA_CHANGE_AB006 §8, контракте и артефакте worker'а; НО при items=[]+has_more=true клиент не имеет курсора для продолжения (см. findings F2)"}
+  ],
+  "checks": [
+    {"id": "RV006-01", "area": "digest", "ok": true, "detail": "пересчитан собственным скриптом: c26812b3... совпадает, 16 файлов"},
+    {"id": "RV006-02", "area": "contract", "ok": true, "detail": "коды/поля/пагинация/типизированные отказы: 40 из 42 собственных проверок PASS; 2 FAIL — один корень (F1: курсор ':x'/'AA:' с пустыми компонентами принимается как RESUMED)"},
+    {"id": "RV006-03", "area": "count", "ok": true, "detail": "точность и независимость от страницы подтверждены; admitted и deps-foreign исключены"},
+    {"id": "RV006-04", "area": "anti_oracle", "ok": true, "detail": "count == полная перечислимая мощность на 3 усечениях гранта; 5 строк в БД → count=2 для AA"},
+    {"id": "RV006-05", "area": "leaks", "ok": true, "detail": "нет payload-текста и чужих id в items (3 гранта + сырой кадр)"},
+    {"id": "RV006-06", "area": "migration", "ok": true, "detail": "гейт, MIGRATION_REQUIRED, идемпотентность, 39/2, legacy-NULL-age"},
+    {"id": "RV006-07", "area": "ab005", "ok": true, "detail": "DIGEST_MISMATCH до кеша, binding, result_scope⊆grant, NO_SUCH_BRANCH"},
+    {"id": "RV006-08", "area": "underfill", "ok": true, "detail": "has_more предфильтровый и документирован; зафиксирован и в собственном кадре (limit=2→1 item, has_more=true)"},
+    {"id": "RV006-09", "area": "cursor_validation", "ok": false, "detail": "F1: after=':x' и after='AA:' принимаются (RESUMED) — контракт требует 'branch:id' с типизированным REJECTED"},
+    {"id": "RV006-10", "area": "pagination_liveness", "ok": false, "detail": "F2: items=[] + has_more=true не даёт курсора для продолжения — видимые кандидаты могут быть недостижимы keyset-обходом при суженном гранте"}
+  ],
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "low",
+      "area": "contract_codes",
+      "claim": "валидация after проверяет только наличие ':' — пустые компоненты ('branch:' / ':id') проходят как RESUMED",
+      "evidence": "own_probes.json S4.typed_refusals / S4.cursor_empty_components: after=':x' → RESUMED, after='AA:' → RESUMED",
+      "impact": "малформатный курсор не получает типизированный REJECTED, молча трактуется как начало/конец keyset; контракт RS007 требует 'branch:id'",
+      "fix_hint": "проверять оба компонента непустыми (split(':',1) и оба truthy) до запроса"
+    },
+    {
+      "id": "F2",
+      "severity": "medium",
+      "area": "page_underfill_liveness",
+      "claim": "при items=[] и has_more=true клиент не может продолжить листать: курсор берётся из items, которых нет; повторный запрос возвращает идентичный кадр (вечный цикл / видимые строки недостижимы)",
+      "evidence": "own_probes.json S5.underfill_measured (count=2, items=[], has_more=true) и S5.no_cursor_advance (identical_frame=true); также walk limit=1 на g1 застревает после первого item (S2.count_not_exists_oracle.walk_limit1.stuck_at); сырой кадр frames_raw.jsonl: limit=2 → 1 item, has_more=true",
+      "impact": "документированное поведение ('клиент продолжает листать по has_more') невыполнимо без курсора; при суженном гранте, когда скрытые строки сортируются раньше видимых, pending-кандидаты могут быть недостижимы через пагинацию (виден только count)",
+      "fix_hint": "возвращать курсор из последней СЫРОЙ (предфильтровой) строки (например, page.next_after), либо фильтровать до LIMIT (дороже), либо документировать ограничение 'клиент должен использовать limit ≥ числа скрытых строк'"
+    },
+    {
+      "id": "F3",
+      "severity": "low",
+      "area": "anti_oracle_observation",
+      "claim": "has_more (предфильтровый limit+1) является слабым exists-сигналом: true при items=[] означает 'в БД есть ещё in-branch строки, часть которых скрыта'",
+      "evidence": "own_probes.json S5.underfill_measured; код admission.py:471; контракт pagination.has_more",
+      "impact": "не противоречит карте (анти-oracle требуется для count и выполнен), но клиент с суженным грантом по has_more=true узнаёт о существовании скрытых in-branch кандидатов; задокументировано в SCHEMA_CHANGE_AB006 §8",
+      "fix_hint": "осознанный tradeoff контракта; при желании строгости — has_more из post-фильтрового прохода (цена: лишний проход)"
+    }
+  ],
+  "own_runs": [
+    {
+      "id": "rv006_own_probes",
+      "what": "42 собственные проверки: контракт (поля/коды/типизированные отказы), точность count на 3 грантах, анти-oracle (count==перечисление, 5 строк→2), утечки (5 маркеров тел), миграция (гейт/идемпотентность/39 триггеров/2 индекса/legacy-NULL), регрессия AB005 (digest до кеша, binding, result_scope, NO_SUCH_BRANCH), underfill/курсор",
+      "artifact": "runtime/RV006/results/own_probes.json",
+      "sha256": "fdccf5814bbffda1b9af6f1a47a28c9cc433f924751575c51292a4ae60262976",
+      "verdict": "40/42 PASS; FAIL = F1 (курсор с пустыми компонентами) и его дубль; F2 зафиксирован как поведение"
+    },
+    {
+      "id": "rv006_raw_mcp_frames",
+      "what": "собственный raw stdio MCP-клиент (без SDK): initialize → tools/list → dom_resume(AA, limit=2) на собственном фикстуре g1; 3 сырых кадра; pending metadata-only, underfill в кадре, нет запрещённого текста в pending",
+      "artifact": "runtime/RV006/results/frames_raw.jsonl",
+      "sha256": "c67bb16a1206d551665c33acf8c4bf1639034bdc508dee22df94e1179a3eda20",
+      "verdict": "PASS (pending: 12 ключей, count=4, items=1 при limit=2, has_more=true, forbidden_text_in_pending=[])"
+    },
+    {
+      "id": "rv006_digest_recompute",
+      "what": "пересчёт digest версии документированным методом",
+      "artifact": "runtime/RV006/probes/digest_check.py",
+      "sha256": "78dcf1f89ef9ca7a7f551dfe41c6b64b199a54b18b653cdbfd3bfe7ceea262ba",
+      "verdict": "PASS (c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505, 16 файлов)"
+    }
+  ],
+  "evidence_refs": [
+    {"path": "runtime/RV006/results/own_probes.json", "sha256": "fdccf5814bbffda1b9af6f1a47a28c9cc433f924751575c51292a4ae60262976"},
+    {"path": "runtime/RV006/results/own_run.out", "sha256": "ff9128f0767383f7dd0bb75512b48ca7dc98f6349f8569e38ff8b61e2d3cc64b"},
+    {"path": "runtime/RV006/results/frames_raw.jsonl", "sha256": "c67bb16a1206d551665c33acf8c4bf1639034bdc508dee22df94e1179a3eda20"},
+    {"path": "runtime/RV006/results/raw_frames_summary.json", "sha256": "9701e5e7ecfec6e857ae2dd6b00bd290571d0d0e00c80f78e4a8d598401238b5"},
+    {"path": "runtime/RV006/probes/digest_check.py", "sha256": "78dcf1f89ef9ca7a7f551dfe41c6b64b199a54b18b653cdbfd3bfe7ceea262ba"},
+    {"path": "runtime/RV006/probes/rv006_own_probes.py", "sha256": "6b2bf5c904d06b62f34c729cc05a1ea64c53603f97f9d01b2db5c878184d6737"},
+    {"path": "runtime/RV006/probes/rv006_raw_frames.py", "sha256": "2cf60d3d0aca70b8f163988f49d79980dce54a0677b4557b0df25bcfa476e9b9"}
+  ],
+  "baseline_immunity": "продукт read-only: mockup/** и docs/ не изменялись; все записи — только runtime/RV006/**, artifacts/REVIEWER_AB006.json, reports/REVIEWER_AB006.md; git/install/сеть не использовались",
+  "not_checked": [
+    "полный pytest-прогон tests/ (вне write_scope карты)",
+    "live OMH / сеть / Git / установка пакетов (запрещены картой)",
+    "истинно конкурентная гонка двух процессов по admit (модель — BEGIN IMMEDIATE сериализация; вне среза)",
+    "perf-замеры p100k (взяты из артефакта worker'а, не повторялись; собственный минимум — функциональный)"
+  ],
+  "observations": [
+    "worker'овская мера page_underfill_edge (count=2, items=0, has_more=true) воспроизведена собственными фикстурами — это не только 'недополнение страницы', но и стоп-кадр пагинации (F2)",
+    "count остаётся точным и не-oracle даже в стоп-кадре — анти-oracle требование карты выполнено",
+    "в сыром MCP-кадре snapshot законно содержит body_b64 допущенного claim (base64) — это не утечка pending-секции; pending.items текста не содержат",
+    "проекция PendingItem fail-closed: лишний ключ в item → PublicProjectionError, а не молчаливый пропуск"
+  ],
+  "report_ref": "reports/REVIEWER_AB006.md",
+  "continuation_required": false,
+  "written_at": "2026-11-08T13:40:00+00:00"
+}

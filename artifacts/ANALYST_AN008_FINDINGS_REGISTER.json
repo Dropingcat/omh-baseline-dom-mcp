@@ -1,0 +1,1738 @@
+{
+ "schema": "analyst_findings_register/v1",
+ "role": "ANALYST",
+ "task": "AN008",
+ "status": "COMPLETED",
+ "completion": "completed",
+ "written_at": "2026-11-08",
+ "product_acceptance": false,
+ "is_approval": false,
+ "current_code_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+ "register": [
+  {
+   "id": "AU004-F-01",
+   "source": "AUDITOR_AB003_TD19.json (роль AU004; verdict_rationale) → WORKER_AB004_AU004F01.json → REVIEWER_AB004_AU004F01.json (RV005)",
+   "title": "Утечка существования чужой ветки и её head-ревизии через нескоупленные dependency/provenance карты публичного DTO (Claim.dependencies, Provenance.dependencies) и YAML-экспорт",
+   "severity": "major",
+   "class": "утечка",
+   "current_status": "FIXED_VERIFIED",
+   "worker_after_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+   "approval": {
+    "artifact": "artifacts/REVIEWER_AB004_AU004F01.json",
+    "decision": "APPROVE",
+    "version_digest": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+    "note": "независимый пересчёт digest (digest_independent.match=true, 16 файлов, изменены ровно admission/public_dto/server); schema_walk: NO_FOREIGN_BY_CONSTRUCTION=39, FILTERED_BY_GRANT=9; дифференциальная проекция: 0 чужих bmap-ключей на гранте {AA}"
+   },
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB003_TD19.json",
+     "locator": "verdict_rationale",
+     "note": "public DTO проектирует Claim.dependencies/provenance.dependencies без scope-фильтра — существование+head чужой ветки видны AA-only; verdict REQUEST_CHANGES"
+    },
+    {
+     "file": "artifacts/WORKER_AB004_AU004F01.json",
+     "locator": "code_digest_before/code_digest_after",
+     "note": "08aa9a9b... → 1ead2d45...; own E2E закрыл F-01 (6 вариантов, 5 сидов + corrupt): чужие ключи удалены из Claim.dependencies/Provenance.dependencies/ReadSnapshot.revisions и YAML-байтов"
+    },
+    {
+     "file": "artifacts/REVIEWER_AB004_AU004F01.json",
+     "locator": "decision / version_reviewed / digest_independent",
+     "note": "APPROVE на 1ead2d45...; 'no leak found on the exact version for the AU004-F-01 class'"
+    }
+   ],
+   "fix_slice": "S0 (закрыт: AB003→RV004 APPROVE→AB004→RV005 APPROVE на 1ead2d45)",
+   "blockers": [],
+   "note": "AUDITOR_AB004 (AU005) вынес REQUEST_CHANGES на 1ead2d45 из-за НОВЫХ находок AU005-F-01..04 — это не блокирует FIXED_VERIFIED класса AU004-F-01 (ревьюер явно разделил классы)."
+  },
+  {
+   "id": "AU005-F-02",
+   "source": "AUDITOR_AB004_AU004F01.json findings[1] (роль AU005) + ANALYST_AN006_AU005_FINDINGS.json → WORKER_AB005.json (WS-F02-ADMIT-BINDING) → REVIEWER_AB005.json + AUDITOR_AB005.json (RV005)",
+   "title": "Кросс-грант idempotency replay: закешированный AB-receipt возвращается по AA-кандидату при известном старом ключе/digest (F-02)",
+   "severity": "major",
+   "class": "утечка",
+   "current_status": "FIXED_VERIFIED",
+   "worker_after_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+   "approval": {
+    "artifact": "artifacts/REVIEWER_AB005.json",
+    "decision": "APPROVE",
+    "version_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+    "secondary_artifacts": [
+     {
+      "artifact": "artifacts/AUDITOR_AB005.json",
+      "decision": "verdict",
+      "expect": "APPROVE"
+     }
+    ],
+    "note": "два независимых APPROVE на ca227b17: REVIEWER_AB005 decision=APPROVE + AUDITOR_AB005 verdict=APPROVE"
+   },
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB004_AU004F01.json",
+     "locator": "findings[1]",
+     "note": "PIDs 5248/3204 возвращают точный AB DEMO_ADMITTED receipt (branch AB, revision1, uuid, tx); replay не создаёт новых фактов"
+    },
+    {
+     "file": "artifacts/REVIEWER_AB005.json",
+     "locator": "slice_verdicts WS-F02-ADMIT-BINDING",
+     "note": "APPROVE; N-F02-1..11, DIGEST_MISMATCH до кеша, binding, result_scope⊆grant, NO_SUCH_BRANCH"
+    },
+    {
+     "file": "artifacts/AUDITOR_AB005.json",
+     "locator": "own_runs C2_BYPASS / C5 / C5B",
+     "note": "С2: reuse_abkey_aaown_digest=IDEMPOTENCY_BINDING_MISMATCH; C5B: replay_under_AA byte_equal, leak_outside_grant=false"
+    },
+    {
+     "file": "artifacts/WORKER_AB005.json",
+     "locator": "slices WS-F02",
+     "note": "FIXED_AND_VERIFIED_PHYSICALLY; финальная форма L1+L2 из RS006"
+    }
+   ],
+   "fix_slice": "S0 (закрыт: AB005 + RV005 на ca227b17)",
+   "blockers": []
+  },
+  {
+   "id": "AU005-F-04",
+   "source": "AUDITOR_AB004_AU004F01.json findings[3] (роль AU005) + ANALYST_AN006  → WORKER_AB005.json (WS-F04-TYPED-ABSENCE) → REVIEWER_AB005.json + AUDITOR_AB005.json (RV005)",
+   "title": "Granted-but-absent ветка ZZ: INTERNAL_ERROR / пустой SYNC_STATUS / ложный SYNCED вместо типизированного отсутствия",
+   "severity": "minor",
+   "class": "недоказуемость",
+   "current_status": "FIXED_VERIFIED",
+   "worker_after_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+   "approval": {
+    "artifact": "artifacts/REVIEWER_AB005.json",
+    "decision": "APPROVE",
+    "version_digest": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+    "secondary_artifacts": [
+     {
+      "artifact": "artifacts/AUDITOR_AB005.json",
+      "decision": "verdict",
+      "expect": "APPROVE"
+     }
+    ],
+    "note": "два независимых APPROVE на ca227b17: REVIEWER_AB005 decision=APPROVE + AUDITOR_AB005 verdict=APPROVE"
+   },
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB004_AU004F01.json",
+     "locator": "findings[3]",
+     "note": "query/resume INTERNAL_ERROR; sync_status пустой; sync SYNCED (ложный успех) на гранте {AA,ZZ}"
+    },
+    {
+     "file": "artifacts/REVIEWER_AB005.json",
+     "locator": "slice_verdicts WS-F04-TYPED-ABSENCE",
+     "note": "APPROVE; реализация head()/require_branch() по branch_heads, sync_status/sync без прохода через head; NO_SUCH_BRANCH uniform typed enum"
+    },
+    {
+     "file": "artifacts/AUDITOR_AB005.json",
+     "locator": "own_runs C7_F04",
+     "note": "ZZ_all_NO_SUCH_BRANCH=true, no_internal=true, ZZ_sync_not_synced=true"
+    }
+   ],
+   "fix_slice": "S0 (закрыт: AB005 + RV005 на ca227b17)",
+   "blockers": []
+  },
+  {
+   "id": "RV006-F1",
+   "source": "REVIEWER_AB006.json findings[0] (RV006) → WORKER_AB007.json (AB007) → reports/REVIEWER_AB007.md (RV007)",
+   "title": "Слабая валидация курсора after: ':x' и 'AA:' принимаются как RESUMED вместо типизированного REJECTED",
+   "severity": "low",
+   "class": "неудобство",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "evidence": [
+    {
+     "file": "artifacts/REVIEWER_AB006.json",
+     "locator": "findings F1 / checks RV006-09",
+     "note": "own_probes S4: after=':x'→RESUMED, 'AA:'→RESUMED; контракт RS007 требует 'branch:id'"
+    },
+    {
+     "file": "artifacts/WORKER_AB007.json",
+     "locator": "digest_before/digest_after",
+     "note": "c26812b3... → 3cd21d96...; digest_verified собственным пересчётом; изменён ровно mockup/admission.py"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "421-434 (_parse_after)",
+     "note": "F1 зафиксирован в коде: оба компонента непустые, ':' внутри id запрещён, всё прочее — Denied('REJECTED')"
+    },
+    {
+     "file": "reports/REVIEWER_AB007.md",
+     "locator": "§2",
+     "note": "CONFORM: ''/:x/AA:/AA:x:y/AA/123 → REJECTED; None/валидный UUID → RESUMED; проверено Python-обёрткой И сырым MCP stdio frame"
+    }
+   ],
+   "fix_slice": "S1-AB007 (код готов; приёмка = запись RV007-артефакта)",
+   "blockers": [
+    "artifacts/REVIEWER_AB007.json отсутствует — отчёт reports/REVIEWER_AB007.md (CONFORM на 3cd21d96) есть, формальная запись артефакта не завершена"
+   ]
+  },
+  {
+   "id": "RV006-F2",
+   "source": "REVIEWER_AB006.json findings[1] (RV006) → WORKER_AB007.json → reports/REVIEWER_AB007.md (RV007)",
+   "title": "items=[] + has_more=true: клиенту неоткуда взять курсор; видимые pending-кандидаты недостижимы keyset-обходом при суженном гранте",
+   "severity": "medium",
+   "class": "недоказуемость",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "evidence": [
+    {
+     "file": "artifacts/REVIEWER_AB006.json",
+     "locator": "findings F2 / checks RV006-10",
+     "note": "own_probes S5: count=2, items=[], has_more=true, identical_frame=true; walk limit=1 застревает"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "466-503 (_pending_page)",
+     "note": "F2/F3-комментарий: фильтры видимости (deps⊆grant, admitted-исключение) применены в SQL ДО LIMIT — страница всегда наполнена видимыми, курсор от последнего item продвигает"
+    },
+    {
+     "file": "reports/REVIEWER_AB007.md",
+     "locator": "§3",
+     "note": "F2 закрыт: 5 собственных walk-ов (union==ref, dupes=0, stuck=false, empty_midwalk=false, last_has_more=false)"
+    }
+   ],
+   "fix_slice": "S1-AB007",
+   "blockers": [
+    "artifacts/REVIEWER_AB007.json отсутствует"
+   ]
+  },
+  {
+   "id": "RV006-F3",
+   "source": "REVIEWER_AB006.json findings[2] (RV006) → WORKER_AB007.json → reports/REVIEWER_AB007.md (RV007)",
+   "title": "has_more (предфильтровый limit+1) — слабый exists-сигнал о существовании скрытых in-branch строк",
+   "severity": "low",
+   "class": "недоказуемость",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "evidence": [
+    {
+     "file": "artifacts/REVIEWER_AB006.json",
+     "locator": "findings F3",
+     "note": "has_more=true при items=[] раскрывает «в БД есть ещё строки»; задокументировано в SCHEMA_CHANGE_AB006 §8; не противоречит карте (анти-oracle для count выполнен)"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "503",
+     "note": "has_more = len(rows)>limit ПОСЛЕ фильтров — считается только по видимым строкам; скрытые не сигналятся"
+    },
+    {
+     "file": "reports/REVIEWER_AB007.md",
+     "locator": "§4",
+     "note": "грант AA при скрытом deps-foreign c4: limit=2 при 2 видимых → has_more=false; c4 нигде не появляется и не даёт счётчик"
+    }
+   ],
+   "fix_slice": "S1-AB007",
+   "blockers": [
+    "artifacts/REVIEWER_AB007.json отсутствует"
+   ]
+  },
+  {
+   "id": "AU008-A-01",
+   "source": "AUDITOR_AB006.json findings[2] (роль AU008) → WORKER_AB007.json → reports/REVIEWER_AB007.md",
+   "title": "Недополнение страницы pending: limit=2 → items=1, count=2 (admitted-строки съедали LIMIT до фильтра)",
+   "severity": "low",
+   "class": "недоказуемость",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB006.json",
+     "locator": "findings[2]",
+     "note": "runtime/AU008/results/ab/a6_limits.json probes.two: limit=2→items=1; причина: LIMIT(limit+1) до Python-фильтра; note: 'точная цель in-flight фикса AB007, не double-charge'"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "466-471",
+     "note": "фильтры видимости перенесены в SQL до LIMIT — недополнение невозможно при наличии видимых строк"
+    },
+    {
+     "file": "reports/REVIEWER_AB007.md",
+     "locator": "§7",
+     "note": "w6: limit=2 → items=2, count=2, has_more=false; closed_no_underfill=true"
+    }
+   ],
+   "fix_slice": "S1-AB007 (тот же тикет, что RV006-F2; не засчитывать дважды)",
+   "blockers": [
+    "artifacts/REVIEWER_AB007.json отсутствует"
+   ]
+  },
+  {
+   "id": "AU006-F-04",
+   "source": "AUDITOR_AU006_TASK_BASELINE.json findings + ANALYST_AN007_AU006_FINDINGS.json findings_map[3] → W1 (WORKER_AB006 + RS007 + AB007); независимое живое подтверждение — LIVE_WAVE1_VERIFY C3 FAIL",
+   "title": "dom_resume не перечисляет pending-кандидатов: беспамятный клиент не обнаруживает незавершённое (продолжение после kill — только через память драйвера)",
+   "severity": "major",
+   "class": "недоказуемость",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "fix_slice": "S6-W1 (pending-видимость реализована AB006 и доработана AB007; приёмка = RV007-артефакт + волна 2 с беспамятным континуатором)",
+   "evidence": [
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "findings_map[3]",
+     "note": "resume отдаёт RESUMED+snapshot+trace+sync, но не pending candidate id/digest/payload/key (admission.py:383-392)"
+    },
+    {
+     "file": "artifacts/WORKER_AB006.json",
+     "locator": "pos_results pos1_memoryless_continuation",
+     "note": "свежий процесс (fresh client, грант AA) через init+resume обнаруживает visible=2 count=2 без подсказки"
+    },
+    {
+     "file": "artifacts/REVIEWER_AB006.json",
+     "locator": "slice_verdicts",
+     "note": "contract_codes_fields PASS, count_exactness PASS, anti_exists_oracle PASS, leaks PASS, migration PASS (версия c26812b3)"
+    },
+    {
+     "file": "artifacts/RESEARCHER_RS007_UNFINISHED.json",
+     "locator": "prototype_results pos1_memoryless_continuation",
+     "note": "rc=0, visible=2; 1×DEMO_ADMITTED + 1×REVISION_CONFLICT (честная rev-гонка)"
+    },
+    {
+     "file": "artifacts/LIVE_WAVE1_VERIFY.json",
+     "locator": "criteria C3 verdict=FAIL",
+     "note": "дефект воспроизведён в живом прогоне ДО W1; закрытие требует повторного живого прогона против новой версии"
+    }
+   ],
+   "blockers": [
+    "волна 2: повторный прогон C3 с полностью беспамятным континуатором (LIVE_WAVE1_FINDINGS §5.3)",
+    "запись RV007-артефакта"
+   ],
+   "note": "статус осознанно не FIXED_VERIFIED: независимого подтверждения на ТОЙ ЖЕ версии в живом E2E (C3-критерий) ещё нет — только срезовые проверки RV006/AU008 и прототип RS007"
+  },
+  {
+   "id": "LVER-C3",
+   "source": "LIVE_WAVE1_VERIFY.json criteria C3 (LVER001) + docs/LIVE_WAVE1_FINDINGS_2026-11-08.md §2",
+   "title": "Волна 1, критерий C3=FAIL: продолжение без старой памяти невозможно — незавершённый кандидат не виден через протокол (континуация шла по подсказке драйвера)",
+   "severity": "major",
+   "class": "недоказуемость",
+   "current_status": "FIXED_AWAITING_ACCEPTANCE",
+   "worker_after_digest": "3cd21d96ff2f83f014f00c3fdf5b21c6ef94c26525385ef6a014365387d8aad0",
+   "fix_slice": "S6-W1 + волна 2",
+   "duplicates_merged": [
+    "LVER-D2 (дискрепансия D2 — тот же сценарий L1-04; D2 = составляющая FAIL C3)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/LIVE_WAVE1_VERIFY.json",
+     "locator": "criteria[2] C3",
+     "note": "L1-04 seq7: state_after revision 1, n_claims 1, ноль pending; exec-40903d58.jsonl: первый вызов нового клиента — dom_review(candidate_id...) из памяти старой сессии; независимая проба l104_probe: dom_resume → 1 claim, zero pending"
+    },
+    {
+     "file": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md",
+     "locator": "§2",
+     "note": "протокол не перечисляет не-допущенные кандидаты; без этого продолжение после сбоя работает только внутри сессии; приоритет C3 выше F-01"
+    },
+    {
+     "file": "artifacts/WORKER_AB006.json",
+     "locator": "pos_results pos1_memoryless_continuation",
+     "note": "механизм исправлен в продукте (W1)"
+    }
+   ],
+   "blockers": [
+    "волна 2: беспамятный континуатор (новый процесс, 0 унаследованных id, 0 чтения прошлых файлов)",
+    "запись RV007-артефакта",
+    "W3/W4 гигиена прогона до волны 2 (иначе волна недоказуема)"
+   ],
+   "note": "корень тот же, что AU006-F-04, но scope разный (живой критерий волны vs кодовая находка) — не слиты, перекрёстно ссылаются; недостаточное условие закрытия: срезовые PASS без живого E2E"
+  },
+  {
+   "id": "AU005-F-01",
+   "source": "AUDITOR_AB004_AU004F01.json findings[0] (роль AU005) + ANALYST_AN006_AU005_FINDINGS.json findings_summary[0]",
+   "title": "Скоупный YAML-ack переиспользуется как полная доставка: O3-идентичность (приёмник/область/ревизия/байты) не связывается с квитанцией",
+   "severity": "major",
+   "class": "ложная готовность",
+   "current_status": "OPEN",
+   "fix_slice": "S6-W6 (идентичность доставки; исследование RS006 готово; после W1; НЕ засчитывается за W1 и наоборот — WORKQUEUE правило 3)",
+   "fix_slice_neg_control": [
+    "NEG-01..09 из RS006 answers_f01 (физические факты: SQL-строки, sha256 файлов, счётчик attach)",
+    "AA-only sync после union не переписывает и не гасит union-ack",
+    "полный экспорт после AA-only создаёт НОВЫЕ байты и свой receipt (fingerprint 113628b8 ≠ 5fadbab7)",
+    "повторный sync при расхождении байтов не подтверждает доставку"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB004_AU004F01.json",
+     "locator": "findings[0]",
+     "note": "outbox intent создаётся один раз на (tx,kind) без view scope/receiver (admission.py:215-217); delivery.confirmed() сверяет только (intent,tx,digest,target)+branch/revision, не байт-хеш и не scope; sync пропускает already-confirmed (admission.py:335)"
+    },
+    {
+     "file": "artifacts/ANALYST_AN006_AU005_FINDINGS.json",
+     "locator": "findings_summary[0]",
+     "note": "AA-only ack fingerprint 5fadbab7... vs virgin union 113628b8...; receipt_unchanged_after_explicit_export=true"
+    },
+    {
+     "file": "runtime/AU005/s4_continue01/results.json",
+     "locator": "stages.delivery",
+     "note": "AA_then_union vs union_first физически разошлись — CONFIRMED, не наблюдение"
+    }
+   ],
+   "blockers": [
+    "W1 идёт первой (WORKQUEUE правило 1/3)",
+    "независимая приёмка среза (reviewer+auditor) после реализации"
+   ],
+   "implementation_ref": "IMP-01"
+  },
+  {
+   "id": "AU005-F-03",
+   "source": "AUDITOR_AB004_AU004F01.json findings[2] + ANALYST_AN006 findings_summary[2]",
+   "title": "Не-провенансные branch-поля (ClaimItem.applicability, excluded_branches, exclude-событие) показывают имена AB в AA-only",
+   "severity": "minor",
+   "class": "утечка",
+   "current_status": "OPEN",
+   "fix_slice": "S7-WS-F03 (O2-непровенансные поля; параллелен W6/W7)",
+   "fix_slice_neg_control": [
+    "AA-only read: ClaimItem.applicability не содержит AB",
+    "excluded_branches и exclude-событие не видны на гранте AA",
+    "origin_branch расшаренного клайма остаётся видимым (O2-решение заказчика не откатывается)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB004_AU004F01.json",
+     "locator": "findings[2]",
+     "note": "source public_dto.py:71-75,100-105,113-121; projections.py:25,47,53; admission.py:277-283; поля не являются source provenance"
+    },
+    {
+     "file": "runtime/AU005/continue01_reconciliation.json",
+     "locator": "O2_raw",
+     "note": "a2 origin AA экспонирует AB в applicability; excluded_branches и exclude-событие видны"
+    },
+    {
+     "file": "docs/DECISION_BRIEF_2026-11-08.md",
+     "locator": "п.0",
+     "note": "связь с графом: dependencies уже рёбра графа без фильтра"
+    }
+   ],
+   "blockers": [
+    "O2 закреплён заказчиком: провенанс доступного клайма виден всегда — не переоткрывать, фильтровать только непровенансные поля"
+   ],
+   "implementation_ref": "IMP-02"
+  },
+  {
+   "id": "AU006-F-01",
+   "source": "AUDITOR_AU006_TASK_BASELINE.json findings[0] + ANALYST_AN007 findings_map[0]",
+   "title": "Обязательность сверки с базлайном не обеспечена технически: init→submit→review→admit не проверяют «базлайн выдан и прочитан» (R01 no-read и R02 with-read обе ветви DEMO_ADMITTED)",
+   "severity": "blocking",
+   "class": "ложная готовность",
+   "current_status": "OPEN",
+   "fix_slice": "S10-W7-E1/E2/E3 (последний в W7 по AN007 fix_order: после F-02/F-05/F-03+F-04; требует решений NU-AU006-01 и NU-AU006-02)",
+   "fix_slice_neg_control": [
+    "нет выдачи базлайна → материальная работа отклонена (сегодня R01: DEMO_ADMITTED — негатив фиксирует дефект)",
+    "чужая/протухшая квитанция (foreign/stale replay) не проходит",
+    "discovery/read/repair доступны до гейта (TBO-03 не ломается)",
+    "receipt без фактического чтения ≠ понимание (REQUIREMENTS.md:163)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AU006_TASK_BASELINE.json",
+     "locator": "findings[0]",
+     "note": "init (admission.py:104-110) проверяет только simulation-флаг; BaselinePacket не выдаётся как обязательный; submit/review/admit не содержат условия чтения"
+    },
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "orchestrator_claim_corrections[0]",
+     "note": "«read-before-write gate есть в макете» — опровергнуто: R01/R02 обе DEMO_ADMITTED (runtime/AU006/recheck/r01_no_read, r02_with_read)"
+    },
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "architecture_recommendation",
+     "note": "E3 (host pre_tool_call) технически пригоден и хостовой (главный агент, субагенты, MCP); рекомендованы E1+E2 первыми, E3 — hardening"
+    },
+    {
+     "file": "docs/DECISION_NU_AU006_01_02_2026-11-08.md",
+     "locator": "п.99",
+     "note": "цена отказа: F-01 остаётся UNVERIFIED_live, защита держится на дисциплине агента"
+    }
+   ],
+   "blockers": [
+    "NU-AU006-01 (вариант политики недоступности (а)/(б)/(в)/(г))",
+    "NU-AU006-02 (авторизация изолированного живого эксперимента гейта)"
+   ],
+   "needs_user_refs": [
+    "NU-01",
+    "NU-02"
+   ],
+   "implementation_ref": "IMP-03"
+  },
+  {
+   "id": "AU006-F-02",
+   "source": "AUDITOR_AU006_TASK_BASELINE.json findings + ANALYST_AN007 findings_map[1]",
+   "title": "Пустые/фиктивные dependencies и requirement/evidence-ссылки проходят submit→review→admit: отсутствие поля трактуется как «ограничений нет», STALE_REVIEW защищает только заявленные deps",
+   "severity": "major",
+   "class": "ложная готовность",
+   "current_status": "OPEN",
+   "fix_slice": "S8-W7-F02 (первый в W7; по контурам независим от F-05 — можно начинать вместе)",
+   "fix_slice_neg_control": [
+    "dependencies={} не обходит staleness: явный пустой набор требует обязательного обоснования",
+    "ссылка на несуществующий claim/tx → типизированный отказ (напр. DEPENDENCY_UNRESOLVED)",
+    "легальные root/hypothesis/disputed клаймы по-прежнему допускаются (позитив)",
+    "молчаливое отсутствие необязательных полей (source_ref) не равно «оснований нет»"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "findings_map[1] absence_inventory",
+     "note": "dependencies={} допускается validate (dom_contract.py:78-79); STALE_REVIEW только для заявленных deps (projections.py:64)"
+    },
+    {
+     "file": "runtime/AU006/recheck/r03_bases/after.sql.json",
+     "locator": "",
+     "note": "неизвестные требования и пустые/фиктивные ссылки проходят submit/review/admit"
+    },
+    {
+     "file": "runtime/AU006/recheck/r05_restart_stale/after.sql.json",
+     "locator": "",
+     "note": "stale-обнаружение работает только на заявленных deps"
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-04"
+  },
+  {
+   "id": "AU006-F-03",
+   "source": "AUDITOR_AU006_TASK_BASELINE.json findings + ANALYST_AN007 findings_map[2]",
+   "title": "ready_for_owner_review: READY=true при file-записи вне DOM, pending/rejected кандидате без disposition, голом no-new-knowledge; owner_close_called=false",
+   "severity": "major",
+   "class": "ложная готовность",
+   "current_status": "OPEN",
+   "fix_slice": "S9-W7-F03 (после/вместе с W1 — без discovery pending нет пути dispose; AN007 fix_order: F-04 до/вместе с F-03)",
+   "fix_slice_neg_control": [
+    "pending без disposition → NOT_READY",
+    "artifact-only без DOM → NOT_READY / DONE невозможен",
+    "bare no-new-knowledge без сопоставления → NOT_READY",
+    "все кандидаты disposed + результат admitted в DOM → READY (позитив)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "findings_map[2] state_table",
+     "note": "ready-дерево (projections.py:7,29-77; admission.py:254-283): не входят disposition, результат в DOM, owner_close"
+    },
+    {
+     "file": "runtime/AU006/recheck/r04_completion/after.sql.json",
+     "locator": "",
+     "note": "R04: READY=true при file-записи вне DOM, pending кандидате и голом комментарии"
+    },
+    {
+     "file": "docs/TASK_BASELINE_OBLIGATION_2026-11-08.md",
+     "locator": "36-40",
+     "note": "готовность к закрытию требует записанного результата"
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-05"
+  },
+  {
+   "id": "AU006-F-05",
+   "source": "AUDITOR_AU006_TASK_BASELINE.json findings + ANALYST_AN007 findings_map[4]",
+   "title": "todo_evidence не связывает пункт с DOM-результатом: window_empty=closed закрывает пункт активностью (unrelated exit0), EVIDENCE_TOOLS не содержит DOM-инструментов",
+   "severity": "major",
+   "class": "ложная готовность",
+   "current_status": "OPEN",
+   "fix_slice": "S8-W7-F05 (OMH-сторона; параллелен F-02 по контурам)",
+   "fix_slice_neg_control": [
+    "unrelated exit0 не закрывает DOM-пункт",
+    "dom_submit REJECTED — не evidence",
+    "window_empty не закрывает DOM-пункт",
+    "admitted tx + доставка закрывают пункт (позитив)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "findings_map[4]",
+     "note": "evidence kinds: tool_call/file_write/pr_ci_run/team_check (todo_evidence.py:9-68,79-98); window_empty=closed (427); EVIDENCE_TOOLS=(terminal/write_file/patch) (94-98)"
+    },
+    {
+     "file": "runtime/AU006/host_fixture_recheck/results.json",
+     "locator": "",
+     "note": "активность принимается за работу; нужен резолвер по admitted tx в DOM"
+    }
+   ],
+   "blockers": [
+    "живой OMH read-only: срез исполняется OMH-дельтой оркестратора (PREPARED_NOT_APPLIED по AN006)",
+    "NU-AU006-01: какой статус при недоступности DOM/LLM"
+   ],
+   "implementation_ref": "IMP-06"
+  },
+  {
+   "id": "AU008-L-01",
+   "source": "AUDITOR_AB006.json findings[0] (роль AU008); повторно подтверждено в коде 3cd21d96 (AN008, анализ строк)",
+   "title": "REJECTED может попасть в pending: _pending_page исключает только admitted; кандидат с decision != 'approve' остаётся в items и count",
+   "severity": "medium",
+   "class": "латентная",
+   "current_status": "LATENT",
+   "latent_trigger": "появление reject-пути (RS009 dom_reject/dom_review с decision='reject'): как только ревьюер сможет писать отказ, отвергнутые кандидаты начнут бесконечно всплывать в pending (агент возвращается к уже решённому) — сегодня review() жёстко пишет 'approve' (admission.py:203), путь не существует",
+   "fix_slice": "S2-WS-REJECT (обязан идти ЦЕЛИКОМ: dom_reject + терминальный фильтр _pending_page + гейт decision в admit — иначе L-01/L-02 станут активными)",
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB006.json",
+     "locator": "findings[0]",
+     "note": "runtime/AU008/results/a2_missed_unfinished.json: refused_visible.visible=true, state=REJECTED; срез admission.py:476-487 исключает только admitted"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "506-514 (3cd21d96)",
+     "note": "state='REJECTED' деривируется из decision != 'approve', но строка остаётся в items; WHERE (484-486) исключает только admitted; _pending_count — тот же предикат"
+    },
+    {
+     "file": "artifacts/RESEARCHER_RS009_REJECT_PATH.json",
+     "locator": "product_gaps_confirmed[1]",
+     "note": "admission.py:486-487 деривирует REJECTED, но не фильтрует из pending"
+    }
+   ],
+   "blockers": [
+    "не закрывать отдельно: L-01/L-02/dom_reject — один срез S2"
+   ],
+   "implementation_ref": "IMP-07"
+  },
+  {
+   "id": "AU008-L-02",
+   "source": "AUDITOR_AB006.json findings[1] (роль AU008); повторно подтверждено в коде 3cd21d96 (AN008)",
+   "title": "admit не проверяет decision последнего ревью: после появления reject-пути отвергнутое можно будет допустить",
+   "severity": "medium",
+   "class": "латентная",
+   "current_status": "LATENT",
+   "latent_trigger": "появление reject-пути: admit() читает review-строку (STALE_REVIEW/INDEPENDENCE/digest/policy/head), но никогда не проверяет r['decision']=='approve' — будущий decision='reject' не помешает допуску",
+   "fix_slice": "S2-WS-REJECT (вместе с L-01 и dom_reject)",
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB006.json",
+     "locator": "findings[1]",
+     "note": "срез admission.py:218-224 — нет проверки decision"
+    },
+    {
+     "file": "mockup/admission.py",
+     "locator": "(3cd21d96)",
+     "note": "в admit-пути decision читается только в pending-проекции (509-514), не в admit; ADMITTED возможен при decision='reject'"
+    },
+    {
+     "file": "artifacts/RESEARCHER_RS009_REJECT_PATH.json",
+     "locator": "product_gaps_confirmed[2]",
+     "note": "'admit не проверяет decision — отвергнутое можно допустить (новое подтверждение)'"
+    }
+   ],
+   "blockers": [
+    "не закрывать отдельно: срез S2"
+   ],
+   "implementation_ref": "IMP-08"
+  },
+  {
+   "id": "GATE001-F-01",
+   "source": "GATE001_REPORT.json (G1-G5) + ANALYST_AN007 orchestrator_claim_corrections[1]",
+   "title": "pre_tool_call хук fail-closed и хостовой (главный агент + субагенты + MCP): гипотеза AN005 «хуки fail-open» опровергнута для плагинного слоя",
+   "severity": "info",
+   "class": "опровержение гипотезы",
+   "current_status": "NOT_A_DEFECT",
+   "fix_slice": "нет (поддерживающее доказательство для W7/E3)",
+   "evidence": [
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "runs G1..G5",
+     "note": "G4: raise в хуке → инструмент заблокирован (FAIL_CLOSED, probe4.txt отсутствует, run exit 0); G2: субагентские вызовы через тот же pre_tool_call (child session distinct, блокируется); G5: MCP-инструмент блокируется идентично"
+    },
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "decision_matrix.fail_closed_on_raise",
+     "note": "'hook exception => tool blocked; gate cannot be silently switched off by a crash'"
+    },
+    {
+     "file": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+     "locator": "orchestrator_claim_corrections[1]",
+     "note": "уточнение: plugins_dispatch.py:59-67 блокирует (fail-closed), но OMH tool_hooks.py:61-116 может конвертировать отдельные ошибки в allow/no — остаточная зона OMH-слоя, вне GATE001"
+    }
+   ],
+   "justification": "опровергнуто с обоснованием: плагинный pre_tool_call при ошибке/таймауте БЛОКИРУЕТ инструмент, покрытие хостовое. Это не дефект, а положительный факт для выбора точки контроля в W7.",
+   "blockers": []
+  },
+  {
+   "id": "GATE001-F-02",
+   "source": "GATE001_REPORT.json architecture_recommendation + docs/NU_AU006_02_HOST_GATE_DESIGN_2026-11-08.md",
+   "title": "Отсутствует non-interactive 'get baseline' primed-allow: unattended/cron/subagent прогоны не могут пройти гейт намеренно; нет внешнего аудит-счётчика, отличающего «гейт молчит» от «гейт работает» (silently-block шумит)",
+   "severity": "medium",
+   "class": "неудобство",
+   "current_status": "POLICY",
+   "fix_slice": "S10-W7-E3 (код только ПОСЛЕ решений NU-AU006-01/02 — governance: кто примирует allow, TTL, exit-hatch, изоляция профилей)",
+   "evidence": [
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "decision_matrix.noninteractive_terminates",
+     "note": "одноразовый прогон завершается exit 0 за ~24s (не виснет), но без типизированного 'get baseline' пути не может пройти намеренно"
+    },
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "decision_matrix.fail_closed_on_raise",
+     "note": "silently-block шумный: требуется внешний мониторинг/аудит-счётчик"
+    },
+    {
+     "file": "artifacts/GATE001_REPORT.json",
+     "locator": "architecture_recommendation.required_support",
+     "note": "primed-allow + внешний аудит-счётчик; E1+E2 первыми, E3 hardening (per-profile изоляция, TTL, exit-hatch)"
+    },
+    {
+     "file": "docs/DECISION_NU_AU006_01_02_2026-11-08.md",
+     "locator": "п.68-103",
+     "note": "изолированный эксперимент: профиль/БД/ветка/задача/хук, kill-switch, TTL, уборка; без авторизации — не запускать"
+    }
+   ],
+   "blockers": [
+    "NU-AU006-02 (авторизация эксперимента)",
+    "NU-AU006-01 (политика недоступности)"
+   ],
+   "needs_user_refs": [
+    "NU-02",
+    "NU-01"
+   ],
+   "implementation_ref": "IMP-12"
+  },
+  {
+   "id": "AU007-LOW-01",
+   "source": "AUDITOR_AB005.json findings[0] (роль AU007) — добавлено аналитиком AN008 при сверке полноты",
+   "title": "Повреждённый idempotency result (невалидный JSON) при обходе immutable-гейта → нетипизированный INTERNAL_ERROR вместо типизированного отказа",
+   "severity": "low",
+   "class": "недоказуемость",
+   "current_status": "OPEN",
+   "fix_slice": "S13-ROBUST (малый срез устойчивости; параллелен W6/W7)",
+   "fix_slice_neg_control": [
+    "corrupt row → типизированный код отказа, не INTERNAL_ERROR",
+    "нормальный idempotent replay возвращает тот же tx (регресс исключён)",
+    "UPDATE/DELETE по-прежнему IMMUTABLE (гейт не ослаблен)"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB005.json",
+     "locator": "findings[0]",
+     "note": "C5C_corrupt: guard_blocks_update=IMMUTABLE; после дропа immutable-триггера replay_status_with_corrupt_row=INTERNAL_ERROR (fails closed, без утечки, но нетипизировано)"
+    },
+    {
+     "file": "runtime/AU007/runs/c5c_corrupt",
+     "locator": "",
+     "note": "история прогона аудитора"
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-13",
+   "noted_by": "найдено аналитиком AN008 (нет в списке родителя)"
+  },
+  {
+   "id": "AU007-LOW-02",
+   "source": "AUDITOR_AB005.json findings[1] (роль AU007) — добавлено аналитиком AN008 при сверке полноты",
+   "title": "Разделение принципалов — namespacing по строке операции ('admit:'+principal), не криптоидентичность; INDEPENDENCE_NOT_ENFORCED",
+   "severity": "low",
+   "class": "—",
+   "current_status": "NOT_A_DEFECT",
+   "fix_slice": "нет",
+   "evidence": [
+    {
+     "file": "artifacts/AUDITOR_AB005.json",
+     "locator": "findings[1]",
+     "note": "'operation=admit:+principal разделяет; документированная семантика, не дефект'"
+    },
+    {
+     "file": "artifacts/AUDITOR_AB005.json",
+     "locator": "own_runs C2_BYPASS",
+     "note": "other_principal_ab=INDEPENDENCE_NOT_ENFORCED — задокументировано"
+    }
+   ],
+   "justification": "опровергнуто с обоснованием аудитора: строковое namespacing — документированная семантика, не нарушение инварианта; не путать с AU005-F-02 (закрыт binding/scope проверками)",
+   "blockers": [],
+   "noted_by": "найдено аналитиком AN008"
+  },
+  {
+   "id": "LVER-D1",
+   "source": "LIVE_WAVE1_VERIFY.json discrepancies[0] (LVER001) + docs/LIVE_WAVE1_FINDINGS §3",
+   "title": "L1-01 заявлен complete, но summary.json не существует (артефакт прогона не дописан) — write_summary не исполнен",
+   "severity": "minor",
+   "class": "недоказуемость",
+   "current_status": "OPEN",
+   "fix_slice": "S3-W4 (авто-сверка «артефакт↔диск↔БД» перед сдачей волны; гигиена прогона — не продукт)",
+   "fix_slice_neg_control": [
+    "волна без summary.json на любой сценарий → валидатор прогона падает (exit≠0)",
+    "отсутствующий кадр — дефект прогона, не продукта"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/LIVE_WAVE1_VERIFY.json",
+     "locator": "discrepancies D1",
+     "note": "RUN.json declares status=complete, steps=6; runtime/LIVE/wave1/L1-01/summary.json отсутствует"
+    },
+    {
+     "file": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md",
+     "locator": "§3 D1",
+     "note": ""
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-09"
+  },
+  {
+   "id": "LVER-D3",
+   "source": "LIVE_WAVE1_VERIFY.json discrepancies[2] (LVER001) + docs/LIVE_WAVE1_FINDINGS §3",
+   "title": "L1-02: таймлайн сращён из двух процессов; seq3 intent_matches_effect=true при обратном по коду (DENIED⇒false); кадры seq1/3/5 отсутствуют; обрыв не отражён в env_events",
+   "severity": "moderate",
+   "class": "недоказуемость (доказательная база прогона)",
+   "current_status": "OPEN",
+   "fix_slice": "S3-W3 (один процесс — один таймлайн; кадр на каждый шаг; обрыв как событие; гигиена прогона)",
+   "fix_slice_neg_control": [
+    "два процесса → два отдельных таймлайна, склейки нет",
+    "обрыв зафиксирован событием (CONTINUED_AFTER_KILL), а не склейкой",
+    "intent_matches_effect консистентен с кодом во всех строках (DENIED⇒false)",
+    "отсутствие сырого кадра на шаг — дефект прогона"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/LIVE_WAVE1_VERIFY.json",
+     "locator": "discrepancies D3",
+     "note": "timeline.jsonl объединяет интерактивную часть (seq1-5, gap 12:06:58→12:10:35) и run_cont_l102.py (seq6-8); RUN.json env_events=[] без упоминания обрыва"
+    },
+    {
+     "file": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md",
+     "locator": "§3 D3",
+     "note": "'такой таймлайн нельзя предъявлять как непрерывную запись действий агента'"
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-10"
+  },
+  {
+   "id": "LVER-D4",
+   "source": "LIVE_WAVE1_VERIFY.json discrepancies[3] (LVER001) + docs/LIVE_WAVE1_FINDINGS §3",
+   "title": "L1-03: doubts=[] в LIVE_WAVE1_RUN.json при зафиксированном doubt (seq4, SCOPE_DENIED, intent_matches_effect=false) в summary.json",
+   "severity": "minor",
+   "class": "недоказуемость",
+   "current_status": "OPEN",
+   "fix_slice": "S3-W4 (авто-сверка полей RUN.json ↔ summary.json ↔ кадры)",
+   "fix_slice_neg_control": [
+    "расхождение doubts/refusals RUN.json↔summary.json отклоняется валидатором прогона"
+   ],
+   "evidence": [
+    {
+     "file": "artifacts/LIVE_WAVE1_VERIFY.json",
+     "locator": "discrepancies D4",
+     "note": "RUN.json doubts=[]; runtime/LIVE/wave1/L1-03/summary.json: doubt {seq:4, code:SCOPE_DENIED, intent_matches_effect:false}; отказ есть в refusals, сомнение пропущено"
+    },
+    {
+     "file": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md",
+     "locator": "§3 D4",
+     "note": ""
+    }
+   ],
+   "blockers": [],
+   "implementation_ref": "IMP-09"
+  }
+ ],
+ "implementations": [
+  {
+   "id": "IMP-01",
+   "finding_ids": [
+    "AU005-F-01"
+   ],
+   "source": {
+    "artifact": "artifacts/RESEARCHER_RS006_AU005_FIXES.json",
+    "answers": "runtime/RS006/answers_f01.json (Q-F01-01, Q-F01-02)",
+    "prototype": "runtime/RS006/prototypes/rs006_f02_f01_prototype.py (m1..m7, d1, ALL_ASSERTS_PASSED, sha 954105cb)"
+   },
+   "changes": [
+    "delivery.py: идентичность доставки = (intent, receiver, view_scope_digest, source_revision, delivered_byte_hash); UNIQUE(intent, receiver, view_scope_digest, fingerprint)",
+    "delivery.confirmed(): skip в sync только при точном совпадении identity+bytes; delivery.py:44-65",
+    "admission.py: outbox-intent создаётся с view scope + receiver (215-217); sync больше не пропускает already-confirmed по старому предикату (335)",
+    "public_dto.py: YAML-экспорт несёт view-bound receipt"
+   ],
+   "migration": "аддитивная (новые колонки identity в delivery intents/acks); legacy ack'и инертны и не переписываются",
+   "new_codes_fields": [
+    "view_scope_digest (sha256 канонической проекции области)",
+    "receiver",
+    "delivered_byte_hash",
+    "новые denied-коды при несовпадении identity"
+   ],
+   "acceptance": {
+    "positive": [
+     "sequential AA→union и union-first дают одинаковый финальный результат",
+     "полный экспорт после AA-only создаёт новые байты и свой receipt (fingerprint 113628b8...)",
+     "повторный sync с теми же байтами идемпотентен (тот же ack)"
+    ],
+    "negative": [
+     "NEG-01..09 (RS006): AA-only sync не переписывает union-ack",
+     "расхождение байтов → доставка НЕ подтверждается",
+     "view-scope mismatch → другой/отсутствующий ack",
+     "union-after-AA создаёт новый файл/ack (сегодня не создаёт)"
+    ],
+    "physical_evidence": [
+     "SQL-строки observations/acks в двух DOM-копиях",
+     "sha256 физических YAML-файлов",
+     "счётчик физических attach до/после"
+    ]
+   },
+   "do_not": [
+    "не засчитывать за W1 (WORKQUEUE правило 3)",
+    "не откатывать O3-решение (receipt связывает tx/получатель/область/ревизию/байты)"
+   ]
+  },
+  {
+   "id": "IMP-02",
+   "finding_ids": [
+    "AU005-F-03"
+   ],
+   "source": {
+    "artifact": "artifacts/RESEARCHER_RS006_AU005_FIXES.json",
+    "answers": "runtime/RS006/answers_other.json (Q-F03-01)",
+    "remedy": "artifacts/AUDITOR_AB004_AU004F01.json findings[2].minimal_complete_remedy"
+   },
+   "changes": [
+    "public_dto.py (71-75,100-105,113-121): отделить обязательную провенанс-проекцию (origin_branch/origin_version доступного клайма — O2) от membership/exclusion политики; applicability/excluded_branches фильтруются по гранту",
+    "projections.py (25,47,53): проекция без накопления чужих excluded",
+    "admission.py:277-283: trace-агрегация excluded только in-grant"
+   ],
+   "migration": "нет",
+   "new_codes_fields": [
+    "scope-фильтр на поля-принадлежности (не на origin)"
+   ],
+   "acceptance": {
+    "positive": [
+     "origin_branch расшаренного клайма виден (O2 не тронут)",
+     "внутренние admitted-данные byte-identical"
+    ],
+    "negative": [
+     "AA-only: ClaimItem.applicability/ excluded_branches/ exclude-событие без AB",
+     "YAML-экспорт на AA-only не содержит AB-имён в этих полях"
+    ],
+    "physical_evidence": [
+     "diff полей AA-only vs AA+AB",
+     "SQL admitted-строки до/после"
+    ]
+   },
+   "do_not": [
+    "не приравнивать к утечке контента (это имена/принадлежности)",
+    "не трогать immutable admitted-данные"
+   ]
+  },
+  {
+   "id": "IMP-03",
+   "finding_ids": [
+    "AU006-F-01"
+   ],
+   "source": {
+    "artifact": "artifacts/GATE001_REPORT.json",
+    "docs": [
+     "docs/DECISION_NU_AU006_01_02_2026-11-08.md",
+     "docs/NU_AU006_02_HOST_GATE_DESIGN_2026-11-08.md"
+    ],
+    "questions": "AN007 Q-AN007-05/07/09"
+   },
+   "changes": [
+    "E2 (DOM-сторона, реализуема уже сейчас в mockup): submit/admit принимают обязательный baseline receipt_id (BaselinePacket, выданный на init/resume); отсутствие → типизированный отказ (напр. BASELINE_REQUIRED); admission.py:119-220, dom_contract.py:6",
+    "E1 (обёртка запуска): перед материальной работой требует receipt (решение NU-02 определяет место)",
+    "E3 (host pre_tool_call hook, ГАТЕ001 доказал совместимость: fail-closed, субагенты+MCP): primed-allow 'get baseline' + TTL + kill-switch; только после решений NU"
+   ],
+   "migration": "нет (E2 — внутри существующего контракта)",
+   "new_codes_fields": [
+    "receipt_id/use_report в envelope",
+    "BASELINE_REQUIRED / BASELINE_STALE / USE_NOT_CONFIRMED",
+    "журнал выдачи сигналов (append-only)"
+   ],
+   "acceptance": {
+    "positive": [
+     "выдача+чтение базлайна → материальная работа разрешена",
+     "discovery/read/repair доступны до гейта (TBO-03)"
+    ],
+    "negative": [
+     "нет выдачи → работа отклонена (сегодня обе ветви DEMO_ADMITTED)",
+     "реплей чужой/протухшей квитанции → отказ",
+     "receipt без фактического чтения ≠ понимание (REQUIREMENTS.md:163)"
+    ],
+    "physical_evidence": [
+     "r01_no_read/r02_with_read контроли после фикса",
+     "raw MCP-кадры отказа",
+     "живой эксперимент NU-02 (H1-H5)"
+    ]
+   },
+   "do_not": [
+    "не выбирать вариант политики за заказчика (NU-AU006-01)",
+    "не запускать живой эксперимент без авторизации",
+    "не строить E3 до решения E1/E2"
+   ]
+  },
+  {
+   "id": "IMP-04",
+   "finding_ids": [
+    "AU006-F-02"
+   ],
+   "source": {
+    "note": "отдельного RS-исследования нет (вопрос Q-AN007-01 передан в RS007, ответа нет) — два варианта предложены аналитиком"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Обязательные проверяемые основания",
+      "cost": "~150-250 LOC, 0 миграций",
+      "risk": "ужесточение submit для легальных 'без оснований' подач (нужен явный путь)",
+      "detail": "dom_contract.validate (78-79): dependencies либо резолвятся в реальный admitted claim/tx (существование + грант), либо явно пусты С обязательным обоснованием; нерезолвящаяся ссылка → DEPENDENCY_UNRESOLVED; admission.py:144-155,175-220",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "Только маркер «оснований нет»",
+      "cost": "~50-80 LOC",
+      "risk": "фиктивные ссылки на несуществующие объекты остаются (дыра не закрыта)",
+      "detail": "правило: dependencies={} требует rationale; без резолва ссылок",
+      "verdict": "частично"
+     }
+    ],
+    "recommendation": "V1 — по positive/negative controls AN007 Q-AN007-01; V2 — только как временная мера"
+   },
+   "migration": "нет",
+   "new_codes_fields": [
+    "DEPENDENCY_UNRESOLVED",
+    "явное осознанное «оснований нет» с обоснованием"
+   ],
+   "acceptance": {
+    "positive": [
+     "валидный root/hypothesis/disputed с реальными deps допускается",
+     "явный пустой набор с обоснованием допускается"
+    ],
+    "negative": [
+     "dependencies={} не обходит staleness",
+     "ссылка на несуществующий claim/tx → DEPENDENCY_UNRESOLVED",
+     "фиктивная ссылка не проходит review/admit"
+    ],
+    "physical_evidence": [
+     "SQL-check транзакций/claims до/после",
+     "r03_bases контроли повторно"
+    ]
+   },
+   "do_not": [
+    "не делать отсутствие поля = «ограничений нет»"
+   ]
+  },
+  {
+   "id": "IMP-05",
+   "finding_ids": [
+    "AU006-F-03"
+   ],
+   "source": {
+    "artifact": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+    "section": "findings_map[2].state_table + questions_for_RS007 Q-AN007-03"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Расширить ready-дерево",
+      "cost": "~100-180 LOC, 0 миграций",
+      "risk": "строже для 'работа в стол' режимов (пересекается с NU-AU006-01 (а))",
+      "detail": "projections.py:29-77 + admission.py:254-283: в ready_for_owner_review обязаны войти — все кандидаты disposed (admitted/rejected/dropped), результат admitted в DOM, никаких pending без disposition; artifact-only без DOM → NOT_READY; bare no-new-knowledge → NOT_READY",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "dom_status-инструмент с блокерами",
+      "cost": "~250+ LOC",
+      "risk": "дублирует проекцию, избыточно",
+      "detail": "отдельная поверхность готовности",
+      "verdict": "избыточно"
+     }
+    ],
+    "recommendation": "V1"
+   },
+   "migration": "нет",
+   "new_codes_fields": [
+    "NOT_READY-коды блокеров (PENDING_UNDISPOSED, RESULT_NOT_IN_DOM, NO_NEW_KNOWLEDGE_UNSUBSTANTIATED)"
+   ],
+   "acceptance": {
+    "positive": [
+     "все кандидаты disposed + результат admitted → READY",
+     "обоснованный no-new-knowledge с сопоставлением → READY"
+    ],
+    "negative": [
+     "pending без disposition → NOT_READY",
+     "artifact-only без DOM → NOT_READY/DONE невозможен",
+     "bare no-new-knowledge → NOT_READY"
+    ],
+    "physical_evidence": [
+     "r04_completion контроли после фикса",
+     "trace SQL в двух состояниях"
+    ]
+   },
+   "do_not": [
+    "не давать READY при owner_close_called=false (R04)"
+   ]
+  },
+  {
+   "id": "IMP-06",
+   "finding_ids": [
+    "AU006-F-05"
+   ],
+   "source": {
+    "artifact": "artifacts/ANALYST_AN007_AU006_FINDINGS.json",
+    "section": "findings_map[4] + Q-AN007-02"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Evidence-kind DOM-результат с резолвером",
+      "cost": "~150-250 LOC в OMH-слое (todo_evidence.py:9-68,79-98,132-143,350-427,497-529; todo_reconciliation.py:609-710,821-908)",
+      "risk": "связывает OMH-слой с DOM-конкретикой (версия/инструменты)",
+      "detail": "kind dom_result/dom_admit, ref=tx_id/candidate_id/receipt_id; EVIDENCE_TOOLS += dom_submit/dom_review/dom_admit/dom_sync; резолвер проверяет admitted+delivered по DOM; window_empty НЕ закрывает DOM-пункты",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "Правило без резолвера",
+      "cost": "~30 LOC",
+      "risk": "факт admitted не проверяется — слабее",
+      "detail": "window_empty не закрывает DOM-пункт; без проверки по DOM",
+      "verdict": "частично"
+     }
+    ],
+    "recommendation": "V1"
+   },
+   "migration": "нет (аддитивный kind)",
+   "new_codes_fields": [
+    "evidence.kind='dom_result'",
+    "ref=tx_id/candidate_id/receipt_id"
+   ],
+   "acceptance": {
+    "positive": [
+     "admitted tx закрывает пункт",
+     "обоснованный no-new-knowledge остаётся возможен"
+    ],
+    "negative": [
+     "unrelated exit0 не закрывает DOM-пункт",
+     "dom_submit REJECTED не evidence",
+     "window_empty не закрывает DOM-пункт"
+    ],
+    "physical_evidence": [
+     "host_fixture_recheck прогоны после фикса",
+     "SQL admitted tx ↔ пункт плана"
+    ]
+   },
+   "do_not": [
+    "не закрывать активностью без факта (окно пусто ≠ работа сделана)"
+   ]
+  },
+  {
+   "id": "IMP-07",
+   "finding_ids": [
+    "AU008-L-01"
+   ],
+   "source": {
+    "artifact": "artifacts/RESEARCHER_RS009_REJECT_PATH.json",
+    "section": "junctions.pending_W1 (V-PEND-REJ, V-PEND-DROP, V-COUNT)",
+    "prototype": "runtime/RS009/prototype/ (31/31 PASS)"
+   },
+   "changes": [
+    "admission.py _pending_page (476-500) и _pending_count (546+): исключить терминальные ADMITTED/REJECTED/DROPPED из items И count; REVIEWED остаётся (ждёт admit)",
+    "state_precedence: ADMITTED > DROPPED > последний вердикт"
+   ],
+   "migration": "нет",
+   "new_codes_fields": [
+    "терминальный фильтр в WHERE (_pending_page) — тот же предикат в count"
+   ],
+   "acceptance": {
+    "positive": [
+     "REJECTED/DROPPED не в pending (items и count)",
+     "REVIEWED (ждущий admit) остаётся видим"
+    ],
+    "negative": [
+     "REJECTED повторно не всплывает после появления домена",
+     "адмит-строка не возвращает кандидата в pending",
+     "V-PEND-REJ/V-PEND-DROP/V-COUNT из RS009"
+    ],
+    "physical_evidence": [
+     "RS009 results/pending_full.json",
+     "raw MCP-кадр pending после reject"
+    ]
+   },
+   "do_not": [
+    "не закрывать отдельно от dom_reject (иначе латент активируется)"
+   ]
+  },
+  {
+   "id": "IMP-08",
+   "finding_ids": [
+    "AU008-L-02"
+   ],
+   "source": {
+    "artifact": "artifacts/RESEARCHER_RS009_REJECT_PATH.json",
+    "section": "fate_of_rejected.admit_of_rejected + contract.rules (V-NEG2/V-NEG4/V-APPROVE-OK/V-LEGACY)"
+   },
+   "changes": [
+    "admission.py admit (218-224): читать last review и проверять decision=='approve'; иначе CANDIDATE_REJECTED; dropped → CANDIDATE_DROPPED",
+    "approve-путь dom_review не меняется (обратная совместимость)"
+   ],
+   "migration": "нет",
+   "new_codes_fields": [
+    "CANDIDATE_REJECTED",
+    "CANDIDATE_DROPPED"
+   ],
+   "acceptance": {
+    "positive": [
+     "approve-путь и legacy остаются рабочими (V-APPROVE-OK, V-LEGACY)",
+     "новый ключ после reject образует новый кандидат (V-RESUB-FIXED)"
+    ],
+    "negative": [
+     "admit отвергнутого → CANDIDATE_REJECTED",
+     "admit dropped → CANDIDATE_DROPPED",
+     "тот же кандидат+ключ повторно → отказ в силе (V-RESUB-SAME)",
+     "IMMUTABLE на вердиктах (V-IMM)"
+    ],
+    "physical_evidence": [
+     "RS009 results/scenario.json",
+     "SQL reviews до/после"
+    ]
+   },
+   "do_not": [
+    "не ослаблять INDEPENDENCE (root!=root кандидата)"
+   ]
+  },
+  {
+   "id": "IMP-09",
+   "finding_ids": [
+    "LVER-D1",
+    "LVER-D4"
+   ],
+   "source": {
+    "docs": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md §5 (W4), NO async research",
+    "runtime": "runtime/LIVE/lib/**"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Валидатор прогона (авто-сверка)",
+      "cost": "~80-150 LOC в runtime/LIVE/lib",
+      "risk": "нет",
+      "detail": "перед сдачей волны: для каждого сценария обязаны существовать summary.json + все сырые кадры + DB-копия; поля RUN.json (status/steps/doubts/refusals/env_events) сверяются с summary.json и кадрами; любое расхождение → exit≠0",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "Ручной чек-лист в карте волны",
+      "cost": "~0 LOC",
+      "risk": "недоказуемо, тот же класс ошибок D1/D4",
+      "detail": "",
+      "verdict": "отклонено"
+     }
+    ],
+    "recommendation": "V1 — включается в pipeline каждой волны (HY001/W3-W4 пакет)"
+   },
+   "migration": "нет",
+   "new_codes_fields": [
+    "нет (инфраструктура прогона)"
+   ],
+   "acceptance": {
+    "positive": [
+     "волна с полным набором артефактов проходит"
+    ],
+    "negative": [
+     "отсутствие summary.json/cadra → валидатор падает",
+     "doubts RUN.json ≠ summary.json → валидатор падает"
+    ],
+    "physical_evidence": [
+     "выход валидатора на волне 2",
+     "пере-прогон L1-01 без расхождений"
+    ]
+   },
+   "do_not": [
+    "не считать D1/D4 дефектами продукта"
+   ]
+  },
+  {
+   "id": "IMP-10",
+   "finding_ids": [
+    "LVER-D3"
+   ],
+   "source": {
+    "docs": "docs/LIVE_WAVE1_FINDINGS_2026-11-08.md §5.1-5.2 (W3)",
+    "runtime": "runtime/LIVE/lib/**"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Один процесс — один таймлайн",
+      "cost": "~100-200 LOC в runtime/LIVE/lib",
+      "risk": "нет",
+      "detail": "склейка запрещена: каждый проход процесса пишет свой файл-таймлайн; континуация стартует новый файл и связывается событием-обрывом (env_event CONTINUED_AFTER_KILL); мягкая сверка intent_matches_effect против кода (DENIED⇒false)",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "Пост-маркировка склеенных строк",
+      "cost": "~40 LOC",
+      "risk": "сохраняет риск «непрерывной записи» в отчёте",
+      "detail": "",
+      "verdict": "частично"
+     }
+    ],
+    "recommendation": "V1"
+   },
+   "migration": "нет",
+   "new_codes_fields": [
+    "env_event: CONTINUED_AFTER_KILL",
+    "per-process timeline файлы"
+   ],
+   "acceptance": {
+    "positive": [
+     "два процесса дают два таймлайна + событие обрыва"
+    ],
+    "negative": [
+     "склейка невозможна по построению",
+     "intent_matches_effect консистентен с кодом во всех строках",
+     "нет шага без сырого кадра"
+    ],
+    "physical_evidence": [
+     "пере-прогон L1-02 без расхождений",
+     "grep склеенных seq-пар = 0"
+    ]
+   },
+   "do_not": [
+    "не предъявлять сращённый таймлайн как непрерывную запись"
+   ]
+  },
+  {
+   "id": "IMP-12",
+   "finding_ids": [
+    "GATE001-F-02"
+   ],
+   "source": {
+    "artifact": "artifacts/GATE001_REPORT.json",
+    "section": "architecture_recommendation.required_support",
+    "docs": "docs/DECISION_NU_AU006_01_02_2026-11-08.md п.68-103"
+   },
+   "changes": [
+    "primed-allow 'get baseline': non-interactive команда, дающая агенту намеренно пройти гейт после получения базлайна (пост-гейтовая сверка receipt)",
+    "внешний аудит-счётчик (async): отличает «гейт молчит» от «гейт работает», ловит silent fail-closed шум",
+    "TTL-уборка примированных состояний + kill-switch + операторский exit-hatch; изоляция профиля эксперимента"
+   ],
+   "migration": "нет (конфигурация хоста/профиля)",
+   "new_codes_fields": [
+    "коды гейта: GATE_AWAITING_BASELINE, GATE_BASELINE_OK"
+   ],
+   "acceptance": {
+    "positive": [
+     "unattended run получает базлайн и проходит гейт намеренно",
+     "аудит-счётчик растёт при блоках, молчит при простоях"
+    ],
+    "negative": [
+     "без примирования блок сохраняется (fail-closed не ослаблен)",
+     "TTL истёк → гейт снова закрыт",
+     "kill-switch срабатывает за N секунд"
+    ],
+    "physical_evidence": [
+     "изолированный профиль/БД/ветка (NU-02)",
+     "hook_log.jsonl + audit-счётчик"
+    ]
+   },
+   "do_not": [
+    "не запускать на живых планах/ветках",
+    "не выбирать governance (кто примирует/TTL) за заказчика"
+   ]
+  },
+  {
+   "id": "IMP-13",
+   "finding_ids": [
+    "AU007-LOW-01"
+   ],
+   "source": {
+    "note": "отдельного RS-исследования нет — два варианта предложены аналитиком",
+    "finding": "artifacts/AUDITOR_AB005.json findings[0]"
+   },
+   "variant": {
+    "options": [
+     {
+      "id": "V1",
+      "name": "Типизированный отказ при повреждённом result",
+      "cost": "~10-30 LOC, 0 миграций",
+      "risk": "минимальный",
+      "detail": "admission.py путь dedupe/replay: при невалидном JSON кешированного result — типизированный код (REPLAY_CORRUPT_STATE), fail-closed без деталей, до попытки воспроизвести",
+      "verdict": "рекомендую"
+     },
+     {
+      "id": "V2",
+      "name": "Авто-ремонт idempotency-кеша",
+      "cost": "~60+ LOC",
+      "risk": "рискует идемпотентностью; требует миграции",
+      "detail": "пересоздание строки результата",
+      "verdict": "отклонено"
+     }
+    ],
+    "recommendation": "V1"
+   },
+   "migration": "нет",
+   "new_codes_fields": [
+    "REPLAY_CORRUPT_STATE"
+   ],
+   "acceptance": {
+    "positive": [
+     "здоровый replay возвращает тот же tx и байты"
+    ],
+    "negative": [
+     "corrupt row → типизированный код, не INTERNAL_ERROR",
+     "UPDATE/DELETE остаются IMMUTABLE (гейт не ослаблен)"
+    ],
+    "physical_evidence": [
+     "C5C_corrupt сценарий после фикса (raw MCP-кадр)"
+    ]
+   },
+   "do_not": [
+    "не раскрывать содержимое повреждённой строки в ответе"
+   ]
+  }
+ ],
+ "slice_order": [
+  {
+   "id": "S0-closed",
+   "label": "Закрытые срезы (история)",
+   "findings": [
+    "AU004-F-01",
+    "AU005-F-02",
+    "AU005-F-04"
+   ],
+   "state": "CLOSED",
+   "requires_completed": [],
+   "note": "AB003/RV004, AB004/RV005, AB005/RV005 — независимые APPROVE на версиях 08aa9a9b/1ead2d45/ca227b17"
+  },
+  {
+   "id": "S1-AB007",
+   "label": "Фикс пагинации pending (RV006 F1-F3 + AU008-A-01)",
+   "findings": [
+    "RV006-F1",
+    "RV006-F2",
+    "RV006-F3",
+    "AU008-A-01"
+   ],
+   "state": "CODE_DONE_AWAITING_ACCEPTANCE (3cd21d96; reports/REVIEWER_AB007.md = CONFORM, artifacts/REVIEWER_AB007.json отсутствует)",
+   "requires_completed": [
+    "S0-closed"
+   ],
+   "acceptance": [
+    "запись artifacts/REVIEWER_AB007.json (независимый пересчёт digest + сырые MCP-кадры)",
+    "волна 2: C3 с беспамятным континуатором (для LVER-C3/AU006-F-04)"
+   ],
+   "note": "меняет admission.py (_pending_page) — следующий срез, трогающий ту же функцию, обязан идти после приёмки S1"
+  },
+  {
+   "id": "S2-WS-REJECT",
+   "label": "Путь отказа RS009 (dom_reject + dom_drop + гейты)",
+   "findings": [
+    "AU008-L-01",
+    "AU008-L-02"
+   ],
+   "state": "PLANNED (исследование готово: RS009 31/31)",
+   "requires_completed": [
+    "S1-AB007"
+   ],
+   "requires_together": [
+    "dom_reject (словарь reason_code, rationale, INDEPENDENCE)",
+    "dom_drop (root-автор, drops-таблица)",
+    "терминальный фильтр _pending_page (ADMITTED/REJECTED/DROPPED вне items и count)",
+    "гейт decision=='approve' в admit (CANDIDATE_REJECTED)"
+   ],
+   "note": "ЧАСТИЧНОЕ исполнение среза запрещено: если реализуют reject без pending-фильтра и admit-гейта — L-01/L-02 из LATENT станут активными. Словарь без OTHER; апелляция — re-review другим root (порог owner-гейта — вопрос заказчика NU-03)"
+  },
+  {
+   "id": "S3-W3W4",
+   "label": "Гигиена прогона (W3/W4): один процесс—один таймлайн; авто-сверка артефактов",
+   "findings": [
+    "LVER-D1",
+    "LVER-D3",
+    "LVER-D4"
+   ],
+   "state": "PLANNED",
+   "requires_completed": [],
+   "requires_before": [
+    "волна 2 (без этого волна 2 недоказуема)"
+   ],
+   "note": "не продукт; пакет с W5; приёмка — повторный прогон без расхождений"
+  },
+  {
+   "id": "S4-W5",
+   "label": "Критерии волны: разделить C1 на «содержимое»/«происхождение», уточнить C4-C7",
+   "findings": [],
+   "state": "PLANNED",
+   "requires_completed": [],
+   "requires_before": [
+    "волна 2"
+   ],
+   "note": "правка acceptance_wave1.json; охватывает C1* (спорный критерий), C4 NOT_CHECKED"
+  },
+  {
+   "id": "S5-W2",
+   "label": "Сценарий устаревания (C4): основание принято → в источнике новая версия → сигнал в ответе",
+   "findings": [],
+   "state": "PLANNED",
+   "requires_completed": [
+    "S1-AB007",
+    "S3-W3W4",
+    "S4-W5"
+   ],
+   "note": "без видимости незавершённого (W1) сценарий нечем продолжить — W1 блокирует W2 (WORKQUEUE правило 1/2)"
+  },
+  {
+   "id": "S6-W6",
+   "label": "Идентичность доставки (AU005-F-01)",
+   "findings": [
+    "AU005-F-01"
+   ],
+   "state": "READY_FOR_WORKER (исследование RS006 готово: answers_f01, прототип m1..m7/d1)",
+   "requires_completed": [
+    "S1-AB007"
+   ],
+   "cannot_substitute": [
+    "не засчитывается за W1 и наоборот (WORKQUEUE правило 3)",
+    "F-01 (AU005) не заменяет AU006-F-01 (разные объекты: квитанция доставки vs сверка базлайна)"
+   ],
+   "note": "срез в составе AB005-цепочки по плану RS006: WS-F04(закрыт) → WS-F02(закрыт) → WS-F01 → WS-F03; F-02 и F-01 принимаются раздельно"
+  },
+  {
+   "id": "S7-WS-F03",
+   "label": "O2-непровенансные branch-поля (AU005-F-03)",
+   "findings": [
+    "AU005-F-03"
+   ],
+   "state": "READY_FOR_WORKER (исследование RS006 answers_other Q-F03-01)",
+   "requires_completed": [],
+   "parallel_with": [
+    "S6-W6",
+    "S8-W7-F02",
+    "S8-W7-F05"
+   ],
+   "note": "не требует W1; может идти параллельно"
+  },
+  {
+   "id": "S8-W7-F02F05",
+   "label": "W7 часть 1: достаточность оснований (F-02) + DOM-эвиденс (F-05)",
+   "findings": [
+    "AU006-F-02",
+    "AU006-F-05"
+   ],
+   "state": "PLANNED (F-02: варианты IMP-04; F-05: IMP-06 по Q-AN007-02)",
+   "requires_completed": [],
+   "note": "независимы по контурам (DOM-контракт vs OMH-reducer) — вместе или параллельно; AN007 fix_order: F-02 первым"
+  },
+  {
+   "id": "S9-W7-F03",
+   "label": "W7 часть 2: ready-дерево (F-03)",
+   "findings": [
+    "AU006-F-03"
+   ],
+   "state": "PLANNED (IMP-05)",
+   "requires_completed": [
+    "S1-AB007"
+   ],
+   "note": "F-04 (discovery pending) — предусловие практического закрытия F-03 (клиент должен уметь dispose); F-04 уже реализован в S1/W1 — нужна его приёмка"
+  },
+  {
+   "id": "S10-W7-F01E",
+   "label": "W7 часть 3: сверка базлайна (E1/E2/E3) + primed-allow",
+   "findings": [
+    "AU006-F-01",
+    "GATE001-F-02"
+   ],
+   "state": "PLANNED (IMP-03, IMP-12)",
+   "requires_completed": [
+    "S8-W7-F02F05",
+    "S9-W7-F03"
+   ],
+   "requires_user_decision": [
+    "NU-01",
+    "NU-02"
+   ],
+   "note": "GATE001 уже доказал работоспособность хука (E3 viable) — обязательность сверки (E1/E2/E3) разрешена к планированию после GATE001; F-01 (AU006) последний в W7 по AN007 fix_order"
+  },
+  {
+   "id": "S11-HISTORY",
+   "label": "История работы (RS008: dom_history, keyset, правило эмиссии, reject/drop чтение)",
+   "findings": [],
+   "state": "PLANNED (исследование RS008 готово: варианты A..E, 23/23 PASS)",
+   "requires_completed": [
+    "S2-WS-REJECT"
+   ],
+   "note": "после reject-пути: истории нечего сказать про отказ, пока отказ нельзя записать; «что отвергли» — ответить нечем"
+  },
+  {
+   "id": "S12-SIGNAL",
+   "label": "Сигнал существования расхождения (политика L1/L2)",
+   "findings": [],
+   "state": "PLANNED (политика принята: docs/EXISTENCE_SIGNAL_POLICY_2026-11-08.md; L3 запрещён)",
+   "requires_completed": [
+    "S2-WS-REJECT"
+   ],
+   "note": "L2 по опоре требует контестации/отказа; L1 — агрегат на старте базлайна; вопрос заказчика NU-04 (факт форка для AA-only)"
+  },
+  {
+   "id": "S13-ROBUST",
+   "label": "Устойчивость idempotency-кеша (AU007-LOW-01)",
+   "findings": [
+    "AU007-LOW-01"
+   ],
+   "state": "PLANNED (IMP-13 V1)",
+   "requires_completed": [],
+   "parallel_with": [
+    "S6-W6",
+    "S7-WS-F03"
+   ]
+  },
+  {
+   "id": "S14-W8",
+   "label": "Идентичность плана (PLAN_ITEM, семейства, impact)",
+   "findings": [],
+   "state": "NOT_STARTED (docs/PLAN_IDENTITY_AND_IMPACT_2026-11-08.md)",
+   "requires_completed": [
+    "S1-AB007",
+    "S5-W2"
+   ],
+   "note": "W8 не начинать, пока W1-W2 не закрыты (WORKQUEUE правило 5)"
+  }
+ ],
+ "slice_rules": [
+  "W1 (S1/S6-W1) идёт первой и блокирует W2; W6 (идентичность доставки) не засчитывается за W1 и наоборот — разные объекты (кеш допуска/доставка ≠ видимость незавершённого)",
+  "Путь отказа RS009 (S2) обязан идти ЦЕЛИКОМ: dom_reject + терминальный фильтр _pending_page (REJECTED не в pending) + гейт decision в admit — иначе латентные AU008-L-01/L-02 становятся активными при появлении reject-пути",
+  "E1/E2/E3 (обязательность сверки) — разрешены после того, как GATE001 доказал работоспособность хука (fail-closed, хостовое покрытие); исполнение — после решений NU-AU006-01/02",
+  "История (RS008) и сигнал существования (L1/L2) идут после пути отказа — иначе на вопрос «что отвергли» ответить нечем",
+  "Гигиена прогона (W3/W4/W5) — не продукт, но без неё волна 2 недоказуема; делается пакетом до волны 2",
+  "Ни одна находка не закрывается по факту карты/прогона/согласия заказчика: только независимые reviewer+auditor на ТОЙ ЖЕ версии кода (сверка digest)",
+  "Ни одна находка не закрывается «исправлением» другой: каждая требует своей негативной E2E (AN007 cannot_substitute)",
+  "AU008-A-01 и RV006-F2 — один тикет (AB007): не засчитывать дважды"
+ ],
+ "needs_user": [
+  {
+   "id": "NU-01",
+   "finding_refs": [
+    "AU006-F-01",
+    "GATE001-F-02"
+   ],
+   "question": "Какую политику выбрать при недоступности DOM/LLM/хуков: (а) останавливать только материальные изменения, (б) ограниченный офлайн-журнал со сверкой, (в) останавливать всё, (г) работа только с явной регистрацией «вне базы» и автоподъёмом? Рекомендация аналитиков: (а) как база + узкая часть (б) только для наблюдений (DECISION_NU:62-64); выбор за заказчиком.",
+   "blocks": [
+    "S10 (E1/E2/E3): без политики нельзя спроектировать гейт и статусы",
+    "IMP-03",
+    "IMP-12"
+   ],
+   "decision_ref": "docs/DECISION_NU_AU006_01_02_2026-11-08.md"
+  },
+  {
+   "id": "NU-02",
+   "finding_refs": [
+    "AU006-F-01",
+    "GATE001-F-02"
+   ],
+   "question": "Авторизуете ли изолированный живой эксперимент гейта (отдельный профиль/БД/ветка/задача, хук только для него, kill-switch + TTL + уборка) для измерения H1-H5 (порядок хука, fail-open/closed, отказ старта, задержка, ложные отказы)? Без него выбор «хук vs обёртка запуска» недоказуем, и защита остаётся политикой.",
+   "blocks": [
+    "S10",
+    "IMP-03 (выбор точки контроля)",
+    "IMP-12 (E3 rollout)"
+   ],
+   "decision_ref": "docs/DECISION_NU_AU006_01_02_2026-11-08.md п.68-103; docs/NU_AU006_02_HOST_GATE_DESIGN_2026-11-08.md"
+  },
+  {
+   "id": "NU-03",
+   "finding_refs": [
+    "AU008-L-01",
+    "AU008-L-02"
+   ],
+   "question": "Кто и по какому порогу может запросить re-review/апелляцию отвергнутого кандидата (owner-гейт)? RS009 спроектировал «re-review другим независимым root», но порог «кто может запросить» — открытый policy-вопрос.",
+   "blocks": [
+    "S2 (полная реализация апелляции; основной reject-контракт реализуем и без неё)"
+   ],
+   "decision_ref": "artifacts/RESEARCHER_RS009_REJECT_PATH.json notes"
+  },
+  {
+   "id": "NU-04",
+   "finding_refs": [
+    "S12 (сигнал существования)"
+   ],
+   "question": "Показывать ли AA-only клиенту САМ ФАКТ расхождения веток (форк существует), без содержимого? O2 это не закрепляет; RS008 q7: по умолчанию — не показывать (no-marker правило, согласовано с bmap-фильтром AU004-F-01).",
+   "blocks": [
+    "S12 (часть реализации L1/L2)"
+   ],
+   "decision_ref": "artifacts/RESEARCHER_RS008_HISTORY.json q7"
+  },
+  {
+   "id": "NU-05",
+   "finding_refs": [
+    "AU006-F-01"
+   ],
+   "question": "Пустой baseline: типизированный NO_BASELINE (информационно + запрет засчитывать покрытие) или reject? DECISION_BRIEF п.3: рекомендован NO_BASELINE; не решено.",
+   "blocks": [
+    "S10 (семантика базлайнового гейта)"
+   ],
+   "decision_ref": "docs/DECISION_BRIEF_2026-11-08.md п.3"
+  },
+  {
+   "id": "NU-06",
+   "finding_refs": [],
+   "question": "Граф связей при запросе клайма: подтвердить числовые значения глубины (минимум 1, потолок 3). Связано с AU004-F-01-классом как предусловие графа (dependencies — рёбра без фильтра), но сам граф — отдельная функция вне реестра.",
+   "blocks": [
+    "(вне реестра: слайс графа)"
+   ],
+   "decision_ref": "docs/DECISION_BRIEF_2026-11-08.md п.0"
+  },
+  {
+   "id": "NU-07",
+   "finding_refs": [],
+   "question": "Разные ветки с 2-5 актуальными версиями: кто и как сводит (DECISION_BRIEF п.2)? ОТКРЫТО. Влияет на проекцию FORKED/граф, не на текущие находки реестра.",
+   "blocks": [
+    "(вне реестра)"
+   ],
+   "decision_ref": "docs/DECISION_BRIEF_2026-11-08.md п.2"
+  },
+  {
+   "id": "NU-08",
+   "finding_refs": [],
+   "question": "Кто признаёт сходимость версий (политика дублей уже принята: возврат с обоснованием отличий; механизм признания — нет, DECISION_BRIEF п.4).",
+   "blocks": [
+    "(вне реестра)"
+   ],
+   "decision_ref": "docs/DECISION_BRIEF_2026-11-08.md п.4"
+  }
+ ],
+ "duplicates_merged": [
+  {
+   "primary": "LVER-C3",
+   "merged": [
+    "LVER-D2"
+   ],
+   "why": "D2 (L1-04: допуск не состоялся, кандидат записан) — составляющая FAIL C3: тот же сценарий; отдельная запись завышала бы счёт"
+  },
+  {
+   "primary": "AU008-A-01",
+   "merged": [
+    "RV006-F2 (частично)"
+   ],
+   "why": "один корень (pre-filter LIMIT underfill), один тикет AB007; A-01 сохранён для полноты аудиторского реестра, не double-charge (AUDITOR_AB006 findings[2].note)"
+  },
+  {
+   "primary": "RV006-F1",
+   "merged": [
+    "AU008-O-01 (учтён)"
+   ],
+   "why": "O-01 опроверг F1 как security-дефект (empty components scope-safe), оставив robustness-замечание; F1 остаётся контрактной находкой (типизированный REJECTED требует RS007); O-01 зафиксирован в evidence F1"
+  },
+  {
+   "primary": "LVER-C3",
+   "merged": [
+    "AU006-F-04 (корень)"
+   ],
+   "why": "один корень (нет pending-discovery в протоколе); НЕ слиты — разный scope (живой критерий vs кодовая находка); перекрёстные ссылки"
+  }
+ ],
+ "coverage": {
+  "n_sources": 34,
+  "n_findings": 24,
+  "n_implementations": 12,
+  "n_slices": 15,
+  "n_needs_user": 8,
+  "required_id_set_present": true
+ },
+ "first_artifact": false,
+ "note": "Реестр построен по артефактам (sha256 в runtime/AN008/source_ledger.json); статусы FIXED_VERIFIED только при независимом APPROVE на той же версии; RV006-F1/F2/F3, AU008-A-01, AU006-F-04, LVER-C3 — FIXED_AWAITING_ACCEPTANCE: код 3cd21d96 есть, reports/REVIEWER_AB007.md = CONFORM, но artifacts/REVIEWER_AB007.json отсутствует (формальная запись приёмки не завершена) и живой C3-прогон волны 2 не выполнен.",
+ "validation": {
+  "validator": "runtime/AN008/validate_an008.py",
+  "negative_controls": "runtime/AN008/negative_controls.json",
+  "receipt": "runtime/AN008/validation_receipt.json",
+  "sha256": {
+   "runtime/AN008/validate_an008.py": "f84069723a4983755aa0a9f4b036bf8c8deff63019d759051eabd4e1400fd8d9",
+   "runtime/AN008/negative_controls.json": "4310454d39a6daa903845c62e5cf6630d16eb11a11f03781f0c5c1db2cda69a4"
+  }
+ }
+}

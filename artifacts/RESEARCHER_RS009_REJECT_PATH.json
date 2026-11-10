@@ -1,0 +1,106 @@
+{
+  "task": "RS009",
+  "role": "RESEARCHER",
+  "status": "DONE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "applied": false,
+  "completed_at": "2026-11-08T18:40:00+03:00",
+  "headline": "Путь записи отказа спроектирован и доказан прототипом (вариант C, 31/31 PASS): контракт вердикта с закрытым словарём причин и обязательным rationale; отвергнутое читаемо, не в pending, переподаётся только новым ключом (F-02), апелляция = re-review другим root без перезаписи (IMMUTABLE); dom_drop — явный маркер «брошено» автором; admit ужесточён (last-review + decision=='approve'), иначе CANDIDATE_REJECTED. Главные дыры продукта: _pending_page включает REJECTED в pending (нет фильтра терминальных) и admit не проверяет decision (отвергнутое можно допустить).",
+  "contract": {
+    "verdict_fields": ["decision", "reason_code", "rationale", "comment(opt)", "reviewer", "root", "candidate_digest", "expected_revision", "server_time", "simulated", "proof_ref"],
+    "reason_codes_closed": ["CONTRADICTS_BASELINE", "INSUFFICIENT_EVIDENCE", "OUT_OF_SCOPE", "DUPLICATE", "STALE_BASIS"],
+    "rules": [
+      "reason_code обязателен iff decision=reject и только из закрытого словаря (иначе REASON_CODE_UNKNOWN, строка не пишется)",
+      "rationale обязателен iff reject, 1..500 символов, не пробельный (RATIONALE_REQUIRED / RATIONALE_TOO_LONG)",
+      "свободный комментарий — отдельное необязательное поле, не заменяет код",
+      "approve пишется только dom_review (без изменений, обратная совместимость); reject — только dom_reject (fail-closed, decision фиксирован)",
+      "drop — авторский маркер (root кандидата или owner), отдельная таблица drops"
+    ],
+    "state_precedence": "ADMITTED > DROPPED > (последний вердикт: REJECTED | REVIEWED) > AWAITING_REVIEW",
+    "terminal_for_pending": ["ADMITTED", "REJECTED", "DROPPED"]
+  },
+  "fate_of_rejected": {
+    "readable": "candidates IMMUTABLE, payload нетронут; история показывает вердикт с кодом+rationale (V-REJ/V-HIST)",
+    "resubmission": {
+      "same_key_same_digest": "F-02 replay: тот же candidate_id, отказ в силе (V-RESUB-SAME)",
+      "same_key_diff_digest": "IDEMPOTENCY_MISMATCH (ключ привязан к digest) (V-IDEM)",
+      "new_key": "новый кандидат, новый цикл ревью, может быть допущен; старый REJECTED в истории (V-RESUB-FIXED)",
+      "revision": "исправленная подача целится в текущую голову, иначе REVISION_CONFLICT (существующее поведение, не меняется)"
+    },
+    "appeal": "re-review другим независимым root; last-review-wins -> REJECTED->REVIEWED; оба вердикта в истории, ничего не перезаписано; один вердикт на (кандидат, root ревьюера) — анти-флип-флоп (V-APPEAL, V-APPEAL-SAME-REVIEWER)",
+    "admit_of_rejected": "CANDIDATE_REJECTED (сегодня admit дыряв: decision не проверяется); dropped -> CANDIDATE_DROPPED"
+  },
+  "author_vs_reviewer": {
+    "reject": "пишет ревьюер (root != root кандидата, INDEPENDENCE_NOT_ENFORCED иначе) — вердикт в reviews",
+    "drop": "пишет автор (root == root кандидата или owner; DROP_AUTHOR_ONLY иначе) — маркер в drops",
+    "not_confusable": "разные таблицы (reviews vs drops), разные авторы (root-проверки), разные состояния (REJECTED vs DROPPED) — разделение зашито в проекцию, LLM не нужен"
+  },
+  "abandoned": {
+    "record": "dom_drop {candidate_id, reason 1..500} -> drops(id, candidate, payload) с IMMUTABLE-триггерами; DEMO_DROPPED",
+    "no_resurrection": "DROPPED исключён из pending (items и count); в истории помечен с причиной и автором",
+    "no_timeouts": "только явная запись; возрастные эвристики (INFERRED из RS008) — подсказка, не факт"
+  },
+  "junctions": {
+    "pending_W1": "сегодня _pending_page включает REJECTED в pending (строки 478-487) — агент будет бесконечно возвращаться; предложено: фильтр терминальных (ADMITTED/REJECTED/DROPPED) в items и count; REVIEWED остаётся (ждёт admit) (V-PEND-REJ, V-PEND-DROP, V-PEND-REVIEWED, V-COUNT)",
+    "history_RS008": "dom_reject пишет в reviews -> история показывает отказ с кодом+rationale (V-REJ/V-HIST); отвергнутый не создаёт claims -> не в established (V-NOESTAB)"
+  },
+  "variants": {
+    "A_extend_review": {"price": "~90-120 LOC, 0 миграций", "risk": "fail-open: клиенты без decision молча одобряют; approve/reject в одном инструменте", "verdict": "минимальная цена, противоречит fail-closed природе отказа"},
+    "B_dom_reject": {"price": "~70-100 LOC, 0 миграций", "risk": "fail-closed, approve-путь не тронут; но «брошено» остаётся незаписанным; два write-path к одному понятию", "verdict": "лучше A, недостаточно без dom_drop"},
+    "C_both_plus_drop": {"price": "~130-180 LOC + аддитивная таблица drops (user_version gate), 1-1.5 дня", "risk": "три поверхности, каждая узкая и fail-closed", "verdict": "РЕКОМЕНДАЦИЯ — реализована в прототипе"}
+  },
+  "risks": [
+    {"risk": "INDEPENDENCE_NOT_ENFORCED при отказе", "mitigation": "root-гейт перенесён на dom_reject; сам-отказ и самоприёмка проверены (V-IND, V-SELF-ADMIT)"},
+    {"risk": "«отклонить всё» как скрытие работы", "mitigation": "отказ не удаляет (IMMUTABLE, payload читаем); словарь+rationale; один вердикт на ревьюера; апелляция; head не двигается (V-HEAD); остаточный риск — скоординированные ревьюеры (governance)"},
+    {"risk": "отказ как оружие против чужой ветки", "mitigation": "кросс-веточный отказ легален и прозрачен; чужой грант -> SCOPE_DENIED (V-NEG4)"},
+    {"risk": "IMMUTABLE", "mitigation": "триггеры на reviews и drops; UPDATE вердикта -> IMMUTABLE (V-IMM)"},
+    {"risk": "свободный текст ломает проверяемость", "mitigation": "закрытый словарь без OTHER; вне словаря -> REASON_CODE_UNKNOWN (V-NEG1)"},
+    {"risk": "reject ослабляет approve", "mitigation": "dom_review не меняется; admit только ужесточается; approve-путь и легаси проверены (V-APPROVE-OK, V-LEGACY)"}
+  ],
+  "prototype": {
+    "location": "runtime/RS009/prototype/ (rs009_lib.py: зеркало схемы + предложенный сервис; run_prototype.py: сценарий 37 шагов, 9 кандидатов)",
+    "scenario": "P1 reject с кодом; P2 approve-путь; P3 replay того же ключа; P4 переподача с исправлением; P5 апелляция другим root; P6 drop автора; P7 сам-отказ; N1-N13 негативы (вне словаря, без rationale, >500, чужой грант, admit отвергнутого, drop чужим, drop допущенного, IMMUTABLE, IDEMPOTENCY_MISMATCH, reject dropped, самоприёмка, повторный вердикт)",
+    "validation": {"status": "PASS", "passed": 31, "total": 31},
+    "key_checks": {
+      "V-REJ": true, "V-HIST": true, "V-PEND-REJ": true, "V-PEND-DROP": true,
+      "V-PEND-REVIEWED": true, "V-COUNT": true, "V-RESUB-SAME": true, "V-RESUB-FIXED": true,
+      "V-APPEAL": true, "V-APPEAL-SAME-REVIEWER": true, "V-IND": true, "V-IND-NO-ROW": true,
+      "V-SELF-ADMIT": true, "V-LEGACY": true, "V-APPROVE-OK": true, "V-NEG1": true,
+      "V-NEG2": true, "V-NEG3": true, "V-NEG4": true, "V-NEG5": true, "V-NEG6": true,
+      "V-NEG7": true, "V-NEG11": true, "V-NEG13": true, "V-IMM": true, "V-IDEM": true,
+      "V-HEAD": true, "V-NOESTAB": true, "V-GRANT": true, "V-DICT": true, "V-STDLIB": true
+    }
+  },
+  "product_gaps_confirmed": [
+    "admission.py:203 review() жёстко пишет decision='approve' — write-gap (установленный факт, не переоткрывался)",
+    "admission.py:486-487 _pending_page деривирует REJECTED, но не фильтрует его из pending (новое подтверждение)",
+    "admission.py:218-224 admit не проверяет decision — отвергнутое можно допустить (новое подтверждение)",
+    "review payload не содержит reason_code/rationale/server_time (аддитивные поля контракта)"
+  ],
+  "artifacts_written": [
+    "artifacts/RESEARCHER_RS009_REJECT_PATH.json",
+    "reports/RESEARCHER_RS009_REJECT_PATH.md",
+    "runtime/RS009/prototype/rs009_lib.py",
+    "runtime/RS009/prototype/run_prototype.py",
+    "runtime/RS009/validate_rs009.py",
+    "runtime/RS009/validation_receipt.json",
+    "runtime/RS009/source_ledger.json",
+    "runtime/RS009/answers/contract.json",
+    "runtime/RS009/answers/fate_of_rejected.json",
+    "runtime/RS009/answers/variants.json",
+    "runtime/RS009/answers/risks.json",
+    "runtime/RS009/answers/pending_history_junction.json",
+    "runtime/RS009/results/steps.json",
+    "runtime/RS009/results/scenario.json",
+    "runtime/RS009/results/pending_full.json",
+    "runtime/RS009/results/history_full.json"
+  ],
+  "notes": [
+    "Продукт read-only: mockup/** не тронут (приёмка AB006 на c26812b3); прототип — предложенная реализация на зеркале схемы",
+    "Один вердикт на (кандидат, root ревьюера) — НОВЫЙ инвариант (анти-флип-флоп/анти-спам); на старые строки не влияет (IMMUTABLE)",
+    "Апелляция требует другого root; порог «кто может запросить re-review» (owner-гейт) — открытый policy-вопрос к заказчику",
+    "Словарь без OTHER: не подходящий код выбирается ближайший, нюанс в rationale; расширение словаря = изменение константы + миграция проекций",
+    "Первый статус по протоколу — честный PARTIAL (контекст собран, прототип строился итеративно); финальный статус DONE"
+  ]
+}

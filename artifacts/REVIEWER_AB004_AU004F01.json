@@ -1,0 +1,1762 @@
+{
+ "role": "REVIEWER",
+ "task": "RV005",
+ "subject": "AB004 / AU004-F-01 fix",
+ "status": "COMPLETE",
+ "first_artifact": false,
+ "first_artifact_note": "initial PARTIAL stub was written first (status PARTIAL), then overwritten by this final",
+ "decision": "APPROVE",
+ "decision_scope": "reviewer recommendation only; no leak found on the exact version for the AU004-F-01 class; two acknowledged observations stay OPEN (X2, staleness) and need an acceptor decision / debt registration",
+ "product_acceptance": false,
+ "is_approval": false,
+ "debt_closed": false,
+ "debt_recommendation": "TD19/AU004-F-01: reviewer finds nothing blocking closure of the AU004-F-01 class; closure itself belongs to OMH/customer. Recommend registering X2 (branch-name values) and the staleness existence signal as separate debt candidates (not registered here).",
+ "version_reviewed": "1ead2d45373ea85262b5989a9d86e5e6a0ace6feeeabcf41ba633b09a7a450bf",
+ "digest_independent": {
+  "match": true,
+  "file_count": 16,
+  "method": "sha256(json.dumps(sorted map mockup/**/*.py rel->sha256, sort_keys=True))",
+  "changed_files": [
+   "mockup/admission.py",
+   "mockup/public_dto.py",
+   "mockup/server.py"
+  ],
+  "unchanged_byte_identical": 13,
+  "before_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+  "before_recomputed_from_precopy": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+  "before_matches_precopy": true
+ },
+ "tests_untouched": {
+  "tests_digest_now": "973f950724c3045d11e91595e8abe1e7764323bb93c9c3f55213c2eb71c5bfc1",
+  "compared_with": "artifacts/WORKER_AB002_A.json tests hashes (18/18 equal)",
+  "mtime_note": "newest tests/*.py mtime 2026-11-07 11:02, before AB004 code edits (2026-11-08 11:30)"
+ },
+ "worker_evidence_integrity": {
+  "manifest_entries_checked": 1714,
+  "mismatches": [],
+  "n_mismatch": 0,
+  "runtime_AB004_files_now": 1721,
+  "runtime_AB004_files_in_manifest": 1708,
+  "files_in_runtime_AB004_not_in_manifest": 13,
+  "examples": [
+   "runtime/AB004/manifest.json",
+   "runtime/AB004/precopy/mockup/__pycache__/__init__.cpython-311.pyc",
+   "runtime/AB004/precopy/mockup/__pycache__/admission.cpython-311.pyc",
+   "runtime/AB004/precopy/mockup/__pycache__/dom_contract.cpython-311.pyc",
+   "runtime/AB004/precopy/mockup/__pycache__/ports.cpython-311.pyc",
+   "runtime/AB004/precopy/mockup/__pycache__/projections.cpython-311.pyc"
+  ]
+ },
+ "schema_walk": {
+  "records": 32,
+  "field_rows": 186,
+  "verdict_counts": {
+   "NO_FOREIGN_BY_CONSTRUCTION": 39,
+   "FILTERED_BY_GRANT": 9,
+   "FIXED_ENUM_OR_CALLER_OWN": 78,
+   "USER_DATA_OF_VISIBLE_RECORDS(expected)": 42,
+   "OBSERVED_X2_BRANCH_NAME_VALUE": 13,
+   "OBSERVED_STALE_EXISTENCE_SIGNAL": 5
+  },
+  "uncovered": [],
+  "tools_walked": 12,
+  "yaml_export_walked": true,
+  "bmap_fields": [
+   "Claim.dependencies",
+   "Provenance.dependencies",
+   "ReadSnapshot.revisions"
+  ],
+  "map_fields_nonbranch": [
+   "Admitted.claim_ids",
+   "Admitted.event_ids",
+   "Claim.properties",
+   "Trace.origins"
+  ],
+  "opaque_fields": [
+   "ClaimItem.metadata"
+  ],
+  "differential_projection": "runtime/RV005/step2/schema_walk_result.json: synthetic instance of all 32 records with bmap keys {AA,AB,ZZ}, scope={AA} -> 0 foreign bmap keys survive; scope=None -> SCOPE_REQUIRED on every record that reaches a bmap",
+  "worker_inventory_comparison": {
+   "worker_bmap": [
+    "Claim.dependencies",
+    "Provenance.dependencies",
+    "ReadSnapshot.revisions"
+   ],
+   "my_bmap": [
+    "Claim.dependencies",
+    "Provenance.dependencies",
+    "ReadSnapshot.revisions"
+   ],
+   "maps_equal": true,
+   "worker_inventory_scope": "maps only; list/scalar branch-valued fields not enumerated (only origin_branch, applicable_branches, excluded_branches named in observation 2)",
+   "additional_branch_valued_fields_found": [
+    "ClaimItem.applicability",
+    "Claim.origin_branch",
+    "History.origin_branch",
+    "Snapshot.excluded_branches",
+    "Origin.origin_branch",
+    "ClaimOrigin.origin_branch",
+    "Residual.claim_origins",
+    "Trace.origins",
+    "Trace.excluded_branches",
+    "QueryResponse.excluded_branches",
+    "TraceResponse.origins",
+    "TraceResponse.excluded_branches",
+    "EVENT_VALUE.exclude.branch"
+   ]
+  },
+  "fields_file": "runtime/RV005/field_inventory.json"
+ },
+ "canary_sweep": {
+  "method": "populated cross-branch fixtures written only through MCP (union author+reviewer(+owner)); canaries in EVERY writable field (claim body, all content-type metadata incl. dict keys, item reason/media_type/local_id/requirement_refs, envelope reason/origin_version/idempotency_key, comment/link/property/replacement/conflict/resolve/exclude values, event reason/ref/local_id) + SQL-derived ids/hashes of the other branch; search raw + base64 (3 alignments) + base64-decoded strings in text+structuredContent of every call, recv wire frames, stderr, exports/*.yaml, omh-target.json",
+  "populated": [
+   "AA claim deps {AA,AB}",
+   "AA claim deps {AB} only",
+   "AB claim deps {AA,AB}",
+   "AB claim deps {AB}",
+   "AB claim shared into AA (applicability in AA)",
+   "AA claim shared into AB",
+   "AB-branch events (comment/link/property/conflict/replacement/archive/converge) incl. on the shared AB claim and on foreign AA claim",
+   "AA-branch events (comment/link/property/conflict+resolve/replacement/archive/link/converge)",
+   "owner exclude AA->AB and AB->AA (seed 90517)"
+  ],
+  "readers": [
+   "AA_only",
+   "AB_only",
+   "union_on_AA",
+   "union_on_AB",
+   "AA_plus_ZZ",
+   "empty_grant"
+  ],
+  "tools_per_reader": "all 12 tools, both roles (author, reviewer), foreign-branch probes, foreign candidate ids, forged/foreign payloads, history revisions, default/master trace, YAML export x N",
+  "sweeps": {
+   "61703": {
+    "seed": 61703,
+    "canaries": 233,
+    "events": 27,
+    "claims": 8,
+    "claims_with_nonempty_deps": 6,
+    "heads": {
+     "AA": 13,
+     "AB": 14
+    },
+    "exclude_events": [],
+    "readers": {
+     "AA_only": {
+      "grant": "AA",
+      "calls": 68,
+      "forbidden_needles": 256,
+      "scanned_bytes": 442502,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AB_only": {
+      "grant": "AB",
+      "calls": 68,
+      "forbidden_needles": 231,
+      "scanned_bytes": 496862,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AA": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 446285,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AB": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 500708,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AA_plus_ZZ": {
+      "grant": "AA,ZZ",
+      "calls": 57,
+      "forbidden_needles": 256,
+      "scanned_bytes": 439845,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "empty_grant": {
+      "grant": "",
+      "calls": 79,
+      "forbidden_needles": 480,
+      "scanned_bytes": 23830,
+      "yaml_files": 0,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 0,
+      "revision_maps_checked": 2,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 0,
+       "acks": 0,
+       "attempts": 0,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": false,
+       "stamp_keys": null
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     }
+    }
+   },
+   "28411": {
+    "seed": 28411,
+    "canaries": 233,
+    "events": 27,
+    "claims": 8,
+    "claims_with_nonempty_deps": 6,
+    "heads": {
+     "AA": 13,
+     "AB": 14
+    },
+    "exclude_events": [],
+    "readers": {
+     "AA_only": {
+      "grant": "AA",
+      "calls": 68,
+      "forbidden_needles": 254,
+      "scanned_bytes": 444787,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AB_only": {
+      "grant": "AB",
+      "calls": 68,
+      "forbidden_needles": 231,
+      "scanned_bytes": 495660,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AA": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 448570,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AB": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 499506,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AA_plus_ZZ": {
+      "grant": "AA,ZZ",
+      "calls": 57,
+      "forbidden_needles": 254,
+      "scanned_bytes": 442130,
+      "yaml_files": 13,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 26,
+       "acks": 26,
+       "attempts": 26,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "empty_grant": {
+      "grant": "",
+      "calls": 79,
+      "forbidden_needles": 478,
+      "scanned_bytes": 23830,
+      "yaml_files": 0,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 0,
+      "revision_maps_checked": 2,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 0,
+       "acks": 0,
+       "attempts": 0,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": false,
+       "stamp_keys": null
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     }
+    }
+   },
+   "x90517": {
+    "seed": 90517,
+    "canaries": 245,
+    "events": 29,
+    "claims": 8,
+    "claims_with_nonempty_deps": 6,
+    "heads": {
+     "AA": 14,
+     "AB": 15
+    },
+    "exclude_events": [
+     [
+      "AA",
+      "AB"
+     ],
+     [
+      "AB",
+      "AA"
+     ]
+    ],
+    "readers": {
+     "AA_only": {
+      "grant": "AA",
+      "calls": 68,
+      "forbidden_needles": 258,
+      "scanned_bytes": 498650,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AB_only": {
+      "grant": "AB",
+      "calls": 68,
+      "forbidden_needles": 261,
+      "scanned_bytes": 495318,
+      "yaml_files": 15,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 30,
+       "acks": 30,
+       "attempts": 30,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AA": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 495519,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "union_on_AB": {
+      "grant": "AA,AB",
+      "calls": 45,
+      "forbidden_needles": 0,
+      "scanned_bytes": 492256,
+      "yaml_files": 15,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 30,
+       "acks": 30,
+       "attempts": 30,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "AA_plus_ZZ": {
+      "grant": "AA,ZZ",
+      "calls": 57,
+      "forbidden_needles": 258,
+      "scanned_bytes": 495993,
+      "yaml_files": 14,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 8,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 8,
+      "revision_maps_checked": 22,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 28,
+       "acks": 28,
+       "attempts": 28,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": true,
+       "stamp_keys": [
+        "chain_head",
+        "port_reported",
+        "read_at",
+        "revisions"
+       ]
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     },
+     "empty_grant": {
+      "grant": "",
+      "calls": 79,
+      "forbidden_needles": 510,
+      "scanned_bytes": 23830,
+      "yaml_files": 0,
+      "unexpected_hits": 0,
+      "expected_shared_claim_hits": 0,
+      "dep_mismatches": 0,
+      "snapshot_objects_checked": 0,
+      "revision_maps_checked": 2,
+      "foreign_revision_keys": 0,
+      "fact_tables_unchanged": true,
+      "delivery": {
+       "observations": 0,
+       "acks": 0,
+       "attempts": 0,
+       "dup_obs_per_intent": 0,
+       "full_internal_stamp": false,
+       "stamp_keys": null
+      },
+      "process_exit_codes": [
+       0,
+       0
+      ],
+      "text_eq_structured": true
+     }
+    }
+   }
+  },
+  "totals": {
+   "canaries": 711,
+   "tool_calls": 1086,
+   "forbidden_needles_total": 3727,
+   "scanned_bytes_frames_stderr_yaml": 7206081,
+   "unexpected_hits": 0
+  },
+  "expected_hits": "only origin_version of the claim SHARED into the reader branch (ab3 into AA / aa4 into AB) - claim attribute of a visible record",
+  "controls": {
+   "positive_control_union_sees_AB_private": {
+    "n_forbidden": 256,
+    "distinct_labels_hit": 5,
+    "sample": [
+     "canary:AB:ab1:origin_version",
+     "canary:AB:ab2:origin_version",
+     "canary:AB:ab3:origin_version",
+     "canary:AB:ab4:origin_version",
+     "id:AB:claim.id"
+    ]
+   },
+   "old_code_AA_only": {
+    "dep_mismatches": 56,
+    "dep_checks_n": 8,
+    "token_hits": 8,
+    "bad_revision_keys": 0,
+    "foreign_dep_key_paths": [
+     "$.claims[].dependencies",
+     "$.history[].provenance.dependencies",
+     "$.snapshot.claims[].dependencies",
+     "$.snapshot.history[].provenance.dependencies"
+    ],
+    "mismatch_example": [
+     {
+      "call": 2,
+      "mismatches": [
+       [
+        "claim",
+        "56679fac-2bbf-4bbb-aa48-b7118a546551",
+        {
+         "AA": 1,
+         "AB": 2
+        },
+        {
+         "AA": 1,
+         "AB": 2
+        }
+       ],
+       [
+        "claim",
+        "83930f62-9e02-4dc8-964a-6973b68dc15b",
+        {
+         "AA": 3,
+         "AB": 2
+        },
+        {
+         "AA": 3,
+         "AB": 2
+        }
+       ],
+       [
+        "claim",
+        "de1f59e9-8249-499e-be50-cc9cb5d3369d",
+        {
+         "AA": 4,
+         "AB": 4
+        },
+        {
+         "AA": 4,
+         "AB": 4
+        }
+       ],
+       [
+        "claim",
+        "ef46c55b-4851-4570-91e5-8529c0fdcdb1",
+        {
+         "AB": 2
+        },
+        {
+         "AB": 2
+        }
+       ],
+       [
+        "event",
+        "f2c3174e-5f71-40d1-a509-06cc5f34d831",
+        {
+         "AA": 1,
+         "AB": 2
+        },
+        {
+         "AA": 1,
+         "AB": 2
+        }
+       ],
+       [
+        "event",
+        "7c3f0e72-dcc8-49a1-8c6b-2f63b91d1b1f",
+        {
+         "AB": 2
+        },
+        {
+         "AB": 2
+        }
+       ],
+       [
+        "event",
+        "14a571c3-1b65-497d-937f-918118f16bbe",
+        {
+         "AA": 3,
+         "AB": 4
+        },
+        {
+         "AA": 3,
+         "AB": 4
+        }
+       ],
+       [
+        "event",
+        "3d313e51-98f9-4528-b554-ab266d062c4a",
+        {
+         "AA": 4,
+         "AB": 4
+        },
+        {
+         "AA": 4,
+         "AB": 4
+        }
+       ],
+       [
+        "event",
+        "f66203a9-5d55-424d-9918-3da4b25b521f",
+        {
+         "AA": 6,
+         "AB": 13
+        },
+        {
+         "AA": 6,
+         "AB": 13
+        }
+       ],
+       [
+        "event",
+        "aa0f997d-1c9a-4123-aa47-3cb5839dc305",
+        {
+         "AA": 11,
+         "AB": 13
+        },
+        {
+         "AA": 11,
+         "AB": 13
+        }
+       ]
+      ]
+     }
+    ]
+   },
+   "union_new_vs_old": {
+    "n_calls": 45,
+    "n_old": 45,
+    "diffs": [
+     [
+      25,
+      "dom_submit",
+      "{}",
+      [
+       "candidate_id"
+      ]
+     ],
+     [
+      27,
+      "dom_submit",
+      "{}",
+      [
+       "candidate_id"
+      ]
+     ],
+     [
+      37,
+      "dom_sync_status",
+      "{\"branch\": \"AA\"}",
+      [
+       "intents"
+      ]
+     ]
+    ]
+   },
+   "AA_only_new_vs_old_modulo_dependencies_and_read_snapshot": {
+    "n_calls": 68,
+    "diffs": [
+     [
+      11,
+      "dom_export",
+      "{\"branch\": \"AA\"}"
+     ],
+     [
+      13,
+      "dom_export",
+      "{\"branch\": \"AA\", \"revision\": 2}"
+     ],
+     [
+      48,
+      "dom_export",
+      "{\"branch\": \"AA\"}"
+     ],
+     [
+      51,
+      "dom_sync_status",
+      "{\"branch\": \"AA\"}"
+     ]
+    ]
+   }
+  },
+  "control_summary": {
+   "positive_union_sees_non_shared_canaries": "163 of 218 distinct tokens visible to the union (remaining 55 = envelope reason/idempotency key, never projected)",
+   "old_code_AA_only_dep_mismatches": 56,
+   "new_code_AA_only_dep_mismatches": 0,
+   "union_new_vs_old": "identical modulo random candidate_id / observed_id",
+   "AA_only_new_vs_old_modulo_deps": "differences only in export sha/handle (filtered YAML) and random observed_id"
+  }
+ },
+ "negatives_repeated_on_own_seeds": {
+  "seeds_used": [
+   61703,
+   28411,
+   90517,
+   33871,
+   41907
+  ],
+  "not_worker_seeds": true,
+  "a_AA_only_deps_AA_AB": true,
+  "b_deps_only_AB": "AA claim deps {AB}: public deps {} (neg.staleness visible_deps)",
+  "c_union_sees_all": true,
+  "d_AB_only_no_AA_keys": true,
+  "e_yaml_bytes": "YAML AA-only: dependency lines only AA: n; no AB/ZZ key; all exports scanned",
+  "f_corruption": {
+   "cases": {
+    "AB-invalid-utf8": {
+     "oracle": {
+      "reason": "EVENT_SHAPE_INVALID",
+      "seq": 6,
+      "branch": "AB"
+     },
+     "pids": [
+      {
+       "pid": 11416,
+       "exit": 0
+      },
+      {
+       "pid": 1624,
+       "exit": 0
+      }
+     ],
+     "uniform": true,
+     "n_calls": 14,
+     "db_unchanged": true,
+     "distinct_status_keys": [
+      [
+       "CHAIN_BROKEN",
+       [
+        "blockers",
+        "readiness",
+        "ready_for_owner_review",
+        "simulated",
+        "status"
+       ]
+      ]
+     ],
+     "stderr_has_locator": false,
+     "stderr_has_RV005BROKEN": false
+    },
+    "AB-wrong-hash": {
+     "oracle": {
+      "reason": "EVENT_HASH_MISMATCH",
+      "seq": 6,
+      "branch": "AB"
+     },
+     "pids": [
+      {
+       "pid": 7308,
+       "exit": 0
+      },
+      {
+       "pid": 12360,
+       "exit": 0
+      }
+     ],
+     "uniform": true,
+     "n_calls": 14,
+     "db_unchanged": true,
+     "distinct_status_keys": [
+      [
+       "CHAIN_BROKEN",
+       [
+        "blockers",
+        "readiness",
+        "ready_for_owner_review",
+        "simulated",
+        "status"
+       ]
+      ]
+     ],
+     "stderr_has_locator": false,
+     "stderr_has_RV005BROKEN": false
+    },
+    "AA-invalid-utf8": {
+     "oracle": {
+      "reason": "EVENT_SHAPE_INVALID",
+      "seq": 4,
+      "branch": "AA"
+     },
+     "pids": [
+      {
+       "pid": 11496,
+       "exit": 0
+      },
+      {
+       "pid": 12440,
+       "exit": 0
+      }
+     ],
+     "uniform": true,
+     "n_calls": 14,
+     "db_unchanged": true,
+     "distinct_status_keys": [
+      [
+       "CHAIN_BROKEN",
+       [
+        "blockers",
+        "readiness",
+        "ready_for_owner_review",
+        "simulated",
+        "status"
+       ]
+      ]
+     ],
+     "stderr_has_locator": false,
+     "stderr_has_RV005BROKEN": false
+    },
+    "AA-wrong-hash": {
+     "oracle": {
+      "reason": "EVENT_HASH_MISMATCH",
+      "seq": 4,
+      "branch": "AA"
+     },
+     "pids": [
+      {
+       "pid": 2736,
+       "exit": 0
+      },
+      {
+       "pid": 13696,
+       "exit": 0
+      }
+     ],
+     "uniform": true,
+     "n_calls": 14,
+     "db_unchanged": true,
+     "distinct_status_keys": [
+      [
+       "CHAIN_BROKEN",
+       [
+        "blockers",
+        "readiness",
+        "ready_for_owner_review",
+        "simulated",
+        "status"
+       ]
+      ]
+     ],
+     "stderr_has_locator": false,
+     "stderr_has_RV005BROKEN": false
+    }
+   },
+   "all_response_texts_identical_per_tool": {
+    "query": true,
+    "snapshot": true,
+    "trace": true,
+    "resume": true,
+    "sync_status": true,
+    "export": true,
+    "sync": true
+   },
+   "n_distinct_texts_per_tool": {
+    "query": 1,
+    "snapshot": 1,
+    "trace": 1,
+    "resume": 1,
+    "sync_status": 1,
+    "export": 1,
+    "sync": 1
+   }
+  },
+  "g_delivery": "per reader: observations == acks == attempts (26/28/30), 0 duplicate observations per intent, every internal stamp has chain_head + revisions{AA,AB} + port_reported + read_at; worker 4/4 case is a smaller fixture",
+  "own_attacks": {
+   "arg_spoof": {
+    "dom_query {\"branch\": \"AA\", \"branches\": \"AA,AB\"}": {
+     "status": "INVALID_ARGUMENTS",
+     "isError": true,
+     "AB_word": false,
+     "n": 173
+    },
+    "dom_query {\"branch\": \"AA\", \"scope\": [\"AA\", \"AB\"]}": {
+     "status": "INVALID_ARGUMENTS",
+     "isError": true,
+     "AB_word": false,
+     "n": 173
+    },
+    "dom_query {\"branch\": \"AA\", \"grant\": \"AB\"}": {
+     "status": "INVALID_ARGUMENTS",
+     "isError": true,
+     "AB_word": false,
+     "n": 173
+    },
+    "dom_query {\"branch\": \"AA\", \"role\": \"owner\"}": {
+     "status": "INVALID_ARGUMENTS",
+     "isError": true,
+     "AB_word": false,
+     "n": 173
+    },
+    "dom_query {\"branch\": \"AA,AB\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"AA,AB\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"AB \"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"AB \"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"ab\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"ab\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"A*\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"A*\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"master\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"master\"}": {
+     "status": "TRACE",
+     "isError": false,
+     "AB_word": false,
+     "n": 210
+    },
+    "dom_query {\"branch\": \"ZZ\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"ZZ\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"AB/../AA\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"AB/../AA\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"AA\\u0000AB\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_trace {\"branch\": \"AA\\u0000AB\"}": {
+     "status": "SCOPE_DENIED",
+     "isError": false,
+     "AB_word": false,
+     "n": 26
+    },
+    "dom_query {\"branch\": \"AA\", \"revision\": -1}": {
+     "status": "REJECTED",
+     "isError": false,
+     "AB_word": false,
+     "n": 22
+    },
+    "dom_query {\"branch\": \"AA\", \"revision\": 99999}": {
+     "status": "REJECTED",
+     "isError": false,
+     "AB_word": false,
+     "n": 22
+    },
+    "dom_query {\"branch\": \"AA\", \"revision\": 0}": {
+     "status": "SNAPSHOT",
+     "isError": false,
+     "AB_word": false,
+     "n": 285
+    },
+    "dom_query {\"branch\": \"AA\", \"revision\": true}": {
+     "status": "INVALID_ARGUMENTS",
+     "isError": true,
+     "AB_word": false,
+     "n": 173
+    },
+    "dom_trace {}": {
+     "status": "TRACE",
+     "isError": false,
+     "AB_word": false,
+     "n": 210
+    }
+   },
+   "scope_required_inprocess": {
+    "dom_query": {
+     "None": "SCOPE_REQUIRED",
+     "{AA}": [
+      "AA"
+     ],
+     "str \"AA\"": [],
+     "[]": [],
+     "list AA,AB": [
+      "AA",
+      "AB"
+     ],
+     "generator": [
+      "AA"
+     ]
+    },
+    "dom_sync": {
+     "None": "SCOPE_REQUIRED",
+     "{AA}": [
+      "AA"
+     ],
+     "str \"AA\"": [],
+     "[]": [],
+     "list AA,AB": [
+      "AA",
+      "AB"
+     ],
+     "generator": [
+      "AA"
+     ]
+    },
+    "dom_sync_status": {
+     "None": "SCOPE_REQUIRED",
+     "{AA}": [
+      "AA"
+     ],
+     "str \"AA\"": [],
+     "[]": [],
+     "list AA,AB": [
+      "AA",
+      "AB"
+     ],
+     "generator": [
+      "AA"
+     ]
+    },
+    "dom_export": {
+     "None": "SCOPE_REQUIRED",
+     "{AA}": [
+      "AA"
+     ],
+     "str \"AA\"": [],
+     "[]": [],
+     "list AA,AB": [
+      "AA",
+      "AB"
+     ],
+     "generator": [
+      "AA"
+     ]
+    },
+    "dom_trace": {
+     "None": "SCOPE_REQUIRED",
+     "{AA}": [
+      "AA"
+     ],
+     "str \"AA\"": [],
+     "[]": [],
+     "list AA,AB": [
+      "AA",
+      "AB"
+     ],
+     "generator": [
+      "AA"
+     ]
+    }
+   },
+   "bmap_nonstr_key": "INVALID_KEY",
+   "tamper_nonbranch_keys": {
+    "visible_deps_aa3": [
+     {
+      "AA": 1
+     }
+    ],
+    "ZZ_in_bytes": false,
+    "CNRYKEY_in_bytes": false,
+    "empty_key_in_deps": false,
+    "yaml_deps_lines": [
+     "AA: 1",
+     "AA: 2",
+     "AA: 3"
+    ],
+    "statuses": {
+     "query": "SNAPSHOT",
+     "resume": "RESUMED",
+     "export": "EXPORTED",
+     "trace": "TRACE",
+     "sync": "SYNCED"
+    }
+   },
+   "race": {
+    "n_reads": 176,
+    "errors": [],
+    "n_errors": 0,
+    "statuses": [
+     [
+      "dom_export",
+      "EXPORTED"
+     ],
+     [
+      "dom_query",
+      "SNAPSHOT"
+     ],
+     [
+      "dom_resume",
+      "RESUMED"
+     ],
+     [
+      "dom_trace",
+      "TRACE"
+     ]
+    ],
+    "revisions_seen_by_reader": [
+     2,
+     3,
+     5,
+     6,
+     7
+    ],
+    "head_AA_start": 2,
+    "head_AA_end": 7,
+    "head_AB_start": 1,
+    "head_AB_end": 6,
+    "token_hits": [],
+    "n_token_hits": 0,
+    "dep_mismatches": 0,
+    "AB_dep_key_in_reads": 0
+   },
+   "race_note": "first race attempt (neg.race) did not overlap (reader saw one revision) - discarded; race2 re-run with a reader running until the writer finished: revisions 2,3,5,6,7 seen, 176 reads, 0 errors, 0 hits, 0 dep mismatch",
+   "empty_grant_and_extra_grant": "empty grant -> SCOPE_DENIED everywhere, trace master UNKNOWN revisions {}; grant AA,ZZ behaves as AA"
+  }
+ },
+ "internal_logic": {
+  "sql_readback": "claim_snapshots/events/claims/branch_heads/transactions table hashes after all reads == before for all 18 reader runs",
+  "readiness_trace": {
+   "status": "TRACE",
+   "readiness": "NOT_READY",
+   "blockers": [
+    "CRITERIA_NOT_CURRENT",
+    "SYNC_PENDING"
+   ],
+   "residual": [
+    {
+     "req": "R1",
+     "reasons": [
+      "STALE_CHECK"
+     ],
+     "n_claim_refs": 1
+    },
+    {
+     "req": "R2",
+     "reasons": [
+      "STALE_CHECK"
+     ],
+     "n_claim_refs": 1
+    }
+   ]
+  },
+  "union_trace_old_vs_new": "identical (control 3)",
+  "note": "trace/stale use full internal deps (union STALE_CHECK on dep {AB} visible to union only)"
+ },
+ "observations": {
+  "O1_staleness_channel": {
+   "verdict": "real but narrow existence/timing signal, no branch name or revision",
+   "evidence": {
+    "aa_only_before": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "aa_only_after": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "union_before": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "union_after": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "union_master_before": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R1",
+       "reasons": [],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "union_master_after": {
+     "status": "TRACE",
+     "readiness": "NOT_READY",
+     "blockers": [
+      "CRITERIA_NOT_CURRENT",
+      "SYNC_PENDING"
+     ],
+     "residual": [
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R1",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      },
+      {
+       "req": "R2",
+       "reasons": [
+        "STALE_CHECK"
+       ],
+       "n_claim_refs": 1
+      }
+     ]
+    },
+    "visible_deps_after_for_AA_only": {
+     "3721f311-4c44-4653-a299-d3999fde91d3": {},
+     "980d0ba8-1c55-4813-8fde-41e2f731466f": {
+      "AA": 2
+     },
+     "b11e0de7-4411-45c1-bbdf-1f8d4cfaa841": {}
+    },
+    "aa2_id": "3721f311-4c44-4653-a299-d3999fde91d3",
+    "aa3_id": "980d0ba8-1c55-4813-8fde-41e2f731466f",
+    "snapshot_unchanged_for_AA_only": true,
+    "AB_word_in_aa_only_trace_after": false
+   },
+   "severity": "low",
+   "leak_by_customer_rule": "partial: the cause (foreign key) is removed, but its effect (STALE_CHECK, claim_refs shrink, CRITERIA_NOT_CURRENT) is visible; claim with public dependencies {} reported stale proves a hidden dependency",
+   "recommendation": "separate debt candidate or explicit owner acceptance; options: report staleness cause-less only for visible deps, or mark hidden-dependency staleness as opaque BLOCKED; do not widen AB004",
+   "caveat": "my small fixture was already stale before the AB advance (ab_conv event advanced AB); clean before/after comes from the worker scenario b"
+  },
+  "O2_X2_branch_name_values": {
+   "verdict": "real, broader than worker listed",
+   "fields": [
+    "ClaimItem.applicability",
+    "Claim.origin_branch",
+    "History.origin_branch",
+    "Snapshot.excluded_branches",
+    "Origin.origin_branch",
+    "ClaimOrigin.origin_branch",
+    "Residual.claim_origins",
+    "Trace.origins",
+    "Trace.excluded_branches",
+    "QueryResponse.excluded_branches",
+    "TraceResponse.origins",
+    "TraceResponse.excluded_branches",
+    "EVENT_VALUE.exclude.branch"
+   ],
+   "seen_in_AA_only_view_value_paths": [
+    "$.claims[].item.applicability[]",
+    "$.claims[].origin_branch",
+    "$.history[].origin_branch",
+    "$.origins.83930f62-9e02-4dc8-964a-6973b68dc15b.origin_branch",
+    "$.snapshot.claims[].item.applicability[]",
+    "$.snapshot.claims[].origin_branch",
+    "$.snapshot.history[].origin_branch",
+    "$.trace.origins.83930f62-9e02-4dc8-964a-6973b68dc15b.origin_branch"
+   ],
+   "exclude_variant": {
+    "AA_only_snapshot_excluded_branches": [
+     "AB"
+    ],
+    "AA_only_trace_excluded_branches": [
+     "AB"
+    ],
+    "AB_only_snapshot_excluded_branches": [
+     "AA"
+    ],
+    "log": [
+     {
+      "tag": "exclude",
+      "branch": "AA",
+      "target": "AB",
+      "admit": "DEMO_ADMITTED"
+     },
+     {
+      "tag": "exclude",
+      "branch": "AB",
+      "target": "AA",
+      "admit": "DEMO_ADMITTED"
+     }
+    ]
+   },
+   "severity": "low-medium (names only, two fixed branch names, no content); contradicts customer rule literally, but projections.py documents the owner-provided branch marker as required on every historical row",
+   "recommendation": "separate debt candidate + owner decision; worker named origin_branch/applicable_branches/excluded_branches but not ClaimItem.applicability (also inside History.provenance.value.item) or Trace.origins/Residual.claim_origins"
+  },
+  "O3_yaml_delivery_semantics": "code reading only (not run cross-grant): delivery.confirmed() for YAML_EXPORT checks branch/revision only, so a YAML_EXPORT intent acked by an AA-only sync keeps the FILTERED bytes; a later union consumer gets no unfiltered re-export. Completeness, not a leak; info for the acceptor.",
+  "O4_manifest_drift": "runtime/AB004 has 1721 files now vs 1708 in manifest.json: 13 extra = 4 manifest.json files (own + 3 nested in regress/*) + 9 .pyc under precopy/mockup/__pycache__ (reviewer runs used -B); all 1714 manifest entries match"
+ },
+ "coverage_omissions": {
+  "scope_not_widened": "no new tools/grants/graph/keywords; 12 tools, same SIGNATURE/TOOLS; admission.py/server.py changes only pass scope=context.branches and build YAML from projected snapshot",
+  "changed_files_exactly": [
+   "mockup/admission.py",
+   "mockup/public_dto.py",
+   "mockup/server.py"
+  ],
+  "oracle_not_weakened": "tests/ byte-identical to AB002_A baseline",
+  "not_run_by_reviewer": [
+   "pytest suite (63 passed/1 failed documented) - not re-run: the suite writes runtime/tmp outside the allowed write scope; relied on parent re-run",
+   "clean before/after staleness (worker covers)",
+   "dom_query on a granted-but-nonexistent branch ZZ (grant AA,ZZ)",
+   "cross-grant sequential YAML delivery"
+  ],
+  "honest_limitations_not_blocking": [
+   "CP-PL-05 REPLACE probe NOT_TESTED",
+   "CP-PL-10 busy/read-only NOT_TESTED"
+  ],
+  "threat_model": "synthetic simulation adapter; launch-time grant is trusted; no network/Git/OMH"
+ },
+ "lessons_vs_RV004": "RV004 followed worker-listed fields with empty deps fixtures; RV005 enumerated all 186 (record,field) rows programmatically with completeness assertion, used populated deps both directions, and added a pre-fix control run proving the sweep detects the original defect (56 dep mismatches on pre-fix code vs 0 now)",
+ "boundaries": "wrote only artifacts/REVIEWER_AB004_AU004F01.json, reports/REVIEWER_AB004_AU004F01.md, runtime/RV005/**; product/tests/tech_debt/foreign artifacts untouched; no Git/install/network/subagents",
+ "report_claim_checks": {
+  "nonempty_dep_claims_61703": 6,
+  "nonempty_dep_claims_28411": 6,
+  "nonempty_dep_claims_x90517": 6,
+  "not_in_manifest_total": 13,
+  "not_in_manifest_pyc": 9,
+  "not_in_manifest_other": [
+   "runtime/AB004/manifest.json",
+   "runtime/AB004/regress/ab003-post/manifest.json",
+   "runtime/AB004/regress/run-au004/manifest.json",
+   "runtime/AB004/regress/rv004-post/manifest.json"
+  ],
+  "corruption_total_calls": 56,
+  "corruption_all_uniform": true,
+  "readers_total": 18,
+  "unexpected_hits_total": 0,
+  "all_fact_tables_unchanged": true,
+  "all_dep_mismatch_zero": true
+ }
+}

@@ -1,0 +1,112 @@
+{
+  "schema": "auditor_verdict/v1",
+  "role": "independent negative auditor AU004 (TD-DOM-19 post-fix); not worker, not reviewer, not accepting authority",
+  "task": "AU004",
+  "debt": "TD-DOM-19-fix-verification (audit of the post-fix guarantee)",
+  "card_ref": "cards/AU004_TD19_AUDITOR.md",
+  "written_at": "2026-11-07T23:30:00Z",
+  "status": "completed",
+  "product_acceptance": false,
+  "is_approval": false,
+  "completion_state": "completed",
+  "verdict": "REQUEST_CHANGES",
+  "verdict_rationale": "On the exact post-fix version (code_digest 08aa9a9b..., independently recomputed, 16 files; only admission.py/server.py differ from baseline, public_dto.py added, 13 others byte-identical) five required guarantees are reproduced GREEN with fresh seed 92041 and real MCP stdio subprocesses/fresh PIDs: (1) CHK-A2-01/02-class LEAK_CLOSED for chain_head/events/head_hash/foreign broken_event_id on healthy surfaces; (2) CHK-A2-03-class GATE uniform BROKEN with NO foreign locator, DB unchanged by tools, oracle locates the seq-level AB break; (3) CHK-DEL-01-class delivery preserved full internal observation stamp (chain_head+ALL revisions+port_reported) with observation->attempt->ack bound, no duplicate writes; (4) both MCP channels serialize one safe object (text==structuredContent on every surface); (5) B-side isolation held (AA-only read_snapshot correctly scoped to {AA}, direct AB read SCOPE_DENIED). HOWEVER a NEW, worker/reviewer-untested confidentiality leak path is confirmed: public DTO projects Claim.dependencies and provenance.dependencies as ('map','int') with NO launch-grant scope filter, so a union-author-created AA claim whose dependency map includes a live AB branch (e.g. {AA:1, AB:2}) exposes foreign-branch existence + head revision (AB:2) to an AA-only caller through dom_query/dom_snapshot/dom_resume AND inside exported YAML bytes. read_snapshot.revisions is correctly scoped but the equivalent info rides claim dependency/provenance maps unscoped, defeating the same confidentiality goal TD19 targets via a different field. Verdict REQUEST_CHANGES (new debt path, not full-system acceptance).",
+  "reviewed_version": {
+    "code_digest": "08aa9a9b978831806bd0ef24fe26f7214ab21b31ca6d2bbe7d27a61bd29bfe6f",
+    "file_count": 16,
+    "method": "SEC003 digest_check sha256(json.dumps(sorted map mockup/**/*.py rel-path->sha256, sort_keys=True)) recomputed by own independent script (same method re-derived from spec, NOT trusting worker digest_check.py receipt)",
+    "recomputed_now_match": true,
+    "baseline_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+    "baseline_file_count": 15,
+    "changed_files": ["mockup/admission.py", "mockup/server.py"],
+    "added_files": ["mockup/public_dto.py"],
+    "unchanged_vs_baseline": 13
+  },
+  "own_runs": {
+    "seed": 92041,
+    "run_dir": "runtime/AU004/run-au004",
+    "manifest_sha256": "990304ae1d12c6cc9ea2c3578394c642152306e2d252b8feab33d6f3a349aaaf",
+    "results_sha256": "15de077a5fb4942898a70e29119731af37b8298aa09e928315c0f93d65acec86",
+    "probe_ref": "runtime/AU004/au004_probe.py",
+    "probe2_ref": "runtime/AU004/au004_x2.py",
+    "python": "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+    "aa_only_process_pid": 11012,
+    "gate_pids": [[3728, 0], [11716, 0]],
+    "clean_env": true,
+    "note": "Independent probe targeting NEW untested surfaces; does NOT re-run worker(3101)/reviewer(7107) scenario order verbatim."
+  },
+  "verified_green": {
+    "gate_uniform_safe": true,
+    "gate_foreign_locator_visible": false,
+    "gate_db_unchanged_by_tools": true,
+    "gate_oracle_located": "CHAIN_BROKEN EVENT_SHAPE_INVALID seq-level AB",
+    "delivery_sync_status": "SYNCED",
+    "delivery_observation_ack": "4 obs / 4 acks",
+    "delivery_internal_stamp_full": true,
+    "delivery_no_duplicate_writes": true,
+    "text_equals_structured_every_surface": true,
+    "aa_only_read_snapshot_scoped": true,
+    "b_side_direct_ab_denied": true,
+    "export_scoped_has_aa_canary_no_ab_canary_no_chain_head": true,
+    "x2b_shared_claim": "EXPECTED/intended applicability sharing provenance (origin_branch=AB valid because claim explicitly applicability-shared to AA); NOT a leak"
+  },
+  "findings": [
+    {
+      "id": "AU004-F-01",
+      "severity": "major",
+      "scope": "confidentiality (hidden-branch metadata) - NEW path beyond TD19's five removed fields",
+      "invariant": "public DTO must not expose foreign-branch existence or head revision to a caller whose launch grant does not include that branch, through ANY field or exported bytes.",
+      "source": "mockup/public_dto.py RECORDS['Claim'].dependencies ('map','int') ~line 84, Provenance.dependencies ('map','int') ~line 78; admission.py integrity_gate keeps full revisions; read_snapshot() scopes only the ReadSnapshot.revisions field (~line 283-291), not the claim/provenance dependency maps.",
+      "initial_conditions": "Fixture: AA head=rev2 (2 AA admits), AB head=rev2 (2 AB admits). A union-grant writer (branches=AA,AB) admits one AA claim whose package dependencies={'AA':1,'AB':2} (check_references for claim ops returns early, so AB in deps is not rejected for the AA claim). AA-only caller (role=author, branches=AA) reads dom_query/dom_snapshot/dom_resume on branch AA.",
+      "repro": "exec runtime/AU004/au004_probe.py (seed 92041). For attacker AA-only: dom_query / dom_snapshot / dom_resume return claims[1].dependencies={AA:1,AB:2} and history[1].provenance.dependencies={AA:1,AB:2}; dom_export writes AA-2-*.yaml whose bytes contain 'AB: 2'. read_snapshot stays {AA:2}.",
+      "expected": "AA-only caller (no AB grant) must not see AB branch name or its revision in any returned field/bytes; dependency/provenance maps should be scoped to the caller's launch-grant branches (like read_snapshot.revisions).",
+      "actual": "AB:2 leaked on query/snapshot/resume AND in YAML export bytes (grep 'AB: 2' -> 2 hits). Confirmed by both text and structuredContent (identical), so no text/structured discrepancy masks it.",
+      "evidence": "runtime/AU004/run-au004/results-au004.json -> X1_foreign_deps_leaked (6 hits); aa_only_surfaces.query/snapshot/resume dependencies_hits; X5_export grep AB; raw frames runtime/AU004/run-au004/healthy/frames-*.jsonl; YAML runtime/AU004/run-au004/export-probe/exports/AA-2-*.yaml lines 35/104 'AB: 2'",
+      "debt_ref": "NEW path; recommend recording as new debt (e.g. TD-DOM-19-scope-extension / new TD-DOM-NN 'public dependency/provenance map scope filtering'). NOT a duplicate of TD19 (its five removed fields - chain_head/global revisions/events/head_hash/broken_event_id - are correctly closed).",
+      "beyond_worker_reviewer": "Worker seed 3101 / reviewer seed 7107 fixtures always used empty/absent deps and never authored an AA claim with a live foreign AB dependency read by an AA-only caller, so the unscoped dependency-map projection was never exercised. This is my own attacking variation."
+    }
+  ],
+  "debt_status_changes": [],
+  "debt_status_explanation": "debt_status_changes=[] intentionally. TD-DOM-19 closure is the OMH/customer decision, not the auditor's; tech_debt.md is read-only in this slice. I do NOT recommend closing TD19 here: a NEW foreign-branch-metadata leak path (Claim.dependencies/Provenance.dependencies unscoped) must be addressed first. Recommendation: keep this fix's verified-green scope, but add dependency/provenance map scope filtering (or a scoping note) before accepting TD19 fully closed.",
+  "section0_checked_suspicions": [
+    {"id": "S-X1", "result": "FINDING AU004-F-01: foreign branch revision/existence leaks via unscoped Claim.dependencies/Provenance.dependencies to an AA-only caller (query/snapshot/resume + YAML bytes)"},
+    {"id": "S-X2", "result": "OK: origin_branch leak only appears via explicit applicability sharing (X2b), which is intended provenance of a shared claim, not an unauthorized leak; no hidden-branch promotion"},
+    {"id": "S-X3", "result": "OK: gate uniform CHAIN_BROKEN across 7 tools x 2 fresh PIDs, no foreign locator, DB unchanged by tools, oracle independently locates break"},
+    {"id": "S-X4", "result": "OK: delivery internal observation stamp full (chain_head+AA+AB+port_reported), observation->attempt->ack bound, no duplicate writes, 4 obs/4 acks"},
+    {"id": "S-X5", "result": "OK: YAML export bytes scoped to AA (AA canary present, AB canary absent) BUT note the X1 leak also rides export bytes when deps carry AB - see AU004-F-01"}
+  ],
+  "out_of_scope_findings": [],
+  "not_checked": [
+    "timing: NOT_CHECKED (not measured; no latency/timing claim asserted)",
+    "CP-PL-10 busy/read-only WAL subcases: NOT_TESTED (inherited omission from prior slices, not re-run)",
+    "real production auth / host identity: fixture roles are simulation-only, launch grants are trusted-launcher fixtures",
+    "B/C/D, UD-01..06, refinement/search/Git/auth/OS/checkpoint: out of scope for this TD19 slice"
+  ],
+  "limitations": [
+    "Delta audit of TD-DOM-19 post-fix only; not whole-system security acceptance, not deploy/task-closure authorization.",
+    "Findings proven on disposable fixtures under the documented simulation trust boundary.",
+    "X1 requires a union-cooperation fixture (a broader author writes an AA claim referencing AB) to realize; still a real cross-grant confidentiality path the fix leaves open.",
+    "Tech debt not modified (read-only per card); recommendation only."
+  ],
+  "verified_by_commands": [
+    "mockup/public_dto.py read (RECORDS schemas, read_snapshot scope, project_tool)",
+    "mockup/admission.py read (integrity_gate, verify_chain, query/sync/export/trace/resume)",
+    "mockup/server.py read (project_tool serialization both channels)",
+    "mockup/projections.py read (snapshot/History/Claim materialization)",
+    "mockup/delivery.py read (confirmed/stamp binding)",
+    "runtime/AB003/digest_check.py + own independent digest recompute -> 08aa9a9b... 16 files match",
+    "exec runtime/AU004/au004_probe.py (seed 92041) exit 0",
+    "exec runtime/AU004/au004_x2.py exit 0",
+    "SQL/file oracle read-backs via runtime/AB003/oracle.py (read-only)",
+    "grep 'AB: 2' exported YAML -> 2 hits"
+  ],
+  "runtime_refs": {
+    "results": "runtime/AU004/run-au004/results-au004.json",
+    "manifest": "runtime/AU004/run-au004/manifest.json",
+    "x2_results": "runtime/AU004/run-au004-x2/results-x2.json",
+    "frames": "runtime/AU004/run-au004/healthy/frames-*.jsonl",
+    "export_yaml": "runtime/AU004/run-au004/export-probe/exports/AA-2-*.yaml",
+    "stderr_pids": "runtime/AU004/run-au004/*/frames-stderr-*.log"
+  },
+  "report_ref": "reports/AUDITOR_AB003_TD19.md"
+}

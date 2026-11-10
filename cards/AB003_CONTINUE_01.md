@@ -1,0 +1,21 @@
+# AB003 — CONTINUATION 01 (worker TD19; фикс-баг проекции + post-прогон + сдача)
+
+Роль прежняя: WORKER. Полный контракт — cards/AB003_TD19_WORKER_PREPARED.md (включая «СНАПШОТ ПЕРЕД DISPATCH»), остаётся в силе. Продолжение той же роли, не пересоздание; родитель финал не дописывает.
+
+## Состояние на диске (подтверждено родителем 2026-11-08; проверить ещё раз перед правкой)
+P=E:/opencode_harness_portable/projects/omh-baseline-dom-mcp.
+- Baseline до правки подтверждён (715b1ca8…ba3). Правка ВНЕСЕНА: mockup/public_dto.py (новый, closed recursive allowlist по RS002 public_schemas), admission.py (guarded → public_dto.broken; read_snapshot публичный; sync сохраняет полный internal stamp для delivery_observations), server.py (text/structuredContent один валидированный объект). Текущий digest 16 файлов = 92a974ab15ab92391b2e84724f90c54ed75deeafb209f6d68a24ba6e2a5b930e (проверить пересчётом; 0cb4e437… — подсказал прежний worker на промежуточном состоянии; если не совпадает ни с одним — использующий текущий как post-fix baseline, расхождение только в mockup/admission.py|server.py|public_dto.py).
+- Pre-fix репродукция лежит: runtime/AB003/run-pre-3101/ (receipt-td19-a2-01/02/03, receipt-td19-delivery, manifest.json, 19 raw frames, omh-target) — LEAK_REPRODUCED на 6 поверхностях + broken_event_id=foreign UUID при коррупции AB-события (seq=3).
+
+## Точный остаток (в порядке)
+1. Применить однострочный фикс проекции (известный симtom, дословно из прежнего прогона): в mockup/public_dto.py в двух местах обёртки веток list/map заменить
+`elem  = spec[1] if ...` на: `elem  = spec[1] if (isinstance(spec[1], tuple) or spec[1] in ('str','int','bool','json')) else ('rec', spec[1])`
+(и то же для vspec), чтобы скалярные токены 'str'/'int'/'bool' не оборачивались в ('rec', NAME). Это чинит NOT_REC $.claims[].item.applicability[].
+2. Перезапустить in-process smoke (claim + 8 видов append + скрытый AB claim) → SMOKE OK (revisions==['AA'], trace.chain=={'status'}, master-AA revisions=={}, union {AA,AB}, ZZ/AB SCOPE_DENIED, history value).
+3. `PY -B runtime/AB003/e2e_td19.py --phase post --seed 3101 --out runtime/AB003/run-post-3101` → ожидать LEAK_CLOSED / GATE_UNIFORM_SAFE / PASS с raw receipts (PID/exit/frames); НЕ маскировать MISMATCH/FAIL — честный отчёт.
+4. Регрессия `pytest -q tests/` (с очисткой PYTHON*): ожидаемо ОДИН падающий тест test_integrity_contracts.py::test_event_chain_is_verified_and_forgery_is_detected (assertы прежней утечки: chain.events/broken_event_id/broken.chain.reason/origins) — НЕ править, задокументировать as intended change; остальные зелёные. Все результаты pytest приложить.
+5. Сдача: artifacts/WORKER_AB003_TD19.json (status=completed ТОЛЬКО при зелёном post; product_acceptance=false, is_approval=false, self-report НЕ APPROVE; per-step evidence refs с sha256; code_digest до/после), reports/WORKER_AB003_TD19.md (6 шагов карты; pre/post raw receipts; digest до/после; schema-change), runtime/AB003/** финальный frozen manifest (source/input/env byte-hashes), docs/SCHEMA_CHANGE_TD19.md (удалены: chain_head, глобальные revisions/events/head_hash, foreign broken_event_id; добавлены integrity_status, Broken-форма, публичный read_snapshot {read_at, revisions авторизованных, integrity_status}). completion_state=completed только при реально существующих файлах.
+6. Если появляются НОВЫЕ пути утечки помимо TD19 — observation с severity отдельной записью (не новый TD), чтобы reviewer/auditor проверили на точной версии.
+
+## Границы (как в основной карте)
+Запись ТОЛЬКО artifacts/WORKER_AB003_TD19.json, reports/WORKER_AB003_TD19.md, runtime/AB003/**, docs/SCHEMA_CHANGE_TD19.md, и разрешённые правки mockup/{public_dto,admission,server,projections}.py внутри scope. SEC003/QA003/PL003/tech_debt/tests/README — read-only. Без Git/install/network/paid/субагентов/OMH delta/new grants/endpoints/TD20-21/B/C/D. PY=E:/opencode_harness_portable/.venv/Scripts/python.exe, CWD=P, чистый env. При лимите — continuation.json той же роли с точным остатком. Финальный вердикт пишет сам исполнитель.

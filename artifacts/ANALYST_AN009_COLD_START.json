@@ -1,0 +1,1045 @@
+{
+  "id": "AN009",
+  "status": "COMPLETE_ANALYSIS_WITH_LIMITED_PROTOTYPE",
+  "h_items": [
+    {
+      "id": "H1",
+      "reproduced": true,
+      "evidence": "runtime/AN009/baseline_reproduction.json"
+    },
+    {
+      "id": "H2",
+      "reproduced": true,
+      "evidence": "runtime/AN009/baseline_reproduction.json"
+    },
+    {
+      "id": "H3",
+      "reproduced": true,
+      "evidence": "runtime/AN009/wrong_project_reproduction.json"
+    },
+    {
+      "id": "H8",
+      "reproduced": true,
+      "evidence": "runtime/AN009/baseline_reproduction.json"
+    }
+  ],
+  "root_causes": [
+    {
+      "h": "H1",
+      "file": "mockup/admission.py",
+      "line": 82,
+      "function": "Service.scope",
+      "cause": "one fixed SCOPE_DENIED for any unauthorized work/principal/branch; appropriate anti-oracle denial but no safe recovery action"
+    },
+    {
+      "h": "H1",
+      "file": "mockup/admission.py",
+      "line": 87,
+      "function": "Service.ready; guarded line 31",
+      "cause": "missing DB -> NOT_INITIALIZED; guarded emits status only"
+    },
+    {
+      "h": "H1/H2",
+      "file": "mockup/public_dto.py",
+      "line": 68,
+      "function": "DomainError/project_tool lines 372–376",
+      "cause": "closed error DTO permits only status; adding help solely in Service would be projected out/refused, so DTO must change too"
+    },
+    {
+      "h": "H2",
+      "file": "mockup/fixtures/__init__.py",
+      "line": 4,
+      "function": "WORK/TASK/POLICY module constants",
+      "cause": "work/task/policy held in fixture; POLICY calculated at line 6. No describe endpoint; init requires both inputs before revealing initialized work"
+    },
+    {
+      "h": "H2/H8",
+      "file": "mockup/server.py",
+      "line": 36,
+      "function": "TOOLS (through 122); SIGNATURE line 124",
+      "cause": "12 tools lack describe/draft; dom_submit payload_json is opaque string schema, not envelope/item schema"
+    },
+    {
+      "h": "H3",
+      "file": "mockup/admission.py",
+      "line": 87,
+      "function": "Service.ready/resume line 437",
+      "cause": "ready checks file existence/delivery migration only, never verifies binding.work_ref/policy against launch; reproduced foreign-bound empty DB returning RESUMED"
+    },
+    {
+      "h": "H3",
+      "file": "mockup/storage.py",
+      "line": 124,
+      "function": "Store.initialize",
+      "cause": "binding comparison happens only in initialize (126–127), not read path; fresh DB inserts AA/AB at zero (129–130), no baseline/instance delivery concept"
+    },
+    {
+      "h": "H8",
+      "file": "mockup/dom_contract.py",
+      "line": 6,
+      "function": "ENVELOPE/COMMON/TYPE_FIELDS and validate line 63",
+      "cause": "mandatory envelope/base64/seven typed metadata schemas/conditional constraints exist internally but not exposed by tools/list"
+    },
+    {
+      "h": "adjacent inherited defect",
+      "file": "mockup/admission.py",
+      "line": 514,
+      "function": "_pending_page and _pending_count line 546",
+      "cause": "REJECTED latest review is returned as pending item; count also never excludes latest rejected review, contrary to terminal-not-pending requirement"
+    }
+  ],
+  "code_version": {
+    "historical_pilot_label": "3cd21d96",
+    "recomputed_digest": "a5268c0877cc6ca6accbc714a073acc35efee9688ce0fe79bba6360ca06a6bf8",
+    "digest_algorithm": "sha256(concat(sorted(posix_relative_path + NUL + file_sha256 + LF)))",
+    "note": "not a Git revision; no Git commands used; do not equate historical short label and different digest algorithm"
+  },
+  "options": [
+    {
+      "id": "A",
+      "name": "Не добавлять холодный старт (контроль, НЕ рекомендация)",
+      "changes": [],
+      "new_tools": [],
+      "new_fields": [],
+      "migration": "Нет. E1+E2 остаются уже принятым, но не исполненным требованием; опция не отменяет это решение.",
+      "leakage": "Новая поверхность отсутствует; уже существующий H3 (чужой binding читается как свой) остаётся.",
+      "decisions": "Не ослабляет проверки, но не исполняет согласованный E1+E2; неприемлемо как готовый продукт.",
+      "other_h": "H1/H2/H3/H8 не устраняются; H5/H6/H7/H9/H10/H11 без изменений.",
+      "cost": {
+        "loc_product": 0,
+        "loc_tests": 0,
+        "risk": "Высокий операционный: новый агент блокирован; ручной JSON и чтение исходников.",
+        "cold_steps_removed": 0
+      },
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "B",
+      "name": "E1+E2 + scoped dom_describe + схемы и безопасные причины, без сборщика",
+      "changes": [
+        {
+          "file": "mockup/server.py",
+          "function": "TOOLS/SIGNATURE/dispatch",
+          "detail": "Добавить read-only dom_describe({}); output описывает только launch identity, binding, grant, policy, schema, типы и полный envelope/item JSON Schema + валидный пример каждого типа. submit/admit принимают delivery_receipt отдельным аргументом."
+        },
+        {
+          "file": "mockup/admission.py",
+          "function": "Service.ready/init/submit/admit",
+          "detail": "Проверять доверенную выдачу; receipt привязать к instance/work/task/principal/root/session/grant/policy/schema/baseline revision+digest. До чтения scoped данных проверять persisted binding. Гейт до idempotency cache."
+        },
+        {
+          "file": "mockup/public_dto.py",
+          "function": "RECORDS/project_tool",
+          "detail": "Замкнутые Describe/ErrorHelp records, константные причины для отказов, без чужих locators/counts."
+        },
+        {
+          "file": "new trusted launcher + mockup/storage.py",
+          "function": "issue_baseline / Store.initialize",
+          "detail": "E1 не запускает без выданного пакета; добавить immutable db_instance и append-only delivery receipt ledger. Никакого model-facing выдающего инструмента."
+        }
+      ],
+      "new_tools": [
+        "dom_describe"
+      ],
+      "new_fields": [
+        "help.reason_code",
+        "help.next_action",
+        "help.descriptor",
+        "work_binding",
+        "grant",
+        "claim_types",
+        "envelope_schema",
+        "delivery_receipt",
+        "baseline.state",
+        "instance_id"
+      ],
+      "migration": "Additive DTO version negotiation; immutable receipt/instance tables and schema version. Existing candidates not rewritten. Legacy launches without verified delivery get BASELINE_RECEIPT_REQUIRED, trusted issuer reissues; no guessed backfill. Do not rewrite existing idempotency records or change L1+L2.",
+      "leakage": "Auth from trusted launcher BEFORE descriptor. No work/branch lookup parameters. grant names are authorization facts, not discovered DB branch inventory; no hidden counts/revisions. Full schema contains types, not hidden instances. Generic SCOPE_DENIED help identical for missing/foreign. L1 only once at issuance, L2 unchanged, no L3.",
+      "decisions": "O1/O2/O3, NU-AU006-01, L1+L2 retained; UD-02 unresolved. Does not itself close F-01/E3.",
+      "other_h": "H1/H2/H3 addressed; H8 schema guessing reduced but agent still builds bytes/base64/key/deps. H7 provider interface needed from AN011; H6/H9 not solved.",
+      "cost": {
+        "loc_product": "300–480 (estimate, excludes actual baseline plan importer)",
+        "loc_tests": "250–400 (estimate)",
+        "risk": "Medium: receipt lifecycle/migration and public DTO surface; still manual byte assembly.",
+        "cold_steps_removed": "At least code lookup work/policy and missing-schema guessing removed; no measured full B trial."
+      },
+      "changes_accepted_decision": false
+    },
+    {
+      "id": "C",
+      "name": "B + dom_draft_claim: recommended scoped byte assembler",
+      "changes": [
+        {
+          "file": "mockup/server.py",
+          "function": "TOOLS/SIGNATURE/dispatch",
+          "detail": "B plus dom_draft_claim(branch, claim{text,content_type,metadata,reason,origin_version,requirement_refs,basis[]}); no authority or work overrides. Strict unknown-field/type validation."
+        },
+        {
+          "file": "new mockup/claim_draft.py",
+          "function": "draft_claim",
+          "detail": "Server obtains work/task/policy/schema from verified launch; checks branch and every explicit basis in grant BEFORE lookup; pins only explicit basis current revisions; encodes exact UTF-8 text, validates item and metadata, canonicalizes dom-c14n/v1; derives stable key from normalized identity + current scope; returns package, digest, unsigned authorship and next_action. Never auto-fills semantic evidence or auto-submits."
+        },
+        {
+          "file": "mockup/admission.py",
+          "function": "Service.submit/review/admit/dedupe",
+          "detail": "Retain original gates; E2 additive receipt check at submit/admit; digest, independence, expected revision and stale dependencies still validated by existing engine. Do not add receipt into closed dom/v1 payload; keep transport argument to avoid accidental unknown field."
+        },
+        {
+          "file": "mockup/public_dto.py",
+          "function": "RECORDS/project_tool",
+          "detail": "B plus closed DraftResponse/DraftAuthorship/Baseline/ErrorHelp. The production implementation MUST reject unknown structural fields, not serialize arbitrary facade dictionaries."
+        },
+        {
+          "file": "new trusted launcher + mockup/storage.py",
+          "function": "issue_baseline / Store.initialize",
+          "detail": "Same immutable instance/receipt migration as B; receipt verification not model-generated. Schema and templates versioned with validator, not copied fixture code."
+        }
+      ],
+      "new_tools": [
+        "dom_describe",
+        "dom_draft_claim"
+      ],
+      "new_fields": [
+        "all B fields",
+        "payload_json",
+        "authorship.principal",
+        "authorship.root",
+        "authorship.assembler",
+        "authorship.reviewed=false",
+        "authorship.signature=NO_AUTHOR_SIGNATURE_ASSERTED",
+        "dependencies",
+        "intent_digest"
+      ],
+      "migration": "B plus additive tool registration. Canonical dom/v1 candidate stays unchanged; receipt is separately bound to delivery/transport then candidate at submit. Existing submit callers require reissued packet; old idempotency binding is preserved. Deterministic draft is not persisted; exact returned payload is the retry token. db_instance legacy assignment requires trusted initialization, never inferred from mere directory name.",
+      "leakage": "All B guarantees plus branch/basis authorization before DB access; no automatic dependency enumeration, no inference of hidden links, no arbitrary external fetch. Refusals disclose no candidate/foreign branch/count. Exact bytes preserved; prompt-looking claim text remains inert data. Prototype functional equality tested; constant-time/network indistinguishability NOT established.",
+      "decisions": "No accepted decision changes. O1 stale review still refuses, O2 public provenance unchanged, O3 delivery engine untouched, NU drafts remain possible during outage but no material admission. E1/E2 prototype only, E3 not tested. Receipt is delivery attestation, NOT author signature or independent approval.",
+      "other_h": "H1/H2/H3/H8 addressed for supported fixture contract; AN011 must provide scoped dynamic requirement/branch definitions. Does not read candidate content for reviewer (AN010), fix stale remediation (AN012), enforce real independent identities (H10), or run sync (H11).",
+      "cost": {
+        "loc_product": "520–850 (estimate; includes B, excludes plan importer and real auth infrastructure)",
+        "loc_tests": "450–700 (estimate)",
+        "risk": "Medium-high: receipt lifecycle, instance migration, schema drift, ensuring helper never becomes admission bypass.",
+        "cold_steps_removed": "Observed old cold path blocked; new path 7 discovery+tool calls, zero source reads/parameter guesses. Eliminates manual code lookup, payload schema discovery, base64, canonical JSON, hash/key calculation. Exact number of saved calls cannot be inferred from a blocked baseline."
+      },
+      "changes_accepted_decision": false
+    }
+  ],
+  "recommendation": {
+    "option": "C",
+    "reason": "Server supplies the contract AND byte-correct candidate without changing admission; B is cheaper but still delegates canonical bytes/hash assembly to novice agent.",
+    "product_readiness": "NOT_ACCEPTED; real baseline issuance/DTO/auth/expiry/migration and independent review still required"
+  },
+  "baseline_package": {
+    "issuer": "trusted task launcher reading accepted OMH PLAN baseline; never agent-supplied authority",
+    "fields": [
+      {
+        "fields": [
+          "version",
+          "schema_version",
+          "canonicalization_version",
+          "descriptor_version"
+        ],
+        "source": "server contract registry",
+        "why": "pin exact byte/schema rules"
+      },
+      {
+        "fields": [
+          "external_work_ref",
+          "external_task_ref"
+        ],
+        "source": "authenticated host task assignment",
+        "why": "avoid guessing and wrong project"
+      },
+      {
+        "fields": [
+          "instance_id",
+          "work_binding"
+        ],
+        "source": "immutable DB instance binding established by trusted initializer",
+        "why": "same project on wrong database must not pass"
+      },
+      {
+        "fields": [
+          "principal",
+          "root",
+          "role",
+          "capabilities",
+          "grant",
+          "session_id"
+        ],
+        "source": "trusted launch identity, not model input",
+        "why": "receipt cannot transfer between agents, roles, scopes or sessions"
+      },
+      {
+        "fields": [
+          "policy_digest",
+          "policy_version"
+        ],
+        "source": "server policy snapshot",
+        "why": "server computes digest; agent copies verified value"
+      },
+      {
+        "fields": [
+          "baseline_revision",
+          "baseline_digest",
+          "claims",
+          "plan_pins",
+          "requirements",
+          "granted_branch_definitions"
+        ],
+        "source": "accepted baseline projection of OMH PLAN; exact text+sha256 pins and allowed provenance",
+        "why": "baseline means real initial plan claims, not just credentials"
+      },
+      {
+        "fields": [
+          "delivery_id",
+          "issued_at",
+          "expires_at",
+          "issuer",
+          "receipt"
+        ],
+        "source": "trusted append-only delivery ledger/signature",
+        "why": "E1 launch and E2 submit/admit reference same authenticated issuance"
+      },
+      {
+        "fields": [
+          "baseline.state",
+          "signal_L1",
+          "signal_window_id"
+        ],
+        "source": "scoped state + once-per-task aggregate under approved L1 policy",
+        "why": "NO_BASELINE is explicit; no per-query L1 drift; L3 absent"
+      }
+    ],
+    "verification": "Verify issuer via authenticated launch channel, receipt signature/server ledger, recipient/root/session/grant/work/task/instance/schema/policy/baseline revision+digest, issuance validity and expiry. Compare endpoint binding without revealing actual mismatched work. Matching a raw untrusted hash is NOT authentication.",
+    "prototype_limit": "Prototype packet contains synthetic NO_BASELINE and fixture requirements, not an importer of an accepted OMH PLAN. Public fixed HMAC key proves binding mechanics only; signature secrecy, expiry, revocation and durable SQL instance migration NOT implemented."
+  },
+  "self_describing_errors": {
+    "NOT_INITIALIZED": "constant BINDING_REQUIRED -> authenticated dom_describe/init_arguments",
+    "SCOPE_DENIED": "constant NOT_AUTHORIZED -> own launch packet/issuer; no expected foreign work/branch or existence distinction",
+    "POLICY_MISMATCH": "after authorization: LAUNCH_POLICY_STALE -> revalidate current scoped contract; never global policy discovery",
+    "REJECTED": "retain typed field paths/codes + constant help to schema/draft; malformed submission creates no candidate",
+    "WORK_BINDING_MISMATCH": "authorized launch instance differs from selected persisted binding; no actual foreign binding returned"
+  },
+  "prototype": {
+    "executed": true,
+    "kind": "isolated stdio MCP facade + unchanged copied admission",
+    "path": "runtime/AN009/endpoint.py",
+    "loc_measured": 141,
+    "runner": "runtime/AN009/run_checks.py",
+    "extra_runner": "runtime/AN009/extra_checks.py",
+    "positive_controls": [
+      "real stdio describe/init/draft/submit/resume/refuse",
+      "seven described content types draft successfully",
+      "independent reviewer still admits",
+      "legal submit/admit lost-reply retry returns same receipt"
+    ],
+    "negative_controls_count": 38,
+    "limitations": [
+      "simulation only",
+      "pending not admitted claim",
+      "no production authentication or expiry enforcement",
+      "no timed side-channel acceptance threshold",
+      "no E3 host gating",
+      "dynamic declaration AN011 interface not implemented",
+      "new facade response DTO hardening not product-accepted",
+      "synthetic instance sidecar is not an immutable production DB binding",
+      "draft does not claim signature; author identity bound by original normalized submit",
+      "latest-review REJECTED remains in inherited pending: not silently fixed in adjacent lane"
+    ]
+  },
+  "cold_start": {
+    "criteria": {
+      "max_calls": 8,
+      "code_file_reads": 0,
+      "parameter_guesses": 0,
+      "claim_visibility": "pending, not admitted"
+    },
+    "criteria_file": "runtime/AN009/criteria.json",
+    "criteria_frozen_before_run": true,
+    "steps": [
+      {
+        "n": 1,
+        "tool": "tools/list",
+        "source_of_parameters": "MCP tool descriptions; no project-specific input"
+      },
+      {
+        "n": 2,
+        "tool": "dom_describe",
+        "source_of_parameters": "launch.tool_entry; no lookup arguments"
+      },
+      {
+        "n": 3,
+        "tool": "dom_init",
+        "source_of_parameters": "describe.init_arguments, verified against authenticated launch packet"
+      },
+      {
+        "n": 4,
+        "tool": "dom_draft_claim",
+        "source_of_parameters": "describe.grant[0] and decision example; scenario text/reason only from assigned task"
+      },
+      {
+        "n": 5,
+        "tool": "dom_submit",
+        "source_of_parameters": "draft.payload_json and draft.delivery_receipt copied verbatim"
+      },
+      {
+        "n": 6,
+        "tool": "dom_resume",
+        "source_of_parameters": "same authorized describe.grant[0]"
+      },
+      {
+        "n": 7,
+        "tool": "dom_submit (deliberately invalid schema_version)",
+        "source_of_parameters": "previous draft payload; test changes only schema_version; receipt unchanged"
+      }
+    ],
+    "baseline_steps": [
+      {
+        "step": "tools/list",
+        "observed": "opaque dom_submit.payload_json and required work/policy but no values/schema"
+      },
+      {
+        "step": "resume before init",
+        "observed": "NOT_INITIALIZED only"
+      },
+      {
+        "step": "init guessed work",
+        "observed": "SCOPE_DENIED only; test probe, not valid cold-start path"
+      },
+      {
+        "step": "STOP",
+        "observed": "cannot proceed without externally issued values; analyst read fixture for reproduction, forbidden to cold agent"
+      },
+      {
+        "step": "manual envelope + byte/hash/key/metadata assembly if privileged values supplied",
+        "observed": "additional code/manual steps; not a measured finite cold path"
+      }
+    ],
+    "result": {
+      "status": "PASS",
+      "tool_calls": 6,
+      "discovery_calls": 1,
+      "total_agent_calls": 7,
+      "code_file_reads": 0,
+      "parameter_guesses": 0,
+      "claim_visibility": "pending only; admission intentionally not attempted"
+    },
+    "counting": "6 domain calls + tools/list=7; initialize is 1 additional protocol RPC (8 RPC requests total), notifications not counted as calls. Server process startup/issuance is trusted launcher overhead, not model tool calls.",
+    "evidence": "runtime/AN009/cold_start_result.json",
+    "comparison": "old path BLOCKED; finite delta not measurable. New path removes source lookup, parameter/schema guessing, byte/base64/canonical/hash/key assembly by agent. This deterministic agent tests legibility, not arbitrary LLM generalization."
+  },
+  "negative_controls": [
+    {
+      "id": "N01_draft_no_write",
+      "passed": true,
+      "evidence": {
+        "before": {
+          "candidates": 1,
+          "claims": 0,
+          "reviews": 0,
+          "transactions": 0,
+          "events": 0,
+          "outbox": 0,
+          "idempotency": 1
+        },
+        "after": {
+          "candidates": 1,
+          "claims": 0,
+          "reviews": 0,
+          "transactions": 0,
+          "events": 0,
+          "outbox": 0,
+          "idempotency": 1
+        }
+      }
+    },
+    {
+      "id": "N02_deterministic_draft",
+      "passed": true,
+      "evidence": {
+        "equal": true
+      }
+    },
+    {
+      "id": "N03_lost_reply_replay",
+      "passed": true,
+      "evidence": {
+        "a": {
+          "status": "RECORDED_CANDIDATE",
+          "candidate_id": "127f6e6e-5606-4fcc-a76e-de055433c3c9",
+          "intent_digest": "48bee65d2e0d877cccfc9fc4eca737c2266dcd07157867ee0060196e41e1f7e8",
+          "accepted_count": 0,
+          "simulated": true
+        },
+        "b": {
+          "status": "RECORDED_CANDIDATE",
+          "candidate_id": "127f6e6e-5606-4fcc-a76e-de055433c3c9",
+          "intent_digest": "48bee65d2e0d877cccfc9fc4eca737c2266dcd07157867ee0060196e41e1f7e8",
+          "accepted_count": 0,
+          "simulated": true
+        },
+        "counts_before": {
+          "candidates": 2,
+          "claims": 0,
+          "reviews": 0,
+          "transactions": 0,
+          "events": 0,
+          "outbox": 0,
+          "idempotency": 2
+        },
+        "counts_after": {
+          "candidates": 2,
+          "claims": 0,
+          "reviews": 0,
+          "transactions": 0,
+          "events": 0,
+          "outbox": 0,
+          "idempotency": 2
+        }
+      }
+    },
+    {
+      "id": "N04_same_key_changed_payload",
+      "passed": true,
+      "evidence": {
+        "status": "IDEMPOTENCY_MISMATCH"
+      }
+    },
+    {
+      "id": "N05_missing_receipt",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_REQUIRED",
+        "help": {
+          "reason_code": "DELIVERY_REQUIRED",
+          "next_action": "Supply the receipt returned by authenticated dom_describe.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N06_forged_receipt",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N07_foreign_dependency",
+      "passed": true,
+      "evidence": {
+        "status": "SCOPE_DENIED",
+        "help": {
+          "reason_code": "NOT_AUTHORIZED",
+          "next_action": "Use only your authenticated launch packet; request reissue from its issuer. No existence information is provided.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N08_existing_foreign_equals_missing",
+      "passed": true,
+      "evidence": {
+        "foreign": {
+          "status": "SCOPE_DENIED",
+          "help": {
+            "reason_code": "NOT_AUTHORIZED",
+            "next_action": "Use only your authenticated launch packet; request reissue from its issuer. No existence information is provided.",
+            "descriptor": "dom_describe"
+          }
+        },
+        "missing": {
+          "status": "SCOPE_DENIED",
+          "help": {
+            "reason_code": "NOT_AUTHORIZED",
+            "next_action": "Use only your authenticated launch packet; request reissue from its issuer. No existence information is provided.",
+            "descriptor": "dom_describe"
+          }
+        }
+      }
+    },
+    {
+      "id": "N09_describe_no_probe_input",
+      "passed": true,
+      "evidence": {
+        "status": "REJECTED",
+        "help": {
+          "reason_code": "PAYLOAD_SCHEMA_INVALID",
+          "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N10_no_self_review",
+      "passed": true,
+      "evidence": {
+        "status": "INDEPENDENCE_NOT_ENFORCED"
+      }
+    },
+    {
+      "id": "N11_unknown_metadata",
+      "passed": true,
+      "evidence": {
+        "status": "REJECTED",
+        "help": {
+          "reason_code": "PAYLOAD_SCHEMA_INVALID",
+          "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+          "descriptor": "dom_describe"
+        },
+        "errors": [
+          {
+            "local_id": "claim-1",
+            "path": "metadata.invented",
+            "code": "UNKNOWN_FIELD",
+            "required": false,
+            "fix": "Supply schema-conforming field; no coercion."
+          }
+        ],
+        "terminal": true,
+        "accepted_count": 0
+      }
+    },
+    {
+      "id": "N12_policy_mismatch_hint",
+      "passed": true,
+      "evidence": {
+        "status": "POLICY_MISMATCH",
+        "help": {
+          "reason_code": "LAUNCH_POLICY_STALE",
+          "next_action": "Revalidate launch delivery with dom_describe; do not invent a policy digest.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N13_other_project",
+      "passed": true,
+      "evidence": {
+        "status": "WORK_BINDING_MISMATCH",
+        "help": {
+          "reason_code": "INSTANCE_NOT_VERIFIED",
+          "next_action": "Stop material operations and ask your launcher to verify the selected instance.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N14_other_instance",
+      "passed": true,
+      "evidence": {
+        "status": "WORK_BINDING_MISMATCH",
+        "help": {
+          "reason_code": "INSTANCE_NOT_VERIFIED",
+          "next_action": "Stop material operations and ask your launcher to verify the selected instance.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_principal",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_root",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_grant",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_policy_digest",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_external_task_ref",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_baseline",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_instance_id",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N15_receipt_binds_session_id",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_INVALID",
+        "help": {
+          "reason_code": "DELIVERY_NOT_VERIFIED",
+          "next_action": "Request an authenticated packet reissue; supplied bytes are not accepted.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N16_author_cannot_admit",
+      "passed": true,
+      "evidence": {
+        "status": "INDEPENDENCE_NOT_ENFORCED"
+      }
+    },
+    {
+      "id": "N17_E1_no_packet",
+      "passed": true,
+      "evidence": {
+        "status": "E1_NO_PACKET",
+        "help": {
+          "reason_code": "LAUNCH_PACKET_REQUIRED",
+          "next_action": "The trusted launcher must issue a baseline package before launch.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N18_hidden_state_no_descriptor_oracle",
+      "passed": true,
+      "evidence": {
+        "hidden_seed_status": "RECORDED_CANDIDATE",
+        "describe_equal": true,
+        "denial_equal": true
+      }
+    },
+    {
+      "id": "N19_explicit_basis_scoped_current",
+      "passed": true,
+      "evidence": {
+        "draft_dependencies": {
+          "AA": 0
+        },
+        "review": {
+          "status": "DEMO_REVIEWED",
+          "review_id": "2d130690-a3f4-4f65-a6e2-ad8581e72a47",
+          "simulated": true
+        }
+      }
+    },
+    {
+      "id": "P01_independent_path_still_works",
+      "passed": true,
+      "evidence": {
+        "status": "DEMO_ADMITTED",
+        "simulated": true,
+        "tx_id": "2b646130-8730-439d-9eb5-15595b07041b",
+        "branch": "AA",
+        "revision": 1,
+        "intent_digest": "48bee65d2e0d877cccfc9fc4eca737c2266dcd07157867ee0060196e41e1f7e8",
+        "claim_ids": {
+          "claim-1": "0b0329b4-35aa-4022-a472-51f6cf811050"
+        },
+        "event_ids": {}
+      }
+    },
+    {
+      "id": "N20_admit_legal_lost_reply",
+      "passed": true,
+      "evidence": {
+        "first": {
+          "status": "DEMO_ADMITTED",
+          "simulated": true,
+          "tx_id": "2b646130-8730-439d-9eb5-15595b07041b",
+          "branch": "AA",
+          "revision": 1,
+          "intent_digest": "48bee65d2e0d877cccfc9fc4eca737c2266dcd07157867ee0060196e41e1f7e8",
+          "claim_ids": {
+            "claim-1": "0b0329b4-35aa-4022-a472-51f6cf811050"
+          },
+          "event_ids": {}
+        },
+        "retry": {
+          "status": "DEMO_ADMITTED",
+          "simulated": true,
+          "tx_id": "2b646130-8730-439d-9eb5-15595b07041b",
+          "branch": "AA",
+          "revision": 1,
+          "intent_digest": "48bee65d2e0d877cccfc9fc4eca737c2266dcd07157867ee0060196e41e1f7e8",
+          "claim_ids": {
+            "claim-1": "0b0329b4-35aa-4022-a472-51f6cf811050"
+          },
+          "event_ids": {}
+        }
+      }
+    },
+    {
+      "id": "N21_L1_wrong_hash_before_cached_replay",
+      "passed": true,
+      "evidence": {
+        "status": "DIGEST_MISMATCH"
+      }
+    },
+    {
+      "id": "N22_O1_stale_basis_still_refused",
+      "passed": true,
+      "evidence": {
+        "status": "STALE_REVIEW"
+      }
+    },
+    {
+      "id": "N23_E2_admit_missing_receipt",
+      "passed": true,
+      "evidence": {
+        "status": "BASELINE_RECEIPT_REQUIRED",
+        "help": {
+          "reason_code": "DELIVERY_REQUIRED",
+          "next_action": "Supply the receipt returned by authenticated dom_describe.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N24_REJECTED_not_pending",
+      "passed": true,
+      "evidence": {
+        "before": 1,
+        "after": 1,
+        "refusal": {
+          "status": "REJECTED",
+          "accepted_count": 0,
+          "errors": [
+            {
+              "local_id": "claim-1",
+              "path": "metadata.attribution",
+              "code": "MISSING_FIELD",
+              "required": true,
+              "fix": "Supply schema-conforming field; no coercion."
+            },
+            {
+              "local_id": "claim-1",
+              "path": "metadata.rationale",
+              "code": "MISSING_FIELD",
+              "required": true,
+              "fix": "Supply schema-conforming field; no coercion."
+            },
+            {
+              "local_id": "claim-1",
+              "path": "metadata.assumptions",
+              "code": "MISSING_FIELD",
+              "required": true,
+              "fix": "Supply schema-conforming field; no coercion."
+            },
+            {
+              "local_id": "claim-1",
+              "path": "metadata.alternatives",
+              "code": "MISSING_FIELD",
+              "required": true,
+              "fix": "Supply schema-conforming field; no coercion."
+            }
+          ],
+          "rejected_local_ids": [
+            "claim-1"
+          ],
+          "help": {
+            "reason_code": "PAYLOAD_SCHEMA_INVALID",
+            "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+            "descriptor": "dom_describe"
+          }
+        }
+      }
+    },
+    {
+      "id": "N25_O2_provenance_not_stripped",
+      "passed": true,
+      "evidence": {
+        "origin_branch": "AA",
+        "origin_version": "artifact-v1"
+      }
+    },
+    {
+      "id": "N26_append_only_still_enforced",
+      "passed": true,
+      "evidence": {
+        "update_denied": true,
+        "immutable_trigger_count": 39
+      }
+    },
+    {
+      "id": "N27_NOT_INITIALIZED_self_describing",
+      "passed": true,
+      "evidence": {
+        "status": "NOT_INITIALIZED",
+        "help": {
+          "reason_code": "BINDING_REQUIRED",
+          "next_action": "Call dom_describe, then dom_init using its init_arguments; do not guess.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N28_SCOPE_DENIED_self_describing",
+      "passed": true,
+      "evidence": {
+        "status": "SCOPE_DENIED",
+        "help": {
+          "reason_code": "NOT_AUTHORIZED",
+          "next_action": "Use only your authenticated launch packet; request reissue from its issuer. No existence information is provided.",
+          "descriptor": "dom_describe"
+        }
+      }
+    },
+    {
+      "id": "N29_malformed_types_no_crash",
+      "passed": true,
+      "evidence": {
+        "content_type": {
+          "status": "REJECTED",
+          "help": {
+            "reason_code": "PAYLOAD_SCHEMA_INVALID",
+            "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+            "descriptor": "dom_describe"
+          }
+        },
+        "branch": {
+          "status": "REJECTED",
+          "help": {
+            "reason_code": "PAYLOAD_SCHEMA_INVALID",
+            "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+            "descriptor": "dom_describe"
+          }
+        },
+        "arguments": {
+          "status": "REJECTED",
+          "help": {
+            "reason_code": "PAYLOAD_SCHEMA_INVALID",
+            "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+            "descriptor": "dom_describe"
+          }
+        }
+      }
+    },
+    {
+      "id": "N30_claim_authority_override_rejected",
+      "passed": true,
+      "evidence": {
+        "status": "REJECTED",
+        "help": {
+          "reason_code": "PAYLOAD_SCHEMA_INVALID",
+          "next_action": "Use dom_describe.claim_types and dom_draft_claim; fix listed fields and submit again.",
+          "descriptor": "dom_describe"
+        }
+      }
+    }
+  ],
+  "needs_user": [
+    {
+      "id": "NU-AN009-UD02",
+      "topic": "Empty baseline launch and authoring policy (UD-02)",
+      "what_changes": "Whether a valid delivery packet with zero accepted initial OMH-plan claims may launch an authoring agent. E1 existence of packet is already required, not reopened.",
+      "why": "Customer requires baseline=initial OMH PLAN claims, but empty-baseline reject vs NO_BASELINE remains open.",
+      "affected": [
+        "E1 packet content",
+        "NO_BASELINE behavior",
+        "cold-start scenario on empty DB",
+        "readiness/coverage"
+      ],
+      "if_refused": "Keep question open; show NO_BASELINE diagnostic only, no product acceptance of empty baseline and no coverage from it.",
+      "choices": [
+        {
+          "id": "reject",
+          "consequences": "Issuer refuses authoring launch until trusted baseline import; recovery/read-only diagnosis still allowed. Cold test must start from genuine seeded baseline."
+        },
+        {
+          "id": "informational",
+          "consequences": "Launch may show NO_BASELINE and allow drafts/provisional candidates, but no coverage/readiness/material close until baseline fixed; exact permitted material operations need explicit policy."
+        }
+      ],
+      "prototype_position": "Exploratory test uses informational NO_BASELINE only; does not decide or implement production choice."
+    }
+  ],
+  "conflicts_with_decisions": [
+    {
+      "source": "inherited product, not recommended change",
+      "decision": "REJECTED is terminal and not pending",
+      "evidence": "runtime/AN009/inherited_defect.json",
+      "resolution": "report to AN010/AN012 owners; no product changes here; malformed-input REJECTED tested separately and does not create pending"
+    }
+  ],
+  "depends_on": [
+    {
+      "owner": "AN011",
+      "interface": "project_contract(scope, revision) -> scoped declared requirements, branches, types and baseline pins; no hidden counts/head revisions",
+      "boundary": "AN009 describes returned contract; does not implement declarations or permissions."
+    },
+    {
+      "owner": "E1/E2 implementer",
+      "interface": "authenticated launch packet + append-only delivery receipt/instance validation",
+      "boundary": "No claim that synthetic facade closes live F-01 or E3."
+    }
+  ],
+  "outage": "Draft artifacts remain allowed; if live DOM unavailable, material submit/admit/close requiring DB must refuse and out-of-base artifact/path/sha256/intent/time must be registered through accepted procedure. Prototype does not implement outage journal.",
+  "product_acceptance": false,
+  "is_approval": false,
+  "remaining": [
+    "production implementation and independent reviewer/auditor",
+    "UD-02 user choice",
+    "real accepted baseline import/issuance and expiry/revocation",
+    "immutable DB instance migration and closed new response DTOs",
+    "timing side-channel threshold/acceptance",
+    "dynamic AN011 declarations",
+    "inherited terminal-REJECTED pending defect"
+  ]
+}

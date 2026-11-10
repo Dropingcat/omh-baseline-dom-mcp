@@ -1,0 +1,632 @@
+{
+ "role": "SEC003 security specialist — negative security/inter-branch isolation E2E over current code (pre TD19 fix); not product worker, not accepting reviewer",
+ "task": "NEGATIVE_E2E_SECURITY + branch isolation attack runs against code digest 715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+ "status": "COMPLETED",
+ "completion_state": "completed",
+ "verdict": "REQUEST_CHANGES",
+ "product_acceptance": false,
+ "is_approval": false,
+ "plan_ref": "docs/NEGATIVE_E2E_PLAN.md",
+ "card": "cards/SEC003_SECURITY.md",
+ "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+ "code_digest_recomputed": "matched (digest_check.py: 15 files, 0 mismatches vs runtime/PL003/input_fingerprints.json source_hashes)",
+ "source_fingerprints": {
+  "code_digest": "715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3",
+  "source_hashes_compared": 15,
+  "mismatches": 0
+ },
+ "input_fingerprints": {
+  "runtime/PL003/failure_map.json": "bf3b538881185e612fe8e38ba15b5370effae05a16cf0e40fbea7acdd6cd3692",
+  "runtime/PL003/scenario_plan.json": "1c51281bb145f2142c5d5ce753695f799cfc895ac9f7b802f418c35de714de00",
+  "runtime/PL003/capability_inventory.json": "0b52516ea66742b0dd68b51e7ecbc92033f0758afd20c03bdade7155336f3aa8",
+  "runtime/PL003/input_fingerprints.json": "a4028d842d7367af8bd39ef112aad96d4195cbbe597e3569d555b94897b2e656"
+ },
+ "env_fingerprints": {
+  "python": "3.11.15 (MSC v.1944 64 bit AMD64)",
+  "platform": "Windows-10-10.0.19042-SP0",
+  "sqlite": "3.53.1",
+  "yaml": "6.0.3",
+  "pydantic": "2.13.5",
+  "mcp": "unknown (no __version__ attr)",
+  "interpreter": "E:/opencode_harness_portable/.venv/Scripts/python.exe",
+  "invocation": "python -B, cwd=P, clean env (no host PYTHONPATH shadow)",
+  "host_pythonpath": "C:\\Users\\Arhys\\AppData\\Local\\hermes\\installs\\5145efa684189398\\environments\\878cb432a99047328310a788e9834b25\\venv\\Lib\\site-packages (NOT inherited in clean runs)"
+ },
+ "scenario_manifest_ref": {
+  "path": "runtime/SEC003/scenario_manifest.json",
+  "sha256": "7b96bf4afc99bbcd04f8c932e0775ed5b71fb3a63ffab3ace238ccece666cf55",
+  "status_by_check_count": 25,
+  "seeds": [
+   3101,
+   3109
+  ],
+  "canonical_runs": [
+   "run-3101-f7fc7e4b",
+   "run-3109-31020cee"
+  ]
+ },
+ "evidence_refs": {
+  "scenario_manifest.json": {
+   "sha256": "7b96bf4afc99bbcd04f8c932e0775ed5b71fb3a63ffab3ace238ccece666cf55",
+   "path": "runtime/SEC003/scenario_manifest.json"
+  },
+  "failure_map.json": {
+   "sha256": "ec309a77fb75ba10bc607bb893990f0fee2c1f35bcae4fa54560491c8c808885",
+   "path": "runtime/SEC003/failure_map.json"
+  },
+  "first_artifact.json": {
+   "sha256": "e468d89f25ab0e11d41916d61414db835c4a3002736c992e78ce48182b5eeb0a",
+   "path": "runtime/SEC003/first_artifact.json"
+  },
+  "run-3101-f7fc7e4b/manifest.json": {
+   "sha256": "e8cc53918d16e9a4ad870acdc64ca84375d433db6bb3ffa990dbbed2728f9a9b",
+   "manifest_file_sha256_on_disk": "c56bead9776ccf10710be556c7bbfbaf134cd060c23bba5a162339ca6269debd",
+   "entries": 759,
+   "path": "runtime/SEC003/run-3101-f7fc7e4b/manifest.json"
+  },
+  "run-3109-31020cee/manifest.json": {
+   "sha256": "373a33d26e3481f83e9e7d15b39e2f93e9764785f9ce781e0b0e321f7ae3145a",
+   "manifest_file_sha256_on_disk": "ca1994aa6e121e12cd6a69e8bc9d7cb3492a0f17bea051a39308e4572209cc13",
+   "entries": 759,
+   "path": "runtime/SEC003/run-3109-31020cee/manifest.json"
+  },
+  "run-3101-85478e2b/manifest.json": {
+   "sha256": "66c8d940739762297e5b91d5b30dc9177dca9bc5509c1bf28bde53608c2773de",
+   "manifest_file_sha256_on_disk": "05444413ed9ec16ce52cbe6071155a649753889adeb771fc1259b10d84eefcaa",
+   "entries": 753,
+   "path": "runtime/SEC003/run-3101-85478e2b/manifest.json"
+  },
+  "run-3101-f7fc7e4b/receipt-hp-07.json": {
+   "sha256": "d64f56a450f412b0008f749a3f8c668aa1e10eccce245814822cf976f8418156",
+   "path": "runtime/SEC003/run-3101-f7fc7e4b/receipt-hp-07.json"
+  },
+  "run-3101-f7fc7e4b/receipt-hp-14.json": {
+   "sha256": "861173f120a545fa4a8d684281b6294dfcd461a96b65589ddd462314250da93b",
+   "path": "runtime/SEC003/run-3101-f7fc7e4b/receipt-hp-14.json"
+  },
+  "run-3101-f7fc7e4b/receipt-lp-a2-01.json": {
+   "sha256": "c80717baa067be34386381c7ce07caa2d072441f481f6b6eedfab8cb867f2ae5",
+   "path": "runtime/SEC003/run-3101-f7fc7e4b/receipt-lp-a2-01.json"
+  },
+  "run-3101-f7fc7e4b/receipt-lp-a2-04.json": {
+   "sha256": "a1f8bd0dc91b922ffb11c63ac68d85c37ae8373d57e3500400873f73492a75fd",
+   "path": "runtime/SEC003/run-3101-f7fc7e4b/receipt-lp-a2-04.json"
+  },
+  "run-3109-31020cee/receipt-hp-07.json": {
+   "sha256": "2453fd2c9e084fbd78422a1502a92d1a8e56336f079c98ad78d5a3c089943708",
+   "path": "runtime/SEC003/run-3109-31020cee/receipt-hp-07.json"
+  },
+  "run-3109-31020cee/receipt-hp-14.json": {
+   "sha256": "86eda09612f22c39338562068f1d0eecc7dd4d9ca17b5ccb7633602d7ff4dcca",
+   "path": "runtime/SEC003/run-3109-31020cee/receipt-hp-14.json"
+  },
+  "run-3109-31020cee/receipt-lp-a2-01.json": {
+   "sha256": "bb820171c0a3da2e02b6a51335784f46119b95e8b32d50d6ed5aad1270a6a33a",
+   "path": "runtime/SEC003/run-3109-31020cee/receipt-lp-a2-01.json"
+  },
+  "run-3109-31020cee/receipt-lp-a2-04.json": {
+   "sha256": "c3bac7ed0831be33577b1283c1acbc6abec150c04bf96fbc17d80f204a8ac7c3",
+   "path": "runtime/SEC003/run-3109-31020cee/receipt-lp-a2-04.json"
+  }
+ },
+ "checked_suspicions": [
+  {
+   "id": "SUS-01",
+   "suspicion": "Host PYTHONPATH shadows mcp/pydantic and breaks harness imports (scenarios.py ModuleNotFoundError: No module named runtime)",
+   "checked": "Clean-env run: env -i with project venv python -B, cwd=P; scenarios.py inserts sys.path.insert(0, P) where P=HERE.parents[1] (project root); importlib.util.find_spec confirms runtime.SEC003.engine and mockup.server resolve to project paths",
+   "found": "REFUTED as product defect — harness import mechanism is correct; the earlier failure was caused by host PYTHONPATH shadow + launching from wrong cwd; with clean env both canonical runs exit 0 (seed-3101-v2.log, seed-3109.log SEED*_EXIT=0)",
+   "evidence": [
+    "runtime/SEC003/seed-3101-v2.log",
+    "runtime/SEC003/seed-3109.log"
+   ]
+  },
+  {
+   "id": "SUS-02",
+   "suspicion": "Link-sensing surface (H-LINK / CP-PL-17 / SC-H-LINK) might exist on some hidden tool and leak hidden-branch links",
+   "checked": "tools/list re-captured on wire + AST inventory of mockup; no link/backlink/dashboard/sensing tools registered",
+   "found": "CONFIRMED GAP: no link-sensing surface exists (GAP-LINKS / NOT_IMPLEMENTED); recorded as GAP with schema-level evidence in receipt-gaps.json; not PASS, not NOT_APPLICABLE",
+   "evidence": [
+    "runtime/SEC003/run-3101-f7fc7e4b/receipt-gaps.json",
+    "runtime/SEC003/run-3109-31020cee/receipt-gaps.json"
+   ]
+  },
+  {
+   "id": "SUS-03",
+   "suspicion": "Snapshot/query search could leak hidden-branch content (cannot-search)",
+   "checked": "GAP-SEARCH/GAP-BRANCH-SEARCH/GAP-REFINEMENT probed on wire: no such tools; snapshot used only as snapshot, never substituted for search",
+   "found": "GAP confirmed (search channel absent); snapshot NOT mislabeled as search; exact GAP IDs remain in result",
+   "evidence": [
+    "runtime/SEC003/run-3101-f7fc7e4b/receipt-gaps.json"
+   ]
+  },
+  {
+   "id": "SUS-04",
+   "suspicion": "AA-only read surfaces leak hidden AB revision/chain metadata (TD19 hypothesis)",
+   "checked": "Field differential of query/snapshot/trace/resume/sync_status/export responses with AA fixed and hidden AB mutated (seeds 3101, 3109); B-only B read control; B control repeated after negatives",
+   "found": "CONFIRMED — TD-DOM-19 reproduced: read_snapshot.revisions {\"AA\":5,\"AB\":7} and AB-inclusive chain_head visible to AA-only caller; foreign broken_event_id leak on corrupted middle AB event. Evidence in receipt-hp-14/hp-07/lp-a2-04 both seeds",
+   "evidence": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "861173f120a545fa4a8d684281b6294dfcd461a96b65589ddd462314250da93b"
+    },
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "d64f56a450f412b0008f749a3f8c668aa1e10eccce245814822cf976f8418156"
+    },
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "a1f8bd0dc91b922ffb11c63ac68d85c37ae8373d57e3500400873f73492a75fd"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "86eda09612f22c39338562068f1d0eecc7dd4d9ca17b5ccb7633602d7ff4dcca"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "2453fd2c9e084fbd78422a1502a92d1a8e56336f079c98ad78d5a3c089943708"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "c3bac7ed0831be33577b1283c1acbc6abec150c04bf96fbc17d80f204a8ac7c3"
+    }
+   ]
+  }
+ ],
+ "findings": [
+  {
+   "id": "SEC003-F-01",
+   "title": "TD-DOM-19 reproduced on current code digest 715b1ca…: branch-scope leak of AB metadata via integrity-gate diagnostic surfaces (AA-only actor)",
+   "severity": "major (impact-based: confidentiality of hidden-branch revision/chain metadata and foreign broken_event_id UUIDs to a read-only AA MCP caller)",
+   "status": "REPRODUCED (existing debt, not newly registered, not closed)",
+   "debt_ref": "TD-DOM-19 (tech_debt.md row 33; cards/AB003_TD19_WORKER_PREPARED.md — P0 fix required, not dispatched by this role)",
+   "violated_boundary": "branch-scope isolation: AA-only caller must not observe hidden AB revision counts/chain metadata or foreign locators",
+   "prerequisite": "AA-only restricted actor (role=author, branches=AA) over fixture with healthy hidden AB branch",
+   "minimal_repro": "dom_snapshot/dom_query/dom_trace/dom_resume/dom_sync_status/dom_export as AA-only: read_snapshot.revisions returns {\"AA\": N, \"AB\": M} with M>0 hidden branch revisions; chain_head exposes AB-inclusive chain; corrupted middle AB event leaks its forbidden UUID via chain.broken_event_id",
+   "expected": "revisions limited to AA; no AB revision count, no foreign chain events/IDs",
+   "actual": "revisions {\"AA\":5,\"AB\":7} and AB-inclusive chain_head visible to AA-only caller on seeds 3101/3109 (evidence: receipt-hp-14 aa_ok/read_snapshot, receipt-hp-07 export_ok, receipt-lp-a2-04 aa_master_trace/union_master_trace)",
+   "raw_evidence": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "861173f120a545fa4a8d684281b6294dfcd461a96b65589ddd462314250da93b"
+    },
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "d64f56a450f412b0008f749a3f8c668aa1e10eccce245814822cf976f8418156"
+    },
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "a1f8bd0dc91b922ffb11c63ac68d85c37ae8373d57e3500400873f73492a75fd"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "86eda09612f22c39338562068f1d0eecc7dd4d9ca17b5ccb7633602d7ff4dcca"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "2453fd2c9e084fbd78422a1502a92d1a8e56336f079c98ad78d5a3c089943708"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "c3bac7ed0831be33577b1283c1acbc6abec150c04bf96fbc17d80f204a8ac7c3"
+    }
+   ],
+   "source_version": "code_digest 715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3 (recomputed, 15/15 per-file hashes matched PL003 input_fingerprints)",
+   "mitigation_suggestion": "Scoping of integrity-gate diagnostic/metadata fields per caller branch scope (no product fix performed by SEC003); P0 fix tracked in AB003_TD19_WORKER_PREPARED.md",
+   "not_duplicating": "TD-DOM-19, TD-DOM-20, TD-DOM-21 are NOT duplicated and NOT closed; debt_status_changes=[]"
+  }
+ ],
+ "per_check": {
+  "CHK-A2-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-01.json",
+     "sha256": "c80717baa067be34386381c7ce07caa2d072441f481f6b6eedfab8cb867f2ae5"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-01.json",
+     "sha256": "bb820171c0a3da2e02b6a51335784f46119b95e8b32d50d6ed5aad1270a6a33a"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CHK-A2-02": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-02.json",
+     "sha256": "e27a795586d9ae60df52e7b346b965d37a77e6f0304369d272a7820096c9c2c0"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-02.json",
+     "sha256": "74102611d8defa572fffd81c2795d4a64e8ec9419b92334eeb5b64b8dc120d5d"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CHK-A2-03": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-03.json",
+     "sha256": "819f76162a3ca448d430b22308dc3bebd02f5054b76daba4a3d12213461f28a3"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-03.json",
+     "sha256": "51cf45ec717bf1c46ed5d08c4566ae2c9e041d0e51e5553268efce01a0379041"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CHK-A2-04": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "a1f8bd0dc91b922ffb11c63ac68d85c37ae8373d57e3500400873f73492a75fd"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-lp-a2-04.json",
+     "sha256": "c3bac7ed0831be33577b1283c1acbc6abec150c04bf96fbc17d80f204a8ac7c3"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CHK-A2-05": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CHK-A2-06": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CHK-A2-07": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-01.json",
+     "sha256": "29567484ca97328db07e5c38ea8e9c62b7234011101c5ffdc03af7a6e3a5448e"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-01.json",
+     "sha256": "e7304839bd2fcba274a4660dc4d330af1239a7e4653dea63f9c9e3e4c6ee87c8"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-02": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-02.json",
+     "sha256": "061e1fbc4eb89e9097f88406de1433a9d60114add407423f0935e36889d38e4c"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-02.json",
+     "sha256": "b4faa1e68afd98bedcd4f73fb939da2fad80eff69a76cd90c7dd031115055513"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-03": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-03.json",
+     "sha256": "ddc6bed09e63812243e60fd0bfc727af3b7d203d2b2af36130ebf9c06a81394e"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-03.json",
+     "sha256": "a6ffb0c680eec330308aa0c3bf5176422acb76e1001c6c37015b7256b03358e2"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-04": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-04.json",
+     "sha256": "d459bb25612e40b64616cf604857d470d51eea2d4eb74bf42c9d509c2b8be42a"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-04.json",
+     "sha256": "7425c3e9bd93d1d690933ecd3dce6b789127d449b581aeba75161c337c981bb9"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-05": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-06": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-07": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "d64f56a450f412b0008f749a3f8c668aa1e10eccce245814822cf976f8418156"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-07.json",
+     "sha256": "2453fd2c9e084fbd78422a1502a92d1a8e56336f079c98ad78d5a3c089943708"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-08": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-09": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-10": {
+   "status": "NOT_TESTED",
+   "scenario": null,
+   "evidence_refs": [],
+   "note": "QA003 primary per scenario plan (availability/shape cases handed to QA with exact statuses/omissions); SEC003 honest NOT_TESTED, not PASS"
+  },
+  "CP-PL-11": {
+   "status": "GAP",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-gaps.json",
+     "sha256": "dde1741b6a9a898d5440aa780916b0c1251ef8e43625237f131ac2db1f2a4760"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-gaps.json",
+     "sha256": "5b1aa6e493de43650e3bc6ce472f09a984aa3459fb233ddc5a48cd137dea8516"
+    }
+   ],
+   "note": "No wire/smoke surface (GAP-SEARCH/GAP-BRANCH-SEARCH/GAP-REFINEMENT/GAP-LINKS NOT_IMPLEMENTED); evidence in receipt-gaps.json"
+  },
+  "CP-PL-12": {
+   "status": "GAP",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-gaps.json",
+     "sha256": "dde1741b6a9a898d5440aa780916b0c1251ef8e43625237f131ac2db1f2a4760"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-gaps.json",
+     "sha256": "5b1aa6e493de43650e3bc6ce472f09a984aa3459fb233ddc5a48cd137dea8516"
+    }
+   ],
+   "note": "No wire/smoke surface (GAP-SEARCH/GAP-BRANCH-SEARCH/GAP-REFINEMENT/GAP-LINKS NOT_IMPLEMENTED); evidence in receipt-gaps.json"
+  },
+  "CP-PL-13": {
+   "status": "GAP",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-gaps.json",
+     "sha256": "dde1741b6a9a898d5440aa780916b0c1251ef8e43625237f131ac2db1f2a4760"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-gaps.json",
+     "sha256": "5b1aa6e493de43650e3bc6ce472f09a984aa3459fb233ddc5a48cd137dea8516"
+    }
+   ],
+   "note": "No wire/smoke surface (GAP-SEARCH/GAP-BRANCH-SEARCH/GAP-REFINEMENT/GAP-LINKS NOT_IMPLEMENTED); evidence in receipt-gaps.json"
+  },
+  "CP-PL-14": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "861173f120a545fa4a8d684281b6294dfcd461a96b65589ddd462314250da93b"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-14.json",
+     "sha256": "86eda09612f22c39338562068f1d0eecc7dd4d9ca17b5ccb7633602d7ff4dcca"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-15": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-15.json",
+     "sha256": "68725d93e4d9ea9c675120ccdc2b1a7ed890148bf2a2939347d17c8dcb8c8eff"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-15.json",
+     "sha256": "cb2398223e594210a067e0e625af72460ef93c241adfec7cd84db5823ccb7cd5"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-16": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-hp-16.json",
+     "sha256": "670eb935b0d80e11820ef3dce8971afaebe175024f9ebb9956736e5568a51d0e"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-hp-16.json",
+     "sha256": "786a9733c9634ef6794c530834bcc9e16e123b4df7c36ca5ae64fbd2a3ded44a"
+    }
+   ],
+   "note": "EXECUTED_NEGATIVE on both seeds 3101/3109; positive controls (AA own admit, B-only B read, B-control after negatives) in receipts"
+  },
+  "CP-PL-17": {
+   "status": "GAP",
+   "scenario": null,
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-gaps.json",
+     "sha256": "dde1741b6a9a898d5440aa780916b0c1251ef8e43625237f131ac2db1f2a4760"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-gaps.json",
+     "sha256": "5b1aa6e493de43650e3bc6ce472f09a984aa3459fb233ddc5a48cd137dea8516"
+    }
+   ],
+   "note": "No wire/smoke surface (GAP-SEARCH/GAP-BRANCH-SEARCH/GAP-REFINEMENT/GAP-LINKS NOT_IMPLEMENTED); evidence in receipt-gaps.json"
+  },
+  "SEC-NOV-01": {
+   "status": "EXECUTED_NEGATIVE",
+   "scenario": "SEC-NOV-01",
+   "evidence_refs": [
+    {
+     "run": "run-3101-f7fc7e4b",
+     "receipt": "receipt-nov-01.json",
+     "sha256": "53dcbd46ee872540522745c0b22a68161d4b971c91bad0d6afd2ef553a78dea5"
+    },
+    {
+     "run": "run-3109-31020cee",
+     "receipt": "receipt-nov-01.json",
+     "sha256": "973b22b624f522a765cf7d55c684b8e156ed2ac231a9d767800e3460f3f23bea"
+    }
+   ],
+   "note": "Novel source-derived negative: branch-scoped candidate/review replay + applicability/history join differential (AA fixed, hidden AB mutated); no cross-branch leak observed beyond known TD19 metadata surfaces"
+  }
+ },
+ "controls": {
+  "positive_control_aa_admit": "AA own submit->review->admit OK (claim ctrl-aa in receipts)",
+  "positive_control_b_read": "B-only actor reads B body/source/ID from its own branch (B canaries present in receipts)",
+  "b_control_repeat": "B read control repeated after negatives — unchanged",
+  "aa_fixed_ab_mutated_differential": "recursive field differential, only documented read_at excluded; IDs/counts/seq/heads/hash/paths compared"
+ },
+ "coverage": {
+  "checks_total": 24,
+  "executed_negative": 12,
+  "gap": 4,
+  "not_tested_qa": 8,
+  "novel_variations": [
+   "SEC-NOV-01 (branch-scoped candidate/review replay + applicability/history join differential)"
+  ],
+  "seeds": [
+   3101,
+   3109
+  ],
+  "runs": [
+   "run-3101-f7fc7e4b",
+   "run-3109-31020cee"
+  ],
+  "positive_controls": [
+   "AA own admit",
+   "B-only B read",
+   "B control after negatives"
+  ]
+ },
+ "omissions": [
+  "Timing-based attacks: NOT_CHECKED (no promised measurements, only bounded exploratory series)",
+  "OS-level sandbox/external checkpoint/live auth/Git/OMH: out of simulation scope",
+  "Full Cartesian coverage / full-system acceptance: not claimed",
+  "Availability/shape cases (CHK-A2-05..07, CP-PL-05,06,08,09,10): handed to QA003 with exact statuses/omissions; SEC003 honest NOT_TESTED"
+ ],
+ "limitations": [
+  "Trusted fixture oracle is a logical harness boundary, not strong OS isolation (agent with terminal/files is a separate threat model)",
+  "No real secrets/live user DB/live config/plugin touched; simulation fixture only",
+  "MCP isError/exit0 does not imply domain-safe; receipts carry raw structuredContent/nested errors"
+ ],
+ "not_checked": [
+  "Timing/jitter measurements (NOT_CHECKED)",
+  "Strong OS sandbox",
+  "Full-system noninterference",
+  "Link dashboard/backlink/counter surfaces (absent — GAP, see SUS-02)"
+ ],
+ "remaining": [
+  "P0 fix for TD-DOM-19 (cards/AB003_TD19_WORKER_PREPARED.md — not dispatched by SEC003)",
+  "QA003 run of the 8 availability/shape checks handed over as NOT_TESTED"
+ ],
+ "continuation_required": false,
+ "continuation_file": null,
+ "verified_by_commands": [
+  "PY -B runtime/SEC003/digest_check.py -> code_digest 715b1ca81f6d8c47f4f43f3977f1150d95583968c876edb556fde4c7ba927ba3, 15 files, 0 mismatches",
+  "PY -B runtime/SEC003/manifest_run.py <run> x3 -> create-only manifests (759/759, 753 entries; hashes recorded)",
+  "PY -B runtime/SEC003/verify.py -> runtime/SEC003/validation.json (real exit; ok only if all statuses/IDs/paths/hashes/evidence refs + final artifacts present)",
+  "clean-env import probe: importlib.util.find_spec(runtime.SEC003.engine|mockup.server) resolved to project paths (SUS-01 refuted)"
+ ],
+ "debt_status_changes": [],
+ "first_artifact_ref": {
+  "path": "runtime/SEC003/first_artifact.json",
+  "sha256": "e468d89f25ab0e11d41916d61414db835c4a3002736c992e78ce48182b5eeb0a"
+ },
+ "written_at": "2026-11-08"
+}

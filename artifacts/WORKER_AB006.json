@@ -1,0 +1,203 @@
+{
+  "schema": "worker_artifact/v1",
+  "role": "WORKER",
+  "task": "AB006",
+  "ticket": "AB006 CONT-02",
+  "status": "COMPLETED_WITH_SEPARATE_ACCEPTANCE",
+  "product_acceptance": false,
+  "is_approval": false,
+  "debt_status_changes": [],
+  "changed_files": [
+    "mockup/admission.py",
+    "mockup/storage.py",
+    "mockup/public_dto.py",
+    "mockup/server.py"
+  ],
+  "changed_files_verified": "дифф текущего дерева против AB005-эры среза runtime/AU006/sources/P (документированный digest-метод): отличаются ровно эти четыре файла, лишних изменённых файлов нет",
+  "digest_method": "sha256(json.dumps({'mockup/<posix-relpath>': sha256(file_bytes)}, sort_keys=True)) по 16 файлам mockup/**/*.py (posix-пути от корня проекта, __pycache__ исключён); файлы сортируются по posix-пути",
+  "digest_before": "ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7",
+  "digest_after": "c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505",
+  "digest_discrepancy": {
+    "claimed_before": "3a5f875b... (обозван в карте 'before')",
+    "claimed_after": "3f0af9c4... (обозван в карте 'after')",
+    "reproducible": false,
+    "explanation": "Ранние числа 3a5f875b…/3f0af9c4… НЕ воспроизводятся документированным методом SEC003 (sha256(json.dumps карты posix-путь->sha256, sort_keys=True) по 16 mockup/**/*.py) и признаны ошибочными: они получены нестандартным расчётом (другой набор файлов/путей/канонизации) и несовместимы с историей digest-цепочки (после AB005 = ca227b17…, зафиксирован в au007.json и WORKER_AB005.json). Действительные значения: before (состояние после AB005) = ca227b17b67a0d85d71aba6703c3d0910265198a68fe2ea064e4f52faec9f6b7, after (текущее состояние) = c26812b398ef533266ece998df611ff73707abc54b79343bbc32eb84386bd505 — воспроизводится на диске (digest_probe.py: 'matches parent True').",
+    "probe": "runtime/AB006/probes/digest_probe.py"
+  },
+  "migration": {
+    "schema_version": 2,
+    "gate": "CANDIDATES_SCHEMA_VERSION=2, PRAGMA user_version монотонен: БД уровня >=2 без created_at у candidates отказывает MIGRATION_REQUIRED, никогда не перестраивается молча",
+    "ddl": [
+      "ALTER TABLE candidates ADD COLUMN created_at TEXT",
+      "CREATE INDEX IF NOT EXISTS idx_idempotency_candidate ON idempotency(candidate_id)",
+      "CREATE INDEX IF NOT EXISTS idx_claims_candidate ON claims(candidate)"
+    ],
+    "order": "1) проверка обязательных таблиц/колонок (MIGRATION_REQUIRED при несовместимом legacy); 2) WS-F02 миграция idempotency v2 при отсутствии scope_digest; 3) executescript(DDL+DELIVERY_DDL) + пересоздание триггеров; 4) миграция v2: если created_at отсутствует -> гейт user_version<2 -> BEGIN IMMEDIATE, MIGRATION_V2_DDL, commit, защитное пересоздание триггеров; если created_at есть -> гарантируются только индексы (DDL[1:], IF NOT EXISTS); 5) binding/branch_heads; 6) PRAGMA user_version=2",
+    "legacy_semantics": "старые строки candidates получают created_at=NULL; age_seconds в pending-секции для них опускается (никогда не 0)",
+    "immutable_triggers": 39,
+    "immutable_triggers_note": "39 immutable = 3 триггера (UPDATE/DELETE/INSERT) на каждую из 13 immutable-таблиц (10 в IMMUTABLE + delivery attempts/observations/acks); всего в БД 44 триггера (39 immutable + 5 не-immutable: attempt_binding, observation_binding, ack_binding, legacy_ack_refused, chain_previous_hash) — подтверждено read-only PRAGMA на fixtures/w1",
+    "indexes": ["idx_idempotency_candidate", "idx_claims_candidate"],
+    "user_version_after": 2,
+    "candidates_columns": ["id", "digest", "payload", "author", "root", "branch", "created_at"],
+    "legacy_init": "OK",
+    "rerun": "OK",
+    "idempotent": true,
+    "evidence": "runtime/AB006/results/checks_summary.json['migration'] (after_first == after_rerun); read-only проверка на fixtures/w1: uv=2, оба индекса, 39 immutable-триггеров"
+  },
+  "perf": {
+    "p1k": {
+      "count": 500,
+      "count_ms": 7.455,
+      "page50_ms": 14.418,
+      "page_items": 50,
+      "page_items_bytes": 20121,
+      "resume_pending_combined_ms": 16.616
+    },
+    "p100k": {
+      "count": 99500,
+      "count_ms": 614.116,
+      "page50_ms": 1504.595,
+      "page_items": 50,
+      "page_items_bytes": 20121,
+      "resume_pending_combined_ms": 2185.688
+    },
+    "p100k_noindex_page50_ms": 15901.46,
+    "noindex_over_index_x": 10.57,
+    "contract_bounds": {
+      "page50_100k": {"contract": 1537.84, "measured": 1504.595, "within_10x": true},
+      "noindex_vs_contract": {"contract_noindex": 16481.45, "measured_noindex": 15901.46}
+    },
+    "conclusion": "индексы в пределах контрактной границы 10x (0.98x от потолка); без индексов ~10.57x медленнее"
+  },
+  "pos_results": [
+    {
+      "id": "pos1_memoryless_continuation",
+      "mode": "discover",
+      "fixture": "runtime/AB006/fixtures/w1_pos",
+      "grant": ["AA"],
+      "stdout": "AB006_FRESH_PASS mode=discover visible=2 count=2",
+      "rc": 0,
+      "resume": {"status": "RESUMED", "revision": 1, "n_claims": 1},
+      "after": {"revision": 2, "n_claims": 2, "pending_count": 1},
+      "discovered_ids": ["b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd"],
+      "receipts": [
+        {"candidate_id": "b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "admit_status": "DEMO_ADMITTED", "state": "AWAITING_REVIEW"},
+        {"candidate_id": "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd", "admit_status": "REVISION_CONFLICT", "review_action": "USED_PENDING_REVIEW", "state": "REVIEWED"}
+      ],
+      "continuation_conflicts": [
+        {"candidate_id": "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd", "expected_branch_revision": 1, "head_branch_revision": 2}
+      ],
+      "checks": {"count": 2, "count_exact": true, "visible_count": 2, "visible_count_exact": true, "no_forbidden_ids": true, "no_forbidden_text": true, "items_metadata_only": true},
+      "leak": {"forbidden_ids_present": [], "forbidden_text_present": false, "items_carry_body": []},
+      "sql_counters": {
+        "before": {"candidates": 5, "claims": 1, "reviews": 2, "idempotency": 6, "transactions": 1, "events": 1},
+        "after": {"candidates": 5, "claims": 2, "reviews": 3, "idempotency": 7, "transactions": 2, "events": 2},
+        "deltas": {"claims": "1->2", "reviews": "2->3", "idempotency": "6->7", "transactions": "1->2", "events": "1->2", "candidates": "5 (без изменений)"}
+      },
+      "meaning": "продолжение после потерянного состояния memoryless: кандидаты повторно обнаружены, один допущен (DEMO_ADMITTED), второй использовал существующий pending review (REVISION_CONFLICT -> USED_PENDING_REVIEW) — новых вредных фактов нет"
+    },
+    {
+      "id": "pagination_walk",
+      "fixture": "runtime/AB006/fixtures/w1",
+      "pages": [
+        {"after": null, "count": 4, "has_more": true, "ids": ["4f0ce33c-4a66-4830-8286-2bdfba1a5ea9"]},
+        {"after": "AA:4f0ce33c-4a66-4830-8286-2bdfba1a5ea9", "count": 4, "has_more": true, "ids": ["b8f2fff7-8f7d-4096-8bfa-d4c149c270fa"]},
+        {"after": "AA:b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "count": 4, "has_more": false, "ids": ["d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd", "9113f3e9-d554-4551-8b1c-1711606998e4"]},
+        {"after": "AB:9113f3e9-d554-4551-8b1c-1711606998e4", "count": 4, "has_more": false, "ids": []}
+      ],
+      "walk": {"no_duplicates_in_walk": true, "walk_covered_all_pending": true, "count_stable_across_pages": true, "last_page_has_more_false": true}
+    }
+  ],
+  "neg_results": [
+    {
+      "id": "neg1_foreign_grant_AB",
+      "fixture": "runtime/AB006/fixtures/w1",
+      "grant": ["AB"],
+      "stdout": "AB006_FRESH_PASS mode=list visible=1 count=1",
+      "rc": 0,
+      "checks": {"count": 1, "count_exact": true, "visible_count": 1, "visible_count_exact": true, "no_forbidden_ids": true, "no_forbidden_text": true, "items_metadata_only": true},
+      "discovered_ids": ["9113f3e9-d554-4551-8b1c-1711606998e4"],
+      "forbidden_ids": ["737b0b8a-20a2-44b7-8ba3-2f4e9272123a", "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd", "b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "4f0ce33c-4a66-4830-8286-2bdfba1a5ea9"],
+      "forbidden_text": "C1 reviewed pre-kill body",
+      "meaning": "грант только AB: виден 1 кандидат ветки AB; кандидаты AA (включая суженный по deps) и admitted-кандидат не выдаются; чужих идентификаторов и текста тел нет"
+    },
+    {
+      "id": "neg2_narrowed_grant_AA",
+      "fixture": "runtime/AB006/fixtures/w1",
+      "grant": ["AA"],
+      "stdout": "AB006_FRESH_PASS mode=list visible=2 count=2",
+      "rc": 0,
+      "checks": {"count": 2, "count_exact": true, "visible_count": 2, "visible_count_exact": true, "no_forbidden_ids": true, "no_forbidden_text": true, "items_metadata_only": true},
+      "discovered_ids": ["b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd"],
+      "forbidden_ids": ["4f0ce33c-4a66-4830-8286-2bdfba1a5ea9"],
+      "forbidden_text": "C4 deps-foreign body",
+      "meaning": "суженный грант AA: AA-кандидат k4 (deps {AB: 0}, AB вне гранта) скрыт полностью (без маркера, без текста); count=2 фильтрован точно"
+    },
+    {
+      "id": "neg2b_full_grant_AA_AB",
+      "fixture": "runtime/AB006/fixtures/w1",
+      "grant": ["AA", "AB"],
+      "stdout": "AB006_FRESH_PASS mode=list visible=4 count=4",
+      "rc": 0,
+      "checks": {"count": 4, "count_exact": true, "visible_count": 4, "visible_count_exact": true, "no_forbidden_ids": true, "no_forbidden_text": true, "items_metadata_only": true},
+      "discovered_ids": ["4f0ce33c-4a66-4830-8286-2bdfba1a5ea9", "b8f2fff7-8f7d-4096-8bfa-d4c149c270fa", "d1535d53-78c4-4c0c-a5a2-a54f7d4bbcfd", "9113f3e9-d554-4551-8b1c-1711606998e4"],
+      "meaning": "полный грант: k4 снова видим (deps AB покрыты), всего 4 pending-кандидата; admitted-кандидат и тексты по-прежнему не выдаются"
+    },
+    {
+      "id": "neg3_no_pending",
+      "fixture": "runtime/AB006/fixtures/w3",
+      "grant": ["AA"],
+      "stdout": "AB006_FRESH_PASS mode=list visible=0 count=0",
+      "rc": 0,
+      "checks": {"count": 0, "count_exact": true, "visible_count": 0, "visible_count_exact": true, "no_forbidden_ids": true, "no_forbidden_text": true, "items_metadata_only": true},
+      "discovered_ids": [],
+      "pending_status": "NO_PENDING",
+      "meaning": "пустая очередь: status=NO_PENDING, count=0, items=[] (см. также frames_empty.jsonl)"
+    }
+  ],
+  "negative_confirmations": [
+    "admitted не выдаётся: кандидат с EXISTS claims.candidate ИЛИ idempotency admit-строкой исключается из pending (admitted-кандидат 737b0b8a… не появляется даже при полном гранте)",
+    "count фильтрован точно (анти-exists-oracle): отдельный scope-фильтрованный pass, не зависит от позиции страницы — neg1 count=1 при 5 кандидатах в БД",
+    "items_metadata_only=true во всех прогонах: тела не отдаются, только payload_length и метаданные (payload/source_ref отсутствуют)",
+    "чужой по deps скрыт целиком: кандидат вне гранта по ветке ИЛИ по dependencies не виден (нет маркера, нет текста) — k4 виден только в neg2b",
+    "REJECTED-состояние выводится без LLM из решения последнего review (decision != 'approve'); текст решения наружу не уходит",
+    "legacy-строки created_at=NULL: age_seconds опускается, никогда не выдаётся 0 (checks_summary age: legacy_null_age_absent=true, pristine w1 age_seconds=5)"
+  ],
+  "page_underfill_edge": {
+    "known_contract_behavior": true,
+    "has_more": "предфильтровый эвристик limit+1: LIMIT limit+1 берётся ДО фильтров видимости (deps ⊆ grant, admitted-исключение), поэтому при сужении гранта страница может оказаться недополненной (has_more=true при пустых/частичных items)",
+    "count": "остаётся точным (свой scope-фильтрованный pass, анти-exists-oracle)",
+    "measured_observation": {"count": 2, "items": 0, "has_more": true},
+    "note": "протокол-конформное поведение, не дефект: клиент должен продолжать листать по has_more, а не по items; зафиксировано в checks_summary['pos']['underfill_edge_narrowed']"
+  },
+  "evidence_refs": [
+    "runtime/AB006/results/checks_summary.json",
+    "runtime/AB006/results/pos1.json",
+    "runtime/AB006/results/neg1.json",
+    "runtime/AB006/results/neg2.json",
+    "runtime/AB006/results/neg2b.json",
+    "runtime/AB006/results/neg3.json",
+    "runtime/AB006/results/frames_full.jsonl",
+    "runtime/AB006/results/frames_empty.jsonl",
+    "runtime/AB006/probes/run_out.txt",
+    "runtime/AB006/probes/digest_probe.py",
+    "runtime/AB006/fixtures/legacy-src/dom.sqlite3",
+    "runtime/AB006/fixtures/legacy-null/dom.sqlite3",
+    "runtime/AB006/fixtures/w1/dom.sqlite3",
+    "runtime/AB006/fixtures/w1_pos/dom.sqlite3",
+    "runtime/AB006/fixtures/w3/dom.sqlite3",
+    "runtime/AB006/fixtures/perf/p1k/dom.sqlite3",
+    "runtime/AB006/fixtures/perf/p100k/dom.sqlite3",
+    "runtime/AB006/fixtures/perf/p100k_noidx/dom.sqlite3",
+    "runtime/AU006/sources/P (срез AB005-эры для диффа изменённых файлов)"
+  ],
+  "reruns_done": "только read-only подтверждения (digest_probe.py, PRAGMA-проверка fixtures); существующие прогоны/числа не переделывались — взяты из runtime/AB006/results/*",
+  "not_checked": [
+    "полный pytest-прогон (вне write_scope карты)",
+    "live OMH/сеть/Git/install (запрещены картой)",
+    "продукт (product_acceptance=false), тесты, конфиги, OMH — не трогались"
+  ],
+  "report_ref": "reports/WORKER_AB006.md",
+  "schema_doc_ref": "docs/SCHEMA_CHANGE_AB006.md",
+  "written_at": "2026-11-08T13:23:04+00:00"
+}

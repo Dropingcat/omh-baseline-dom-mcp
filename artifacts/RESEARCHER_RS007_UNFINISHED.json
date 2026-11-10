@@ -1,0 +1,81 @@
+{
+  "schema": "researcher_synthesis_rs007/v1",
+  "role": "RESEARCHER",
+  "task": "RS007 (W1: незавершённая работа — видимость и континуация без подсказки)",
+  "status": "COMPLETED",
+  "completion": "completed",
+  "first_artifact": "runtime/RS007/first_artifact.json (PARTIAL, честный)",
+  "continuation": "CONT-01: фикс параметров pending-запроса + добит зелёный прототип + options/contract/checks + валидатор",
+  "product_acceptance": false,
+  "is_approval": false,
+  "code_digest_scope": "read-only: продукт (mockup.admission/storage/fixtures/dom_contract) не изменён ни одним байтом (receipt product_files_modified=[]); вся запись в runtime/RS007/**, artifacts/RESEARCHER_RS007_UNFINISHED.json, reports/RESEARCHER_RS007_UNFINISHED.md; сеть=false; git/install/платные/субагенты не использовались",
+  "observed": "Прочитаны: карта RS007_CONTINUE_01.md (полностью), rs007_pending.py, rs007_prototype.py, drivers/fresh_client.py, answers_taxonomy.json (7 видов), answers_leak.json (политика), receipt. Проведены 4 правки: (1) порядок параметров pending-SQL (подзапросы work,work → IN(ветки) → after → limit+1) — причина: IN(?) получал work и давал visible=0; (2) _exact_count исключает admitted (count == число pending, а не всех in-branch кандидатов); (3) драйвер не сканирует собственный argv в leak-контролях (самофлагирование: forbid-значения приходят из матрицы сценариев, не из вывода view); (4) rc-гейт учитывает только boolean-проверки (int visible_count/count ломали all(v is True)). Отдельно: pos1 честно переопределён — два кандидата на одну ревизию: второй admit неизбежно REVISION_CONFLICT (admit требует head==expected_branch_revision, admission.py:224), конфликт выдаётся метаданными (expected 1 vs head 2), без форсирования; perf-фикстура: admitted-строки перенесены в конец keyset-порядка, чтобы страницы были живыми.",
+  "answers_count": 5,
+  "answers_refs": [
+    "runtime/RS007/answers/answers_taxonomy.json (7 видов + SQL-предикаты + question2 no-locks/no-race)",
+    "runtime/RS007/answers/answers_leak.json (LEAK-1..6, анти-exists-oracle)",
+    "runtime/RS007/answers/answers_options.json (A..E с числами 1/1k/100k, вердикт A)",
+    "runtime/RS007/answers/answers_contract.json (NO_PENDING/PENDING_PRESENT, поля, пагинация, миграция v2, «вне базы»)",
+    "runtime/RS007/answers/answers_checks.json (POS1-3 + NEG1-5 + perf-контроли с физическими файлами)"
+  ],
+  "prototype": {
+    "script": "runtime/RS007/prototypes/rs007_prototype.py",
+    "receipt": "runtime/RS007/prototypes/receipt/rs007_prototype_receipt.json",
+    "sha256": "ed18874db203ed4a3e39d9ecf6511539c7246faf6ca0bedbc81ae0b8a67cd09e",
+    "driver": "runtime/RS007/prototypes/drivers/fresh_client.py (python -E -I, без candidate-ids в argv)",
+    "network": false,
+    "product_import": "read-only"
+  },
+  "prototype_results": {
+    "file": "runtime/RS007/prototypes/results/scenarios.json",
+    "all_subprocess_scenarios_rc0": true,
+    "scenarios": {
+      "neg1_foreign_grant_AB": "rc=0 visible=1 count=1 (только своя ветка; чужое не видно)",
+      "neg2_narrowed_grant_AA": "rc=0 visible=2 count=2 (C4 с deps {AB} скрыт целиком)",
+      "neg2b_full_grant_AA_AB": "rc=0 visible=4 count=4 (C4 виден метаданными, текст не возвращается)",
+      "pos1_memoryless_continuation": "rc=0 visible=2 count=2; без подсказки: 1×DEMO_ADMITTED + 1×REVISION_CONFLICT (expected 1/head 2), final 1",
+      "empty_no_pending": "rc=0 visible=0 count=0 NO_PENDING",
+      "par_same_key_first": "rc=0 DEMO_ADMITTED",
+      "par_same_key_second_replay": "rc=0 тот же receipt, same tx_id (3ade0d30…), вторая транзакция не создана",
+      "par_fresh_key_second_conflict": "rc=0 первый DEMO_ADMITTED",
+      "par_fresh_key_second": "rc=0 REVISION_CONFLICT (fresh key, head сдвинут)",
+      "par_threaded_same_key": "in-process: оба DEMO_ADMITTED, tx_total=1 claims_total=1 head_AA=1"
+    },
+    "after_pos1_pending_AA": {"count": 1, "expect_1_stale_c2_conflict": true},
+    "perf": {
+      "page50_ms_1_1k_100k": [1.96, 15.84, 1537.84],
+      "noindex_100k_page50_ms": 16481.45,
+      "index_speedup": 10.72,
+      "count_exact_pending_ms_1_1k_100k": [0.90, 19.82, 674.13],
+      "resume_ms_1_1k_100k": [3.94, 4.27, 4.82],
+      "page_items_bytes": 20121
+    }
+  },
+  "key_deliverables": [
+    "Зелёный прототип W1: 9/9 сценариев rc=0 + потоковый контроль (1 запись при 2 потоках) + page-замеры пересчитаны",
+    "pos1: беспамятный процесс (python -E -I, роль helper, грант AA) находит 2 незавершённых БЕЗ подсказки и продолжает; REVISION_CONFLICT второго — честный факт (rev-гонка), не форсируется и не прячется",
+    "Контракт pending (вариант A): NO_PENDING/PENDING_PRESENT; 13 полей item (включая operation); count точный pending (исключая admitted) и независимый от страницы; keyset-пагинация (branch,id) с has_more из limit+1; миграция v2 (created_at + 2 индекса) обязательна с ~1k (10.72×); «вне базы» вне контракта (только вариант E, решение заказчика)",
+    "Вердикт A с условиями: A при pending ≤ ~100k (страница 50 ≈ 1.5s); C при жёстких SLA >100k; B только как дополнение; E — отдельное решение по «вне базы»",
+    "Ответы options/contract/checks + валидатор: 50/50 проверок PASS, exit 0"
+  ],
+  "external_sources": [],
+  "publication_limits": "Ничего не применено к продукту/tests/tech_debt/конфигам/живому OMH; applied=false; решения заказчика (O1/O2/поиск/K/NU-AU006-01) не переоткрыты; конвенция decision!='approve' (admit не энфорсит) — наблюдение вне W1; TD-номера не присваивались.",
+  "validation": {
+    "validator": "runtime/RS007/validate_rs007.py",
+    "receipt": "runtime/RS007/validation_receipt.json",
+    "status": "PASS",
+    "checks_total": 50,
+    "checks_passed": 50,
+    "validator_sha256": "7977f9016cbebf3db857719595c881c519c8de11a34963619b29868b9d70b0f8",
+    "checked": "rc=0 ×9 сценариев; visible-значения; потоковый контроль (1 tx/1 claim/head=1); совпадение tx_id при idempotent replay; живые страницы perf; индексы дают ускорение; count_py == pending−500; live-пробы pending_view на w1 (1, PENDING_PRESENT) и w3 (0, NO_PENDING); leak-контроли всех сценариев пусты; 5 ответов с ключами; 7 видов таксономии; файловые ссылки checks существуют; отсутствие debug_probe*/__pycache__"
+  },
+  "code_not_modified": [
+    "mockup/admission.py",
+    "mockup/storage.py",
+    "mockup/fixtures.py",
+    "mockup/dom_contract.py",
+    "mockup/projections.py",
+    "mockup/public_dto.py"
+  ],
+  "written_at": "2026-11-08T17:30:00+03:00"
+}
