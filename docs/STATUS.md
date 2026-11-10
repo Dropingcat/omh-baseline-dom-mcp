@@ -54,6 +54,14 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - AC001 — независимая приёмка по требованиям; вынесла REQUEST_CHANGES, идёт повторная проверка.
 - AC002 — quality/security и независимый E2E из чистой директории.
 
+## Блок внесения клаймов (claim-entry) — вход/выход
+
+Профиль **lite** (интерфейс ввода/вывода присутствует частично):
+- **Вход:** `dom_claim(branch, type, text, ...)` — branch (str), type (enum из 7: quote/decision/formula/code/data/concept/text), text (str) + необязательные поля из `COMMON_FIELDS` (requirement_refs, reason, origin_version) и type-specific из `FIELD_TYPES` (валидируются по `TYPE_ARGS[type]` в `_validated_claim_args`). `dom_update(claim_id, text, reason)` — обновление (новая версия + replacement). `dom_find(query, branch, type, requirement_ref, limit)` — поиск. `dom_describe()` — схема/примеры типов.
+- **Выход:** `CLAIM_ADMITTED` / `ALREADY_RECORDED` (claim_id, record_id, version, branch, type, revision, review_level, origin_version, raw_sha256, next_steps) для dom_claim; `CLAIM_UPDATED` (new_claim_id, supersedes, ...) для dom_update; `dom_find` возвращает совпадения.
+- **Частично присутствует:** `dom_claim` в строгом профиле отсутствует (там ввод через `dom_submit` с полным пакетом); `dom_describe` даёт примеры, но нет отдельного `dom_claim_schema`/per-type input schema в MCP (все поля плоские в одной схеме). Валидация type-specific полей — на сервере, не в JSON Schema.
+- **Открытые вопросы:** type-specific required поля (например, quote требует source_ref) не помечены required в схеме; нет явного вывода «что изменилось» при обновлении (diff старой/новой версии).
+
 ## Ветка создания клаймов из плана OMH и их обновление (обзор)
 
 Два пути создания:
