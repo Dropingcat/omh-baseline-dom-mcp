@@ -143,7 +143,7 @@ LITE_SIGNATURE = {
     'dom_describe': ({}, {}),
     'dom_start': ({}, {'request': str, 'goal': str, 'branches': list, 'adopt': bool}),
     'dom_claim': ({'branch': str, 'type': str, 'text': str}, dict(claim_entry_mod.COMMON_FIELDS, **claim_entry_mod.FIELD_TYPES)),
-    'dom_update': ({'claim_id': str, 'text': str, 'reason': str}, {}),
+    'dom_update': ({'claim_id': str, 'text': str, 'reason': str}, {'idempotency_key': str}),
     'dom_find': ({}, {'query': str, 'branch': str, 'type': str, 'requirement_ref': str, 'limit': int}),
 }
 # dom_start/dom_find accept requests with a missing 'request' so that the refusal can carry a hint
@@ -219,7 +219,7 @@ def dispatch(service, name, arguments):
         extra = {k: v for k, v in args.items() if k not in ('branch', 'type', 'text')}
         return service.claim(args['branch'], args['type'], args['text'], **extra)
     if name == 'dom_update':
-        return service.update(args['claim_id'], args['text'], args['reason'])
+        return service.update(args['claim_id'], args['text'], args['reason'], args.get('idempotency_key'))
     if name == 'dom_find':
         return service.find(args.get('query'), args.get('branch'), args.get('type'), args.get('requirement_ref'), args.get('limit', 20))
     if name == 'dom_init':

@@ -656,6 +656,6 @@ class Service:
     @guarded
     def claim(self,branch,type,text,**fields): return claim_entry_mod.claim(self,branch,type,text,fields)
     @guarded
-    def update(self,claim_id,text,reason): return claim_entry_mod.update(self,claim_id,text,reason)
+    def update(self,claim_id,text,reason,idempotency_key=None): return claim_entry_mod.update(self,claim_id,text,reason,idempotency_key)
     @guarded
     def find(self,query=None,branch=None,type=None,requirement_ref=None,limit=20): return claim_entry_mod.find(self,query,branch,type,requirement_ref,limit)

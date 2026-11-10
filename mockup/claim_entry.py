@@ -38,7 +38,7 @@ FIELD_TYPES = {
     'provenance': str, 'definition': str, 'scope': str, 'links': list,
     'classification': str, 'evidence': list,
 }
-COMMON_FIELDS = {'requirement_refs': list, 'reason': str, 'origin_version': str}
+COMMON_FIELDS = {'requirement_refs': list, 'reason': str, 'origin_version': str, 'idempotency_key': str}
 TYPE_ARGS = {
     'quote': ('source_ref', 'locator', 'source_snapshot_digest'),
     'decision': ('attribution', 'rationale', 'assumptions', 'alternatives'),
@@ -313,7 +313,7 @@ def _surface(sub):
     return sub
 
 
-def _write_claim(svc, branch, item, origin_version, reason, tag):
+def _write_claim(svc, branch, item, origin_version, reason, tag, idempotency_key=None):
     """Admit one claim item on ``branch`` (or return the identical current one). -> dict with claim_id | refusal."""
     with svc.store.read() as c:
         existing = _find_identical(svc, c, branch, item)
@@ -323,7 +323,7 @@ def _write_claim(svc, branch, item, origin_version, reason, tag):
     item_key = digest({'tag': tag, 'branch': branch, 'item': dict(item, local_id='')})[:40]
 
     def build(revision):
-        key = 'lite-%s-%s-r%d' % (tag, item_key[:24], revision)
+        key = idempotency_key or 'lite-%s-%s-r%d' % (tag, item_key[:24], revision)
         return _package(svc, branch, revision, [item], key, 'claims', origin_version, reason)
     receipt = _commit(svc, branch, build)
     if receipt.get('status') != 'DEMO_ADMITTED':
@@ -376,8 +376,9 @@ def claim(svc, branch, typ, text, fields):
     svc.ready()
     raw, args, refs, reason, origin_version = _validated_claim_args(svc, branch, typ, text, fields)
     item = build_item(typ, text, raw, branch, args, refs, reason)
+    idempotency_key = fields.get('idempotency_key') or None
     if svc.lite:
-        res = _write_claim(svc, branch, item, origin_version, reason, 'claim')
+        res = _write_claim(svc, branch, item, origin_version, reason, 'claim', idempotency_key)
         if 'claim_id' not in res:
             return res
         cid = res['claim_id']
@@ -396,7 +397,7 @@ def claim(svc, branch, typ, text, fields):
     with svc.store.read() as c:
         revision = svc.head(c, branch)
     item_key = digest({'tag': 'claim', 'branch': branch, 'item': dict(item, local_id='')})[:40]
-    key = 'strict-claim-%s-r%d' % (item_key[:24], revision)
+    key = idempotency_key or 'strict-claim-%s-r%d' % (item_key[:24], revision)
     pkg = _package(svc, branch, revision, [item], key, 'claims', origin_version, reason)
     sub = svc.submit(json.dumps(pkg))
     if sub.get('status') != 'RECORDED_CANDIDATE':
@@ -423,7 +424,7 @@ def _rebuild_for_update(old_item, old_text, old_raw, new_text, new_raw, reason):
     return item
 
 
-def update(svc, claim_id, text, reason):
+def update(svc, claim_id, text, reason, idempotency_key=None):
     Denied = _denied()
     _lite_only(svc)
     svc.scope()
@@ -466,7 +467,7 @@ def update(svc, claim_id, text, reason):
         key_base = digest({'old': claim_id, 'item': dict(new_item, local_id='')})[:24]
 
         def build1(revision):
-            return _package(svc, branch, revision, [new_item], 'lite-upd1-%s-r%d' % (key_base, revision), 'claims', origin_version, reason)
+            return _package(svc, branch, revision, [new_item], idempotency_key or 'lite-upd1-%s-r%d' % (key_base, revision), 'claims', origin_version, reason)
         receipt = _commit(svc, branch, build1)
         if receipt.get('status') != 'DEMO_ADMITTED':
             return receipt
@@ -476,7 +477,7 @@ def update(svc, claim_id, text, reason):
              'value': {'replacement_ref': new_id}, 'supersedes': '', 'ref': 'lite:dom_update'}
 
     def build2(revision):
-        return _package(svc, branch, revision, [event], 'lite-upd2-%s-r%d' % (digest({'old': claim_id, 'new': new_id})[:24], revision),
+        return _package(svc, branch, revision, [event], idempotency_key or 'lite-upd2-%s-r%d' % (digest({'old': claim_id, 'new': new_id})[:24], revision),
                         'append', origin_version, reason)
     receipt2 = _commit(svc, branch, build2)
     if receipt2.get('status') != 'DEMO_ADMITTED':
@@ -713,6 +714,7 @@ TOOL_DOCS = {
             'requirement_refs': _arg('array of strings', False, 'Requirement ids this claim supports, e.g. ["R1"]. Used for coverage in dom_trace.'),
             'reason': _arg('string', False, 'Why this claim is recorded (default "lite dom_claim").'),
             'origin_version': _arg('string', False, 'Version marker of the source/artifact (default "lite-v1").'),
+            'idempotency_key': _arg('string', False, 'Optional idempotency key (TD-DOM-22.5, TD-DOM-28): a retry of this exact claim with the same content returns the same claim_id (ALREADY_RECORDED); the same key with different content is refused (IDEMPOTENCY_MISMATCH).'),
             'source_ref': _arg('string', False, 'quote: where the quote comes from (url, file, person).'),
             'locator': _arg('string', False, 'quote/code: position in the source.'),
             'source_snapshot_digest': _arg('string', False, 'quote: sha256 of the source snapshot (default: hash of the quote).'),
@@ -748,6 +750,7 @@ TOOL_DOCS = {
             'claim_id': _arg('string', True, 'The claim to replace (claim_id from dom_claim / dom_find).'),
             'text': _arg('string', True, 'The complete new text (not a diff).'),
             'reason': _arg('string', True, 'Why it changes; recorded in the event chain.'),
+            'idempotency_key': _arg('string', False, 'Optional idempotency key (TD-DOM-22.5): replaying the same update returns the same new version instead of appending again.'),
         },
         'returns': 'status CLAIM_UPDATED, new_claim_id, supersedes, record_id, version, revision, review_level, next_steps.',
         'example': {'claim_id': '<claim_id from dom_claim>', 'text': 'Use method Y for the main run.', 'reason': 'X failed validation on 2026-11-09'},
@@ -880,7 +883,7 @@ def claim_type_examples():
         out[t] = {
             'use_for': _CLAIM_WHEN[t],
             'required': ['branch', 'type', 'text'] + list(REQUIRED_FIELDS.get(t, ())),
-            'optional_common': ['requirement_refs', 'reason', 'origin_version'],
+            'optional_common': ['requirement_refs', 'reason', 'origin_version', 'idempotency_key'],
             'optional_type_specific': allowed,
             'example_call': {'tool': 'dom_claim', 'arguments': _CLAIM_EXAMPLES[t]},
         }
