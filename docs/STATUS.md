@@ -93,6 +93,7 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 
 **Зафиксированные решения:**
 - **D1.** DOM — проекция OMH: `plan_tasks`/`task_claims` — read-only кэш; статусы остаются в OMH.
+- **D1.1.** Пункты плана версионируются по стабильному `plan_task_id`; `plan_task_versions` append-only; `current_plan_tasks` — view; `task_claims` не переобновляются; `link_stale` — по `semantic_digest`, не по версии.
 - **D2.** `version`/`logical_claim_id` — производные из replacement-цепочки; колонки не вводятся.
 - **D3.** Базлайн — SQL-view над `events`; материализация после benchmark.
 - **D4.** `commit_ref` — опциональное поле `code`; нужен `OPTIONAL_FIELDS`; hash 40/64 hex.
@@ -105,8 +106,8 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 |---|---|---|
 | **P0** | TD-DOM-33 double `verify_chain`; TD-DOM-34 `sync` read-tx; TD-DOM-35 registry; TD-DOM-36 snapshot invariant | `arch/p0-invariants` |
 | **P1** | TD-DOM-37 миграции; 38 derived version; 39 `commit_ref`; 40 baseline view; 41 `dom_recall`; 22.6 diff | `arch/p1-version-baseline` |
-| **P2** | TD-DOM-42 проекция плана; 43 `dom_plan_tree`/`dom_task_claims`; 44 deferred | `arch/p2-plan-projection` |
-| **P3** | TD-DOM-45 drift; 46 fork | `arch/p3-diff-drift-fork` |
+| **P2** | TD-DOM-42 проекция плана; 43 `dom_plan_tree`/`dom_task_claims`; 54 идентичность/версии пунктов и защита от переобновления; 44 deferred | `arch/p2-plan-projection` |
+| **P3** | TD-DOM-45 drift; 46 fork; 55 split/merge orphan links | `arch/p3-diff-drift-fork` |
 | **P4** | TD-DOM-47 два оркестратора; 48 дедуп/полнота; 49 сессии; 50 `Service` фасады | `arch/p4-orchestrator` |
 | **P5** | TD-DOM-51 `IOmhDeliveryPort`; 52 Merkle/checkpoints; 53 retry/circuit/fallback | `arch/p5-live-ports` |
 

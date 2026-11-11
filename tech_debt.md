@@ -141,6 +141,7 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 |---|---|---|---|---|
 | TD-DOM-42 | Нет проекции плана OMH: `plan_tasks`/`task_claims` (read-only, `source='OMH'`, `synced_at`, `stale`) | major | D1, P1 | open |
 | TD-DOM-43 | Нет `dom_plan_tree`/`dom_task_claims`; root не должен быть хардкодом `П1` | major | TD-DOM-42 | open |
+| TD-DOM-54 | Пункты плана идентифицируются по `path`, а не по стабильному `plan_task_id`; нет версий; повторный sync переобновляет записи и ломает `task_claims` | major | D1.1, TD-DOM-42 | open |
 | TD-DOM-44 | Материализованное состояние планирования (TD-PLAN-01) — преждевременно; только после benchmark, как кэш с rebuild | minor | TD-DOM-42 | deferred |
 
 ### Приоритет 3 — diff/drift/fork
@@ -149,6 +150,7 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 |---|---|---|---|---|
 | TD-DOM-45 | Drift: нет явной миссии/constraints; формула аудита делит на ноль и штрафует `extra` | major | TD-DOM-42/43 | open |
 | TD-DOM-46 | `fork_branch` не реализован; нужна атомарная транзакция, `carry ∩ rewrite = ∅`, `branch_fork_claims` | major | TD-DOM-40 | open |
+| TD-DOM-55 | Split/merge плана не обрабатывается: ссылки `task_claims` становятся orphaned без явного relink | major | TD-DOM-54 | open |
 
 ### Приоритет 4 — оркестратор
 
@@ -171,12 +173,12 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 
 - **P0:** TD-DOM-33, 34, 35, 36.
 - **P1:** TD-DOM-37, 38, 39, 40, 41, 22.6.
-- **P2:** TD-DOM-42, 43; TD-DOM-44 deferred.
-- **P3:** TD-DOM-45, 46.
+- **P2:** TD-DOM-42, 43, 54; TD-DOM-44 deferred.
+- **P3:** TD-DOM-45, 46, 55.
 - **P4:** TD-DOM-47, 48, 49, 50.
 - **P5:** TD-DOM-51, 52, 53.
 
-Итого новых: TD-DOM-33…53 (21 пункт). Из них P0 — 4, P1 — 6, P2 — 3 (2 + deferred), P3 — 2, P4 — 4, P5 — 3.
+Итого новых: TD-DOM-33…55 (23 пункта). Из них P0 — 4, P1 — 5 (+22.6), P2 — 4 (3 + deferred), P3 — 3, P4 — 4, P5 — 3.
 
 ### Связь с существующими долгами
 

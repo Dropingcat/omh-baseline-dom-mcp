@@ -35,6 +35,103 @@
 
 **Источник ответа:** `docs/audit/2026-11-11_QUESTIONS_AND_ANSWERS.md` Q1, Q40; ответ 2026-11-11: «DOM это проекция OMH».
 
+### D1.1. Версии пунктов плана и защита от переобновления
+
+**Проблема.** Если ключ проекции — `path`, то переименование/перемещение задачи ломает `task_claims`; если синхронизация переписывает все строки, каждый poll создаёт «переобновление»: новые версии, новые `synced_at`, ложную `stale` и потерю локальных связей.
+
+**Модель:**
+- **Идентичность** — `plan_task_id` из OMH (стабильный), а не `path`. `path` — изменяемый атрибут.
+- **История** — `plan_task_versions` (append-only): `(plan_task_id, version)`; `version` растёт на любое изменение проекции, включая статус.
+- **Текущее состояние** — view `current_plan_tasks` (max version), не отдельная мутируемая таблица.
+- **Связи** — `task_claims(plan_task_id, claim_id, role)`: DOM-owned; синхронизация плана их **не трогает**.
+- **Семантический отпечаток** — `semantic_digest` (title, description, acceptance_criteria, task_type, required_roles, parent_id). `link_stale` считается по нему, а не по номеру версии: смена статуса не инвалидирует связь, смена смысла — инвалидирует. Список семантических полей — конфигурируемый; `status`, `priority`, `assignee`, `observed_at` в него не входят.
+
+**Единственный писатель статуса** — `project_plan_snapshot`: он копирует статус из OMH-снимка; публичного API «поставить статус» в DOM нет.
+
+**Схема:**
+```sql
+CREATE TABLE plan_tasks(              -- identity, stable
+  plan_task_id TEXT PRIMARY KEY,
+  source TEXT NOT NULL CHECK(source='OMH'),
+  external_ref TEXT,
+  created_at TEXT NOT NULL
+);
+CREATE TABLE plan_task_versions(      -- append-only projection history
+  plan_task_id TEXT NOT NULL REFERENCES plan_tasks(plan_task_id),
+  version INTEGER NOT NULL,
+  path TEXT NOT NULL,
+  parent_id TEXT,
+  status TEXT NOT NULL,
+  title TEXT NOT NULL,
+  task_type TEXT,
+  source_revision TEXT NOT NULL,
+  digest TEXT NOT NULL,
+  semantic_digest TEXT NOT NULL,
+  archived INTEGER NOT NULL DEFAULT 0,
+  observed_at TEXT NOT NULL,
+  PRIMARY KEY(plan_task_id, version)
+);
+CREATE VIEW current_plan_tasks AS
+SELECT t.plan_task_id, t.source, t.external_ref, t.created_at, v.archived,
+       v.version, v.path, v.parent_id, v.status, v.title, v.task_type,
+       v.source_revision, v.digest, v.semantic_digest, v.observed_at
+FROM plan_tasks t
+JOIN plan_task_versions v ON v.plan_task_id = t.plan_task_id
+ AND v.version = (SELECT MAX(version) FROM plan_task_versions
+                  WHERE plan_task_id = t.plan_task_id);
+CREATE TABLE task_claims(
+  plan_task_id TEXT NOT NULL REFERENCES plan_tasks(plan_task_id),
+  claim_id TEXT NOT NULL REFERENCES claims(id),
+  role TEXT NOT NULL CHECK(role IN ('justifies','implements','validates','documents','depends_on')),
+  linked_at_plan_version INTEGER NOT NULL,
+  linked_semantic_digest TEXT NOT NULL,
+  linked_at TEXT NOT NULL,
+  PRIMARY KEY(plan_task_id, claim_id, role)
+);
+CREATE TABLE plan_projection_state(
+  source TEXT PRIMARY KEY CHECK(source='OMH'),
+  source_revision TEXT,
+  last_checked_at TEXT NOT NULL,
+  last_changed_at TEXT,
+  snapshot_digest TEXT
+);
+```
+
+`plan_task_versions` — append-only: `BEFORE UPDATE/DELETE` триггеры → `IMMUTABLE`. `task_claims` — единственная таблица, которую DOM меняет при relink; синхронизация плана её не касается.
+
+**Алгоритм `project_plan_snapshot(snapshot, mode='full'|'partial')`:**
+1. Валидация: уникальные `plan_task_id`, parent существует, нет циклов, `source_revision` не старше текущей.
+2. `BEGIN IMMEDIATE`.
+3. Для каждого пункта:
+   - `digest` = canonical JSON **содержательных** полей (path, parent_id, status, title, task_type, ...), **без** `source_revision`/`observed_at`/`synced_at`; `semantic_digest` = canonical JSON семантических (title, description, acceptance_criteria, task_type, required_roles, parent_id), **без** status и метаданных синхронизации.
+   - нет в `plan_tasks` → insert identity + version 1.
+   - есть, `digest` совпал → **skip** (никаких записей, `observed_at` не меняется).
+   - есть, `digest` изменился → insert version `current+1`; `plan_tasks` не переписывается.
+   - есть, отсутствует в `full` snapshot → insert version `current+1` с `archived=1` (не delete); при повторном появлении — новая версия с `archived=0`.
+4. `plan_projection_state.last_checked_at` обновляется всегда; `last_changed_at` — только если были изменения.
+5. `COMMIT`.
+6. Идемпотентность: `(source, source_revision)`; повтор → `ALREADY_PROJECTED` без записей.
+
+**Правила против переобновления:**
+- не переписывать всю таблицу; только изменённые пункты;
+- `digest` не включает метаданные синхронизации; иначе каждый poll = новая версия;
+- `observed_at` не двигать, если `digest` не изменился;
+- `stale` = `source_revision` отстаёт или `now - last_checked_at > ttl`, а не «пункт обновлён»;
+- `task_claims` не трогать при синхронизации плана;
+- `link_stale` — по `semantic_digest`, не по `version`;
+- архив вместо удаления;
+- отклонять старый `source_revision` (`STALE_PROJECTION_SNAPSHOT`).
+
+**Крайние случаи:**
+- **Переименование/перемещение:** тот же `plan_task_id`, новая `path`/`parent_id`; версия растёт; ссылки остаются; `link_stale` — только если изменился `semantic_digest` (например, parent).
+- **Статус:** новая версия, `semantic_digest` тот же → `link_stale=false`.
+- **Удаление:** `archived=1`; ссылки остаются, `plan_archived=true`.
+- **Split/merge:** новые `plan_task_id`; старые archived; ссылки **не копируются автоматически** — `ORPHANED_LINKS`, требуется явный relink.
+- **Тот же path, новый `plan_task_id`:** новая задача; старую в архив; ссылки не переиспользовать.
+- **OMH без стабильного ID:** DOM вводит surrogate `plan_task_id` + `external_ref`; path-изменение без ID трактуется как новая задача (документированное ограничение).
+
+**Тесты:** идемпотентный повтор; status-only → `link_stale=false`; title → `link_stale=true`; rename → links intact; delete → archived; old revision → отказ; split/merge → orphaned; concurrent sync → без дублей; append-only `plan_task_versions` (no UPDATE/DELETE).
+
 ### D2. `version` / `logical_claim_id` — производные
 
 **Решение:** не вводить колонки. Оба значения выводятся из цепочки replacement-событий:
@@ -407,40 +504,34 @@ WHERE kind = 'claim';
 
 ### P2. Проекция плана и task claims
 
-**P2.1. Схема проекции.**
-```sql
-CREATE TABLE plan_tasks(
-  path TEXT PRIMARY KEY,
-  parent_path TEXT REFERENCES plan_tasks(path),
-  claim_id TEXT REFERENCES claims(id),
-  status TEXT NOT NULL,
-  source TEXT NOT NULL CHECK(source = 'OMH'),
-  synced_at TEXT NOT NULL,
-  CHECK(parent_path IS NULL OR parent_path <> path)
-);
-
-CREATE TABLE task_claims(
-  task_path TEXT NOT NULL REFERENCES plan_tasks(path),
-  claim_id TEXT NOT NULL REFERENCES claims(id),
-  role TEXT NOT NULL CHECK(role IN ('justifies','implements','validates','documents','depends_on')),
-  PRIMARY KEY(task_path, claim_id, role)
-);
-```
-- `UNIQUE(claim_id, path)` из аудита **убрать**: один decision-клайм может обосновывать несколько задач.
-- `status` не мутируется DOM; синхронизация — отдельный `replace_projection(tasks, claims, digest, synced_at)` в одной транзакции.
-- `plan_projection_state(last_sync, digest)` для `stale`.
+**P2.1. Идентичность и версии пунктов плана (D1.1).**
+- `plan_tasks` — только идентичность: `plan_task_id` (из OMH), `source`, `external_ref`, `created_at`.
+- `plan_task_versions` — append-only история: `(plan_task_id, version)`, `path`, `parent_id`, `status`, `title`, `task_type`, `source_revision`, `digest`, `semantic_digest`, `archived`, `observed_at`.
+- `current_plan_tasks` — view max(version); не мутируемая таблица.
+- `task_claims` — `plan_task_id` + `linked_at_plan_version` + `linked_semantic_digest`; DOM-owned, синхронизация плана их не трогает.
+- `plan_projection_state` — `source_revision`, `last_checked_at`, `last_changed_at`, `snapshot_digest`.
+- `project_plan_snapshot` — идемпотентный: skip по `digest`, version+1 только при изменении, archive при отсутствии в full snapshot, reject older `source_revision`.
+- `link_stale` — по `semantic_digest`, не по версии.
+- Полная схема и алгоритм — §D1.1.
 
 **P2.2. `dom_plan_tree`.**
-- Рекурсивный CTE по `parent_path`; глубина ≤ `depth`; `claim_count` — текущие версии через `task_claims`.
-- `root` — явный или `project_root`; не хардкод `П1`.
+- Рекурсивный CTE по `parent_id`; глубина ≤ `depth`; `claim_count` — текущие версии через `task_claims`.
+- `root` — `plan_task_id` или `path` (resolve to id); не хардкод `П1`.
 - `PLAN_ROOT_NOT_FOUND`, `PLAN_CYCLE`, `PLAN_PROJECTION_STALE`.
+- `at_version` опционально: historical tree из `plan_task_versions`; по умолчанию current.
+- `dom_plan_task_versions(plan_task_id)` — список версий + diff (from/to) по `digest`/`semantic_digest`.
 
 **P2.3. `dom_task_claims`.**
-- Рекурсивный CTE по поддереву; join `task_claims` + `claims`; фильтр текущих версий; группировка по роли.
-- `baseline_range` — min/max `baseline_view.seq` для возвращённых клаймов.
-- `stale`, `as_of`.
+- Рекурсивный CTE по `parent_id`; join `task_claims` + `claims`; фильтр текущих версий клаймов; группировка по роли.
+- `link_stale` = `current.semantic_digest != linked_semantic_digest` или `archived=1`; `plan_task_version`, `linked_at_plan_version`.
+- `at_plan_version` опционально: только ссылки с `linked_at_plan_version <= at_plan_version` (аудит истории).
+- `baseline_range` — min/max `baseline_view.seq`; `stale`, `as_of`; `include_archived` для истории.
 
-**DoD P2:** проекция обновляется атомарно; `stale` корректен; тесты на приоритет членства и на отсутствие статусов в DOM.
+**P2.4. Split/merge/orphan.**
+- Новые `plan_task_id`; старые archived; ссылки не копируются; `ORPHANED_LINKS` + `next_steps` relink.
+- `dom_task_claims` показывает `orphaned_links`.
+
+**DoD P2:** идемпотентный sync; status-only не старит ссылки; rename сохраняет ссылки; delete архивирует; old revision отклоняется; split/merge не теряет ссылки молча; `stale` корректен; статусы в DOM не пишутся.
 
 ### P3. Diff, drift, fork
 
@@ -513,6 +604,7 @@ CREATE TABLE task_claims(
 | TD-DRIFT-01 | TD-DOM-45 | P3 | drift zero/extra |
 | TD-FORK-01 | TD-DOM-46 | P3 | fork atomic |
 | TD-CTX-01..05 | TD-DOM-42/43 | P2 | projection/stale |
+| D1.1 (plan item versions) | TD-DOM-54/55 | P2/P3 | idempotent sync / link_stale |
 | ORCH-01..03 | TD-DOM-47/48/49 | P4 | dedup/completeness/sessions |
 | FAULT-01..03 | TD-DOM-53 | P5 | retry/checkpoint |
 
@@ -526,8 +618,8 @@ CREATE TABLE task_claims(
 |---|---|---|---|
 | **P0** | double verify, sync tx, registry, snapshot invariant | доказанные дефекты; без продуктовых решений | — |
 | **P1** | commit_ref, derived version, baseline view, recall, diff | даёт «возврат к задаче»; минимальная схема | P0 |
-| **P2** | проекция плана, plan_tree, task_claims | требует D1 и синхронизации OMH | P1 |
-| **P3** | drift, fork | требуют формальной миссии и стабильного version | P2 |
+| **P2** | проекция плана, версии пунктов, plan_tree, task_claims | требует D1/D1.1 и синхронизации OMH | P1 |
+| **P3** | drift, fork, split/merge orphan links | требуют формальной миссии и стабильного version | P2 |
 | **P4** | два оркестратора, дедуп, полнота, сессии | отдельная подсистема | P1/P2 |
 | **P5** | live-порты, Merkle, retry/circuit | после P0 и стабильного ядра | P0/P1 |
 
@@ -538,8 +630,8 @@ CREATE TABLE task_claims(
 | `main` | docs, анализ, стабильное ядро | — | — |
 | `arch/p0-invariants` | TD-DOM-33..36 | `main` | 4 теста + полный прогон |
 | `arch/p1-version-baseline` | TD-DOM-37..41, 22.6 | P0 | P1 DoD |
-| `arch/p2-plan-projection` | TD-DOM-42/43 (TD-DOM-44 deferred) | P1 | P2 DoD |
-| `arch/p3-diff-drift-fork` | TD-DOM-45/46 | P2 | P3 DoD |
+| `arch/p2-plan-projection` | TD-DOM-42/43/54 (TD-DOM-44 deferred) | P1 | P2 DoD |
+| `arch/p3-diff-drift-fork` | TD-DOM-45/46/55 | P2 | P3 DoD |
 | `arch/p4-orchestrator` | TD-DOM-47..50 | P1/P2 | P4 DoD |
 | `arch/p5-live-ports` | TD-DOM-51..53 | P0/P1 | P5 DoD |
 
@@ -557,6 +649,7 @@ CREATE TABLE task_claims(
 6. **Drift thresholds:** дефолт 0.3; кто утверждает; нужны ли per-task пороги.
 7. **LLM-фильтр:** модель, промпт, provenance, детерминированный fallback; нужен ли он в MVP.
 8. **pydantic:** использовать для схем или оставить ручной `strict_arguments`; Q38 разрешает, но выбор не сделан.
+9. **Стабильный `plan_task_id` из OMH:** есть ли у OMH неизменяемый ID и версия задачи? Если нет — DOM вводит surrogate + `external_ref`, а смена `path` без ID трактуется как новая задача.
 
 ---
 
