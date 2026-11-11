@@ -101,3 +101,91 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 | ID | Долг | Severity | Источник | Статус |
 |---|---|---|---|---|
 | TD-DOM-32 | requirement_refs не валидируются по составу/длине/набору: произвольные строки (включая path-traversal) принимаются и хранятся. Потенциальная stored-injection при выводе в YAML/trace. | minor | combat test 2026-11-10 (A15) | open |
+
+## Архитектурный аудит 2026-11-11 — новые долги и приоритеты
+
+Источник: `docs/AUDIT_2026-11-11_ARCHITECTURE_ANALYSIS.md`; исходный аудит `docs/audit/2026-11-11_ARCHITECTURE_AUDIT.txt` (3 619 строк). Решения D1–D6 зафиксированы там же. Прежняя сводка (25 открытых) дополняется; актуальный порядок — ниже.
+
+### Зафиксированные решения
+
+- **D1.** DOM — проекция OMH: `plan_tasks`/`task_claims` — read-only кэш (`source='OMH'`, `synced_at`, `stale`); DOM не владеет статусами.
+- **D2.** `version`/`logical_claim_id` — производные из replacement-цепочки; колонки не вводятся.
+- **D3.** Базлайн — SQL-view над `events`; материализация только после benchmark.
+- **D4.** `commit_ref` — опциональное поле `code`; нужен `OPTIONAL_FIELDS`; hash 40/64 hex.
+- **D5.** Drift — явная миссия (`expected` + `constraints`); score = `(missing+changed)/|expected|`; `extra` отдельно; `|expected|=0` → `undefined`.
+- **D6.** Два оркестратора: внешний (Hermes, NL→MCP) и внутренний (DOM, доменная оркестрация); LLM-фильтр — за портом, только кандидаты.
+
+### Приоритет 0 — доказанные дефекты (закрывать первыми)
+
+| ID | Долг | Severity | Проверка закрытия | Статус |
+|---|---|---|---|---|
+| TD-DOM-33 | Двойная `verify_chain` в `trace`/`resume` (`query=1`, `trace=2`, `resume=2`); лишняя O(N) на каждом чтении | major | счётчик вызовов: 1 на запрос; тест | open |
+| TD-DOM-34 | `sync` держит read-tx вокруг внешнего I/O; при `journal_mode=DELETE` блокирует писателей до `busy_timeout` | major | slow port + параллельный writer; задержка < 2 с | open |
+| TD-DOM-35 | Ручной реестр `TOOLS`/`SIGNATURE`/`dispatch` — routing drift; нет теста соответствия | major | drift-тест TOOL↔handler↔signature↔doc | open |
+| TD-DOM-36 | Нет инварианта «каждый claim имеет snapshot»; ARCH-01 trigger нереализуем в текущем flow | major | SQL-инвариант + helper; ADR | open |
+
+### Приоритет 1 — ядро (после P0)
+
+| ID | Долг | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-37 | Миграции: `_migrate_vN + ledger` + DOWN; v4 только под конкретную фичу | major | P0 | open (v4 deferred) |
+| TD-DOM-38 | `version`/`logical_claim_id` не отдаются в DTO; вывод из `_lineage` (не колонки) | major | P0 | open |
+| TD-DOM-39 | `commit_ref` отсутствует; добавление в `TYPE_FIELDS` сделает его обязательным и сломает старые code-клаймы | minor | — | open |
+| TD-DOM-40 | Базлайн не представлен: нет `baseline_view` (`seq`, `prev_seq`, `chunk_hash=event_hash`) | major | TD-DOM-38 | open |
+| TD-DOM-41 | Нет `dom_recall` (replay до branch-local seq); `pending_decisions`/`resolved_conflicts`/`related_branches` не определены | major | TD-DOM-40 | open |
+| TD-DOM-22.6 | Нет навигации по версиям/diff (`dom_claim_versions`, `dom_diff`) | minor | TD-DOM-38 | open |
+
+### Приоритет 2 — проекция плана
+
+| ID | Долг | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-42 | Нет проекции плана OMH: `plan_tasks`/`task_claims` (read-only, `source='OMH'`, `synced_at`, `stale`) | major | D1, P1 | open |
+| TD-DOM-43 | Нет `dom_plan_tree`/`dom_task_claims`; root не должен быть хардкодом `П1` | major | TD-DOM-42 | open |
+| TD-DOM-44 | Материализованное состояние планирования (TD-PLAN-01) — преждевременно; только после benchmark, как кэш с rebuild | minor | TD-DOM-42 | deferred |
+
+### Приоритет 3 — diff/drift/fork
+
+| ID | Долг | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-45 | Drift: нет явной миссии/constraints; формула аудита делит на ноль и штрафует `extra` | major | TD-DOM-42/43 | open |
+| TD-DOM-46 | `fork_branch` не реализован; нужна атомарная транзакция, `carry ∩ rewrite = ∅`, `branch_fork_claims` | major | TD-DOM-40 | open |
+
+### Приоритет 4 — оркестратор
+
+| ID | Долг | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-47 | Нет контракта двух оркестраторов (Hermes outer / DOM inner); риск «второго планировщика» | major | D1, D6 | open |
+| TD-DOM-48 | Нет детерминированного дедупа/полноты на внутреннем слое (`DUPLICATE_OF`, `INCOMPLETE` + `missing_refs`) | major | TD-DOM-47 | open |
+| TD-DOM-49 | Сессии не персистентны/не изолированы (in-memory sample) | major | TD-DOM-47 | open |
+| TD-DOM-50 | `Service` — God Object (TD-STRUCT-01); рефакторинг фасадами, не big bang | major | P1 | open |
+
+### Приоритет 5 — live/fault tolerance
+
+| ID | Долг | Severity | Зависимости | Статус |
+|---|---|---|---|---|
+| TD-DOM-51 | Нет `IOmhDeliveryPort` (Protocol) и инъекции; `admission.sync` знает о симуляции (TD-INT-01) | major | P0/P1 | open |
+| TD-DOM-52 | Нет Merkle/checkpoint для инкрементальной проверки; `branch_heads.last_verified_seq` несовместим с глобальным `events.seq` | major | P0, TD-DOM-01 | open |
+| TD-DOM-53 | Нет матрицы retryable/circuit/fallback; `update` без reconciler для `UPDATE_INCOMPLETE` | major | TD-DOM-51 | open |
+
+### Сводка и порядок
+
+- **P0:** TD-DOM-33, 34, 35, 36.
+- **P1:** TD-DOM-37, 38, 39, 40, 41, 22.6.
+- **P2:** TD-DOM-42, 43; TD-DOM-44 deferred.
+- **P3:** TD-DOM-45, 46.
+- **P4:** TD-DOM-47, 48, 49, 50.
+- **P5:** TD-DOM-51, 52, 53.
+
+Итого новых: TD-DOM-33…53 (21 пункт). Из них P0 — 4, P1 — 6, P2 — 3 (2 + deferred), P3 — 2, P4 — 4, P5 — 3.
+
+### Связь с существующими долгами
+
+- TD-DOM-01 (внешний checkpoint) → TD-DOM-52.
+- TD-DOM-03 (Git merge) → TD-DOM-46 + TD-DOM-08.
+- TD-DOM-08 (live OMH) → TD-DOM-51.
+- TD-DOM-14 (scope trace/resume) → остаётся отдельным; не дублируется.
+- TD-DOM-15 (STALE_CHECK) → остаётся; не смешивать с drift.
+- TD-DOM-16 (payload KeyError) → частично P0.4 инвариант; отдельный фикс.
+- TD-DOM-22.6 → TD-DOM-38/41 (diff/versions).
+- TD-DOM-29 → TD-DOM-38.
+- TD-DOM-32 (requirement_refs) → остаётся; не дублируется.

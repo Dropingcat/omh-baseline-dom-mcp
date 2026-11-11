@@ -84,8 +84,35 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - **TD-DOM-12 (major, монотонность головы ветки):** в `storage._create_triggers` добавлены `branch_heads_monotonic_update` (BEFORE UPDATE WHEN NEW.revision < OLD.revision → `BRANCH_HEAD_REWIND`), `branch_heads_invariant_update` (BEFORE UPDATE WHEN NEW.revision < COALESCE(MAX(tx.revision),0) → `BRANCH_HEAD_BELOW_TX`), `branch_heads_no_delete` (BEFORE DELETE → `BRANCH_HEAD_DELETE`). Проверено вручную: rewind 5→3 → `BRANCH_HEAD_REWIND`, delete → `BRANCH_HEAD_DELETE`. Коммит `a1b1a23`.
 - **TD-DOM-18 (major, монотонная защёлка `converged`):** в `projections.snapshot` флаг `converged` сбрасывается в `False` при любом контент-событии после `converge` (claim/applicability/archive/property/replacement/conflict/resolve/exclude). Проверено: P1 → после добавления нового общего контента `converged_flag=false`, `NOT_READY [BRANCH_NOT_CONVERGED]`. Коммит `5d114a9`.
 - **TD-DOM-22.5 (minor, идемпотентность входа):** опциональный `idempotency_key` в `dom_claim`/`dom_update` (в `COMMON_FIELDS`, `strict_arguments`, `TOOL_DOCS`, `_validated_claim_args`), проброс в `_package`/`_commit`. Verified: lite replay same key+content → `ALREADY_RECORDED` + тот же `claim_id`; lite same key+diff content → `IDEMPOTENCY_MISMATCH`; strict replay → тот же `candidate_id`; strict diff → `IDEMPOTENCY_MISMATCH`. Тест `tests/test_claim_entry_idempotency.py` — 6/6 pass.
-- Прогон тестов: 61 passed, 3 failed (`test_event_chain_is_verified_and_forgery_is_detected`, `test_idempotency_is_scoped_to_external_work_ref`, `test_actual_death_reopen[after_commit]`) — предсуществующие, связаны с TD-DOM-16/TD-DOM-12, не регрессия.
+- Прогон тестов: 67 passed, 3 failed (`test_event_chain_is_verified_and_forgery_is_detected`, `test_idempotency_is_scoped_to_external_work_ref`, `test_actual_death_reopen[after_commit]`) — предсуществующие, связаны с TD-DOM-16/TD-DOM-12, не регрессия (после TD-DOM-22.4/22.5).
 - Вынесено в отдельный репозиторий: https://github.com/Dropingcat/omh-baseline-dom-mcp (`main`).
+
+## Архитектурный анализ 2026-11-11: решения и приоритеты
+
+Источник: `docs/AUDIT_2026-11-11_ARCHITECTURE_ANALYSIS.md`; исходный аудит 3 619 строк. Анализ проверен по коду, а не пересказан.
+
+**Зафиксированные решения:**
+- **D1.** DOM — проекция OMH: `plan_tasks`/`task_claims` — read-only кэш; статусы остаются в OMH.
+- **D2.** `version`/`logical_claim_id` — производные из replacement-цепочки; колонки не вводятся.
+- **D3.** Базлайн — SQL-view над `events`; материализация после benchmark.
+- **D4.** `commit_ref` — опциональное поле `code`; нужен `OPTIONAL_FIELDS`; hash 40/64 hex.
+- **D5.** Drift — явная миссия; score = `(missing+changed)/|expected|`; `extra` отдельно; пустая миссия → `undefined`.
+- **D6.** Два оркестратора: внешний (Hermes, NL→MCP) и внутренний (DOM, доменная оркестрация); LLM-фильтр — только кандидаты за портом.
+
+**Приоритеты закрытия:**
+
+| Приоритет | Что | Ветка |
+|---|---|---|
+| **P0** | TD-DOM-33 double `verify_chain`; TD-DOM-34 `sync` read-tx; TD-DOM-35 registry; TD-DOM-36 snapshot invariant | `arch/p0-invariants` |
+| **P1** | TD-DOM-37 миграции; 38 derived version; 39 `commit_ref`; 40 baseline view; 41 `dom_recall`; 22.6 diff | `arch/p1-version-baseline` |
+| **P2** | TD-DOM-42 проекция плана; 43 `dom_plan_tree`/`dom_task_claims`; 44 deferred | `arch/p2-plan-projection` |
+| **P3** | TD-DOM-45 drift; 46 fork | `arch/p3-diff-drift-fork` |
+| **P4** | TD-DOM-47 два оркестратора; 48 дедуп/полнота; 49 сессии; 50 `Service` фасады | `arch/p4-orchestrator` |
+| **P5** | TD-DOM-51 `IOmhDeliveryPort`; 52 Merkle/checkpoints; 53 retry/circuit/fallback | `arch/p5-live-ports` |
+
+**Правила веток:** одна ветка — один приоритет; ADR на каждый пункт; тесты не ослаблять; 3 известных красных теста триажить до P1. Merge в `main` — только после DoD приоритета и полного прогона.
+
+**Доказанные дефекты P0 (эмпирика):** `runtime/tmp/audit_verify_chain.py` → `query=1`, `trace=2`, `resume=2`; `sync` держит read-tx при `journal_mode=DELETE`; `TOOLS`/`SIGNATURE`/`dispatch` — три ручных списка.
 
 ## Что остаётся открытым
 
