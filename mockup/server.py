@@ -206,47 +206,105 @@ def strict_arguments(name, arguments):
     return arguments
 
 
+def _handle_describe(service, args):
+    return service.describe()
+
+
+def _handle_start(service, args):
+    return service.start(args.get('request'), args.get('goal'), args.get('branches'), args.get('adopt', False))
+
+
+def _handle_claim(service, args):
+    extra = {k: v for k, v in args.items() if k not in ('branch', 'type', 'text')}
+    return service.claim(args['branch'], args['type'], args['text'], **extra)
+
+
+def _handle_update(service, args):
+    return service.update(args['claim_id'], args['text'], args['reason'], args.get('idempotency_key'))
+
+
+def _handle_find(service, args):
+    return service.find(args.get('query'), args.get('branch'), args.get('type'), args.get('requirement_ref'), args.get('limit', 20))
+
+
+def _handle_init(service, args):
+    return service.init(dict(args))
+
+
+def _handle_resume(service, args):
+    return service.resume(args['branch'], args.get('limit', 50), args.get('after'))
+
+
+def _handle_submit(service, args):
+    return service.submit(args['payload_json'])
+
+
+def _handle_review(service, args):
+    return service.review(args['candidate_id'], args['intent_digest'])
+
+
+def _handle_admit(service, args):
+    return service.admit(args['candidate_id'], args['review_id'], args['idempotency_key'], args['intent_digest'])
+
+
+def _handle_append(service, args):
+    return service.append(args['payload_json'])
+
+
+def _handle_query(service, args):
+    return service.query(args['branch'], args.get('revision'))
+
+
+def _handle_trace(service, args):
+    return service.trace(args.get('branch', 'master'))
+
+
+def _handle_export(service, args):
+    return service.export(args['branch'], args.get('revision'))
+
+
+def _handle_sync_status(service, args):
+    return service.sync_status(args['branch'])
+
+
+def _handle_sync(service, args):
+    return service.sync(args['branch'])
+
+
+# TD-DOM-35: the single routing table.  A tool is usable only if it is declared
+# in SIGNATURE, visible for the launch profile, and has an entry here; the
+# drift test in tests/test_tool_registry.py pins the three sets together.
+HANDLERS = {
+    'dom_describe': _handle_describe,
+    'dom_start': _handle_start,
+    'dom_claim': _handle_claim,
+    'dom_update': _handle_update,
+    'dom_find': _handle_find,
+    'dom_init': _handle_init,
+    'dom_resume': _handle_resume,
+    'dom_submit': _handle_submit,
+    'dom_review': _handle_review,
+    'dom_admit': _handle_admit,
+    'dom_append': _handle_append,
+    'dom_query': _handle_query,
+    'dom_snapshot': _handle_query,
+    'dom_trace': _handle_trace,
+    'dom_export': _handle_export,
+    'dom_sync_status': _handle_sync_status,
+    'dom_sync': _handle_sync,
+}
+
+
 def dispatch(service, name, arguments):
     visible = LITE_TOOL_NAMES if service.profile == 'lite' else STRICT_TOOL_NAMES
     if name not in SIGNATURE or name not in visible:
         raise ToolInput('UNKNOWN_TOOL')
     args = strict_arguments(name, arguments)
-    if name == 'dom_describe':
-        return service.describe()
-    if name == 'dom_start':
-        return service.start(args.get('request'), args.get('goal'), args.get('branches'), args.get('adopt', False))
-    if name == 'dom_claim':
-        extra = {k: v for k, v in args.items() if k not in ('branch', 'type', 'text')}
-        return service.claim(args['branch'], args['type'], args['text'], **extra)
-    if name == 'dom_update':
-        return service.update(args['claim_id'], args['text'], args['reason'], args.get('idempotency_key'))
-    if name == 'dom_find':
-        return service.find(args.get('query'), args.get('branch'), args.get('type'), args.get('requirement_ref'), args.get('limit', 20))
-    if name == 'dom_init':
-        return service.init(dict(args))
-    if name == 'dom_resume':
-        return service.resume(args['branch'], args.get('limit', 50), args.get('after'))
-    if name == 'dom_submit':
-        return service.submit(args['payload_json'])
-    if name == 'dom_review':
-        return service.review(args['candidate_id'], args['intent_digest'])
-    if name == 'dom_admit':
-        return service.admit(args['candidate_id'], args['review_id'], args['idempotency_key'], args['intent_digest'])
-    if name == 'dom_append':
-        return service.append(args['payload_json'])
-    if name in ('dom_query', 'dom_snapshot'):
-        return service.query(args['branch'], args.get('revision'))
-    if name == 'dom_trace':
-        return service.trace(args.get('branch', 'master'))
-    if name == 'dom_export':
-        return service.export(args['branch'], args.get('revision'))
-    if name == 'dom_sync_status':
-        return service.sync_status(args['branch'])
-    if name == 'dom_sync':
-        return service.sync(args['branch'])
-    # Declared in SIGNATURE but not routed here: still a structured refusal, never
-    # a silent None returned to the caller.
-    raise ToolInput('UNKNOWN_TOOL')
+    handler = HANDLERS.get(name)
+    if handler is None:
+        # Declared in SIGNATURE but not routed: structured refusal, never None.
+        raise ToolInput('UNKNOWN_TOOL')
+    return handler(service, args)
 
 
 def build_server(service, log_path=None):

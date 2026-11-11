@@ -8,7 +8,7 @@ import sqlite3
 
 import pytest
 
-from mockup.admission import Service
+from mockup.admission import IntegrityFailure, Service, verify_chain
 from mockup.dom_contract import validate, raw_hash
 from mockup.fixtures import package, item, amendment, WORK, POLICY
 from test_projection_state import accepted
@@ -30,12 +30,20 @@ def test_trace_for_forbidden_principal_is_scope_denied(tmp_path):
 
 
 def test_event_chain_is_verified_and_forgery_is_detected(tmp_path):
-    """F5: recompute previous_hash/event_hash; a direct INSERT is caught."""
+    """F5: recompute previous_hash/event_hash; a direct INSERT is caught.
+
+    Public Trace exposes only the chain status (the internal head hash, event
+    count and broken locators stay server-side).  The detailed locators are
+    asserted through the internal gate that raises IntegrityFailure.
+    """
     first = accepted(tmp_path, package())
     claim = first['claim_ids']['one']
     clean = Service(tmp_path).trace('AA')
-    assert clean['chain']['status'] == 'CHAIN_OK'
-    assert clean['chain']['events'] == 1
+    assert clean['chain'] == {'status': 'CHAIN_OK'}
+    with Service(tmp_path).store.read() as c:
+        verified = verify_chain(c)
+    assert verified['status'] == 'CHAIN_OK'
+    assert verified['events'] == 1
 
     with sqlite3.connect(database(tmp_path)) as raw:
         head = raw.execute('SELECT event_hash FROM events ORDER BY seq DESC LIMIT 1').fetchone()[0]
@@ -45,13 +53,20 @@ def test_event_chain_is_verified_and_forgery_is_detected(tmp_path):
                     (forged_payload, head))
 
     broken = Service(tmp_path).trace('AA')
-    assert broken['chain']['status'] == 'CHAIN_BROKEN'
-    assert broken['chain']['reason'] == 'EVENT_HASH_MISMATCH'
-    assert broken['chain']['broken_event_id'] == 'forged-event'
+    assert broken['status'] == 'CHAIN_BROKEN'
     assert 'EVENT_CHAIN_BROKEN' in broken['blockers']
     assert broken['ready_for_owner_review'] is False
+    # Public Broken DTO must not leak internal chain/origin locators.
+    assert 'origins' not in broken and 'read_snapshot' not in broken
+
+    with Service(tmp_path).store.read() as c:
+        with pytest.raises(IntegrityFailure) as raised:
+            Service(tmp_path).integrity_gate(c)
+    internal = raised.value.result
+    assert internal['chain']['reason'] == 'EVENT_HASH_MISMATCH'
+    assert internal['chain']['broken_event_id'] == 'forged-event'
     # the forged archive is what the projection saw, which is why the chain check matters
-    assert next(c for c in broken['origins'] if c == claim) == claim
+    assert claim in internal['origins']
 
 
 def test_event_insert_must_extend_the_stored_chain(tmp_path):
@@ -67,23 +82,28 @@ def test_event_insert_must_extend_the_stored_chain(tmp_path):
 
 
 def test_idempotency_is_scoped_to_external_work_ref(tmp_path):
-    """F6: UNIQUE(external_work_ref, operation, key), not (operation, key)."""
+    """F6: work (and the launch-grant digest) are part of the replay key."""
     accepted(tmp_path, package())
     with Service(tmp_path).store.read() as c:
         info = list(c.execute('PRAGMA table_info(idempotency)'))
         columns = {row[1] for row in info}
         assert {'external_work_ref', 'operation', 'key', 'digest', 'result'} <= columns
         primary_key = [row[1] for row in sorted(info, key=lambda r: r[5]) if row[5]]
-        assert primary_key == ['external_work_ref', 'operation', 'key']
+        # WS-F02 extended the key with the launch grant digest; work stays in it.
+        assert primary_key == ['external_work_ref', 'operation', 'key', 'scope_digest']
         rows = [row[0] for row in c.execute('SELECT DISTINCT external_work_ref FROM idempotency')]
         assert rows == [WORK]
         # the same operation/key under another work is a different intent...
-        c.execute("INSERT INTO idempotency(external_work_ref,operation,key,digest,result) "
-                  "VALUES('demo:other-work','admit:demo-reviewer','k1','digest-a','result-a')")
-        # ...while a repeat inside the same work still collides
+        c.execute("INSERT INTO idempotency(external_work_ref,operation,key,scope_digest,digest,result) "
+                  "VALUES('demo:other-work','admit:demo-reviewer','k1','scope-a','digest-a','result-a')")
+        # ...while a repeat inside the same work and scope still collides
         with pytest.raises(sqlite3.IntegrityError):
-            c.execute('INSERT INTO idempotency(external_work_ref,operation,key,digest,result) VALUES(?,?,?,?,?)',
-                      (WORK, 'admit:demo-reviewer', 'k1', 'digest-b', 'result-b'))
+            c.execute("INSERT INTO idempotency(external_work_ref,operation,key,scope_digest,digest,result) "
+                      "VALUES('demo:other-work','admit:demo-reviewer','k1','scope-a','digest-b','result-b')")
+        # the same key under this work's scope is a different intent, not a collision
+        c.execute('INSERT INTO idempotency(external_work_ref,operation,key,scope_digest,digest,result) '
+                  'VALUES(?,?,?,?,?,?)',
+                  (WORK, 'admit:demo-reviewer', 'k1', 'scope-a', 'digest-c', 'result-c'))
 
 
 def test_unknown_content_type_does_not_abort_error_aggregation():

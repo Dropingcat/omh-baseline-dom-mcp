@@ -119,10 +119,12 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 
 | ID | Долг | Severity | Проверка закрытия | Статус |
 |---|---|---|---|---|
-| TD-DOM-33 | Двойная `verify_chain` в `trace`/`resume` (`query=1`, `trace=2`, `resume=2`); лишняя O(N) на каждом чтении | major | счётчик вызовов: 1 на запрос; тест | open |
-| TD-DOM-34 | `sync` держит read-tx вокруг внешнего I/O; при `journal_mode=DELETE` блокирует писателей до `busy_timeout` | major | slow port + параллельный writer; задержка < 2 с | open |
-| TD-DOM-35 | Ручной реестр `TOOLS`/`SIGNATURE`/`dispatch` — routing drift; нет теста соответствия | major | drift-тест TOOL↔handler↔signature↔doc | open |
-| TD-DOM-36 | Нет инварианта «каждый claim имеет snapshot»; ARCH-01 trigger нереализуем в текущем flow | major | SQL-инвариант + helper; ADR | open |
+| TD-DOM-33 | Двойная `verify_chain` в `trace`/`resume` (`query=1`, `trace=2`, `resume=2`); лишняя O(N) на каждом чтении | major | счётчик вызовов: 1 на запрос; тест | **closed** (2026-11-11): `ADR-P0-01`; `Service.integrity` → `(stamp, chain)`, `_trace` переиспользует; `test_trace_and_resume_verify_chain_once` → trace/resume/query = 1. |
+| TD-DOM-34 | `sync` держит read-tx вокруг внешнего I/O; при `journal_mode=DELETE` блокирует писателей до `busy_timeout` | major | slow port + параллельный writer; задержка < 2 с | **closed** (2026-11-11): `ADR-P0-02`; sync/export выносят внешний эффект из транзакции, наблюдение пишется отдельной write-tx после re-check; `test_sync_does_not_hold_a_read_transaction_across_external_io` → writer `DEMO_ADMITTED`, sync `SYNCED`. |
+| TD-DOM-35 | Ручной реестр `TOOLS`/`SIGNATURE`/`dispatch` — routing drift; нет теста соответствия | major | drift-тест TOOL↔handler↔signature↔doc | **closed** (2026-11-11): `ADR-P0-03`; единый `HANDLERS`, `tests/test_tool_registry.py` (3 теста). |
+| TD-DOM-36 | Нет инварианта «каждый claim имеет snapshot»; ARCH-01 trigger нереализуем в текущем flow | major | SQL-инвариант + helper; ADR | **closed** (2026-11-11): `ADR-P0-04`; `_record_claim` вставляет пару, `claim_snapshot_gaps` — read-only guard; 2 теста. DB-level trigger отложен (Q12). |
+
+**Статус P0 (2026-11-11):** закрыт в `arch/p0-invariants`; ADR-P0-01…04; полный прогон **77 passed, 0 failed**; demo exit 0. Три ранее красных теста триажированы как устаревшие относительно текущих публичных контрактов, не ослаблены.
 
 ### Приоритет 1 — ядро (после P0)
 

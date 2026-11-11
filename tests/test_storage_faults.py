@@ -50,7 +50,9 @@ def test_actual_death_reopen(tmp_path,death):
         assert replay['status']=='DEMO_ADMITTED'
         assert admit(Service(tmp_path,role='reviewer'),c,r,'death')==replay
         assert counts(tmp_path)==after
-        assert b.admit(c['candidate_id'],r['review_id'],'death','different')['status']=='IDEMPOTENCY_MISMATCH'
+        # WS-F02 L1 checks candidate-vs-intent digest before the cache lookup, so a
+        # different intent is a DIGEST_MISMATCH (never an idempotency oracle).
+        assert b.admit(c['candidate_id'],r['review_id'],'death','different')['status']=='DIGEST_MISMATCH'
     (tmp_path/'readback.json').write_text(json.dumps({'before':before,'after':after,'exit_code':p.exitcode,'pid':p.pid}),encoding='utf8')
 
 def test_two_process_race(tmp_path):

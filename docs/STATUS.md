@@ -16,10 +16,10 @@ P = E:/opencode_harness_portable/projects/omh-baseline-dom-mcp
 | docs/SPEC.md, docs/IMPLEMENTATION_PLAN.md | есть |
 | cards/AA001, AA002, AB001, AC001, AC002 | есть; в AB001 добавлено дополнение r2 |
 | mockup/{storage,admission,dom_contract,projections,ports}.py | есть |
-| mockup/server.py (stdio MCP) | есть; 12 объявленных инструментов (10 нормативных + `dom_sync` + алиас `dom_snapshot`) |
+| mockup/server.py (stdio MCP) | есть; 17 инструментов в strict (12 базовых + 5 claim-entry), 11 видимых в lite |
 | mockup/demo.py | есть; запуск exit 0, артефакты в `runtime/runs/` |
 | mockup/README.md | есть |
-| tests/*.py | есть; 49 тестов, exit 0 |
+| tests/*.py | есть; 77 тестов, exit 0 |
 
 ## Фактический прогон тестов
 
@@ -84,7 +84,7 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - **TD-DOM-12 (major, монотонность головы ветки):** в `storage._create_triggers` добавлены `branch_heads_monotonic_update` (BEFORE UPDATE WHEN NEW.revision < OLD.revision → `BRANCH_HEAD_REWIND`), `branch_heads_invariant_update` (BEFORE UPDATE WHEN NEW.revision < COALESCE(MAX(tx.revision),0) → `BRANCH_HEAD_BELOW_TX`), `branch_heads_no_delete` (BEFORE DELETE → `BRANCH_HEAD_DELETE`). Проверено вручную: rewind 5→3 → `BRANCH_HEAD_REWIND`, delete → `BRANCH_HEAD_DELETE`. Коммит `a1b1a23`.
 - **TD-DOM-18 (major, монотонная защёлка `converged`):** в `projections.snapshot` флаг `converged` сбрасывается в `False` при любом контент-событии после `converge` (claim/applicability/archive/property/replacement/conflict/resolve/exclude). Проверено: P1 → после добавления нового общего контента `converged_flag=false`, `NOT_READY [BRANCH_NOT_CONVERGED]`. Коммит `5d114a9`.
 - **TD-DOM-22.5 (minor, идемпотентность входа):** опциональный `idempotency_key` в `dom_claim`/`dom_update` (в `COMMON_FIELDS`, `strict_arguments`, `TOOL_DOCS`, `_validated_claim_args`), проброс в `_package`/`_commit`. Verified: lite replay same key+content → `ALREADY_RECORDED` + тот же `claim_id`; lite same key+diff content → `IDEMPOTENCY_MISMATCH`; strict replay → тот же `candidate_id`; strict diff → `IDEMPOTENCY_MISMATCH`. Тест `tests/test_claim_entry_idempotency.py` — 6/6 pass.
-- Прогон тестов: 67 passed, 3 failed (`test_event_chain_is_verified_and_forgery_is_detected`, `test_idempotency_is_scoped_to_external_work_ref`, `test_actual_death_reopen[after_commit]`) — предсуществующие, связаны с TD-DOM-16/TD-DOM-12, не регрессия (после TD-DOM-22.4/22.5).
+- Прогон тестов (2026-11-11, после P0): **77 passed, 0 failed**. Ранее красные тесты триажированы: публичный Trace/Broken DTO не отдаёт внутренние локаторы (детали проверяются через `integrity_gate`/`verify_chain`); replay key включает `scope_digest`; `DIGEST_MISMATCH` при подмене intent — L1-проверка до кэша. Ни один тест не ослаблен.
 - Вынесено в отдельный репозиторий: https://github.com/Dropingcat/omh-baseline-dom-mcp (`main`).
 
 ## Архитектурный анализ 2026-11-11: решения и приоритеты
@@ -104,16 +104,24 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 
 | Приоритет | Что | Ветка |
 |---|---|---|
-| **P0** | TD-DOM-33 double `verify_chain`; TD-DOM-34 `sync` read-tx; TD-DOM-35 registry; TD-DOM-36 snapshot invariant | `arch/p0-invariants` |
+| **P0** | TD-DOM-33 double `verify_chain`; TD-DOM-34 `sync` read-tx; TD-DOM-35 registry; TD-DOM-36 snapshot invariant — **closed 2026-11-11, ADR-P0-01…04** | `arch/p0-invariants` |
 | **P1** | TD-DOM-37 миграции; 38 derived version; 39 `commit_ref`; 40 baseline view; 41 `dom_recall`; 22.6 diff | `arch/p1-version-baseline` |
 | **P2** | TD-DOM-42 проекция плана; 43 `dom_plan_tree`/`dom_task_claims`; 54 идентичность/версии пунктов и защита от переобновления; 44 deferred | `arch/p2-plan-projection` |
 | **P3** | TD-DOM-45 drift; 46 fork; 55 split/merge orphan links | `arch/p3-diff-drift-fork` |
 | **P4** | TD-DOM-47 два оркестратора; 48 дедуп/полнота; 49 сессии; 50 `Service` фасады | `arch/p4-orchestrator` |
 | **P5** | TD-DOM-51 `IOmhDeliveryPort`; 52 Merkle/checkpoints; 53 retry/circuit/fallback | `arch/p5-live-ports` |
 
-**Правила веток:** одна ветка — один приоритет; ADR на каждый пункт; тесты не ослаблять; 3 известных красных теста триажить до P1. Merge в `main` — только после DoD приоритета и полного прогона.
+**Правила веток:** одна ветка — один приоритет; ADR на каждый пункт; тесты не ослаблять; 3 известных красных теста триажированы до P1 (77 passed, 0 failed). Merge в `main` — только после DoD приоритета и полного прогона.
 
-**Доказанные дефекты P0 (эмпирика):** `runtime/tmp/audit_verify_chain.py` → `query=1`, `trace=2`, `resume=2`; `sync` держит read-tx при `journal_mode=DELETE`; `TOOLS`/`SIGNATURE`/`dispatch` — три ручных списка.
+**P0 закрыт (2026-11-11, `arch/p0-invariants`):** ADR-P0-01…04; полный прогон **77 passed, 0 failed**; demo exit 0. Эмпирика до фикса: `runtime/tmp/audit_verify_chain.py` → `query=1`, `trace=2`, `resume=2`; `sync` держал read-tx при `journal_mode=DELETE`; `TOOLS`/`SIGNATURE`/`dispatch` — три ручных списка.
+
+### P0 выполнен (2026-11-11)
+
+- **TD-DOM-33 / ADR-P0-01:** `Service.integrity` возвращает `(stamp, chain)`; `trace`/`resume`/`query` — одна проверка цепочки.
+- **TD-DOM-34 / ADR-P0-02:** `sync` и `export` выполняют внешний I/O вне read-tx; attempt/observation — отдельные write-tx; ack только после re-check.
+- **TD-DOM-35 / ADR-P0-03:** единый `HANDLERS`; drift-тест `tests/test_tool_registry.py` (реестр, видимость, схемы).
+- **TD-DOM-36 / ADR-P0-04:** `_record_claim` вставляет claim+snapshot парой; `claim_snapshot_gaps` — read-only guard; прямой обход виден тестом.
+- Проверка: `tests/test_p0_invariants.py` (4 теста) + `tests/test_tool_registry.py` (3 теста); полный прогон 77 passed; demo exit 0.
 
 ## Что остаётся открытым
 

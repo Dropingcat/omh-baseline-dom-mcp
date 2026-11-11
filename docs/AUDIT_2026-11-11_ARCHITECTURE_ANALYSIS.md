@@ -469,7 +469,9 @@ WHERE kind = 'claim';
 | P0.3 | Единый реестр `TOOLS`/`SIGNATURE`/`dispatch` | `server.py:42-249` | drift-тест |
 | P0.4 | Инвариант «claim ↔ snapshot» + helper | `admission.py:290-294` | SQL-инвариант |
 
-**DoD P0:** 4 теста зелёные; полный прогон не хуже текущего (67 passed, 3 known failed); demo exit 0.
+**DoD P0:** 4 теста зелёные; полный прогон **77 passed, 0 failed**; demo exit 0.
+
+**Статус 2026-11-11:** P0.1–P0.4 закрыты в `arch/p0-invariants`; ADR-P0-01…04 (`docs/adr/`); новые тесты `tests/test_p0_invariants.py` и `tests/test_tool_registry.py`. Три ранее красных теста триажированы как устаревшие относительно текущих публичных контрактов (публичный Trace/Broken DTO, `scope_digest` в replay key, L1 digest-first), не ослаблены.
 
 ### P1. Ядро: version + baseline + recall
 
@@ -655,7 +657,7 @@ WHERE kind = 'claim';
 
 ## 9. Что дальше
 
-1. Закрыть P0 (`arch/p0-invariants`): 4 теста, ADR, коммит.
+1. **P0 — выполнен 2026-11-11** (`arch/p0-invariants`): 4 теста, ADR-P0-01…04, коммит; 77 passed, demo exit 0.
 2. Закрыть P1 (`arch/p1-version-baseline`): commit_ref, derived version, baseline view, recall, diff.
 3. После P1 — синхронизация проекции плана (P2) и только затем drift/fork (P3).
 4. P4/P5 — отдельные планы; не смешивать с ядром.

@@ -80,6 +80,18 @@ def verify_chain(c):
         previous=row['event_hash']
     return {'status':'CHAIN_OK','events':len(rows),'head_hash':previous}
 
+def claim_snapshot_gaps(c):
+    """Claim ids that have no immutable dependency snapshot (P0 invariant).
+
+    The admission transaction inserts both rows together; this read-only check
+    makes a future bypass visible without pretending SQLite can enforce a
+    cross-row invariant (the snapshot values come from the envelope, not from
+    ``claims.payload``).
+    """
+    return [r[0] for r in c.execute(
+        'SELECT c.id FROM claims c LEFT JOIN claim_snapshots s ON s.claim_id=c.id '
+        'WHERE s.claim_id IS NULL ORDER BY c.id')]
+
 class Service:
     def __init__(self,directory,role='author',simulation=True,branches=('AA','AB'),profile='strict'):
         if profile not in ('strict','lite'): raise ValueError('UNKNOWN_PROFILE')
@@ -134,7 +146,8 @@ class Service:
             # D-02 / AN009 H3: the persisted binding must be this launch's (or an adopted one)
             # BEFORE any scoped data is read.  A binding-less file stays readable as before.
             if self.binding_state(c)=='foreign': raise Denied('SCOPE_DENIED')
-    def integrity_gate(self,c):
+    def integrity(self,c):
+        """Verify once, return ``(stamp, chain)`` so read paths can reuse the result."""
         chain=verify_chain(c)
         stamp={'read_at':datetime.now(timezone.utc).isoformat(),'chain_head':chain.get('head_hash'),
                'revisions':dict(c.execute('SELECT branch,revision FROM branch_heads'))}
@@ -145,7 +158,9 @@ class Service:
             raise IntegrityFailure(dict(status='CHAIN_BROKEN',chain=chain,read_snapshot=stamp,
                                         readiness='NOT_READY',ready_for_owner_review=False,
                                         blockers=['EVENT_CHAIN_BROKEN'],origins=origins))
-        return stamp
+        return stamp,chain
+    def integrity_gate(self,c):
+        return self.integrity(c)[0]
     @guarded
     def init(self,request):
         if not self.context.simulation: raise Denied('OMH_BINDING_UNVERIFIED')
@@ -258,6 +273,19 @@ class Service:
             else:  # pre-v3 database not yet migrated by dom_init/dom_start: label lives in the payload only
                 c.execute('INSERT INTO reviews(id,candidate,payload) VALUES(?,?,?)',(rid,candidate_id,canonical(review)))
         return {'status':'DEMO_REVIEWED','review_id':rid,'simulated':True}
+    def _record_claim(self,c,claim_id,candidate_id,tx,p,item,revision,review_id):
+        """Insert the claim and its immutable snapshot as one pair (TD-DOM-36).
+
+        The snapshot values come from the admitted envelope (dependencies and
+        review id), not from ``claims.payload``; a SQLite trigger cannot derive
+        them.  Keeping the two inserts in one helper makes the invariant true by
+        construction; ``claim_snapshot_gaps`` is the read-only guard.
+        """
+        raw=decode(item['body_b64'])
+        metadata=item.get('metadata') if type(item.get('metadata')) is dict else {}
+        source_ref=metadata.get('source_ref') or metadata.get('artifact_ref') or metadata.get('repository_ref') or ''
+        c.execute('INSERT INTO claims VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',(claim_id,candidate_id,tx,item['content_type'],raw,raw_hash(raw),item['encoding'],item['media_type'],source_ref,p['branch'],p['origin_version'],canonical(item)))
+        c.execute('INSERT INTO claim_snapshots VALUES(?,?,?,?,?,?)',(claim_id,tx,p['branch'],revision,canonical(p['dependencies']).decode('utf8'),review_id))
     @guarded
     def admit(self,candidate_id,review_id,idempotency_key,intent_digest):
         self.capability('admit'); self.ready()
@@ -284,14 +312,9 @@ class Service:
             c.execute('INSERT INTO transactions VALUES(?,?,?,?)',(tx,p['branch'],revision,canonical(receipt)))
             for i in p['items']:
                 if p['operation']=='claims':
-                    raw=decode(i['body_b64'])
-                    metadata=i.get('metadata') if type(i.get('metadata')) is dict else {}
-                    source_ref=metadata.get('source_ref') or metadata.get('artifact_ref') or metadata.get('repository_ref') or ''
-                    c.execute('INSERT INTO claims VALUES(?,?,?,?,?,?,?,?,?,?,?,?)',(ids[i['local_id']],candidate_id,tx,i['content_type'],raw,raw_hash(raw),i['encoding'],i['media_type'],source_ref,p['branch'],p['origin_version'],canonical(i)))
-                    # N1: the claim's dependency snapshot and reviewing id are bound to
-                    # the claim here, inside the admission transaction.  Later events
-                    # (``applicability`` included) may never restate them.
-                    c.execute('INSERT INTO claim_snapshots VALUES(?,?,?,?,?,?)',(ids[i['local_id']],tx,p['branch'],revision,canonical(p['dependencies']).decode('utf8'),review_id))
+                    # N1: the claim's dependency snapshot and reviewing id are bound
+                    # to the claim inside the same transaction (TD-DOM-36).
+                    self._record_claim(c,ids[i['local_id']],candidate_id,tx,p,i,revision,review_id)
                     value={'item':i,'origin_version':p['origin_version']}; kind='claim'; claim=ids[i['local_id']]
                 else:
                     value=i; kind=i['event_type']; claim=i['claim_ref'] or None
@@ -348,24 +371,24 @@ class Service:
         self.ready()
         if branch!='master': self.scope(branch)
         with self.store.read() as c:
-            stamp=self.integrity_gate(c)
+            stamp,chain=self.integrity(c)
             if branch=='master' and not self.lite and not {'AA','AB'}<=self.context.branches:
                 scope=[]
             elif branch=='master':
                 scope=sorted(self.context.branches)
             else:
                 scope=[branch]
-            body=dict(self._trace(c,branch),
+            body=dict(self._trace(c,branch,chain),
                       read_snapshot=public_dto.read_snapshot(stamp,scope))
             return public_dto.project(body,'TraceResponse',scope=self.context.branches)
-    def _trace(self,c,branch):
+    def _trace(self,c,branch,chain=None):
         if branch=='master':
             if self.lite: branches=sorted(self.context.branches)
             elif not {'AA','AB'}<=self.context.branches: return {'status':'TRACE','readiness':'UNKNOWN','ready_for_owner_review':False,'simulated':True}
             else: branches=['AA','AB']
         else: branches=[branch]
         from .projections import trace_branch
-        chain=public_dto.chain(verify_chain(c))
+        chain=public_dto.chain(chain if chain is not None else verify_chain(c))
         snaps=[self._snapshot(c,b) for b in branches]
         excluded=sorted({b for s in snaps for b in s['excluded_branches']})
         def reqs(s):
@@ -399,11 +422,17 @@ class Service:
         self.scope(branch); self.ready()
         with self.store.read() as c:
             stamp=self.integrity_gate(c)
-            body=dict(self._export(c,branch,revision),
-                      read_snapshot=public_dto.read_snapshot(stamp,[branch]))
-            return public_dto.project(body,'ExportResponse',scope=self.context.branches)
-    def _export(self,c,branch,revision=None):
-        import os
+            info,raw=self._export_bytes(c,branch,revision)
+        # File I/O happens after the read transaction: no read lock is held
+        # across the filesystem (TD-DOM-34).
+        if self._write_export(info['handle'],raw):
+            result=dict(status='EXPORTED',handle=info['handle'],sha256=info['sha256'],
+                        revision=info['revision'],simulated=True)
+        else:
+            result={'status':'EXPORT_PENDING','simulated':True}
+        body=dict(result,read_snapshot=public_dto.read_snapshot(stamp,[branch]))
+        return public_dto.project(body,'ExportResponse',scope=self.context.branches)
+    def _export_bytes(self,c,branch,revision=None):
         import yaml
         # AU004-F-01: the YAML bytes are the same public Snapshot object the MCP
         # query returns -- branch-keyed dependency maps filtered by the caller's
@@ -411,6 +440,9 @@ class Service:
         snap=public_dto.project(self._snapshot(c,branch,revision),'Snapshot',scope=self.context.branches)
         raw=yaml.safe_dump(snap,sort_keys=True,allow_unicode=False).encode('utf8')
         sha=raw_hash(raw); handle=f"exports/{branch}-{snap['revision']}-{sha}.yaml"
+        return dict(handle=handle,sha256=sha,revision=snap['revision']),raw
+    def _write_export(self,handle,raw):
+        import os
         dest=self.directory/handle
         try:
             dest.parent.mkdir(parents=True,exist_ok=True)
@@ -420,8 +452,8 @@ class Service:
             os.replace(temp,dest)
             self.fault_hook('after_rename')
             if dest.read_bytes()!=raw: raise OSError('readback mismatch')
-        except OSError: return {'status':'EXPORT_PENDING','simulated':True}
-        return dict(status='EXPORTED',handle=handle,sha256=sha,revision=snap['revision'],simulated=True)
+        except OSError: return False
+        return True
 
     @guarded
     def _delivery(self,intent,state,payload):
@@ -452,36 +484,41 @@ class Service:
                 c.execute('INSERT INTO delivery_attempts VALUES(?,?,?,?,?,?,?,?)',
                           (attempt,intent['id'],intent['tx'],intent['digest'],intent['target'],self.context.principal,self.context.root,datetime.now(timezone.utc).isoformat()))
             self.fault_hook('after_attempt')
-            exact=False; raw=b''; report='not_sent'; result={}
-            # Read lock pins the verified slice through side effect, not a writer transaction.
-            with self.store.read() as c:
-                stamp=self.integrity_gate(c)
-                if intent['kind']=='YAML_EXPORT':
-                    result=self._export(c,branch,intent['revision'])
-                    if result['status']=='EXPORTED':
-                        raw=(self.directory/result['handle']).read_bytes()
-                        exact=raw_hash(raw)==result['sha256']
-                    report=result['status']
+            exact=False; raw=b''; report='not_sent'
+            # No read transaction around the external effect: the intent row is
+            # immutable and the recording transaction below re-verifies the
+            # chain.  Holding a read lock here would block writers until
+            # busy_timeout under journal_mode=DELETE (TD-DOM-34).
+            if intent['kind']=='YAML_EXPORT':
+                with self.store.read() as c:
+                    self.integrity_gate(c)
+                    info,exported=self._export_bytes(c,branch,intent['revision'])
+                if self._write_export(info['handle'],exported):
+                    raw=exported
+                    exact=raw_hash(raw)==info['sha256']
+                    report='EXPORTED'
                 else:
-                    port=OMHPort(self.directory,self.omh_mode)
-                    payload=json.loads(intent['payload'])
-                    expected={'digest':intent['digest'],'payload':payload}
-                    try:
+                    report='EXPORT_PENDING'
+            else:
+                port=OMHPort(self.directory,self.omh_mode)
+                payload=json.loads(intent['payload'])
+                expected={'digest':intent['digest'],'payload':payload}
+                try:
+                    observed=port.read_target(intent['target']).get(intent['tx'])
+                    exact=observed==expected
+                    if not exact:
+                        report=port.attach(intent['target'],intent['tx'],intent['digest'],payload)
+                        self.fault_hook('after_external_send')
                         observed=port.read_target(intent['target']).get(intent['tx'])
                         exact=observed==expected
-                        if not exact:
-                            report=port.attach(intent['target'],intent['tx'],intent['digest'],payload)
-                            self.fault_hook('after_external_send')
-                            observed=port.read_target(intent['target']).get(intent['tx'])
-                            exact=observed==expected
-                        raw=canonical(observed)
-                    except (OSError,ValueError):
-                        report='TARGET_UNAVAILABLE'; exact=False; raw=b''
-                stamp['read_at']=datetime.now(timezone.utc).isoformat()
-                stamp['port_reported']=report
+                    raw=canonical(observed)
+                except (OSError,ValueError):
+                    report='TARGET_UNAVAILABLE'; exact=False; raw=b''
             observed_id=str(uuid.uuid4())
             with self.store.transaction() as c:
-                self.integrity_gate(c)
+                stamp=self.integrity_gate(c)
+                stamp['read_at']=datetime.now(timezone.utc).isoformat()
+                stamp['port_reported']=report
                 c.execute('INSERT INTO delivery_observations VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
                           (observed_id,attempt,intent['id'],intent['tx'],intent['digest'],intent['target'],int(exact),raw_hash(raw),len(raw),stamp['read_at'],self.context.principal,self.context.root,canonical(stamp),raw))
                 # An explicitly lost reply remains ambiguous until a fresh reconcile.
@@ -523,8 +560,8 @@ class Service:
         if after is not None:
             self._parse_after(after)
         with self.store.read() as c:
-            stamp=self.integrity_gate(c)
-            trace=self._trace(c,branch)
+            stamp,chain=self.integrity(c)
+            trace=self._trace(c,branch,chain)
             body={'status':'RESUMED','snapshot':self._snapshot(c,branch),
                   'trace':trace,
                   'sync':delivery_facts.status(c,branch),'simulated':True,
