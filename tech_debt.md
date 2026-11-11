@@ -86,7 +86,7 @@ ind, _rebuild_for_update) из mockup/lite.py в общий модуль mockup/
 | TD-DOM-22.3 | Подключить dom_claim/dom_update/dom_find/dom_describe/dom_start к strict-профилю в server.py (TOOLS, SIGNATURE, dispatch, STRICT_TOOL_NAMES); обновить 	est_handshake_list_and_refusals и 	est_two_role_flow_over_stdio. | major | 22.1, 22.2 | open  **closed** (2026-11-10): 5 tools added to strict TOOLS; handshake test updated (17 tools); 7/7 mcp_stdio pass. |
 | TD-DOM-22.4 | Per-type required-поля в JSON Schema dom_claim (TD-DOM-23): либо two-step schema, либо обогащение dom_describe списками required/optional по типу. | minor | 22.3 | open  **closed** (2026-11-10): REQUIRED_FIELDS table + oneOf in input_schema + per-type required check in strict_arguments + claim_type_examples enriched with required/optional. Tests 61 pass, 7 mcp pass. |
 | TD-DOM-22.5 | Идемпотентность на уровне ввода клайма (TD-DOM-28): опциональный idempotency_key в dom_claim/dom_update, проброс в _package/_commit. | minor | 22.1, 22.2 | **closed** (2026-11-10): COMMON_FIELDS + _validated_claim_args принимают idempotency_key (str, optional); _write_claim/_commit и strict claim submit используют его как package idempotency key; dom_update потокнёт в build1/build2. Verified: lite replay same key+content -> ALREADY_RECORDED + same claim_id; lite same key+diff content -> IDEMPOTENCY_MISMATCH; strict replay -> same candidate_id; strict diff -> IDEMPOTENCY_MISMATCH; strict_arguments accepts idempotency_key on dom_claim/dom_update. Tests: tests/test_claim_entry_idempotency.py (6 pass). |
-| TD-DOM-22.6 | Навигация по цепочке версий / diff (TD-DOM-29): dom_claim_versions(claim_id) или ersion_chain в dom_find/dom_query; diff в ответе dom_update. | minor | 22.1 | open |
+| TD-DOM-22.6 | Навигация по цепочке версий / diff (TD-DOM-29): dom_claim_versions(claim_id) или ersion_chain в dom_find/dom_query; diff в ответе dom_update. | minor | 22.1 | **closed** (2026-11-11): `dom_claim_versions` + `dom_diff`, см. ADR-P1-05. |
 | TD-DOM-22.7 | Независимый review в strict claim-entry (TD-DOM-27): Service.claim в strict отказывает при self-review (INDEPENDENCE_NOT_ENFORCED); проверка тестом. | major | 22.2, 22.3 | open  **closed** (2026-11-10): strict claim submit -> review (root-B) -> admit DEMO_ADMITTED; find=1. |
 | TD-DOM-22.8 | Multi-branch атомарное внесение (TD-DOM-30): ranches: [...] в dom_claim. Высокий риск; отложить до OMH binding (TD-DOM-25/TD-DOM-08). | minor | 22.2, TD-DOM-08 | open (deferred) |
 | TD-DOM-22.9 | Binding к OMH task/work (TD-DOM-25): 
@@ -130,12 +130,14 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 
 | ID | Долг | Severity | Зависимости | Статус |
 |---|---|---|---|---|
-| TD-DOM-37 | Миграции: `_migrate_vN + ledger` + DOWN; v4 только под конкретную фичу | major | P0 | open (v4 deferred) |
-| TD-DOM-38 | `version`/`logical_claim_id` не отдаются в DTO; вывод из `_lineage` (не колонки) | major | P0 | open |
-| TD-DOM-39 | `commit_ref` отсутствует; добавление в `TYPE_FIELDS` сделает его обязательным и сломает старые code-клаймы | minor | — | open |
-| TD-DOM-40 | Базлайн не представлен: нет `baseline_view` (`seq`, `prev_seq`, `chunk_hash=event_hash`) | major | TD-DOM-38 | open |
-| TD-DOM-41 | Нет `dom_recall` (replay до branch-local seq); `pending_decisions`/`resolved_conflicts`/`related_branches` не определены | major | TD-DOM-40 | open |
-| TD-DOM-22.6 | Нет навигации по версиям/diff (`dom_claim_versions`, `dom_diff`) | minor | TD-DOM-38 | open |
+| TD-DOM-37 | Миграции: `_migrate_vN + ledger` + DOWN; v4 только под конкретную фичу | major | P0 | open (v4 deferred): P1 не добавляет колонок; view создаётся идемпотентно, см. ADR-P1-00 |
+| TD-DOM-38 | `version`/`logical_claim_id` не отдаются в DTO; вывод из `_lineage` (не колонки) | major | P0 | **closed** (2026-11-11): ADR-P1-02; `Claim`/`FoundMatch`/`ClaimWritten`/`Updated` отдают производные поля; тест `test_version_logical_id_and_supersedes_are_derived` |
+| TD-DOM-39 | `commit_ref` отсутствует; добавление в `TYPE_FIELDS` сделает его обязательным и сломает старые code-клаймы | minor | — | **closed** (2026-11-11): ADR-P1-01; `OPTIONAL_FIELDS['code']`, hash 40/64, `INVALID_FIELD`; 3 теста |
+| TD-DOM-40 | Базлайн не представлен: нет `baseline_view` (`seq`, `prev_seq`, `chunk_hash=event_hash`) | major | TD-DOM-38 | **closed** (2026-11-11): ADR-P1-03; `baseline_view` (claim chunks) + `branch_event_view` (recall boundaries); `chunk_hash=event_hash`; тест |
+| TD-DOM-41 | Нет `dom_recall` (replay до branch-local seq); `pending_decisions`/`resolved_conflicts`/`related_branches` не определены | major | TD-DOM-40 | **closed** (2026-11-11, P1 scope): ADR-P1-04; branch-scope `dom_recall`; `pending_decisions=null` (кандидаты не события), `resolved_conflicts`/`related_branches` определены; `task_path` — P2 |
+| TD-DOM-22.6 | Нет навигации по версиям/diff (`dom_claim_versions`, `dom_diff`) | minor | TD-DOM-38 | **closed** (2026-11-11): ADR-P1-05; `dom_claim_versions` + `dom_diff` по `logical_claim_id`; 3 теста |
+
+**Статус P1 (2026-11-11):** закрыт в `arch/p1-version-baseline`, кроме TD-DOM-37 (v4 deferred). ADR-P1-00…05; `tests/test_p1_version_baseline.py` (13 тестов); полный прогон **90 passed, 0 failed**; demo exit 0. `dom_recall`/`dom_claim_versions`/`dom_diff` добавлены в strict-реестр (20 инструментов). Ограничения: recall без `task_path` до P2; `pending_decisions=null`; глобальная карта replacement-событий branch-agnostic до P3.
 
 ### Приоритет 2 — проекция плана
 
@@ -180,7 +182,7 @@ equirement_refs → OMH task refs. Заблокировано TD-DOM-08. | major
 - **P4:** TD-DOM-47, 48, 49, 50.
 - **P5:** TD-DOM-51, 52, 53.
 
-Итого новых: TD-DOM-33…55 (23 пункта). Из них P0 — 4, P1 — 5 (+22.6), P2 — 4 (3 + deferred), P3 — 3, P4 — 4, P5 — 3.
+Итого новых: TD-DOM-33…55 (23 пункта). Из них P0 — 4, P1 — 5 (+22.6), P2 — 4 (3 + deferred), P3 — 3, P4 — 4, P5 — 3. P1 закрыт (кроме TD-DOM-37, v4 deferred); актуальный прогон — 90 passed.
 
 ### Связь с существующими долгами
 

@@ -475,6 +475,8 @@ WHERE kind = 'claim';
 
 ### P1. Ядро: version + baseline + recall
 
+**Статус 2026-11-11:** P1 закрыт в `arch/p1-version-baseline` (кроме TD-DOM-37, отложенного до первой v4-схемы). ADR-P1-00…05 (`docs/adr/`); новые тесты `tests/test_p1_version_baseline.py` (13). Полный прогон **90 passed, 0 failed**; demo exit 0. Реализованы `commit_ref`, производные `version`/`logical_claim_id`/`supersedes`, `baseline_view` + `branch_event_view`, `dom_recall` (branch-scope), `dom_claim_versions`, `dom_diff`. `task_path`-фильтр recall и зависимые от `task_claims` поля отложены до P2; `pending_decisions` честно `null`, потому что кандидаты не являются событиями. Baseline-view не требует v4.
+
 **P1.1. `commit_ref` (optional).**
 - Добавить `OPTIONAL_FIELDS = {'code': {'commit_ref': dict}}` в `dom_contract.py`.
 - Расширить `fields()`/`validate()`: обязательные — как сейчас, опциональные — только если присутствуют; unknown keys reject.
@@ -502,7 +504,7 @@ WHERE kind = 'claim';
 - Выравнивание по `logical_claim_id`; `common_ancestor` — `branch_forks.fork_point` или корень цепочки.
 - Тест: две ветки, changed/only/identical.
 
-**DoD P1:** P0 зелёный; P1 тесты; ADR на `commit_ref` и baseline view.
+**DoD P1:** выполнен. P0 зелёный; 12 P1-тестов; ADR-P1-00…05; `commit_ref` и baseline view покрыты; recall/diff/versions зарегистрированы в strict `TOOLS`/`SIGNATURE`/`HANDLERS` и публичных DTO.
 
 ### P2. Проекция плана и task claims
 
@@ -658,8 +660,8 @@ WHERE kind = 'claim';
 ## 9. Что дальше
 
 1. **P0 — выполнен 2026-11-11** (`arch/p0-invariants`): 4 теста, ADR-P0-01…04, коммит; 77 passed, demo exit 0.
-2. Закрыть P1 (`arch/p1-version-baseline`): commit_ref, derived version, baseline view, recall, diff.
-3. После P1 — синхронизация проекции плана (P2) и только затем drift/fork (P3).
+2. **P1 — выполнен 2026-11-11** (`arch/p1-version-baseline`): commit_ref, derived version, baseline view, recall, diff; ADR-P1-00…05; 13 тестов; 90 passed, demo exit 0. TD-DOM-37 отложен до v4; `task_path` recall — P2.
+3. Следующий шаг — синхронизация проекции плана (P2), затем drift/fork (P3).
 4. P4/P5 — отдельные планы; не смешивать с ядром.
 
 **Критерий готовности анализа:** решения D1–D6 зафиксированы, tech_debt обновлён, ветки/приоритеты описаны, P0 имеет исполнимый список шагов.

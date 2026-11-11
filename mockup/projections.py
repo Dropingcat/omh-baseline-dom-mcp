@@ -15,7 +15,7 @@ def _review_level(c,review_id):
     except (ValueError,TypeError,AttributeError): return None
     return level if isinstance(level,str) else None
 
-def _materialize(c,cid,claims,with_level=False):
+def _materialize(c,cid,claims,with_level=False,lineage=None,parent=None):
     """Create the per-branch claim entry once; later events accumulate into it.
 
     The projection is a fold over history, so a claim record must never be
@@ -36,21 +36,29 @@ def _materialize(c,cid,claims,with_level=False):
     snap=c.execute('SELECT dependencies,review_id FROM claim_snapshots WHERE claim_id=?',(cid,)).fetchone()
     if not snap: return None
     item=json.loads(r['payload'])
-    record=dict(claim_id=cid,origin_branch=r['origin_branch'],origin_version=r['origin_version'],body_b64=item['body_b64'],raw_sha256=r['raw_sha256'],item=item,archived=False,properties={},dependencies=json.loads(snap['dependencies']),review_id=snap['review_id'],applicable_branches=[])
+    root,version=(lineage(cid) if lineage else (cid,1))
+    record=dict(claim_id=cid,logical_claim_id=root,version=version,supersedes=(parent.get(cid) if parent else None),origin_branch=r['origin_branch'],origin_version=r['origin_version'],body_b64=item['body_b64'],raw_sha256=r['raw_sha256'],item=item,archived=False,properties={},dependencies=json.loads(snap['dependencies']),review_id=snap['review_id'],applicable_branches=[])
     if with_level: record['review_level']=_review_level(c,snap['review_id'])
     claims[cid]=record
     return record
 
-def snapshot(c,branch,revision,with_level=False):
-    rows=c.execute('SELECT * FROM events WHERE branch=? AND revision<=? ORDER BY seq',(branch,revision)).fetchall()
+def snapshot(c,branch,revision,with_level=False,at_event_seq=None):
+    if at_event_seq is None:
+        rows=c.execute('SELECT * FROM events WHERE branch=? AND revision<=? ORDER BY seq',(branch,revision)).fetchall()
+    else:
+        rows=c.execute('SELECT * FROM events WHERE branch=? AND revision<=? AND seq<=? ORDER BY seq',
+                       (branch,revision,at_event_seq)).fetchall()
+    from .claim_entry import _children,_lineage
+    children=_children(c); lineage=_lineage(children)
+    parent={new:old for old,new in children.items()}
     claims={}; history=[]; conflicts=set(); converged=False; excluded=set()
     for row in rows:
         p=json.loads(row['payload']); v=p['value']; kind=row['kind']; cid=row['claim_ref']
         history.append(dict(event_id=row['id'],kind=kind,revision=row['revision'],claim_ref=cid,provenance=p))
         if kind=='claim':
-            _materialize(c,cid,claims,with_level)
+            _materialize(c,cid,claims,with_level,lineage,parent)
         elif kind=='applicability':
-            record=_materialize(c,cid,claims,with_level)
+            record=_materialize(c,cid,claims,with_level,lineage,parent)
             target=v['value']['branch']
             if record is not None and target not in record['applicable_branches']: record['applicable_branches'].append(target)
         elif kind=='archive' and cid in claims: claims[cid]['archived']=True
@@ -71,6 +79,29 @@ def snapshot(c,branch,revision,with_level=False):
         claim=claims.get(entry['claim_ref'])
         if claim: entry['origin_branch']=claim['origin_branch']; entry['origin_version']=claim['origin_version']
     return dict(status='SNAPSHOT',branch=branch,revision=revision,simulated=True,claims=sorted(claims.values(),key=lambda x:x['claim_id']),history=history,conflicts=sorted(conflicts),converged=converged,excluded_branches=sorted(excluded))
+
+def snapshot_at_seq(c,branch,at_seq,with_level=False):
+    """P1.4: replay the branch up to a branch-local event seq.
+
+    ``at_seq`` counts every event on the branch (claim, applicability, archive,
+    replacement, ...), so stopping immediately before an archive is expressible.
+    Returns ``None`` when the seq is outside the recorded range.
+    """
+    if type(at_seq) is not int or at_seq < 0:
+        return None
+    head=c.execute('SELECT COALESCE(MAX(seq),0) FROM branch_event_view WHERE branch=?',(branch,)).fetchone()[0]
+    if at_seq > head:
+        return None
+    if at_seq == 0:
+        return dict(status='SNAPSHOT',branch=branch,revision=0,simulated=True,claims=[],
+                    history=[],conflicts=[],converged=False,excluded_branches=[],event_seq=0)
+    row=c.execute('SELECT event_seq,revision FROM branch_event_view WHERE branch=? AND seq=?',
+                  (branch,at_seq)).fetchone()
+    if row is None:
+        return None
+    snap=snapshot(c,branch,row['revision'],with_level,at_event_seq=row['event_seq'])
+    snap['event_seq']=row['event_seq']
+    return snap
 
 def trace_branch(c,snap,pending,requirements=('R1','R2')):
     residual=[]

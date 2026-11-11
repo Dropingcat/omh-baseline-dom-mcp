@@ -92,7 +92,9 @@ RECORDS = {
         'review_id': 'str', 'dependencies': ('bmap', 'int'),
     },
     'Claim': {
-        'claim_id': 'str', 'origin_branch': 'str', 'origin_version': 'str',
+        'claim_id': 'str', 'logical_claim_id': 'str', 'version': 'int',
+        'supersedes': ('null', 'str'),
+        'origin_branch': 'str', 'origin_version': 'str',
         'body_b64': 'str', 'raw_sha256': 'str', 'item': ('rec', 'ClaimItem'),
         'archived': 'bool', 'properties': ('map', 'str'),
         'dependencies': ('bmap', 'int'), 'review_id': 'str',
@@ -215,20 +217,49 @@ RECORDS.update({
     },
     'ClaimWritten': {
         'status': 'str', 'simulated': 'bool', 'claim_id': 'str', 'record_id': 'str',
-        'version': 'int', 'branch': 'str', 'type': 'str', 'revision': 'int',
+        'logical_claim_id': 'str', 'version': 'int', 'branch': 'str', 'type': 'str', 'revision': 'int',
         'review_level': ('null', 'str'), 'origin_version': 'str', 'raw_sha256': 'str',
         'next_steps': ('list', 'NextStep'),
     },
     'Updated': {
         'status': 'str', 'simulated': 'bool', 'new_claim_id': 'str', 'supersedes': 'str',
-        'record_id': 'str', 'version': 'int', 'branch': 'str', 'revision': 'int',
+        'record_id': 'str', 'logical_claim_id': 'str', 'version': 'int', 'branch': 'str', 'revision': 'int',
         'review_level': ('null', 'str'), 'raw_sha256': 'str',
         'next_steps': ('list', 'NextStep'),
     },
     'FoundMatch': {
         'claim_id': 'str', 'branch': 'str', 'type': 'str', 'preview': 'str',
         'origin_version': 'str', 'review_level': ('null', 'str'), 'is_current': 'bool',
-        'record_id': 'str', 'version': 'int', 'revision': 'int',
+        'record_id': 'str', 'logical_claim_id': 'str', 'version': 'int',
+        'supersedes': ('null', 'str'), 'revision': 'int',
+    },
+    'ClaimVersion': {
+        'claim_id': 'str', 'version': 'int', 'supersedes': ('null', 'str'),
+        'raw_sha256': 'str', 'revision': 'int', 'is_current': 'bool',
+    },
+    'ClaimVersions': {
+        'status': 'str', 'logical_claim_id': 'str',
+        'versions': ('list', 'ClaimVersion'),
+        'read_snapshot': ('rec', 'ReadSnapshot'),
+    },
+    'DiffSide': {'claim_id': 'str', 'version': 'int', 'sha': 'str'},
+    'DiffChanged': {
+        'logical_id': 'str', 'a': ('rec', 'DiffSide'), 'b': ('rec', 'DiffSide'),
+    },
+    'Diff': {
+        'status': 'str', 'comparable': 'bool', 'common_ancestor': ('null', 'str'),
+        'only_a': ('list', 'str'), 'only_b': ('list', 'str'),
+        'changed': ('list', 'DiffChanged'), 'identical': ('list', 'str'),
+        'read_snapshot': ('rec', 'ReadSnapshot'),
+    },
+    'BaselineRange': {'branch': 'str', 'from_seq': 'int', 'to_seq': 'int'},
+    'Recall': {
+        'status': 'str', 'branch': 'str', 'at_seq': 'int', 'revision': 'int',
+        'active_claims': ('list', 'Claim'), 'archived_claims': ('list', 'str'),
+        'pending_decisions': ('null', ('list', 'str')),
+        'resolved_conflicts': ('list', 'str'), 'related_branches': ('list', 'str'),
+        'as_of': 'str', 'baseline_range': ('rec', 'BaselineRange'),
+        'read_snapshot': ('rec', 'ReadSnapshot'),
     },
     'Found': {
         'status': 'str', 'simulated': 'bool', 'matches': ('list', 'FoundMatch'),
@@ -245,6 +276,9 @@ TOOL_RESPONSES = {
     'dom_sync_status': 'SyncStatusResponse',
     'dom_export': 'ExportResponse',
     'dom_sync': 'Sync',
+    'dom_claim_versions': 'ClaimVersions',
+    'dom_diff': 'Diff',
+    'dom_recall': 'Recall',
 }
 LITE_RESPONSES = {
     'dom_start': ('Started', ('STARTED', 'ALREADY_STARTED')),

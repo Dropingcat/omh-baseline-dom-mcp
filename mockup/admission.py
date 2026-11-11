@@ -349,6 +349,123 @@ class Service:
         return snapshot(c,branch,revision,self.lite)
 
     @guarded
+    def claim_versions(self,claim_id):
+        """P1.5: the replacement chain of one logical claim, oldest first."""
+        if type(claim_id) is not str or not claim_id:
+            raise Denied('INVALID_FIELD',field='claim_id')
+        with self.store.read() as c:
+            row=c.execute('SELECT origin_branch FROM claims WHERE id=?',(claim_id,)).fetchone()
+            if row is None: raise Denied('NO_SUCH_CLAIM',field='claim_id')
+            self.scope(row['origin_branch']); self.ready()
+            stamp=self.integrity_gate(c)
+            children=claim_entry_mod._children(c)
+            archived=claim_entry_mod._archived(c)
+            info=claim_entry_mod._lineage(children)
+            parent={new:old for old,new in children.items()}
+            root,_=info(claim_id)
+            versions=[]; cid=root; seen=set()
+            while cid is not None and cid not in seen:
+                seen.add(cid)
+                found=c.execute('SELECT cl.raw_sha256,t.revision FROM claims cl '
+                                'JOIN transactions t ON t.id=cl.tx WHERE cl.id=?',(cid,)).fetchone()
+                if found is None: break
+                _,version=info(cid)
+                versions.append({'claim_id':cid,'version':version,'supersedes':parent.get(cid),
+                                 'raw_sha256':found['raw_sha256'],'revision':found['revision'],
+                                 'is_current':cid not in archived})
+                cid=children.get(cid)
+            body={'status':'CLAIM_VERSIONS','logical_claim_id':root,'versions':versions,
+                  'read_snapshot':public_dto.read_snapshot(stamp,[row['origin_branch']])}
+            return public_dto.project(body,'ClaimVersions',scope=self.context.branches)
+
+    @guarded
+    def diff(self,branch_a,branch_b):
+        """P1.5: compare current claims of two branches by logical claim id."""
+        self.scope(branch_a); self.scope(branch_b); self.ready()
+        with self.store.read() as c:
+            self.require_branch(c,branch_a); self.require_branch(c,branch_b)
+            stamp=self.integrity_gate(c)
+            a=self._snapshot(c,branch_a); b=self._snapshot(c,branch_b)
+
+        def current(snap):
+            out={}
+            for claim in snap['claims']:
+                if not claim['archived']:
+                    out[claim['logical_claim_id']]=claim
+            return out
+
+        def deepest(snap):
+            out={}
+            for claim in snap['claims']:
+                lid=claim['logical_claim_id']
+                out[lid]=max(out.get(lid,0),claim['version'])
+            return out
+
+        ca,cb=current(a),current(b)
+        shared=set(deepest(a))&set(deepest(b))
+        only_a=sorted(set(ca)-set(cb)); only_b=sorted(set(cb)-set(ca))
+        changed=[]; identical=[]
+        for lid in sorted(set(ca)&set(cb)):
+            left,right=ca[lid],cb[lid]
+            if left['raw_sha256']==right['raw_sha256']:
+                identical.append(lid)
+            else:
+                changed.append({'logical_id':lid,
+                                'a':{'claim_id':left['claim_id'],'version':left['version'],'sha':left['raw_sha256']},
+                                'b':{'claim_id':right['claim_id'],'version':right['version'],'sha':right['raw_sha256']}})
+        da,db=deepest(a),deepest(b)
+        common=max(shared,key=lambda lid:(max(da[lid],db[lid]),lid)) if shared else None
+        body={'status':'DIFF','comparable':bool(shared),'common_ancestor':common,
+              'only_a':only_a,'only_b':only_b,'changed':changed,'identical':identical,
+              'read_snapshot':public_dto.read_snapshot(stamp,[branch_a,branch_b])}
+        return public_dto.project(body,'Diff',scope=self.context.branches)
+
+    @guarded
+    def recall(self,branch,at_seq):
+        """P1.4: branch-local replay up to an event seq (archive-aware)."""
+        self.scope(branch); self.ready()
+        if type(at_seq) is not int or at_seq < 0:
+            raise Denied('INVALID_FIELD',field='at_seq')
+        with self.store.read() as c:
+            self.require_branch(c,branch)
+            stamp=self.integrity_gate(c)
+            from .projections import snapshot_at_seq
+            snap=snapshot_at_seq(c,branch,at_seq,self.lite)
+            if snap is None:
+                raise Denied('REVISION_OUT_OF_RANGE',field='at_seq')
+            active=[cl for cl in snap['claims'] if not cl['archived']]
+            archived=[cl['claim_id'] for cl in snap['claims'] if cl['archived']]
+            conflicts=set(); resolved=set()
+            for event in snap['history']:
+                if event['kind']=='conflict':
+                    ref=event['provenance']['value']['value']['conflict_ref']
+                    conflicts.add(ref); resolved.discard(ref)
+                elif event['kind']=='resolve':
+                    ref=event['provenance']['value']['value']['conflict_ref']
+                    conflicts.discard(ref); resolved.add(ref)
+            related={b for cl in active for b in cl['applicable_branches'] if b != branch}
+            related |= {b for cl in active for b in cl['dependencies'] if b != branch}
+            active_ids={cl['claim_id'] for cl in active}
+            if active_ids:
+                for ref,target in c.execute(
+                        "SELECT claim_ref,branch FROM events WHERE kind='applicability' AND seq<=?",
+                        (snap['event_seq'],)):
+                    if ref in active_ids and target != branch:
+                        related.add(target)
+            related=sorted(related)
+            body={'status':'RECALL','branch':branch,'at_seq':at_seq,'revision':snap['revision'],
+                  'active_claims':active,'archived_claims':archived,
+                  # Candidate/review rows have no event seq, so historical pending
+                  # is not reconstructible from the append-only log.  Documented
+                  # as null until candidates become events.
+                  'pending_decisions':None,
+                  'resolved_conflicts':sorted(resolved),'related_branches':related,
+                  'as_of':datetime.now(timezone.utc).isoformat(),
+                  'baseline_range':{'branch':branch,'from_seq':1 if at_seq else 0,'to_seq':at_seq},
+                  'read_snapshot':public_dto.read_snapshot(stamp,[branch])}
+            return public_dto.project(body,'Recall',scope=self.context.branches)
+
+    @guarded
     def append(self,payload_json):
         try: p=strict_loads(payload_json)
         except (ValueError,TypeError): raise Denied('REJECTED')

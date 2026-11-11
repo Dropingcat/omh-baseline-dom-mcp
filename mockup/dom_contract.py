@@ -2,6 +2,7 @@
 import base64
 import hashlib
 import json
+import re
 MAX_INT=9007199254740991
 ENVELOPE={'external_work_ref','external_task_ref','branch','expected_branch_revision','schema_version','policy_digest','idempotency_key','operation','items','dependencies','origin_version','reason'}
 COMMON={'local_id':str,'content_type':str,'body_b64':str,'encoding':str,'media_type':str,'reason':str,'applicability':list,'metadata':dict,'requirement_refs':list}
@@ -13,6 +14,24 @@ TYPE_FIELDS={
  'data':{'artifact_ref':str,'artifact_digest':str,'method':str,'columns':dict,'units':dict,'provenance':str},
  'concept':{'definition':str,'scope':str,'assumptions':list,'attribution':str,'links':list},
  'text':{'classification':str,'evidence':list,'attribution':str,'assumptions':list}}
+# D4: commit_ref is optional.  Keeping it out of TYPE_FIELDS means an existing
+# code claim without a commit still validates; `fields()` accepts the extra key
+# only when it is present.
+OPTIONAL_FIELDS={'code':{'commit_ref':dict}}
+COMMIT_REF_REQUIRED={'hash':str,'branch':str}
+COMMIT_REF_OPTIONAL={'author':str,'message':str,'committed_at':str}
+
+def valid_commit_ref(value):
+    """40/64 hex commit hash, non-empty branch, closed shape, no coercion."""
+    if type(value) is not dict: return False
+    allowed=set(COMMIT_REF_REQUIRED)|set(COMMIT_REF_OPTIONAL)
+    if set(value)-allowed: return False
+    if type(value.get('hash')) is not str or not re.fullmatch(r'(?:[0-9a-fA-F]{40}|[0-9a-fA-F]{64})',value['hash']): return False
+    if type(value.get('branch')) is not str or not value['branch'].strip(): return False
+    for key,typ in COMMIT_REF_OPTIONAL.items():
+        if key in value and (type(value[key]) is not typ or not value[key]): return False
+    return True
+
 EVENTS={'comment','link','property','applicability','archive','replacement','conflict','resolve','converge','exclude'}
 EVENT_FIELDS={'local_id':str,'event_type':str,'claim_ref':str,'reason':str,'value':dict,'supersedes':str,'ref':str}
 
@@ -63,12 +82,15 @@ def normalized(p,principal,root):
 def validate(p,branches=('AA','AB')):
     errors=[]
     def err(local,path,code='MISSING_FIELD',required=True): errors.append(dict(local_id=local,path=path,code=code,required=required,fix='Supply schema-conforming field; no coercion.'))
-    def fields(o,spec,local,prefix):
+    def fields(o,spec,local,prefix,optional=None):
         if type(o) is not dict: err(local,prefix,'INVALID_TYPE'); return
+        optional=optional or {}
         for k,t in spec.items():
             if k not in o: err(local,prefix+'.'+k)
             elif type(o[k]) is not t or t is str and not o[k] and k not in ('supersedes','claim_ref'): err(local,prefix+'.'+k,'INVALID_TYPE')
-        for k in o.keys()-spec.keys(): err(local,prefix+'.'+k,'UNKNOWN_FIELD',False)
+        for k,t in optional.items():
+            if k in o and type(o[k]) is not t: err(local,prefix+'.'+k,'INVALID_TYPE')
+        for k in o.keys()-spec.keys()-optional.keys(): err(local,prefix+'.'+k,'UNKNOWN_FIELD',False)
     if type(p) is not dict: err(None,'$','INVALID_TYPE'); return errors
     spec={k:str for k in ENVELOPE}; spec.update(items=list,dependencies=dict,expected_branch_revision=int)
     fields(p,spec,None,'$')
@@ -104,7 +126,8 @@ def validate(p,branches=('AA','AB')):
         if known:
             tspec=dict(TYPE_FIELDS[typ])
             if typ=='code' and isinstance(m,dict) and m.get('dirty') is True: tspec['artifact_manifest']=list
-            fields(m,tspec,local,'metadata')
+            fields(m,tspec,local,'metadata',OPTIONAL_FIELDS.get(typ))
+            if typ=='code' and isinstance(m,dict) and 'commit_ref' in m and not valid_commit_ref(m['commit_ref']): err(local,'metadata.commit_ref','INVALID_TYPE')
         try:
             raw=decode(i.get('body_b64'))
             if i.get('encoding')!='utf-8': err(local,'encoding','INVALID_ENCODING')

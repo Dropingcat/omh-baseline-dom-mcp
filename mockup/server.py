@@ -125,6 +125,27 @@ TOOLS = [
         inputSchema={'type': 'object', 'additionalProperties': False,
                      'properties': {'branch': {'type': 'string'}},
                      'required': ['branch']}),
+    types.Tool(
+        name='dom_recall',
+        description='Replay a branch up to a branch-local event seq: active/archived claims, resolved conflicts, '
+                    'related branches and the exact baseline range. Read-only.',
+        inputSchema={'type': 'object', 'additionalProperties': False,
+                     'properties': {'branch': {'type': 'string'},
+                                    'at_seq': {'type': 'integer', 'minimum': 0}},
+                     'required': ['branch', 'at_seq']}),
+    types.Tool(
+        name='dom_claim_versions',
+        description='The replacement chain of one logical claim, oldest first, with derived version and current flag.',
+        inputSchema={'type': 'object', 'additionalProperties': False,
+                     'properties': {'claim_id': {'type': 'string'}},
+                     'required': ['claim_id']}),
+    types.Tool(
+        name='dom_diff',
+        description='Compare current claims of two branches by logical claim id: only_a/only_b, changed, identical.',
+        inputSchema={'type': 'object', 'additionalProperties': False,
+                     'properties': {'branch_a': {'type': 'string'},
+                                    'branch_b': {'type': 'string'}},
+                     'required': ['branch_a', 'branch_b']}),
 
     # TD-DOM-22.3: claim-entry block exposed in the strict profile too.
     types.Tool(name='dom_describe', description=claim_entry_mod.compose_description('dom_describe'),
@@ -162,6 +183,9 @@ SIGNATURE = {
     'dom_export': ({'branch': str}, {'revision': int}),
     'dom_sync_status': ({'branch': str}, {}),
     'dom_sync': ({'branch': str}, {}),
+    'dom_recall': ({'branch': str, 'at_seq': int}, {}),
+    'dom_claim_versions': ({'claim_id': str}, {}),
+    'dom_diff': ({'branch_a': str, 'branch_b': str}, {}),
 }
 
 
@@ -271,6 +295,18 @@ def _handle_sync(service, args):
     return service.sync(args['branch'])
 
 
+def _handle_recall(service, args):
+    return service.recall(args['branch'], args['at_seq'])
+
+
+def _handle_claim_versions(service, args):
+    return service.claim_versions(args['claim_id'])
+
+
+def _handle_diff(service, args):
+    return service.diff(args['branch_a'], args['branch_b'])
+
+
 # TD-DOM-35: the single routing table.  A tool is usable only if it is declared
 # in SIGNATURE, visible for the launch profile, and has an entry here; the
 # drift test in tests/test_tool_registry.py pins the three sets together.
@@ -292,6 +328,9 @@ HANDLERS = {
     'dom_export': _handle_export,
     'dom_sync_status': _handle_sync_status,
     'dom_sync': _handle_sync,
+    'dom_recall': _handle_recall,
+    'dom_claim_versions': _handle_claim_versions,
+    'dom_diff': _handle_diff,
 }
 
 

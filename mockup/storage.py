@@ -68,6 +68,23 @@ CREATE TABLE IF NOT EXISTS outbox(id TEXT PRIMARY KEY, tx TEXT NOT NULL REFERENC
 CREATE TABLE IF NOT EXISTS delivery_events(seq INTEGER PRIMARY KEY AUTOINCREMENT, intent TEXT NOT NULL REFERENCES outbox(id), state TEXT NOT NULL, payload BLOB NOT NULL);
 CREATE TABLE IF NOT EXISTS project_root(id INTEGER PRIMARY KEY CHECK(id=1), request_claim_id TEXT NOT NULL REFERENCES claims(id), goal_claim_id TEXT REFERENCES claims(id), goal_confirmed INTEGER NOT NULL DEFAULT 0 CHECK(goal_confirmed IN (0,1)), request_sha256 TEXT NOT NULL, goal_sha256 TEXT, branch TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS adoptions(seq INTEGER PRIMARY KEY AUTOINCREMENT, new_work_ref TEXT NOT NULL, source_work_ref TEXT NOT NULL, source_policy TEXT NOT NULL, chain_hash TEXT NOT NULL, user_version_at INTEGER NOT NULL, adopted_at TEXT NOT NULL, UNIQUE(new_work_ref,source_work_ref));
+-- P1.3: baseline is a projection of the append-only event log, never a table.
+-- ``baseline_view`` numbers claim chunks per branch (D3); ``branch_event_view``
+-- numbers every branch-local event so recall can stop before an archive or a
+-- replacement (the event, not the claim, is the recall boundary).
+CREATE VIEW IF NOT EXISTS baseline_view AS
+SELECT branch, ROW_NUMBER() OVER (PARTITION BY branch ORDER BY seq) AS seq,
+       claim_ref AS claim_id,
+       ROW_NUMBER() OVER (PARTITION BY branch ORDER BY seq) - 1 AS prev_seq,
+       event_hash AS chunk_hash, revision
+FROM events WHERE kind='claim';
+CREATE VIEW IF NOT EXISTS branch_event_view AS
+SELECT branch, seq AS event_seq,
+       ROW_NUMBER() OVER (PARTITION BY branch ORDER BY seq) AS seq,
+       id AS event_id, claim_ref AS claim_id, kind, revision,
+       event_hash AS chunk_hash,
+       ROW_NUMBER() OVER (PARTITION BY branch ORDER BY seq) - 1 AS prev_seq
+FROM events;
 '''
 
 class Store:

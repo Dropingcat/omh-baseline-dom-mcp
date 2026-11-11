@@ -1,4 +1,4 @@
-# Статус проекта (проверено оркестратором, 2026-11-06)
+# Статус проекта (проверено оркестратором, 2026-11-11)
 
 Не самоотчёт исполнителя. Каждый пункт — результат фактического чтения или прогона.
 
@@ -16,10 +16,10 @@ P = E:/opencode_harness_portable/projects/omh-baseline-dom-mcp
 | docs/SPEC.md, docs/IMPLEMENTATION_PLAN.md | есть |
 | cards/AA001, AA002, AB001, AC001, AC002 | есть; в AB001 добавлено дополнение r2 |
 | mockup/{storage,admission,dom_contract,projections,ports}.py | есть |
-| mockup/server.py (stdio MCP) | есть; 17 инструментов в strict (12 базовых + 5 claim-entry), 11 видимых в lite |
+| mockup/server.py (stdio MCP) | есть; 20 инструментов в strict (12 базовых + 5 claim-entry + 3 P1), 11 видимых в lite |
 | mockup/demo.py | есть; запуск exit 0, артефакты в `runtime/runs/` |
 | mockup/README.md | есть |
-| tests/*.py | есть; 77 тестов, exit 0 |
+| tests/*.py | есть; 90 тестов, exit 0 |
 
 ## Фактический прогон тестов
 
@@ -60,7 +60,7 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - **Вход:** `dom_claim(branch, type, text, ...)` — branch (str), type (enum из 7: quote/decision/formula/code/data/concept/text), text (str) + необязательные поля из `COMMON_FIELDS` (requirement_refs, reason, origin_version, idempotency_key) и type-specific из `FIELD_TYPES` (валидируются по `TYPE_ARGS[type]` в `_validated_claim_args`). `dom_update(claim_id, text, reason, idempotency_key)` — обновление (новая версия + replacement). `dom_find(query, branch, type, requirement_ref, limit)` — поиск. `dom_describe()` — схема/примеры типов.
 - **Выход:** `CLAIM_ADMITTED` / `ALREADY_RECORDED` (claim_id, record_id, version, branch, type, revision, review_level, origin_version, raw_sha256, next_steps) для dom_claim; `CLAIM_UPDATED` (new_claim_id, supersedes, ...) для dom_update; `dom_find` возвращает совпадения.
 - **Частично присутствует:** `dom_claim` в строгом профиле отсутствует (там ввод через `dom_submit` с полным пакетом); `dom_describe` даёт примеры, но нет отдельного `dom_claim_schema`/per-type input schema в MCP (все поля плоские в одной схеме). Валидация type-specific полей — на сервере, не в JSON Schema.
-- **Открытые вопросы:** type-specific required поля (например, quote требует source_ref) — закрыто TD-DOM-22.4 (`REQUIRED_FIELDS` + `oneOf` в `input_schema`, `dom_describe` отдаёт required/optional по типу); нет явного вывода «что изменилось» при обновлении (diff старой/новой версии) — TD-DOM-22.6.
+- **Открытые вопросы:** type-specific required поля (например, quote требует source_ref) — закрыто TD-DOM-22.4 (`REQUIRED_FIELDS` + `oneOf` в `input_schema`, `dom_describe` отдаёт required/optional по типу); diff старой/новой версии — закрыт TD-DOM-22.6 (`dom_claim_versions`, `dom_diff`); `commit_ref` — опциональное поле code (TD-DOM-39).
 
 ## Ветка создания клаймов из плана OMH и их обновление (обзор)
 
@@ -105,13 +105,13 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 | Приоритет | Что | Ветка |
 |---|---|---|
 | **P0** | TD-DOM-33 double `verify_chain`; TD-DOM-34 `sync` read-tx; TD-DOM-35 registry; TD-DOM-36 snapshot invariant — **closed 2026-11-11, ADR-P0-01…04** | `arch/p0-invariants` |
-| **P1** | TD-DOM-37 миграции; 38 derived version; 39 `commit_ref`; 40 baseline view; 41 `dom_recall`; 22.6 diff | `arch/p1-version-baseline` |
+| **P1** | TD-DOM-37 миграции (v4 deferred); 38 derived version; 39 `commit_ref`; 40 baseline view; 41 `dom_recall`; 22.6 diff — **closed 2026-11-11, ADR-P1-00…05** | `arch/p1-version-baseline` |
 | **P2** | TD-DOM-42 проекция плана; 43 `dom_plan_tree`/`dom_task_claims`; 54 идентичность/версии пунктов и защита от переобновления; 44 deferred | `arch/p2-plan-projection` |
 | **P3** | TD-DOM-45 drift; 46 fork; 55 split/merge orphan links | `arch/p3-diff-drift-fork` |
 | **P4** | TD-DOM-47 два оркестратора; 48 дедуп/полнота; 49 сессии; 50 `Service` фасады | `arch/p4-orchestrator` |
 | **P5** | TD-DOM-51 `IOmhDeliveryPort`; 52 Merkle/checkpoints; 53 retry/circuit/fallback | `arch/p5-live-ports` |
 
-**Правила веток:** одна ветка — один приоритет; ADR на каждый пункт; тесты не ослаблять; 3 известных красных теста триажированы до P1 (77 passed, 0 failed). Merge в `main` — только после DoD приоритета и полного прогона.
+**Правила веток:** одна ветка — один приоритет; ADR на каждый пункт; тесты не ослаблять; 3 известных красных теста триажированы до P1 (после P1 — 90 passed, 0 failed). Merge в `main` — только после DoD приоритета и полного прогона.
 
 **P0 закрыт (2026-11-11, `arch/p0-invariants`):** ADR-P0-01…04; полный прогон **77 passed, 0 failed**; demo exit 0. Эмпирика до фикса: `runtime/tmp/audit_verify_chain.py` → `query=1`, `trace=2`, `resume=2`; `sync` держал read-tx при `journal_mode=DELETE`; `TOOLS`/`SIGNATURE`/`dispatch` — три ручных списка.
 
@@ -123,12 +123,22 @@ MCP-сервер: 12 объявленных инструментов — 10 но
 - **TD-DOM-36 / ADR-P0-04:** `_record_claim` вставляет claim+snapshot парой; `claim_snapshot_gaps` — read-only guard; прямой обход виден тестом.
 - Проверка: `tests/test_p0_invariants.py` (4 теста) + `tests/test_tool_registry.py` (3 теста); полный прогон 77 passed; demo exit 0.
 
+### P1 выполнен (2026-11-11, `arch/p1-version-baseline`)
+
+- **TD-DOM-39 / ADR-P1-01:** `commit_ref` — опциональное поле code; hash 40/64 hex, закрытая форма; старые code-клаймы без поля проходят; невалидная форма → `INVALID_FIELD` (lite) / `INVALID_TYPE` (strict).
+- **TD-DOM-38 / ADR-P1-02:** `version`, `logical_claim_id`, `supersedes` — производные из replacement-цепочки; отдаются в `Claim`, `dom_find`, `dom_claim`, `dom_update`; колонок нет.
+- **TD-DOM-40 / ADR-P1-03:** `baseline_view` (claim chunks, `chunk_hash=event_hash`, `prev_seq`) и `branch_event_view` (границы любого события для recall); создаются идемпотентно, v4 не нужен.
+- **TD-DOM-41 / ADR-P1-04:** `dom_recall(branch, at_seq)` — branch-local replay; `at_seq=0` пуст, выход за голову → `REVISION_OUT_OF_RANGE`; `pending_decisions=null` (кандидаты не события), `resolved_conflicts`/`related_branches` определены; `task_path` — P2.
+- **TD-DOM-22.6 / ADR-P1-05:** `dom_claim_versions` и `dom_diff`; выравнивание по `logical_claim_id`; `common_ancestor`, `only_a/only_b`, `changed`, `identical`; при отсутствии общего claim `comparable=false`.
+- **TD-DOM-37 / ADR-P1-00:** ledger/DOWN отложены до первой v4-схемы; P1 не добавляет колонок.
+- Проверка: `tests/test_p1_version_baseline.py` (13 тестов); полный прогон **90 passed, 0 failed**; demo exit 0. Strict-реестр: 20 инструментов (+`dom_recall`, `dom_claim_versions`, `dom_diff`).
+
 ## Что остаётся открытым
 
 - Реальные идентификаторы/полномочия OMH для сопоставления автор/проверяющий (Q01).
 - Точные имена и права хостовых хуков/гейтов в установленной версии (Q02).
 - Замена SQLite-файла администратором и внешний checkpoint (Q08, TD-DOM-01).
-- Живой MCP handshake подтверждён частично (stdio-сервер есть, 17 инструментов; полный handshake — в E2E AB002-A, 26/26 PASS).
+- Живой MCP handshake подтверждён частично (stdio-сервер есть, 20 инструментов; полный handshake — в E2E AB002-A, 26/26 PASS).
 - Остальные открытые долги: см. `tech_debt.md` (TD-DOM-01…10, 14…21), сводка по областям там же.
 
 Макет — демонстрация механики локального хранения и допуска. Он не является гарантией защиты от локального администратора, от неограниченного terminal у исполнителя и не закрывает реальные задачи в OMH.

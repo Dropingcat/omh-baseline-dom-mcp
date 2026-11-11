@@ -18,7 +18,7 @@ import re
 import sqlite3
 from datetime import datetime, timezone
 
-from .dom_contract import digest, raw_hash
+from .dom_contract import digest, raw_hash, valid_commit_ref
 
 LITE_POLICY_DOC = {'version': 'lite-policy/v1', 'profile': 'lite'}
 BRANCH_RE = re.compile(r'^[A-Za-z0-9_-]{1,32}$')
@@ -36,14 +36,14 @@ FIELD_TYPES = {
     'repository_ref': str, 'relative_path': str, 'language': str, 'snapshot_digest': str,
     'artifact_ref': str, 'artifact_digest': str, 'method': str, 'columns': dict,
     'provenance': str, 'definition': str, 'scope': str, 'links': list,
-    'classification': str, 'evidence': list,
+    'classification': str, 'evidence': list, 'commit_ref': dict,
 }
 COMMON_FIELDS = {'requirement_refs': list, 'reason': str, 'origin_version': str, 'idempotency_key': str}
 TYPE_ARGS = {
     'quote': ('source_ref', 'locator', 'source_snapshot_digest'),
     'decision': ('attribution', 'rationale', 'assumptions', 'alternatives'),
     'formula': ('expression', 'notation', 'units', 'assumptions', 'derivation_refs'),
-    'code': ('repository_ref', 'relative_path', 'language', 'snapshot_digest', 'locator'),
+    'code': ('repository_ref', 'relative_path', 'language', 'snapshot_digest', 'locator', 'commit_ref'),
     'data': ('artifact_ref', 'artifact_digest', 'method', 'columns', 'units', 'provenance'),
     'concept': ('definition', 'scope', 'assumptions', 'attribution', 'links'),
     'text': ('classification', 'evidence', 'attribution', 'assumptions'),
@@ -140,11 +140,14 @@ def build_metadata(typ, text, raw, args):
                 'assumptions': pick('assumptions', []), 'units': pick('units', {'expression': 'unspecified'}),
                 'derivation_refs': pick('derivation_refs', ['agent-entered'])}
     if typ == 'code':
-        return {'repository_ref': pick('repository_ref', 'local:project'),
-                'relative_path': pick('relative_path', 'unspecified.txt'),
-                'language': pick('language', 'text'),
-                'snapshot_digest': pick('snapshot_digest', d['snapshot_digest']),
-                'locator': pick('locator', d['locator']), 'dirty': False}
+        metadata = {'repository_ref': pick('repository_ref', 'local:project'),
+                    'relative_path': pick('relative_path', 'unspecified.txt'),
+                    'language': pick('language', 'text'),
+                    'snapshot_digest': pick('snapshot_digest', d['snapshot_digest']),
+                    'locator': pick('locator', d['locator']), 'dirty': False}
+        if args.get('commit_ref') is not None:
+            metadata['commit_ref'] = args['commit_ref']
+        return metadata
     if typ == 'data':
         return {'artifact_ref': pick('artifact_ref', 'agent:inline'),
                 'artifact_digest': pick('artifact_digest', d['artifact_digest']),
@@ -218,6 +221,7 @@ def _level(row_level, row_payload):
 
 def _claim_info(svc, c, claim_id):
     children = _children(c)
+    parent = {new: old for old, new in children.items()}
     record_id, version = _lineage(children)(claim_id)
     row = c.execute('SELECT s.review_id, t.revision FROM claim_snapshots s JOIN transactions t ON t.id=s.tx WHERE s.claim_id=?', (claim_id,)).fetchone()
     level = None
@@ -226,7 +230,8 @@ def _claim_info(svc, c, claim_id):
         rv = c.execute('SELECT %s AS lvl, payload FROM reviews WHERE id=?' % ('review_level' if 'review_level' in cols else 'NULL'), (row['review_id'],)).fetchone()
         level = _level(rv['lvl'], rv['payload']) if rv else None
     sha = c.execute('SELECT raw_sha256 FROM claims WHERE id=?', (claim_id,)).fetchone()
-    return {'record_id': record_id, 'version': version, 'review_level': level,
+    return {'record_id': record_id, 'logical_claim_id': record_id, 'version': version,
+            'supersedes': parent.get(claim_id), 'review_level': level,
             'revision': row['revision'] if row else 0, 'raw_sha256': sha[0] if sha else ''}
 
 
@@ -355,6 +360,9 @@ def _validated_claim_args(svc, branch, typ, text, fields):
             raise Denied('INVALID_FIELD', field=name, hint="Unknown argument '%s'." % name)
         if type(value) is not FIELD_TYPES[name]:
             raise Denied('INVALID_FIELD', field=name, hint="'%s' must be of type %s." % (name, FIELD_TYPES[name].__name__))
+        if name == 'commit_ref' and not valid_commit_ref(value):
+            raise Denied('INVALID_FIELD', field='commit_ref',
+                         hint="'commit_ref' needs {'hash': 40|64 hex, 'branch': non-empty}; optional author/message/committed_at are non-empty strings.")
         if name not in TYPE_ARGS[typ]:
             raise Denied('INVALID_FIELD', field=name,
                          hint="'%s' does not apply to type '%s'. Allowed extra arguments for %s: %s." % (name, typ, typ, ', '.join(TYPE_ARGS[typ])))
@@ -389,7 +397,7 @@ def claim(svc, branch, typ, text, fields):
             {'tool': 'dom_trace', 'arguments': {}, 'why': 'readiness: admitted_total and admitted_independent are separate numbers'},
         ]
         return {'status': 'ALREADY_RECORDED' if res['already'] else 'CLAIM_ADMITTED', 'simulated': True, 'claim_id': cid,
-                'record_id': res['record_id'], 'version': res['version'], 'branch': branch, 'type': typ,
+                'record_id': res['record_id'], 'logical_claim_id': res['logical_claim_id'], 'version': res['version'], 'branch': branch, 'type': typ,
                 'revision': res['revision'], 'review_level': res['review_level'], 'origin_version': origin_version,
                 'raw_sha256': res['raw_sha256'], 'next_steps': steps}
     # strict profile: independent review required, so only submit a candidate;
@@ -415,6 +423,10 @@ def claim(svc, branch, typ, text, fields):
 def _rebuild_for_update(old_item, old_text, old_raw, new_text, new_raw, reason):
     typ = old_item['content_type']
     meta = dict(old_item['metadata'])
+    # A new code body is not the content of the old commit: do not carry a
+    # stale commit_ref into the new version.
+    if typ == 'code':
+        meta.pop('commit_ref', None)
     old_d, new_d = _derived(typ, old_text, old_raw), _derived(typ, new_text, new_raw)
     for key, new_value in new_d.items():
         if key == 'source_b64' or meta.get(key) == old_d.get(key):
@@ -489,7 +501,7 @@ def update(svc, claim_id, text, reason, idempotency_key=None):
         {'tool': 'dom_trace', 'arguments': {}, 'why': 'readiness counts only current versions'},
     ]
     return {'status': 'CLAIM_UPDATED', 'simulated': True, 'new_claim_id': new_id, 'supersedes': claim_id,
-            'record_id': info['record_id'], 'version': info['version'], 'branch': branch,
+            'record_id': info['record_id'], 'logical_claim_id': info['logical_claim_id'], 'version': info['version'], 'branch': branch,
             'revision': receipt2['revision'], 'review_level': info['review_level'],
             'raw_sha256': info['raw_sha256'], 'next_steps': steps}
 
@@ -552,7 +564,9 @@ def find(svc, query, branch, typ, requirement_ref, limit):
     with svc.store.read() as c:
         stamp = svc.integrity_gate(c)
         archived = _archived(c)
-        info = _lineage(_children(c))
+        children = _children(c)
+        info = _lineage(children)
+        parent = {new: old for old, new in children.items()}
         ph = ','.join('?' * len(branches)) or "''"
         sql = ('SELECT cl.id, cl.content_type, cl.raw, cl.origin_branch, cl.origin_version, cl.payload, t.revision, '
                '%s AS lvl, rv.payload AS rvp FROM claims cl JOIN transactions t ON t.id=cl.tx '
@@ -573,7 +587,8 @@ def find(svc, query, branch, typ, requirement_ref, limit):
                 matches.append({'claim_id': row['id'], 'branch': row['origin_branch'], 'type': row['content_type'],
                                 'preview': _preview(body, query), 'origin_version': row['origin_version'],
                                 'review_level': _level(row['lvl'], row['rvp']), 'is_current': row['id'] not in archived,
-                                'record_id': record_id, 'version': version, 'revision': row['revision']})
+                                'record_id': record_id, 'logical_claim_id': record_id,
+                                'version': version, 'supersedes': parent.get(row['id']), 'revision': row['revision']})
     from . import public_dto
     return {'status': 'FOUND', 'simulated': True, 'matches': matches, 'total': total, 'truncated': total > len(matches),
             'read_snapshot': public_dto.read_snapshot(stamp, branches)}
@@ -730,6 +745,7 @@ TOOL_DOCS = {
             'relative_path': _arg('string', False, 'code: relative path (no leading slash, no "..").'),
             'language': _arg('string', False, 'code: language.'),
             'snapshot_digest': _arg('string', False, 'code: sha256 of the file snapshot.'),
+            'commit_ref': _arg('object', False, 'code: optional {hash: 40|64 hex, branch: non-empty, author?, message?, committed_at?}; omit when the code is not tied to a commit.'),
             'artifact_ref': _arg('string', False, 'data: dataset/file id.'),
             'artifact_digest': _arg('string', False, 'data: sha256 of the artifact.'),
             'method': _arg('string', False, 'data: how the data was obtained.'),
@@ -741,7 +757,7 @@ TOOL_DOCS = {
             'classification': _arg('string', False, 'text: "factual" (needs evidence) or "interpretation" (default when no evidence).'),
             'evidence': _arg('array', False, 'text: [{"ref": "...", "locator": "..."}]; makes the text factual.'),
         },
-        'returns': 'status CLAIM_ADMITTED|ALREADY_RECORDED, claim_id, record_id, version, revision, review_level ("self"), raw_sha256, next_steps.',
+        'returns': 'status CLAIM_ADMITTED|ALREADY_RECORDED, claim_id, record_id, logical_claim_id, version, revision, review_level ("self"), raw_sha256, next_steps.',
         'example': {'branch': 'main', 'type': 'decision', 'text': 'Use method X for the main run.', 'rationale': 'cheaper and already validated', 'requirement_refs': ['R1']},
     },
     'dom_update': {
@@ -752,7 +768,7 @@ TOOL_DOCS = {
             'reason': _arg('string', True, 'Why it changes; recorded in the event chain.'),
             'idempotency_key': _arg('string', False, 'Optional idempotency key (TD-DOM-22.5): replaying the same update returns the same new version instead of appending again.'),
         },
-        'returns': 'status CLAIM_UPDATED, new_claim_id, supersedes, record_id, version, revision, review_level, next_steps.',
+        'returns': 'status CLAIM_UPDATED, new_claim_id, supersedes, record_id, logical_claim_id, version, revision, review_level, next_steps.',
         'example': {'claim_id': '<claim_id from dom_claim>', 'text': 'Use method Y for the main run.', 'reason': 'X failed validation on 2026-11-09'},
     },
     'dom_find': {
@@ -764,7 +780,7 @@ TOOL_DOCS = {
             'requirement_ref': _arg('string', False, 'Only claims supporting this requirement id.'),
             'limit': _arg('integer', False, 'Max matches, 1..200 (default 20).'),
         },
-        'returns': 'status FOUND, matches[{claim_id, branch, type, preview<=200 chars, origin_version, review_level, is_current, record_id, version, revision}], total, truncated.',
+        'returns': 'status FOUND, matches[{claim_id, branch, type, preview<=200 chars, origin_version, review_level, is_current, record_id, logical_claim_id, version, supersedes, revision}], total, truncated.',
         'example': {'query': 'method X', 'branch': 'main', 'limit': 10},
     },
     'dom_resume': {
